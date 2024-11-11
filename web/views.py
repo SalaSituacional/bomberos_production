@@ -24,6 +24,8 @@ import os
 from django.conf import settings
 import subprocess
 from django.db.models import Case, When
+from urllib.parse import urlparse
+import dj_database_url
 
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
@@ -49,27 +51,34 @@ def descargar_base_datos(request):
             return response
     
     elif 'postgresql' in db_engine:
-        # Para PostgreSQL, generamos un archivo .sql con pg_dump
-        db_name = settings.DATABASES['default']['NAME']
-        db_user = settings.DATABASES['default']['USER']
-        db_password = settings.DATABASES['default']['PASSWORD']
+        # Obtener la URL de conexión completa de la base de datos
+        db_url = "postgresql://data_rad4_user:Akjqm5bt9mEcBcxEhx9JsikkQ5RwMnDu@dpg-cskgpc3tq21c73dohb3g-a.oregon-postgres.render.com/data_rad4"
+        url_parsed = urlparse(db_url)
+
+        # Extraer información de la URL
+        db_name = url_parsed.path[1:]  # Remueve el primer '/' de la ruta para obtener solo el nombre
+        db_user = url_parsed.username
+        db_password = url_parsed.password
+        db_host = url_parsed.hostname
+
+        # Configurar el nombre del archivo de respaldo
         filename = f"backup_{fecha_actual}.sql"
 
-        # Configuramos el comando pg_dump
+        # Configurar el comando pg_dump
         dump_cmd = [
-            "pg_dump", 
-            "-U", db_user, 
-            "-d", db_name, 
+            "pg_dump",
+            "-h", db_host,
+            "-U", db_user,
+            "-d", db_name,
             "-F", "c"
         ]
 
-        # Ejecutamos el comando y capturamos el resultado
+        # Establecer la contraseña en la variable de entorno y ejecutar el comando
         os.environ['PGPASSWORD'] = db_password
         with subprocess.Popen(dump_cmd, stdout=subprocess.PIPE) as proc:
             response = HttpResponse(proc.stdout, content_type="application/sql")
             response['Content-Disposition'] = f'attachment; filename="{filename}"'
-            return response
-    
+            return response    
     else:
         # Otros motores de base de datos
         return HttpResponse("Motor de base de datos no compatible", status=400)
