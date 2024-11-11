@@ -1,0 +1,309 @@
+{% if user.user == "SeRvEr" %}
+    {% include "layouts/panel_admin.html" %}
+{% elif user.user == "Sala_Situacional" %}
+    {% include "layouts/panel_sala_situacional.html" %}
+{% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
+    {% include "layouts/panel_comandancia.html" %}
+{% elif user.user == "Operaciones01" %}
+    {% include "layouts/panel_operaciones.html" %}
+{% elif user.user == "Grumae02" %}
+    {% include "layouts/panel_Grumae.html" %}
+{% elif user.user == "Rescate03" %}
+    {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Prevencion05" %}
+    {% include "layouts/panel_prevencion.html" %}
+{% elif user.user == "Serviciosmedicos06" %}
+    {% include "layouts/panel_serviciosmedicos.html" %}
+{% elif user.user == "Capacitacion07" %}
+    {% include "layouts/panel_capacitacion.html" %}
+{% elif user.user == "Enfermeria08" %}
+    {% include "layouts/panel_enfermeria.html" %}
+{% elif user.user == "Psicologia09" %}
+    {% include "layouts/panel_psicologia.html" %}
+{% endif %}
+
+{% block content %}
+<div class="general-dashboard">
+  <div class="div-user-name  username-space">
+    <h3 class="division-title">Tabla de Personal</h3>
+    
+
+    <section class="user-name">
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / {{ user.user }}</p>
+      <svg
+        width="30px"
+        height="30px"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
+            fill="#000000"
+          ></path>
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
+            fill="#000000"
+          ></path>
+        </g>
+      </svg>
+    </section>
+  </div>
+  <div class="tool-personal">
+    <section class="accion-filter">
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Jerarquia:</span>
+        <input type="text" class="form-control" placeholder="Buscar Jerarquia" id="filterJerarquia">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Status</span>
+        <select class="form-select form-select-sm" aria-label="Small select example" id="filterStatus">
+          <option selected disabled>Estado</option>
+          <option value="1">Activo</option>
+          <option value="2">Jubilado</option>
+          <option value="3">Incapacitado</option>
+        </select>
+      </div>
+    </section>
+    <section class="accion-personal">
+        Personas Totales: {{ total }}
+        <button type="button" class="btn" data-bs-toggle="modal"
+        data-bs-target="#modal-info">
+<svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>plus-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000"> <path d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z" id="plus-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
+        </button>
+    </section>
+  </div>
+ <!-- tabla -->
+  <div class="table-responsive-sm">
+    <table class="table table-hover" id="data-table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nombres</th>
+          <th scope="col">Apellidos</th>
+          <th scope="col">Jerarquia</th>
+          <th scope="col">Cargo</th>
+          <th scope="col">Cédula</th>
+          <th scope="col">Sexo</th>
+          <th scope="col">Contrato</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Acción</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        {% for personal in personal %}
+        <tr>
+          <!-- prettier-ignore -->
+          <th scope="row">{{ forloop.counter }}</th>
+          <!-- prettier-ignore -->
+          <td>{{ personal.nombres }}</td>
+          <!-- prettier-ignore -->
+          <td>{{ personal.apellidos }}</td>
+          <!-- prettier-ignore -->
+          <td>{{ personal.jerarquia }}</td>
+          <td>{{ personal.cargo }}</td>
+          <td>{{ personal.cedula }}</td>
+          <td>{{ personal.sexo }}</td>
+          <td>{{ personal.rol }}</td>
+          <td>{{ personal.status }}</td>
+          <td>
+            <button class="btn btn-danger edit-button" data-id="{{ personal.id }}" data-nombres="{{ personal.nombres }}" data-apellidos="{{ personal.apellidos }}" data-jerarquia="{{ personal.jerarquia }}" data-cargo="{{ personal.cargo }}" data-cedula="{{ personal.cedula }}" data-sexo="{{ personal.sexo }}" data-rol="{{ personal.rol }}" data-status="{{ personal.status }}" data-bs-toggle="modal" data-bs-target="#modal-mod">
+              Editar
+            </button>
+          </td>
+
+          <!-- prettier-ignore -->
+        {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>     
+  <div class="contain-dates">
+    <section class="buttons-items">
+      <a href="{% url 'descargar_excel_personal' %}" class="btn btn-primary">Descargar Excel</a>
+    </section>
+  
+  </div>
+</div>  
+<!-- div general-dashboard fin -->
+<div class="modal fade" tabindex="-1" id="modal-info">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content modal-content-two">
+      <div class="modal-header header-dashboard-two">
+        <section class="title-icon">
+          <img
+            src="../static/assets/logo bomberos 2.svg"
+            alt="Logo de bomberos"
+          />
+          <h2>Cuerpo de Bomberos</h2>
+        </section>
+      </div>
+      <div class="modal-body modal-body-two modal-body-three">
+        <section class="info-modal personal-register" id="info_modal">
+          <h2>Registrar Personal</h2>
+            <form action="" method="post">
+              {% csrf_token %}
+              <div class="form-style" id="form_general">{{ form_personal.as_div }}</div>
+              <!-- Boton Enviar -->
+              <div class="modal-footer modal-footer-personal">
+                <button type="submit" id="button_submit" class="btn btn-danger btn-center">
+                  Aceptar
+                </button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                  Cerrar
+                </button>
+              </div>
+            </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal-mod">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content modal-content-two">
+      <div class="modal-header header-dashboard-two">
+        <section class="title-icon">
+          <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
+          <h2>Cuerpo de Bomberos</h2>
+        </section>
+      </div>
+      <div class="modal-body modal-body-two modal-body-three">
+        <section class="info-modal personal-register" id="info_modal">
+          <h2>Editar Personal</h2>
+          <form action="{% url 'edit_personal' %}" method="POST">
+            <div class="form-style">
+              {% csrf_token %}
+
+              <!-- Campo oculto para el ID -->
+              <input type="hidden" name="personal_id" id="id_persona" />
+
+              <!-- Campo de Nombres -->
+              <div bis_skin_checked="1">
+                <label for="id_nombres">Nombres:</label>
+                <input type="text" name="formulario-nombres" maxlength="50" required="" id="id_nombres">
+              </div>
+
+              <!-- Campo de Apellidos -->
+              <div bis_skin_checked="1">
+                <label for="id_apellidos">Apellidos:</label>
+                <input type="text" name="formulario-apellidos" maxlength="50" required="" id="id_apellidos">
+              </div>
+
+              <!-- Campo de Nacionalidad -->
+              <div bis_skin_checked="1">
+                <label for="id_nacionalidad">Nacionalidad:</label>
+                <select name="formulario-nacionalidad" id="id_nacionalidad">
+                  <option value="V">V</option>
+                  <option value="E">E</option>
+                </select>
+              </div>
+
+              <!-- Campo de Cedula -->
+              <div bis_skin_checked="1">
+                <label for="id_cedula">Cedula:</label>
+                <input type="number" name="formulario-cedula" required="" id="id_cedula">
+              </div>
+
+              <!-- Campo de Jerarquia -->
+              <div bis_skin_checked="1">
+                <label for="id_jerarquia">Jerarquia:</label>
+                <select name="formulario-jerarquia" class="disable-first-option" required="" id="id_jerarquia">
+                  <option value="" selected="">Seleccione Una Opcion</option>
+                  <option value="General">General</option>
+                  <option value="Coronel">Coronel</option>
+                  <option value="Teniente Coronel">Teniente Coronel</option>
+                  <option value="Mayor">Mayor</option>
+                  <option value="Capitán">Capitán</option>
+                  <option value="Primer Teniente">Primer Teniente</option>
+                  <option value="Teniente">Teniente</option>
+                  <option value="Sargento Mayor">Sargento Mayor</option>
+                  <option value="Sargento Primero">Sargento Primero</option>
+                  <option value="Sargento segundo">Sargento segundo</option>
+                  <option value="Cabo Primero">Cabo Primero</option>
+                  <option value="Cabo Segundo">Cabo Segundo</option>
+                  <option value="Distinguido">Distinguido</option>
+                  <option value="Bombero">Bombero</option>
+                </select>
+              </div>
+
+              <!-- Campo de Cargo -->
+              <div bis_skin_checked="1">
+                <label for="id_cargo">Cargo:</label>
+                <input type="text" name="formulario-cargo" maxlength="50" required="" id="id_cargo">
+              </div>
+
+              <!-- Campo de Sexo -->
+              <div bis_skin_checked="1">
+                <label for="id_sexo">Sexo:</label>
+                <select name="formulario-sexo" class="disable-first-option" required="" id="id_sexo">
+                  <option value="" selected="">Seleccione Una Opcion</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                </select>
+              </div>
+
+              <!-- Campo de Rol -->
+              <div bis_skin_checked="1">
+                <label for="id_rol">Rol:</label>
+                <select name="formulario-rol" class="disable-first-option" required="" id="id_rol">
+                  <option value="" selected="">Seleccione Una Opcion</option>
+                  <option value="Administrativo">Administrativo</option>
+                  <option value="Bombero">Bombero</option>
+                  <option value="Civil">Civil</option>
+                </select>
+              </div>
+
+              <!-- Campo de Status -->
+              <div bis_skin_checked="1">
+                <label for="id_status">Status:</label>
+                <select name="formulario-status" class="disable-first-option" required="" id="id_status">
+                  <option value="" selected="">Seleccione Una Opcion</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Jubilado">Jubilado</option>
+                  <option value="Incapacitado">Incapacitado</option>
+                  <option value="Fallecido">Fallecido</option>
+                </select>      
+              </div>
+            </div>
+              <!-- Boton Enviar -->
+              <div class="modal-footer modal-footer-personal" bis_skin_checked="1">
+                <button type="submit" id="button_submit" class="btn btn-danger btn-center">
+                  Aceptar
+                </button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                  Cerrar
+                </button>
+              </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<footer class="footer">
+  <section class="text-reserved">
+    <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
+  </section>
+</footer>
+</div>
+
+<script src="../static/js/modificar_personal.js"></script>
+{% endblock %}
+

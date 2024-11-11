@@ -1,0 +1,494 @@
+{% if user.user == "SeRvEr" %}
+    {% include "layouts/panel_admin.html" %}
+{% elif user.user == "Sala_Situacional" %}
+    {% include "layouts/panel_sala_situacional.html" %}
+{% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
+    {% include "layouts/panel_comandancia.html" %}
+{% elif user.user == "Operaciones01" %}
+    {% include "layouts/panel_operaciones.html" %}
+{% elif user.user == "Grumae02" %}
+    {% include "layouts/panel_Grumae.html" %}
+{% elif user.user == "Rescate03" %}
+    {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Prevencion05" %}
+    {% include "layouts/panel_prevencion.html" %}
+{% elif user.user == "Serviciosmedicos06" %}
+    {% include "layouts/panel_serviciosmedicos.html" %}
+{% elif user.user == "Capacitacion07" %}
+    {% include "layouts/panel_capacitacion.html" %}
+{% elif user.user == "Enfermeria08" %}
+    {% include "layouts/panel_enfermeria.html" %}
+{% elif user.user == "Psicologia09" %}
+    {% include "layouts/panel_psicologia.html" %}
+{% endif %}
+{% block content %}
+<div class="general-dashboard">
+  <div class="div-user-name">
+    <section class="user-name">
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / {{ user.user }}</p>
+      <svg
+        width="30px"
+        height="30px"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
+            fill="#000000"
+          ></path>
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
+            fill="#000000"
+          ></path>
+        </g>
+      </svg>
+    </section>
+  </div>
+  <div class="content-stadist">
+    <div class="stadist-rows">
+      <!-- Pie 1 -->
+      <section class="cards-stadist-rows">
+        <div class="cards-stadists">
+          <div id="graphic-one" class="cards-stadists">
+            <p>Procedimientos <br> (Divisiones - Tipos de Procedimientos)</p>
+            <canvas id="pie"></canvas>
+          </div>
+          <select class="form-select-sm" aria-label="Default select example">
+            <option selected disabled class="form-select">Seleccionar Division</option>
+            <option value="4">Grumae</option>
+            <option value="1">Rescate</option>
+            <option value="8">Psicologia</option>
+            <option value="3">Prevencion</option>
+            <option value="6">Enfermeria</option>
+            <option value="2">Operaciones</option>
+            <option value="9">Capactiacion</option>
+            <option value="5">PreHospitalaria</option>
+            <option value="7">Servicios Medicos</option>
+          </select>
+          <div class="card-month">
+            <input type="month" id="month-picker2" class="form-select">
+          </div>
+          <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAPowerPoint()">Exportar</button>
+        </div>
+      </section>
+      <!-- Donut 1 -->
+      <section class="cards-stadist-rows">
+        <section class="cards-stadists">
+        <div class="cards-stadists" id="graphic-two">
+          <p>Procedimientos <br> (Divisiones - Parroquias)</p>
+          <canvas id="donuts"></canvas>
+        </div>
+          <select class="form-select-sm3" aria-label="Default select example">
+            <option selected disabled class="form-select">Seleccionar Division</option>
+            <option value="4">Grumae</option>
+            <option value="1">Rescate</option>
+            <option value="8">Psicologia</option>
+            <option value="3">Prevencion</option>
+            <option value="6">Enfermeria</option>
+            <option value="2">Operaciones</option>
+            <option value="9">Capactiacion</option>
+            <option value="5">PreHospitalaria</option>
+            <option value="7">Servicios Medicos</option>
+          </select>
+          <div class="card-month">
+            <input type="month" id="month-picker4" class="form-select">
+          </div>
+          <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAPowerPointTwo()">Exportar</button>
+        </section>
+      </section>
+      <!-- Pie 2 -->
+      <section class="cards-stadist-rows">
+        <div class="cards-stadists">
+          <div id="graphic-three" class="cards-stadists">
+            <p>Procedimientos <br> (Divisiones - Tipos de Procedimientos)</p>
+            <canvas id="pie_two"></canvas>
+          </div>
+          <select class="form-select-sm2" aria-label="Default select example">
+            <option selected disabled class="form-select">Seleccionar Division</option>
+            <option value="4">Grumae</option>
+            <option value="1">Rescate</option>
+            <option value="8">Psicologia</option>
+            <option value="3">Prevencion</option>
+            <option value="6">Enfermeria</option>
+            <option value="2">Operaciones</option>
+            <option value="9">Capactiacion</option>
+            <option value="5">PreHospitalaria</option>
+            <option value="7">Servicios Medicos</option>
+          </select>
+          <div class="card-month">
+            <input type="month" id="month-picker3" class="form-select">
+          </div>
+          <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAPowerPointThree()">Exportar</button>
+        </div>
+      </section>
+      <!-- Donut 2 -->
+      <section class="cards-stadist-rows">
+        <section class="cards-stadists">
+        <div class="cards-stadists" id="graphic-four">
+          <p>Procedimientos <br> (Divisiones - Parroquias)</p>
+          <canvas id="donuts_two"></canvas>
+        </div>
+          <select class="form-select-sm4" aria-label="Default select example">
+            <option selected disabled class="form-select">Seleccionar Division</option>
+            <option value="4">Grumae</option>
+            <option value="1">Rescate</option>
+            <option value="8">Psicologia</option>
+            <option value="3">Prevencion</option>
+            <option value="6">Enfermeria</option>
+            <option value="2">Operaciones</option>
+            <option value="9">Capactiacion</option>
+            <option value="5">PreHospitalaria</option>
+            <option value="7">Servicios Medicos</option>
+          </select>
+          <div class="card-month">
+            <input type="month" id="month-picker5" class="form-select">
+          </div>
+          <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAPowerPointFour()">Exportar</button>
+        </section>
+      </section>
+      <!-- Polar 1 -->
+      <section class="cards-stadist-rows">
+        <section class="cards-stadists">
+        <div class="cards-stadists" id="graphic-five">
+          <p>Procedimientos <br> (Tipos de Procedimientos - Divisiones)</p>
+          <canvas id="polar"></canvas>
+        </div>
+        <select class="form-select-sm5" aria-label="Default select example">
+          <option selected="" disabled="" class="form-select">Seleccionar Division</option>
+        <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="4">Atendido No Efectuado</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="17">Asesoramiento</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="20">Reinspeccion de Prevención</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="23">Inspeccion Establecimiento por Artificios Pirotecnicos</option><option value="24">Valoración Medica</option><option value="25">Jornada Medica</option><option value="26">Administración de Medicamentos</option><option value="27">Administración de Tratamiento</option><option value="28">Aerosolterapia</option><option value="29">Atención Local</option><option value="30">Atención Prehospitalaria</option><option value="31">Cuantificación de Presión Arterial</option><option value="32">Cuantificación de Signos Vitales</option><option value="33">Cura</option><option value="34">Otro</option><option value="35">Certificado de Salud Mental</option><option value="36">Consulta Bombero Activo</option><option value="37">Consulta Integrante Brigada Juvenil</option><option value="38">Consulta Paciente Externo</option><option value="39">Evaluación Psicológica Postvacacional</option><option value="40">Evaluación Psicológica Prevacacional</option><option value="41">Evaluación Personal Nuevo Ingreso</option><option value="45">Capacitación</option></select>
+          <div class="card-month">
+            <input type="month" id="month-picker6" class="form-select">
+          </div>
+          <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAPowerPointFive()">Exportar</button>
+        </section>
+      </section>
+      <!-- Polar 2 -->
+      <section class="cards-stadist-rows">
+        <section class="cards-stadists">
+        <div class="cards-stadists" id="graphic-six">
+          <p>Procedimientos <br> (Tipos de Procedimientos - Parroquias)</p>
+          <canvas id="polar2"></canvas>
+        </div>
+        <select class="form-select-sm6" aria-label="Default select example">
+          <option selected="" disabled="" class="form-select">Seleccionar Division</option>
+          <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="4">Atendido No Efectuado</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="17">Asesoramiento</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="20">Reinspeccion de Prevención</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="23">Inspeccion Establecimiento por Artificios Pirotecnicos</option><option value="24">Valoración Medica</option><option value="25">Jornada Medica</option><option value="26">Administración de Medicamentos</option><option value="27">Administración de Tratamiento</option><option value="28">Aerosolterapia</option><option value="29">Atención Local</option><option value="30">Atención Prehospitalaria</option><option value="31">Cuantificación de Presión Arterial</option><option value="32">Cuantificación de Signos Vitales</option><option value="33">Cura</option><option value="34">Otro</option><option value="35">Certificado de Salud Mental</option><option value="36">Consulta Bombero Activo</option><option value="37">Consulta Integrante Brigada Juvenil</option><option value="38">Consulta Paciente Externo</option><option value="39">Evaluación Psicológica Postvacacional</option><option value="40">Evaluación Psicológica Prevacacional</option><option value="41">Evaluación Personal Nuevo Ingreso</option><option value="45">Capacitación</option></select>
+          <div class="card-month">
+            <input type="month" id="month-picker7" class="form-select">
+          </div>
+          <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAPowerPointSix()">Exportar</button>
+        </section>
+      </section>
+      <!-- Pie 3 -->
+      <section class="cards-stadist-rows">
+        <div class="cards-stadists">
+          <div id="graphic-seven" class="cards-stadists">
+            <p>Procedimientos <br> (Divisiones - Tipos de Procedimientos)</p>
+            <canvas id="pie3"></canvas>
+          </div>
+          <select class="form-select-sm7" aria-label="Default select example">
+            <option selected="" disabled="" class="form-select">Seleccionar Division</option>
+            <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="45">Capacitación</option></select>
+          <div class="card-month">
+            <input type="month" id="month-picker8" class="form-select">
+          </div>
+          <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAPowerPointSeven()">Exportar</button>
+        </div>
+      </section>
+      <!-- Pie 4 -->
+      <section class="cards-stadist-rows">
+        <div class="cards-stadists">
+          <div id="graphic-eight" class="cards-stadists">
+            <p>Procedimientos <br> (Divisiones - Tipos de Procedimientos)</p>
+            <canvas id="pie4"></canvas>
+          </div>
+          <select class="form-select-sm8" aria-label="Default select example">
+            <option selected="" disabled="" class="form-select">Seleccionar Division</option>
+            <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="45">Capacitación</option></select>
+          <div class="card-month">
+            <input type="month" id="month-picker9" class="form-select">
+          </div>
+          <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAPowerPointEight()">Exportar</button>
+        </div>
+      </section>
+    </div>
+    <!-- ------------------------------------------------------------------------------------------------------ -->
+    <div class="stadist-column">
+      <section class="cards-stadist-column">
+        <section class="section-month">
+          <input type="month" class="form-select month-style" id="monthSelector"/>
+        </section>
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+          <!-- Operaciones -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseOne"
+                aria-expanded="false"
+                aria-controls="flush-collapseOne"
+              >
+              - Operaciones
+              </button>
+            </h2>
+            <div
+              id="flush-collapseOne"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+                <ol class="items-list-procediments" id="list_operaciones">
+                </ol>
+              </div>
+            </div>
+          </div>
+          <!-- Prehospitalaria -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseTwo"
+                aria-expanded="false"
+                aria-controls="flush-collapseTwo"
+              >
+                - PreHospitalaria
+              </button>
+            </h2>
+            <div
+              id="flush-collapseTwo"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+                <ol class="items-list-procediments" id="list_prehospitalaria">
+                  
+                </ol>
+              </div>
+            </div>
+          </div>
+          <!-- Servicios medicos -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseThree"
+                aria-expanded="false"
+                aria-controls="flush-collapseThree"
+              >
+                - Servicios Medicos
+              </button>
+            </h2>
+            <div
+              id="flush-collapseThree"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+                <ol class="items-list-procediments" id="list_medicos">
+                </ol>
+              </div>
+            </div>
+          </div>
+          <!-- Grumae -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseFour"
+                aria-expanded="false"
+                aria-controls="flush-collapseFour"
+              >
+                - Grumae
+              </button>
+            </h2>
+            <div
+              id="flush-collapseFour"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+               <ol class="items-list-procediments" id="list_grumae">
+               </ol>
+              </div>
+            </div>
+          </div>
+          <!-- Rescate -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseFive"
+                aria-expanded="false"
+                aria-controls="flush-collapseFive"
+              >
+                - Rescate
+              </button>
+            </h2>
+            <div
+              id="flush-collapseFive"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+                <ol class="items-list-procediments" id="list_rescate">
+                 </ol>
+              </div>
+            </div>
+          </div>
+          <!-- Prevencion -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseSix"
+                aria-expanded="false"
+                aria-controls="flush-collapseSix"
+              >
+                - Prevencion
+              </button>
+            </h2>
+            <div
+              id="flush-collapseSix"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+                <ol class="items-list-procediments" id="list_prevencion">
+                 </ol>
+              </div>
+            </div>
+          </div>
+          <!-- Capacitacion -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseSeven"
+                aria-expanded="false"
+                aria-controls="flush-collapseSeven"
+              >
+                 - Capacitacion
+              </button>
+            </h2>
+            <div
+              id="flush-collapseSeven"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+                <ol class="items-list-procediments" id="list_capacitacion">
+                 </ol>
+              </div>
+            </div>
+          </div>
+          <!-- Enfermeria -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseNine"
+                aria-expanded="false"
+                aria-controls="flush-collapseNine"
+              >
+                - Enfermeria
+              </button>
+            </h2>
+            <div
+              id="flush-collapseNine"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+                <ol class="items-list-procediments" id="list_enfermeria">
+                 </ol>
+              </div>
+            </div>
+          </div>
+          <!-- Psicologia -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseEight"
+                aria-expanded="false"
+                aria-controls="flush-collapseEight"
+              >
+                - Psicologia
+              </button>
+            </h2>
+            <div
+              id="flush-collapseEight"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+                <ol class="items-list-procediments" id="list_psicologia">
+                 </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bartwo">
+          <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAWord()">Exportar</button>
+        </div>
+      </section>
+    </div>
+  </div>
+<div class="title-bar"><h4>Grafica de barras / Divisiones</h4></div>
+  <div class="graphic-bar">
+    <section class="barts" id="graphic-three">
+      <canvas id="bar" class="bar-graphic"></canvas>
+    </section>
+  </div>
+  <div class="bartwo">
+    <div class="select-bar">
+      <input type="month" id="month-picker" class="form-select ">
+    </div>
+    <div class="btn-bar">
+      <button type="button" class="btn btn-primary btn-graphic" onclick="exportarAPowerPointThree()">Exportar</button>
+    </div>
+  </div>
+
+      <footer class="footer">
+      <section class="text-reserved">
+        <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
+      </section>
+    </footer>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script src="../static/js/estadisticas.js"></script>
+  <script src="../static/js/export.js"></script>
+
+  {% endblock %}
+</div>
