@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cuerpo De Bomberos</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../static/styles.css" />
+  </head>
+  <body>
+    <div class="img-background"></div>
+    <div class="link-to-back">
+      <a href="/">
+        <svg
+          width="50px"
+          height="50px"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></g>
+          <g id="SVGRepo_iconCarrier">
+            <path
+              d="M5 9.77746V16.2C5 17.8802 5 18.7203 5.32698 19.362C5.6146 19.9265 6.07354 20.3854 6.63803 20.673C7.27976 21 8.11984 21 9.8 21H14.2C15.8802 21 16.7202 21 17.362 20.673C17.9265 20.3854 18.3854 19.9265 18.673 19.362C19 18.7203 19 17.8802 19 16.2V5.00002M21 12L15.5668 5.96399C14.3311 4.59122 13.7133 3.90484 12.9856 3.65144C12.3466 3.42888 11.651 3.42893 11.0119 3.65159C10.2843 3.90509 9.66661 4.59157 8.43114 5.96452L3 12"
+              stroke="#ffffff"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></path>
+          </g>
+        </svg>
+      </a>
+    </div>
+    <h1 class="title-login">Cuerpo De Bomberos</h1>
+    <div class="login-form">
+      <section class="form-items">
+        <form action="" class="form-content" method="post">
+          {% csrf_token %}
+          <img src="../static/assets/logo bomberos 2.svg" alt="" />
+          <section class="inputs-forms">
+            <label for="user">Usuario:</label>
+            <input
+              name="user"
+              id="user"
+              type="text"
+              placeholder="Usuario:"
+              required
+            />
+          </section>
+          <section class="inputs-forms">
+            <label for="password">Contraseña:</label>
+            <input
+              name="password"
+              id="password"
+              type="password"
+              placeholder="Contraseña:"
+              required
+            />
+          </section>
+          <section class="btn-inputs-forms">
+            <button>Ingresar</button>
+          </section>
+        </form>
+      </section>
+    </div>
+    <footer class="icons-footer">
+      <div class="icons">
+        <img src="../static/assets/logo bomberos 2.svg" alt="Bomberos" />
+        <img src="../static/assets/logo dgnb.svg" alt="dgnb" />
+        <img src="../static/assets/interior,justicia,paz.png" alt="Venezuela" />
+        <img src="../static/assets/logo alcaldia.svg" alt="Alcaldia" />
+      </div>
+    </footer>
+    <!-- Modal de error -->
+    <div
+      class="modal fade"
+      id="staticBackdrop"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="staticBackdropLabel">ERROR</h2>
+          </div>
+          <div class="modal-body">
+            <svg
+              version="1.1"
+              id="Capa_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              viewBox="-5 -5 60.00 60.00"
+              xml:space="preserve"
+              width="120px"
+              height="120px"
+              fill="#000000"
+            >
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g
+                id="SVGRepo_tracerCarrier"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke="#ffffff"
+                stroke-width="0.7000000000000001"
+              ></g>
+              <g id="SVGRepo_iconCarrier">
+                <circle style="fill: #d75a4a" cx="25" cy="25" r="25"></circle>
+                <polyline
+                  style="
+                    fill: none;
+                    stroke: #ffffff;
+                    stroke-width: 5;
+                    stroke-linecap: round;
+                    stroke-miterlimit: 10;
+                  "
+                  points="16,34 25,25 34,16 "
+                ></polyline>
+                <polyline
+                  style="
+                    fill: none;
+                    stroke: #ffffff;
+                    stroke-width: 5;
+                    stroke-linecap: round;
+                    stroke-miterlimit: 10;
+                  "
+                  points="16,16 25,25 34,34 "
+                ></polyline>
+              </g>
+            </svg>
+            <h4>Usuario o contraseña incorrectas</h4>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-bs-dismiss="modal"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Mostrar modal si hay un error -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% if error %}
+    <script>
+      // Si Django envía la variable 'error', mostramos la ventana modal de error
+      var errorModal = new bootstrap.Modal(
+        document.getElementById("staticBackdrop")
+      );
+      errorModal.show();
+    </script>
+    {% endif %}
+
+    <!-- Incluye Bootstrap JS y dependencias -->
+  </body>
+</html>
