@@ -348,6 +348,7 @@ const opcionesPorCategoria = {
     { value: "22", text: "Artificios Piroctenicos" },
   ],
   5: [
+    { value: "2", text: "Apoyo a Otras Unidades" },
     { value: "3", text: "Guardia de Prevención" },
     { value: "4", text: "Atendido No Efectuado" },
     { value: "6", text: "Falsa Alarma" },
@@ -526,6 +527,7 @@ document
     };
 
     let campos;
+    console.log(this.value)
     switch (this.value) {
       case "1":
         requiredFalse();
@@ -1034,9 +1036,7 @@ document
       case "10":
         requiredFalse();
         showElements(["rescate"]);
-        campos = document
-          .getElementById("rescate")
-          .querySelectorAll("select, input");
+        campos = document.getElementById("rescate").querySelectorAll("select, input");
         setRequired(campos, true);
         document.getElementById("button_submit").style.display = "none";
         document
