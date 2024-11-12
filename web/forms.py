@@ -218,7 +218,7 @@ class FormularioRegistroPersonal(forms.Form):
     cargo = forms.CharField(max_length=50)
     sexo = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Masculino", "Masculino"), ("Femenino", "Femenino")], widget=forms.Select(attrs={"class": "disable-first-option"}))
     rol = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Administrativo", "Administrativo"), ("Bombero", "Bombero"), ("Civil", "Civil")], widget=forms.Select(attrs={"class": "disable-first-option"}))
-    status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Activo", "Activo"), ("Jubilado", "Jubilado"), ("Incapacitado", "Incapacitado"), ("Fallecido", "Fallecido")], widget=forms.Select(attrs={"class": "disable-first-option"}))
+    status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Activo", "Activo"), ("Jubilado", "Jubilado"), ("Incapacitado", "Incapacitado"), ("Fallecido", "Fallecido"), ("Cese", "Cese"), ("Comision de Servicios", "Comision de Servicios")], widget=forms.Select(attrs={"class": "disable-first-option"}))
 
 # Form1
 class SelectorDivision(forms.Form):
@@ -285,7 +285,7 @@ class Formulario_Enfermeria(forms.Form):
     encargado_area = forms.ChoiceField(choices=Asignar_op_Enfermeros, widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
 
 class Formulario_Servicios_medicos(forms.Form):
-    opc = [("", "Seleccione Una Opcion"),("Consultas Medicas", "Consultas Medicas"), ("Consultas Psicologicas", "Consultas Psicologicas"), ("Servicios Medicos", "Servicios Medicos")]
+    opc = [("", "Seleccione Una Opcion"),("Consultas Medicas", "Consultas Medicas"), ("Servicios Medicos", "Servicios Medicos")]
 
     tipo_servicio = forms.ChoiceField(choices=opc, widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
     jefe_area = forms.ChoiceField(choices=Asignar_op_Doctores(), widget=forms.Select(attrs={"class": "disable-first-option"}), required=False, label="Jefe de Area")
