@@ -252,13 +252,13 @@ svg {
 }
 
 /* https://codepen.io/TechnoBishop/pen/LEVPJw */
-iframe,
+/* iframe,
 video {
   width: 100%;
   height: calc((100vw - 4rem) * (9 / 16));
   max-height: calc(800px * 9 / 16);
   aspect-ratio: 16 / 9;
-}
+} */
 
 label {
   cursor: pointer;

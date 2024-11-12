@@ -1378,6 +1378,9 @@ def inicio(request):
 def information(request):
     return render(request, 'Blog/informacion.html') 
 
+def noticias(request):
+    return render(request, 'Blog/noticias.html') 
+
 # Vista de la Ventana Inicial (Login)
 @never_cache
 def Home(request):

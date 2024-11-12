@@ -27,6 +27,7 @@ urlpatterns = [
     path('login/', Home, name="home"),
     path('', inicio, name="inicio"),
     path('informacion/', information,name='informacion'),
+    path('noticias/', noticias,name='noticias'),
     path('dashboard/', Dashboard,name='dashboard') ,
     path('personal/', View_personal) ,
     path('prueba/', Prueba),
