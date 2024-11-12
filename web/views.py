@@ -1373,10 +1373,10 @@ def logout(request):
     return redirect('/login/')
 
 def inicio(request):
-    return render(request, 'blog/inicio.html')
+    return render(request, 'Blog/inicio.html')
 
 def information(request):
-    return render(request, 'blog/informacion.html') 
+    return render(request, 'Blog/informacion.html') 
 
 # Vista de la Ventana Inicial (Login)
 @never_cache
