@@ -1,18 +1,37 @@
 {% extends "blog.html" %} {% block content %}
 
+<style>
+    #instagram-feed {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .instagram-post {
+      max-width: 320px;
+      width: 100%;
+    }
+  </style>
+
 <section
   id="publicaciones"
-  style="width: 65%; margin: 0 auto; margin-bottom: 20rem"
+  style="width: 65%; margin: 0 auto; margin-bottom: 20rem;"
 >
-  <!-- LightWidget WIDGET -->
-  <script src="https://cdn.lightwidget.com/widgets/lightwidget.js"></script>
-  <iframe
-    src="//lightwidget.com/widgets/ec4f87088c0b53e6b1ae330bb2a80723.html"
-    scrolling="no"
-    allowtransparency="true"
-    class="lightwidget-widget"
-    style="width: 100%; border: 0; overflow: hidden"
-  ></iframe>
-</section>
+<h1>Publicaciones Instagram</h1>
+<!-- Contenedor de las Publicaciones -->
+<div id="instagram-feed">
+  {% for post in posts %}
+  <!-- Crear bloque de incrustación de Instagram para cada URL -->
+  <blockquote
+      class="instagram-media"
+      data-instgrm-permalink="{{ post.url }}"
+      data-instgrm-version="14"
+      style="max-width: 320px"
+  >
+      <a href="{{ post.url }}" target="_blank"></a>
+  </blockquote>
+  {% endfor %}
+  </div>
+</section>  
 
+<script async src="https://www.instagram.com/embed.js"></script>
 {% endblock %}
