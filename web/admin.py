@@ -64,5 +64,6 @@ admin.site.register(Inspeccion_Habitabilidad)
 admin.site.register(Inspeccion_Arbol)
 admin.site.register(Inspeccion_Otros)
 admin.site.register(Tipos_Investigacion)
+admin.site.register(InstagramPost)
 
 

@@ -61,4 +61,5 @@ urlpatterns = [
     path('get_persona/<int:persona_id>/', get_persona, name='get_persona'),
      path('editar_personal/', edit_personal, name='edit_personal'),
     path('api/procedimientos_tipo_detalles/', api_procedimientos_tipo_detalles, name='procedimientos_tipo_detalles'),
+    path('instagram/', instagram_feed, name='instagram_feed'),
 ]

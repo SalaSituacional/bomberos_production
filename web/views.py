@@ -26,6 +26,52 @@ import subprocess
 from django.db.models import Case, When
 from urllib.parse import urlparse
 import dj_database_url
+import instaloader
+from datetime import timezone as dt_timezone
+
+def get_instagram_post_date(url):
+    L = instaloader.Instaloader()
+
+    # Extraer el shortcode de la URL
+    shortcode = url.split("/p/")[-1].split("/")[0]
+
+    try:
+        # Obtener la publicación usando el shortcode
+        post = instaloader.Post.from_shortcode(L.context, shortcode)
+        naive_datetime = post.date_utc  # Asumiendo que `post.date_utc` es el valor sin zona horaria
+        # Convertir la fecha sin zona horaria a UTC
+        fecha_publicacion = timezone.make_aware(naive_datetime, dt_timezone.utc)
+        return fecha_publicacion
+    except Exception as e:
+        print(f"Error al obtener la publicación: {e}")
+        return None
+
+def instagram_feed(request):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+
+    success = False  # Variable para indicar si se ha agregado correctamente
+
+    if request.method == 'POST':
+        url = request.POST.get('url')
+        if url:
+            fecha_publicacion = get_instagram_post_date(url)
+            if fecha_publicacion:
+                InstagramPost.objects.create(url=url, fecha=fecha_publicacion)
+                success = True  # Ahora success indica éxito sin redireccionar
+
+    posts = InstagramPost.objects.all().order_by('-fecha')
+
+    return render(request, 'instagram_feed.html', {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        'posts': posts,
+        'success': success,  # Asegurarse de que success esté en el contexto
+    })
+
 
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
@@ -1379,7 +1425,10 @@ def information(request):
     return render(request, 'Blog/informacion.html') 
 
 def noticias(request):
-    return render(request, 'Blog/noticias.html') 
+    # Obtener todas las publicaciones, ordenadas por fecha (más recientes primero)
+    posts = InstagramPost.objects.all().order_by('-fecha')
+
+    return render(request, 'Blog/noticias.html', {'posts': posts,}) 
 
 # Vista de la Ventana Inicial (Login)
 @never_cache

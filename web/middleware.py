@@ -2,6 +2,7 @@
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.urls import reverse
+from django.utils.deprecation import MiddlewareMixin
 
 class LogoutIfAuthenticatedMiddleware:
     def __init__(self, get_response):
@@ -23,4 +24,15 @@ class NoCacheMiddleware:
         response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
         response['Pragma'] = 'no-cache'
         response['Expires'] = '0'
+        return response
+
+class LoadingScreenMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        # Establece una variable en la sesión o en el contexto para indicar que el proceso ha comenzado
+        request.loading = True
+
+    def process_response(self, request, response):
+        # Cuando la respuesta se envíe, quita la variable de carga
+        if hasattr(request, 'loading') and request.loading:
+            response['Loading'] = 'Complete'
         return response

@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'web.middleware.LogoutIfAuthenticatedMiddleware',  # Tu middleware existente
     'web.middleware.NoCacheMiddleware',  # Ajusta esto según tu estructura
+    'web.middleware.LoadingScreenMiddleware',
 ]
 
 LOGIN_URL = 'home'  # Cambia esto al nombre de tu URL de inicio de sesión

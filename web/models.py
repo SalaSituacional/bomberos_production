@@ -1,6 +1,14 @@
 from django.db import models
+from django.utils import timezone
 
 # Modelos Para Agregar Datos Aparte
+
+class InstagramPost(models.Model):
+    url = models.URLField()  # Para almacenar la URL de la publicación
+    fecha = models.DateTimeField(default="2000-01-01T00:00:00")  # Para almacenar la fecha de la publicación
+
+    def __str__(self):
+        return f"{self.url} - {self.fecha}"
 
 class Doctores(models.Model):
   doctor = models.CharField(max_length=80)
