@@ -295,6 +295,45 @@
   </section>
 </footer>
 <!-- fin resumen de procedimientos -->
+
+
+<!-- <script>
+  // Función fetch con pantalla de carga
+  async function fetchWithLoader(url, options) {
+    let response;
+    try {
+        document.getElementById("loadingScreen").style.display = "block";
+        response = await fetch(url, options);
+
+        if (!response.ok) {
+            throw new Error("Error en la solicitud: " + response.status);
+        }
+
+        const jsonData = await response.json(); // Obtener los datos en JSON
+        return jsonData;
+    } catch (error) {
+        console.error("Error al consumir la API:", error);
+        throw error;
+    } finally {
+        document.getElementById("loadingScreen").style.display = "none";
+    }
+}
+
+
+    
+    // Manejo de formularios y navegación
+    document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll("form").forEach(form => {
+        form.addEventListener("submit", function() {
+              document.getElementById("loadingScreen").style.display = "block";
+            });
+          });
+          
+          window.addEventListener("beforeunload", function() {
+            document.getElementById("loadingScreen").style.display = "block";
+          });
+        });
+</script> -->
 <script src="../static/js/animate.js"></script>
 <script src="../static/js/graphic.js"></script>
 {% endblock %}
