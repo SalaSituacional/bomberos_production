@@ -2085,8 +2085,8 @@ summary > * {
   color: #FFF;
   font-family: var(--Londrina);
   h2{
-    text-shadow: black 15px 5px ;
     font-size: 4rem;
+    text-shadow: 10px 10px 20px black;
     margin: 0;
     padding: 0;
   }
@@ -2138,7 +2138,8 @@ summary > * {
   width: 70%;
   height: auto;
   h3{
-    font-size: 2.5rem;
+    text-align: center;
+    font-size: 4rem;
     color: #B2150C;
     font-family: var(--Londrina);  
   }
@@ -2150,7 +2151,7 @@ summary > * {
   }
 }
   ul li{
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-family: var(--Londrina);  
     color: #B2150C;
   }
@@ -2210,4 +2211,11 @@ summary > * {
   img{
     margin-bottom: 10rem;
   }
+}
+.list-valores{
+  height: auto;
+  width: auto;
+  display: flex;
+  justify-content: space-around;
+  padding: 2rem;
 }
