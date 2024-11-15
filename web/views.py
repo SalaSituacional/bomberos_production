@@ -3592,7 +3592,7 @@ def tabla_general(request):
             procedimiento.delete()
             return JsonResponse({'success': True})
         except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
     return render(request, "tablageneral.html", {
         "user": user,
