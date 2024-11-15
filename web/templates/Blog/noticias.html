@@ -1,37 +1,20 @@
 {% extends "blog.html" %} {% block content %}
-
-<style>
-    #instagram-feed {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .instagram-post {
-      max-width: 320px;
-      width: 100%;
-    }
-  </style>
-
-<section
-  id="publicaciones"
-  style="width: 65%; margin: 0 auto; margin-bottom: 20rem;"
->
-<h1>Publicaciones Instagram</h1>
-<!-- Contenedor de las Publicaciones -->
-<div id="instagram-feed">
-  {% for post in posts %}
-  <!-- Crear bloque de incrustación de Instagram para cada URL -->
-  <blockquote
+<section id="publicaciones" class="public-instagram">
+  <h1>Publicaciones Instagram</h1>
+  <!-- Contenedor de las Publicaciones -->
+  <div class="instagram-feed">
+    {% for post in posts %}
+    <!-- Crear bloque de incrustación de Instagram para cada URL -->
+    <blockquote
       class="instagram-media"
       data-instgrm-permalink="{{ post.url }}"
       data-instgrm-version="14"
       style="max-width: 320px"
-  >
+    >
       <a href="{{ post.url }}" target="_blank"></a>
-  </blockquote>
-  {% endfor %}
+    </blockquote>
+    {% endfor %}
   </div>
-</section>  
-
+</section>
 <script async src="https://www.instagram.com/embed.js"></script>
 {% endblock %}
