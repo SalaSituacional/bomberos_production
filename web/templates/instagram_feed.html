@@ -5,42 +5,6 @@
 {% endif %}
 
 {% block content %}
-<style>
-    /* Estilos básicos para el modal */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        padding-top: 100px;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.4);
-    }
-    .modal-content {
-        background-color: #fefefe;
-        margin: auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 400px;
-    }
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-</style>
-  
-
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
@@ -77,26 +41,30 @@
       </section>
     </div>
   </div>
-  
-      <h1>Feed de Publicaciones de Instagram</h1>
-  
-      <!-- Formulario para Agregar Nueva URL -->
-      <form method="post">
-      {% csrf_token %}
+  <div class="feed-instagram">
+    <h3>Feed de Publicaciones de Instagram</h3>
+    <!-- Formulario para Agregar Nueva URL -->
+    <div class="form-instagram">
+      <form method="post" class="form-feed-instagram">
+        {% csrf_token %}
       <input
-          type="url"
-          name="url"
-          placeholder="Ingresa la URL de la publicación de Instagram"
-          required
+      class="form-control"
+      type="url"
+      name="url"
+      placeholder="Ingresar Enlace de la publicacion"
+      required
       />
-      <button type="submit">Agregar Publicación</button>
-      </form>
-
+      <button type="submit" class="btn btn-danger">Agregar Publicación</button>
+    </form>
+  </div>
+</div>
     <!-- Modal de Confirmación -->
-    <div id="successModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p>¡La publicación se ha agregado exitosamente!</p>
+    <div id="successModal" class="modal-public-instagram" style="display: none;">
+        <div class="modal-content-instagram">
+          <p>¡Publicacion Agregada Exitosamente!</p>
+          <button class="btn btn-danger" onclick="closeModal()"> 
+            Cerrar
+          </button>
         </div>
     </div>
 
@@ -121,13 +89,13 @@
     </script>
 
       <!-- Script de Incrustación de Instagram -->
-      <script async src="https://www.instagram.com/embed.js"></script>
       <script>
-      // Reprocesar el script de Instagram después de que se cargue la página
-      window.onload = function () {
+        // Reprocesar el script de Instagram después de que se cargue la página
+        window.onload = function () {
           window.instgrm.Embeds.process();
-      };
+        };
       </script>
+      <script async src="https://www.instagram.com/embed.js"></script>
   
   <footer class="footer">
     <section class="text-reserved">
