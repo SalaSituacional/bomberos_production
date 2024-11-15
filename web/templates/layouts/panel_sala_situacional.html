@@ -419,10 +419,13 @@
 
     <!-- Pantalla de carga -->
     <div id="loadingScreen" style="display: none">
-      <div class="loader"></div>
-      <p>Cargando...</p>
-    </div>
+      <div class="spinner-border text-danger">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div> 
 
+    
+    {% block content %} {% endblock %}
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -438,7 +441,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>
     <script src="../../static/js/off.js"></script>
-
-    {% block content %} {% endblock %}
   </body>
 </html>
