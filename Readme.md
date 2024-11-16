@@ -1,6 +1,6 @@
 # Documentacion Oficial de Inicio del Servidor
 
-### 1ero - Crear Entorno Virtual 
+### 1ero - Crear Entorno Virtual
 
 "py -m pip install virtualenv" -- Instalar el entorno virtual
 
@@ -11,6 +11,8 @@
 ### 2do - Descargar Django en el Entorno Virtual
 
 "py -m pip install django" -- Descargar la libreria de Django
+
+"pip install -r requirements.txt " descargar las librerias usadas en el programa"
 
 # Ejecutar el Django
 
