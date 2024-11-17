@@ -1,25 +1,25 @@
 // Función fetch con pantalla de carga
 async function fetchWithLoader(url, options = {}) {
   try {
-      // Muestra la pantalla de carga
-      document.getElementById("loadingScreen").style.display = "block";
+    // Muestra la pantalla de carga
+    document.getElementById("loadingScreen").style.display = "block";
 
-      // Realiza la petición fetch
-      const response = await fetch(url, options);
+    // Realiza la petición fetch
+    const response = await fetch(url, options);
 
-      // Verifica si la respuesta es exitosa
-      if (!response.ok) {
-          throw new Error("Error en la solicitud: " + response.status);
-      }
+    // Verifica si la respuesta es exitosa
+    if (!response.ok) {
+      throw new Error("Error en la solicitud: " + response.status);
+    }
 
-      // Intenta convertir la respuesta a JSON
-      return await response.json();
+    // Intenta convertir la respuesta a JSON
+    return await response.json();
   } catch (error) {
-      console.error("Error al consumir la API:", error);
-      throw error;
+    console.error("Error al consumir la API:", error);
+    throw error;
   } finally {
-      // Oculta la pantalla de carga, independientemente de si la solicitud fue exitosa o falló
-      document.getElementById("loadingScreen").style.display = "none";
+    // Oculta la pantalla de carga, independientemente de si la solicitud fue exitosa o falló
+    document.getElementById("loadingScreen").style.display = "none";
   }
 }
 
@@ -36,8 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-
-
 // Variable global para almacenar los datos de procedimientos
 let procedimientosMensuales = [];
 
@@ -48,11 +46,20 @@ async function obtenerProcedimientosPorMes() {
 
     // Asignar los datos a la variable global
     procedimientosMensuales = [
-      data.enero, data.febrero, data.marzo, data.abril, data.mayo,
-      data.junio, data.julio, data.agosto, data.septiembre,
-      data.octubre, data.noviembre, data.diciembre,
+      data.enero,
+      data.febrero,
+      data.marzo,
+      data.abril,
+      data.mayo,
+      data.junio,
+      data.julio,
+      data.agosto,
+      data.septiembre,
+      data.octubre,
+      data.noviembre,
+      data.diciembre
     ];
-    
+
     // Llamar a la función para actualizar el gráfico
     actualizarGrafico();
   } catch (error) {
@@ -64,8 +71,18 @@ async function obtenerProcedimientosPorMes() {
 function actualizarGrafico() {
   const ctx = document.getElementById("myChart").getContext("2d");
   const labels = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre"
   ];
 
   // Crear el gráfico o actualizarlo
@@ -82,24 +99,24 @@ function actualizarGrafico() {
           tension: 0.4,
           pointStyle: "circle",
           borderWidth: 2,
-          pointRadius: 4,
-        },
-      ],
+          pointRadius: 4
+        }
+      ]
     },
     options: {
       maintainAspectRatio: false,
       scales: {
-        y: { beginAtZero: true },
+        y: { beginAtZero: true }
       },
       plugins: {
         legend: {
           labels: {
-            font: { size: 32, lineHeight: 1.5 },
-            padding: 20,
-          },
-        },
-      },
-    },
+            font: { size: 14, lineHeight: 1.5 },
+            padding: 18
+          }
+        }
+      }
+    }
   });
 }
 
@@ -153,7 +170,7 @@ async function fetchPorcentajes(periodo) {
       rescate: porcentajes.rescate,
       grumae: porcentajes.grumae,
       servicios_medicos: porcentajes.servicios_medicos,
-      prevencion: porcentajes.prevencion,
+      prevencion: porcentajes.prevencion
     };
 
     // Inicia la animación para cada barra con los valores actualizados
@@ -171,27 +188,43 @@ async function fetchProcedimientos(condicion) {
   try {
     const data = await fetchWithLoader("/api/parroquias/", {
       headers: {
-        "X-User-Name": usuario.textContent,
-      },
+        "X-User-Name": usuario.textContent
+      }
     });
 
     const fields = {
       Total: "total",
       Mes: "del_mes",
-      Hoy: "hoy",
+      Hoy: "hoy"
     };
 
-    document.getElementById("parroquias").textContent = 
-      condicion === "Total" ? "Totales" : condicion === "Mes" ? "Mensuales" : "Diarios";
+    document.getElementById("parroquias").textContent =
+      condicion === "Total"
+        ? "Totales"
+        : condicion === "Mes"
+        ? "Mensuales"
+        : "Diarios";
 
     for (const [key, value] of Object.entries(fields)) {
       if (condicion === key) {
-        document.getElementById("concordia").textContent = `${data.concordia[value]}`;
-        document.getElementById("otros_municipios").textContent = `${data.otros_municipios[value]}`;
-        document.getElementById("san_sebastian").textContent = `${data.san_sebastian[value]}`;
-        document.getElementById("san_juan").textContent = `${data.san_juan[value]}`;
-        document.getElementById("pedro_m").textContent = `${data.pedro_m[value]}`;
-        document.getElementById("francisco_romero").textContent = `${data.francisco_romero_lobo[value]}`;
+        document.getElementById(
+          "concordia"
+        ).textContent = `${data.concordia[value]}`;
+        document.getElementById(
+          "otros_municipios"
+        ).textContent = `${data.otros_municipios[value]}`;
+        document.getElementById(
+          "san_sebastian"
+        ).textContent = `${data.san_sebastian[value]}`;
+        document.getElementById(
+          "san_juan"
+        ).textContent = `${data.san_juan[value]}`;
+        document.getElementById(
+          "pedro_m"
+        ).textContent = `${data.pedro_m[value]}`;
+        document.getElementById(
+          "francisco_romero"
+        ).textContent = `${data.francisco_romero_lobo[value]}`;
       }
     }
   } catch (error) {
@@ -213,12 +246,22 @@ async function fetchDivisiones() {
 
 function updateCards(data, type) {
   for (const [division, detalles] of Object.entries(data)) {
-    const count = type === "total" ? detalles.total :
-                  type === "del_mes" ? detalles.del_mes : detalles.hoy;
-    document.getElementById("divisiones").textContent = 
-      type === "total" ? "Totales" : type === "del_mes" ? "Mensuales" : "Diarios";
+    const count =
+      type === "total"
+        ? detalles.total
+        : type === "del_mes"
+        ? detalles.del_mes
+        : detalles.hoy;
+    document.getElementById("divisiones").textContent =
+      type === "total"
+        ? "Totales"
+        : type === "del_mes"
+        ? "Mensuales"
+        : "Diarios";
 
-    const card = document.querySelector(`li[data-division="${division}"] .count`);
+    const card = document.querySelector(
+      `li[data-division="${division}"] .count`
+    );
     if (card) {
       card.textContent = count;
     }
