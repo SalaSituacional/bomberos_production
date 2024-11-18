@@ -148,7 +148,7 @@
               class="button_delete"
               data-id="{{ row.id }}"
               data-id_mostrar="{{ forloop.counter }}"
-              data-solicitante="{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres}} {{ row.id_solicitante.apellidos}}"
+              data-solicitante="{{ row.solicitante_externo }}"
               data-jefeComision="{{ row.id_jefe_comision.jerarquia }} {{ row.id_jefe_comision.nombres}} {{ row.id_jefe_comision.apellidos}}"
               data-fecha="{{ row.fecha|date:'d-m-Y'}}"
               data-tipoProcedimiento="{{ row.id_tipo_procedimiento.tipo_procedimiento }}"

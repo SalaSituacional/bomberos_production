@@ -1,41 +1,3 @@
-// Función fetch con pantalla de carga
-async function fetchWithLoader(url, options = {}) {
-  try {
-    // Muestra la pantalla de carga
-    document.getElementById("loadingScreen").style.display = "block";
-
-    // Realiza la petición fetch
-    const response = await fetch(url, options);
-
-    // Verifica si la respuesta es exitosa
-    if (!response.ok) {
-      throw new Error("Error en la solicitud: " + response.status);
-    }
-
-    // Intenta convertir la respuesta a JSON
-    return await response.json();
-  } catch (error) {
-    console.error("Error al consumir la API:", error);
-    throw error;
-  } finally {
-    // Oculta la pantalla de carga, independientemente de si la solicitud fue exitosa o falló
-    document.getElementById("loadingScreen").style.display = "none";
-  }
-}
-
-// Manejo de formularios y navegación
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll("form").forEach((form) => {
-    form.addEventListener("submit", function () {
-      document.getElementById("loadingScreen").style.display = "block";
-    });
-  });
-
-  window.addEventListener("beforeunload", function () {
-    document.getElementById("loadingScreen").style.display = "block";
-  });
-});
-
 // Variable global para almacenar los datos de procedimientos
 let procedimientosMensuales = [];
 
@@ -57,7 +19,7 @@ async function obtenerProcedimientosPorMes() {
       data.septiembre,
       data.octubre,
       data.noviembre,
-      data.diciembre
+      data.diciembre,
     ];
 
     // Llamar a la función para actualizar el gráfico
@@ -82,7 +44,7 @@ function actualizarGrafico() {
     "Septiembre",
     "Octubre",
     "Noviembre",
-    "Diciembre"
+    "Diciembre",
   ];
 
   // Crear el gráfico o actualizarlo
@@ -99,24 +61,24 @@ function actualizarGrafico() {
           tension: 0.4,
           pointStyle: "circle",
           borderWidth: 2,
-          pointRadius: 4
-        }
-      ]
+          pointRadius: 4,
+        },
+      ],
     },
     options: {
       maintainAspectRatio: false,
       scales: {
-        y: { beginAtZero: true }
+        y: { beginAtZero: true },
       },
       plugins: {
         legend: {
           labels: {
             font: { size: 14, lineHeight: 1.5 },
-            padding: 18
-          }
-        }
-      }
-    }
+            padding: 18,
+          },
+        },
+      },
+    },
   });
 }
 
@@ -170,7 +132,7 @@ async function fetchPorcentajes(periodo) {
       rescate: porcentajes.rescate,
       grumae: porcentajes.grumae,
       servicios_medicos: porcentajes.servicios_medicos,
-      prevencion: porcentajes.prevencion
+      prevencion: porcentajes.prevencion,
     };
 
     // Inicia la animación para cada barra con los valores actualizados
@@ -188,14 +150,14 @@ async function fetchProcedimientos(condicion) {
   try {
     const data = await fetchWithLoader("/api/parroquias/", {
       headers: {
-        "X-User-Name": usuario.textContent
-      }
+        "X-User-Name": usuario.textContent,
+      },
     });
 
     const fields = {
       Total: "total",
       Mes: "del_mes",
-      Hoy: "hoy"
+      Hoy: "hoy",
     };
 
     document.getElementById("parroquias").textContent =

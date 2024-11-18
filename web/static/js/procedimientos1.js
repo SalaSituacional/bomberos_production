@@ -1,44 +1,3 @@
-// Función fetch con pantalla de carga
-async function fetchWithLoader(url, options = {}) {
-  try {
-      // Muestra la pantalla de carga
-      document.getElementById("loadingScreen").style.display = "block";
-
-      // Realiza la petición fetch
-      const response = await fetch(url, options);
-
-      // Verifica si la respuesta es exitosa
-      if (!response.ok) {
-          throw new Error("Error en la solicitud: " + response.status);
-      }
-
-      // Intenta convertir la respuesta a JSON
-      return await response.json();
-  } catch (error) {
-      console.error("Error al consumir la API:", error);
-      throw error;
-  } finally {
-      // Oculta la pantalla de carga, independientemente de si la solicitud fue exitosa o falló
-      document.getElementById("loadingScreen").style.display = "none";
-  }
-}
-
-// Manejo de formularios y navegación
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll("form").forEach((form) => {
-    form.addEventListener("submit", function () {
-      document.getElementById("loadingScreen").style.display = "block";
-    });
-  });
-
-  window.addEventListener("beforeunload", function () {
-    document.getElementById("loadingScreen").style.display = "block";
-  });
-});
-
-
-
-
 function eliminarOpciones(select_id, opc) {
   const select = document.getElementById(`${select_id}`);
   const opcionesAEliminar = [`${opc}`]; // Valores de las opciones a eliminar
@@ -568,7 +527,6 @@ document
     };
 
     let campos;
-    console.log(this.value)
     switch (this.value) {
       case "1":
         requiredFalse();
