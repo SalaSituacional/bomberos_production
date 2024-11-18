@@ -45,17 +45,17 @@
     <h3>Feed de Publicaciones de Instagram</h3>
     <!-- Formulario para Agregar Nueva URL -->
     <div class="form-instagram">
-      <form method="post" class="form-feed-instagram">
+      <form action="" method="post" class="form-feed-instagram">
         {% csrf_token %}
-      <input
-      class="form-control"
-      type="url"
-      name="url"
-      placeholder="Ingresar Enlace de la publicacion"
-      required
-      />
-      <button type="submit" class="btn btn-danger">Agregar Publicación</button>
-    </form>
+        <input
+        class="form-control"
+        type="url"
+        name="url"
+        placeholder="Ingresar Enlace de la publicacion"
+        required
+        />
+        <button type="submit" class="btn btn-danger">Agregar Publicación</button>
+      </form>
   </div>
 </div>
     <!-- Modal de Confirmación -->

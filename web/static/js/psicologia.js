@@ -8,13 +8,11 @@ document.querySelectorAll(".button_delete").forEach((button) => {
     const id = this.getAttribute("data-id");
     const id_mostrar = this.getAttribute("data-id_mostrar");
     const solicitante = this.getAttribute("data-solicitante");
-    const jefe_comision = this.getAttribute("data-jefeComision");
     const fecha = this.getAttribute("data-fecha");
     const tipo_procedimiento = this.getAttribute("data-tipoProcedimiento");
     infoProcedimiento.innerHTML = `
       <p><b>ID: </b>${id_mostrar} </p>
       <p><b>Solicitante:</b> ${solicitante}</p>
-      <p><b>Jefe de Comision:</b> ${jefe_comision}</p>
       <p><b>Fecha:</b> ${fecha}</p>
       <p><b>Tipo De Procedimiento:</b> ${tipo_procedimiento}</p>`;
     confirmarEliminar.setAttribute("data-id", id);
@@ -28,27 +26,28 @@ confirmarEliminar.onclick = function () {
 };
 
 // Función para eliminar procedimiento
-function eliminarProcedimiento(id) {
-  fetch("/operaciones/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": getCookie("csrftoken"), // Asegúrate de incluir el token CSRF
-    },
-    body: JSON.stringify({ id: id }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        // Eliminar el procedimiento de la vista
-        document
-          .querySelector(`button[data-id="${id}"]`)
-          .parentElement.remove();
-        location.reload();
-      } else {
-        alert("Error al eliminar el procedimiento");
-      }
+async function eliminarProcedimiento(id) {
+  try {
+    const response = await fetchWithLoader("/operaciones/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"), // Asegúrate de incluir el token CSRF
+      },
+      body: JSON.stringify({ id: id }),
     });
+
+    if (response.success) {
+      // Eliminar el procedimiento de la vista
+      document.querySelector(`button[data-id="${id}"]`).parentElement.remove();
+      location.reload();
+    } else {
+      alert("Error al eliminar el procedimiento");
+    }
+  } catch (error) {
+    console.error("Error al intentar eliminar el procedimiento:", error);
+    alert("Ocurrió un error al eliminar el procedimiento. Inténtalo nuevamente.");
+  }
 }
 
 // Función para obtener el token CSRF
