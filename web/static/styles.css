@@ -438,7 +438,8 @@ summary > * {
 
 /* ******************** Utilities ******************** */
 .line {
-  width: 100%;
+  margin: 0 auto;
+  width: 80%;
   height: 1px;
   border: 1px solid #b6243a;
   background-color: black;
