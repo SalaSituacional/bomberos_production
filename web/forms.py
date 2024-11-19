@@ -10,7 +10,7 @@ def Asignar_ops_Personal():
         "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero"
     ]
 
-    personal = Personal.objects.all().order_by("id")
+    personal = Personal.objects.all().order_by("id").exclude(id=4)
     # Filtro y ordenación de acuerdo a las jerarquías
 
     personal_ordenado =personal.order_by(
@@ -28,7 +28,7 @@ def Asignar_ops_Solicitante():
         Q(jerarquia="Teniente Coronel") | 
         Q(jerarquia__isnull=True) | 
         Q(jerarquia="")
-    ).order_by("id")
+    ).order_by("id").exclude(id=4)
     op = [("", "Seleccione Una Opcion")]
     for persona in personal:
         op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}"))
@@ -590,7 +590,11 @@ class Formulario_Retencion_Preventiva(forms.Form):
     capacidad = forms.CharField(max_length=50, required=False)
     serial = forms.CharField(max_length=50, required=False)
     nro_constancia_retencion = forms.CharField(max_length=50, required=False)
-    descripcion = forms.CharField(max_length=100, required=False)
+    nombre = forms.CharField(max_length=40, required=False)
+    apellidos = forms.CharField(max_length=40, required=False)
+    nacionalidad = forms.ChoiceField(choices=[("V", "V"), ("E", "E")], required=False)
+    cedula = forms.IntegerField(widget=forms.NumberInput(attrs={'maxlength': '15'}), required=False)
+    descripcion = forms.CharField(max_length=150, required=False)
     material_utilizado = forms.CharField(max_length=100, required=False)
     status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Culminado", "Culminado"), ("En Proceso", "En Proceso")], widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
 
