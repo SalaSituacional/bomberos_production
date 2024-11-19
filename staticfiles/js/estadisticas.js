@@ -106,50 +106,82 @@ const colors = [
 function createOrUpdateChart(ctx, chart, type, labels, data) {
   if (chart) chart.destroy(); // Destruir gráfico previo si existe
 
-  return new Chart(ctx, {
-    type: type,
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Procedimientos",
-          data: data,
-          borderWidth: 1,
-          backgroundColor: colors,
-        },
-      ],
-    },
-    options: {
-      plugins: {
-        legend: {
-          display: true,
-          labels: {
-            font: {
-              size: 16,
+  if (type === "polarArea"){
+    return new Chart(ctx, {
+      type: type,
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Procedimientos",
+            data: data,
+            borderWidth: 1,
+            backgroundColor: colors,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          r: {
+            min: 0,
+            max: Math.max(5),
+            ticks: {
+              beginAtZero: true,
+              stepSize: 1,
+              callback: function (data) {
+                return Math.round(data);
+              },
             },
           },
         },
       },
-    },
-  });
+    });
+  } 
+  else{
+    return new Chart(ctx, {
+      type: type,
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Procedimientos",
+            data: data,
+            borderWidth: 1,
+            backgroundColor: colors,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              font: {
+                size: 16,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
 
 // Función genérica para manejar la lógica de cada gráfico
 async function updateChart(
   endpoint,
   ctxId,
-  selectDivision,
+  selectElement,
   monthPicker,
   chartRef,
   type,
   labelField,
   valueField
 ) {
-  const divisionId = selectDivision.value;
-  const mesSeleccionado = monthPicker.value;
+  const selectedValue = selectElement.value;
+  const selectedMonth = monthPicker.value;
 
-  const data = await fetchWithLoader(`${endpoint}?division_id=${divisionId}&mes=${mesSeleccionado}`);
-
+  const data = await fetchWithLoader(`${endpoint}?param_id=${selectedValue}&mes=${selectedMonth}`);
   const ctx = document.getElementById(ctxId).getContext("2d");
 
   if (!data || data.length === 0) {
@@ -165,758 +197,210 @@ async function updateChart(
   chartRef.chart = createOrUpdateChart(ctx, chartRef.chart, type, labels, values);
 }
 
-// Gráfica de Pie: Procedimientos por División
+// Configuración de gráficos
 document.addEventListener("DOMContentLoaded", function () {
-  const selectDivision = document.querySelector(".form-select-sm");
-  const monthPicker = document.getElementById("month-picker2");
-  const chartRef = { chart: null }; // Referencia para el gráfico
-  const endpoint = "/api/procedimientos_division/";
+  const chartConfigs = [
+    {
+      selectElement: document.querySelector(".form-select-sm"),
+      monthPicker: document.getElementById("month-picker2"),
+      ctxId: "pie",
+      endpoint: "/api/procedimientos_division/",
+      type: "pie",
+      labelField: "id_tipo_procedimiento__tipo_procedimiento",
+      valueField: "count",
+      defaultOption: 6,
+    },
+    {
+      selectElement: document.querySelector(".form-select-sm2"),
+      monthPicker: document.getElementById("month-picker3"),
+      ctxId: "pie_two",
+      endpoint: "/api/procedimientos_division/",
+      type: "pie",
+      labelField: "id_tipo_procedimiento__tipo_procedimiento",
+      valueField: "count",
+      defaultOption: 4,
+    },
+    {
+      selectElement: document.querySelector(".form-select-sm3"),
+      monthPicker: document.getElementById("month-picker4"),
+      ctxId: "donuts",
+      endpoint: "/api/procedimientos_division_parroquia/",
+      type: "doughnut",
+      labelField: "id_parroquia__parroquia",
+      valueField: "count",
+      defaultOption: 1,
+    },
+    {
+      selectElement: document.querySelector(".form-select-sm4"),
+      monthPicker: document.getElementById("month-picker5"),
+      ctxId: "donuts_two",
+      endpoint: "/api/procedimientos_division_parroquia/",
+      type: "doughnut",
+      labelField: "id_parroquia__parroquia",
+      valueField: "count",
+      defaultOption: 2,
+    },
+    {
+      selectElement: document.querySelector(".form-select-sm5"),
+      monthPicker: document.getElementById("month-picker6"),
+      ctxId: "polar",
+      endpoint: "/api/procedimientos_tipo/",
+      type: "polarArea",
+      labelField: "id_division__division",
+      valueField: "count",
+      defaultOption: 9,
+    },
+    {
+      selectElement: document.querySelector(".form-select-sm6"),
+      monthPicker: document.getElementById("month-picker7"),
+      ctxId: "polar2",
+      endpoint: "/api/procedimientos_tipo_parroquias/",
+      type: "polarArea",
+      labelField: "id_parroquia__parroquia",
+      valueField: "count",
+      defaultOption: 7,
+    },
+    {
+      selectElement: document.querySelector(".form-select-sm7"),
+      monthPicker: document.getElementById("month-picker8"),
+      ctxId: "pie3",
+      endpoint: "/api/procedimientos_tipo_detalles/",
+      type: "polarArea",
+      labelField: "tipo_servicio",
+      valueField: "count",
+      defaultOption: 1,
+    },
+    {
+      selectElement: document.querySelector(".form-select-sm8"),
+      monthPicker: document.getElementById("month-picker9"),
+      ctxId: "pie4",
+      endpoint: "/api/procedimientos_tipo_detalles/",
+      type: "polarArea",
+      labelField: "tipo_servicio",
+      valueField: "count",
+      defaultOption: 9,
+    },
+  ];
 
-  // Establecer división por defecto
-  selectDivision.value = selectDivision.options[6].value;
+  // Inicializar gráficos según la configuración
+  chartConfigs.forEach((config) => {
+    const { selectElement, monthPicker, ctxId, endpoint, type, labelField, valueField, defaultOption } = config;
+    const chartRef = { chart: null };
 
-  selectDivision.addEventListener("change", () =>
-    updateChart(endpoint, "pie", selectDivision, monthPicker, chartRef, "pie", "id_tipo_procedimiento__tipo_procedimiento", "count")
-  );
+    // Establecer valor por defecto
+    selectElement.value = selectElement.options[defaultOption].value;
 
-  monthPicker.addEventListener("change", () =>
-    updateChart(endpoint, "pie", selectDivision, monthPicker, chartRef, "pie", "id_tipo_procedimiento__tipo_procedimiento", "count")
-  );
+    selectElement.addEventListener("change", () =>
+      updateChart(endpoint, ctxId, selectElement, monthPicker, chartRef, type, labelField, valueField)
+    );
 
-  // Cargar gráfica inicial
-  updateChart(endpoint, "pie", selectDivision, monthPicker, chartRef, "pie", "id_tipo_procedimiento__tipo_procedimiento", "count");
+    monthPicker.addEventListener("change", () =>
+      updateChart(endpoint, ctxId, selectElement, monthPicker, chartRef, type, labelField, valueField)
+    );
+
+    // Cargar gráfica inicial
+    updateChart(endpoint, ctxId, selectElement, monthPicker, chartRef, type, labelField, valueField);
+  });
 });
-
-// Gráfica de Pie 2: Procedimientos por División
-document.addEventListener("DOMContentLoaded", function () {
-  const selectDivision = document.querySelector(".form-select-sm2");
-  const monthPicker = document.getElementById("month-picker3");
-  const chartRef = { chart: null }; // Referencia para el gráfico
-  const endpoint = "/api/procedimientos_division/";
-
-  // Establecer división por defecto
-  selectDivision.value = selectDivision.options[4].value;
-
-  selectDivision.addEventListener("change", () =>
-    updateChart(endpoint, "pie_two", selectDivision, monthPicker, chartRef, "pie", "id_tipo_procedimiento__tipo_procedimiento", "count")
-  );
-
-  monthPicker.addEventListener("change", () =>
-    updateChart(endpoint, "pie_two", selectDivision, monthPicker, chartRef, "pie", "id_tipo_procedimiento__tipo_procedimiento", "count")
-  );
-
-  // Cargar gráfica inicial
-  updateChart(endpoint, "pie_two", selectDivision, monthPicker, chartRef, "pie", "id_tipo_procedimiento__tipo_procedimiento", "count");
-});
-
-// Gráfica de Donut: Procedimientos por División-Parroquias
-document.addEventListener("DOMContentLoaded", function () {
-  const selectDivision = document.querySelector(".form-select-sm3");
-  const monthPicker = document.getElementById("month-picker4");
-  const chartRef = { chart: null }; // Referencia para el gráfico
-  const endpoint = "/api/procedimientos_division_parroquia/";
-
-  // Establecer división por defecto
-  selectDivision.value = selectDivision.options[1].value;
-
-  selectDivision.addEventListener("change", () =>
-    updateChart(endpoint, "donuts", selectDivision, monthPicker, chartRef, "doughnut", "id_parroquia__parroquia", "count")
-  );
-
-  monthPicker.addEventListener("change", () =>
-    updateChart(endpoint, "donuts", selectDivision, monthPicker, chartRef, "doughnut", "id_parroquia__parroquia", "count")
-  );
-
-  // Cargar gráfica inicial
-  updateChart(endpoint, "donuts", selectDivision, monthPicker, chartRef, "doughnut", "id_parroquia__parroquia", "count");
-});
-
-// Gráfica de Donut2: Procedimientos por División-Parroquias
-document.addEventListener("DOMContentLoaded", function () {
-  const selectDivision = document.querySelector(".form-select-sm4");
-  const monthPicker = document.getElementById("month-picker5");
-  const chartRef = { chart: null }; // Referencia para el gráfico
-  const endpoint = "/api/procedimientos_division_parroquia/";
-
-  // Establecer división por defecto
-  selectDivision.value = selectDivision.options[2].value;
-
-  selectDivision.addEventListener("change", () =>
-    updateChart(endpoint, "donuts_two", selectDivision, monthPicker, chartRef, "doughnut", "id_parroquia__parroquia", "count")
-  );
-
-  monthPicker.addEventListener("change", () =>
-    updateChart(endpoint, "donuts_two", selectDivision, monthPicker, chartRef, "doughnut", "id_parroquia__parroquia", "count")
-  );
-
-  // Cargar gráfica inicial
-  updateChart(endpoint, "donuts_two", selectDivision, monthPicker, chartRef, "doughnut", "id_parroquia__parroquia", "count");
-});
-
-
-// VIEJAS ========================================================================
-
-// // Grafica de Polar1, Tipos de Procedimientos por Division
-// document.addEventListener("DOMContentLoaded", function () {
-//   const selectTipoProcedimiento = document.querySelector(".form-select-sm5");
-//   const monthPicker = document.getElementById("month-picker6");
-//   let chart; // Declarar la variable chart aquí
-
-
-//   // Establecer un tipo de procedimiento por defecto (por ejemplo, la primera opción)
-//   selectTipoProcedimiento.value = selectTipoProcedimiento.options[9].value; // Cambia el índice según el tipo que quieras por defecto
-
-//   async function fetchProcedimientos(tipoProcedimientoId, mes) {
-//     try {
-//       const response = await fetchWithLoader(
-//         `/api/procedimientos_tipo/?tipo_procedimiento_id=${tipoProcedimientoId}&mes=${mes}`
-//       );
-//       if (!response.ok) {
-//         const errorData = await response.json();
-//         throw new Error(errorData.error || "Error fetching data");
-//       }
-//       return await response.json();
-//     } catch (error) {
-//       console.error('Error al obtener los procedimientos:', error);
-//       return null; // Retorna null si hay un error
-//     }
-//   }
-
-//   async function updateChart() {
-//     const tipoProcedimientoId = selectTipoProcedimiento.value;
-//     const mesSeleccionado = monthPicker.value;
-
-//     const data = await fetchProcedimientos(tipoProcedimientoId, mesSeleccionado);
-
-//     // Verifica si se recibieron datos válidos
-//     if (!data || data.length === 0) {
-//       // Cargar gráfica vacía
-//       const ctx5 = document.getElementById("polar").getContext("2d");
-
-//       // Destruir el gráfico existente si ya está creado
-//       if (chart) {
-//         chart.destroy();
-//       }
-
-//       // Crear un nuevo gráfico de pie con datos vacíos
-//       chart = new Chart(ctx5, {
-//         type: "polarArea",
-//         data: {
-//             labels: ["Ninguno"],
-//             datasets: [
-//                 {
-//                     label: "Procedimientos",
-//                     data: 0,
-//                     borderWidth: 1,
-//                     backgroundColor: colors, // Asignar colores de la paleta
-//                 },
-//             ],
-//         },
-//         options: {
-//             scales: {
-//                 r: {
-//                     min: 0,
-//                     max: Math.max(5),
-//                     ticks: {
-//                         beginAtZero: true,
-//                         stepSize: 1,
-//                         callback: function(value) {
-//                             return Math.round(value);
-//                         }
-//                     }
-//                 }
-//             },
-//             plugins: {
-//                 legend: {
-//                     display: true,
-//                     labels: {
-//                         font: {
-//                             size: 16,
-//                         },
-//                     },
-//                 },
-//             },
-//         }
-//     });
-//       return; // Termina la función para evitar crear una gráfica con datos
-//     }
-
-//     const labels = data.map(
-//       (proc) => proc.id_division__division // Cambiado para que coincida con el nombre del campo en el JSON
-//     );
-//     const values = data.map((proc) => proc.count);
-
-//     const ctx5 = document.getElementById("polar").getContext("2d");
-
-//     // Destruir el gráfico existente si ya está creado
-//     if (chart) {
-//       chart.destroy();
-//     }
-
-//     // Crear un nuevo gráfico de pie
-  
-//   chart = new Chart(ctx5, {
-//       type: "polarArea",
-//       data: {
-//           labels: labels,
-//           datasets: [
-//               {
-//                   label: "Procedimientos",
-//                   data: values,
-//                   borderWidth: 1,
-//                   backgroundColor: colors, // Asignar colores de la paleta
-//               },
-//           ],
-//       },
-//       options: {
-//           scales: {
-//               r: {
-//                   min: 0,
-//                   max: Math.max(5, Math.max(...values)),
-//                   ticks: {
-//                       beginAtZero: true,
-//                       stepSize: 1,
-//                       callback: function(value) {
-//                           return Math.round(value);
-//                       }
-//                   }
-//               }
-//           },
-//           plugins: {
-//               legend: {
-//                   display: true,
-//                   labels: {
-//                       font: {
-//                           size: 16,
-//                       },
-//                   },
-//               },
-//           },
-//       }
-//   });
-  
-//   }
-
-//   // Añadir event listeners
-//   selectTipoProcedimiento.addEventListener("change", updateChart);
-//   monthPicker.addEventListener("change", updateChart);
-
-//   // Llamar a updateChart para cargar la gráfica por defecto
-//   updateChart();
-// });
-
-// // Grafica de Polar2, Tipos de Procedimientos por Division
-// document.addEventListener("DOMContentLoaded", function () {
-//   const selectTipoProcedimiento = document.querySelector(".form-select-sm6"); // -- Aumentar Uno
-//   const monthPicker = document.getElementById("month-picker7");  // -- Aumentar Uno
-//   let chart; // Declarar la variable chart aquí
-
-
-//   // Establecer un tipo de procedimiento por defecto (por ejemplo, la primera opción)
-//   selectTipoProcedimiento.value = selectTipoProcedimiento.options[1].value; // Cambia el índice según el tipo que quieras por defecto
-
-//   async function fetchProcedimientos(tipoProcedimientoId, mes) {
-//     try {
-//       const response = await fetchWithLoader(
-//         `/api/procedimientos_tipo_parroquias/?tipo_procedimiento_id=${tipoProcedimientoId}&mes=${mes}`
-//       );
-//       if (!response.ok) {
-//         const errorData = await response.json();
-//         throw new Error(errorData.error || "Error fetching data");
-//       }
-//       return await response.json();
-//     } catch (error) {
-//       console.error('Error al obtener los procedimientos:', error);
-//       return null; // Retorna null si hay un error
-//     }
-//   }
-
-//   async function updateChart() {
-//     const tipoProcedimientoId = selectTipoProcedimiento.value;
-//     const mesSeleccionado = monthPicker.value;
-
-//     const data = await fetchProcedimientos(tipoProcedimientoId, mesSeleccionado);
-
-//     // Verifica si se recibieron datos válidos
-//     if (!data || data.length === 0) {
-//       // Cargar gráfica vacía
-//       const ctx7 = document.getElementById("polar2").getContext("2d");  // -- Aumentar Uno El ID y el Ctx
-
-//       // Destruir el gráfico existente si ya está creado
-//       if (chart) {
-//         chart.destroy();
-//       }
-
-//       // Crear un nuevo gráfico de pie con datos vacíos
-//       chart = new Chart(ctx7, {
-//         type: "polarArea",
-//         data: {
-//             labels: ["Ninguno"],
-//             datasets: [
-//                 {
-//                     label: "Procedimientos",
-//                     data: 0,
-//                     borderWidth: 1,
-//                     backgroundColor: colors, // Asignar colores de la paleta
-//                 },
-//             ],
-//         },
-//         options: {
-//             scales: {
-//                 r: {
-//                     min: 0,
-//                     max: Math.max(5),
-//                     ticks: {
-//                         beginAtZero: true,
-//                         stepSize: 1,
-//                         callback: function(value) {
-//                             return Math.round(value);
-//                         }
-//                     }
-//                 }
-//             },
-//             plugins: {
-//                 legend: {
-//                     display: true,
-//                     labels: {
-//                         font: {
-//                             size: 16,
-//                         },
-//                     },
-//                 },
-//             },
-//         }
-//     });
-    
-//       return; // Termina la función para evitar crear una gráfica con datos
-//     }
-
-//     const labels = data.map(
-//       (proc) => proc.id_parroquia__parroquia // Cambiado para que coincida con el nombre del campo en el JSON
-//     );
-//     const values = data.map((proc) => proc.count);
-
-//     const ctx7 = document.getElementById("polar2").getContext("2d"); // Cambiar el id y el ctx 
-
-//     // Destruir el gráfico existente si ya está creado
-//     if (chart) {
-//       chart.destroy();
-//     }
-
-//     // Crear un nuevo gráfico de pie
-  
-//   chart = new Chart(ctx7, {
-//       type: "polarArea",
-//       data: {
-//           labels: labels,
-//           datasets: [
-//               {
-//                   label: "Procedimientos",
-//                   data: values,
-//                   borderWidth: 1,
-//                   backgroundColor: colors, // Asignar colores de la paleta
-//               },
-//           ],
-//       },
-//       options: {
-//           scales: {
-//               r: {
-//                   min: 0,
-//                   max: Math.max(5, Math.max(...values)),
-//                   ticks: {
-//                       beginAtZero: true,
-//                       stepSize: 1,
-//                       callback: function(value) {
-//                           return Math.round(value);
-//                       }
-//                   }
-//               }
-//           },
-//           plugins: {
-//               legend: {
-//                   display: true,
-//                   labels: {
-//                       font: {
-//                           size: 16,
-//                       },
-//                   },
-//               },
-//           },
-//       }
-//   });
-  
-//   }
-
-//   // Añadir event listeners
-//   selectTipoProcedimiento.addEventListener("change", updateChart);
-//   monthPicker.addEventListener("change", updateChart);
-
-//   // Llamar a updateChart para cargar la gráfica por defecto
-//   updateChart();
-// });
-
-// // Grafica de Pie3, Tipos de Procedimientos - Tipos
-// document.addEventListener("DOMContentLoaded", function () {
-//   const selectTipoProcedimiento = document.querySelector(".form-select-sm7");
-//   const monthPicker = document.getElementById("month-picker8");
-//   let chart;
-
-//   // Selección por defecto
-//   selectTipoProcedimiento.value = selectTipoProcedimiento.options[1].value;
-
-//   async function fetchProcedimientos(tipoProcedimientoId, mes) {
-//     try {
-//       const response = await fetchWithLoader(
-//         `/api/procedimientos_tipo_detalles/?tipo_procedimiento_id=${tipoProcedimientoId}&mes=${mes}`
-//       );
-//       if (!response.ok) {
-//         const errorData = await response.json();
-//         throw new Error(errorData.error || "Error fetching data");
-//       }
-//       return await response.json();
-//     } catch (error) {
-//       console.error('Error al obtener los procedimientos:', error); 
-//       return null;
-//     }
-//   }
-
-//   async function updateChart() {
-//     const tipoProcedimientoId = selectTipoProcedimiento.value;
-//     const mesSeleccionado = monthPicker.value;
-
-//     const data = await fetchProcedimientos(tipoProcedimientoId, mesSeleccionado);
-
-//     if (!data || data.length === 0) {
-//       const ctx8 = document.getElementById("pie3").getContext("2d");
-
-//       if (chart) {
-//         chart.destroy();
-//       }
-
-//       chart = new Chart(ctx8, {
-//         type: "polarArea",
-//         data: {
-//           labels: ["Ninguno"],
-//           datasets: [
-//             {
-//               label: "Procedimientos",
-//               data: [0],
-//               borderWidth: 1,
-//               backgroundColor: ["#D3D3D3"], // Color de fondo para "sin datos"
-//             },
-//           ],
-//         },
-//         options: {
-//           scales: {
-//             r: {
-//               min: 0,
-//               max: 5,
-//               ticks: {
-//                 beginAtZero: true,
-//                 stepSize: 1,
-//                 callback: (value) => Math.round(value),
-//               },
-//             },
-//           },
-//           plugins: {
-//             legend: {
-//               display: true,
-//               labels: {
-//                 font: { size: 16 },
-//               },
-//             },
-//           },
-//         },
-//       });
-//       return;
-//     }
-
-//     // Asumimos que data tiene campos `tipo_servicio` o `id_parroquia__parroquia` y `count`
-//     const labels = data.map(item => item.tipo_servicio );
-//     const values = data.map(item => item.count);
-
-//     const ctx8 = document.getElementById("pie3").getContext("2d");
-
-//     if (chart) {
-//       chart.destroy();
-//     }
-
-//     // Crear un nuevo gráfico de área polar con los datos de la API
-//     chart = new Chart(ctx8, {
-//       type: "polarArea",
-//       data: {
-//         labels: labels,
-//         datasets: [
-//           {
-//             label: "Procedimientos",
-//             data: values,
-//             borderWidth: 1,
-//             backgroundColor: colors, // Colores para cada tipo de servicio
-//           },
-//         ],
-//       },
-//       options: {
-//         scales: {
-//           r: {
-//             min: 0,
-//             max: Math.max(5, Math.max(...values)),
-//             ticks: {
-//               beginAtZero: true,
-//               stepSize: 1,
-//               callback: (value) => Math.round(value),
-//             },
-//           },
-//         },
-//         plugins: {
-//           legend: {
-//             display: true,
-//             labels: {
-//               font: { size: 16 },
-//             },
-//           },
-//         },
-//       },
-//     });
-//   }
-
-//   // Event listeners para actualizar la gráfica cuando cambia el tipo o el mes
-//   selectTipoProcedimiento.addEventListener("change", updateChart);
-//   monthPicker.addEventListener("change", updateChart);
-
-//   // Cargar la gráfica por defecto
-//   updateChart();
-// });
-
-// // Grafica de Pie4, Tipos de Procedimientos - Tipos
-// document.addEventListener("DOMContentLoaded", function () {
-//   const selectTipoProcedimiento = document.querySelector(".form-select-sm8");
-//   const monthPicker = document.getElementById("month-picker9");
-//   let chart;
-
-//   // Selección por defecto
-//   selectTipoProcedimiento.value = selectTipoProcedimiento.options[9].value;
-
-//   async function fetchProcedimientos(tipoProcedimientoId, mes) {
-//     try {
-//       const response = await fetchWithLoader(
-//         `/api/procedimientos_tipo_detalles/?tipo_procedimiento_id=${tipoProcedimientoId}&mes=${mes}`
-//       );
-//       if (!response.ok) {
-//         const errorData = await response.json();
-//         throw new Error(errorData.error || "Error fetching data");
-//       }
-//       return await response.json();
-//     } catch (error) {
-//       console.error('Error al obtener los procedimientos:', error); 
-//       return null;
-//     }
-//   }
-
-//   async function updateChart() {
-//     const tipoProcedimientoId = selectTipoProcedimiento.value;
-//     const mesSeleccionado = monthPicker.value;
-
-//     const data = await fetchProcedimientos(tipoProcedimientoId, mesSeleccionado);
-
-//     if (!data || data.length === 0) {
-//       const ctx9 = document.getElementById("pie4").getContext("2d");
-
-//       if (chart) {
-//         chart.destroy();
-//       }
-
-//       chart = new Chart(ctx9, {
-//         type: "polarArea",
-//         data: {
-//           labels: ["Ninguno"],
-//           datasets: [
-//             {
-//               label: "Procedimientos",
-//               data: [0],
-//               borderWidth: 1,
-//               backgroundColor: ["#D3D3D3"], // Color de fondo para "sin datos"
-//             },
-//           ],
-//         },
-//         options: {
-//           scales: {
-//             r: {
-//               min: 0,
-//               max: 5,
-//               ticks: {
-//                 beginAtZero: true,
-//                 stepSize: 1,
-//                 callback: (value) => Math.round(value),
-//               },
-//             },
-//           },
-//           plugins: {
-//             legend: {
-//               display: true,
-//               labels: {
-//                 font: { size: 16 },
-//               },
-//             },
-//           },
-//         },
-//       });
-//       return;
-//     }
-
-//     // Asumimos que data tiene campos `tipo_servicio` o `id_parroquia__parroquia` y `count`
-//     const labels = data.map(item => item.tipo_servicio );
-//     const values = data.map(item => item.count);
-
-//     const ctx9 = document.getElementById("pie4").getContext("2d");
-
-//     if (chart) {
-//       chart.destroy();
-//     }
-
-//     // Crear un nuevo gráfico de área polar con los datos de la API
-//     chart = new Chart(ctx9, {
-//       type: "polarArea",
-//       data: {
-//         labels: labels,
-//         datasets: [
-//           {
-//             label: "Procedimientos",
-//             data: values,
-//             borderWidth: 1,
-//             backgroundColor: colors, // Colores para cada tipo de servicio
-//           },
-//         ],
-//       },
-//       options: {
-//         scales: {
-//           r: {
-//             min: 0,
-//             max: Math.max(5, Math.max(...values)),
-//             ticks: {
-//               beginAtZero: true,
-//               stepSize: 1,
-//               callback: (value) => Math.round(value),
-//             },
-//           },
-//         },
-//         plugins: {
-//           legend: {
-//             display: true,
-//             labels: {
-//               font: { size: 16 },
-//             },
-//           },
-//         },
-//       },
-//     });
-//   }
-
-//   // Event listeners para actualizar la gráfica cuando cambia el tipo o el mes
-//   selectTipoProcedimiento.addEventListener("change", updateChart);
-//   monthPicker.addEventListener("change", updateChart);
-
-//   // Cargar la gráfica por defecto
-//   updateChart();
-// });
 
 
 // Grafica de Barras =======================================================================================================================================================
 
-// Grafica de Barras del mes o anual
-document.addEventListener("DOMContentLoaded", function() {
-
+document.addEventListener("DOMContentLoaded", function () {
   let chart; // Declarar chart fuera de las funciones para que sea accesible
-  
+
+  // Función para obtener datos de la API con la función fetchWithLoader
   async function fetchDivisiones(mes = "") {
     try {
-      const response = await fetchWithLoader(`/api/divisiones_estadisticas/?mes=${mes}`);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching divisiones:", error);
-    return {};
-  }
-}
-
-function updateCards(data) {
-  for (const [division, detalles] of Object.entries(data)) {
-    const count = detalles.total || 0; // Solo total
-    
-    const card = document.querySelector(
-      `li[data-division="${division}"] .count`
-    );
-    if (card) {
-      card.textContent = count;
+      return await fetchWithLoader(`/api/divisiones_estadisticas/?mes=${mes}`);
+    } catch (error) {
+      console.error("Error fetching divisiones:", error);
+      return {};
     }
   }
-}
 
-function obtenerDivisiones(data) {
-  const divisionesList = [];
-  for (const [division, detalles] of Object.entries(data)) {
-    // Solo tomar el total
-    divisionesList.push({ division, count: detalles.total || 0 });
+  // Actualiza las tarjetas con los datos obtenidos
+  function updateCards(data) {
+    for (const [division, detalles] of Object.entries(data)) {
+      const count = detalles.total || 0; // Solo total
+
+      const card = document.querySelector(
+        `li[data-division="${division}"] .count`
+      );
+      if (card) {
+        card.textContent = count;
+      }
+    }
   }
-  return divisionesList;
-}
 
-async function init() {
-  const data = await fetchDivisiones(); // Sin mes seleccionado
-  updateCards(data); // Solo datos totales
-  actualizarGrafica(data);
-}
-
-function actualizarGrafica(data) {
-  const divisiones = obtenerDivisiones(data);
-  const labels = divisiones.map((item) => item.division);
-  const values = divisiones.map((item) => item.count);
-  
-  const ctx6 = document.getElementById("bar").getContext("2d");
-  
-  // Destruir el gráfico existente si ya está creado
-  if (chart) {
-    chart.destroy();
+  // Extrae divisiones y totales para la gráfica
+  function obtenerDivisiones(data) {
+    const divisionesList = [];
+    for (const [division, detalles] of Object.entries(data)) {
+      // Solo tomar el total
+      divisionesList.push({ division, count: detalles.total || 0 });
+    }
+    return divisionesList;
   }
-  
-  // Crear un nuevo gráfico de barras
-  chart = new Chart(ctx6, {
-    type: "bar",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Procedimientos",
-          data: values,
-          borderWidth: 1,
-          backgroundColor: colors,
-          borderColor: colors
+
+  // Función para inicializar los datos
+  async function init() {
+    const data = await fetchDivisiones(); // Sin mes seleccionado
+    updateCards(data); // Actualizar las tarjetas con datos totales
+    actualizarGrafica(data); // Crear la gráfica
+  }
+
+  // Actualiza o crea la gráfica de barras
+  function actualizarGrafica(data) {
+    const divisiones = obtenerDivisiones(data);
+    const labels = divisiones.map((item) => item.division);
+    const values = divisiones.map((item) => item.count);
+
+    const ctx6 = document.getElementById("bar").getContext("2d");
+
+    // Destruir el gráfico existente si ya está creado
+    if (chart) {
+      chart.destroy();
+    }
+
+    // Crear un nuevo gráfico de barras
+    chart = new Chart(ctx6, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Procedimientos",
+            data: values,
+            borderWidth: 1,
+            backgroundColor: colors,
+            borderColor: colors,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
         },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
+        scales: {
+          x: { ticks: { font: { size: 15 } } },
+          y: { ticks: { font: { size: 18 } } },
+        },
       },
-      scales: {
-        x: { ticks: { font: { size: 15 } } },
-        y: { ticks: { font: { size: 18 } } },
-      },
-    },
-  });
-}
+    });
+  }
 
-// Manejar el evento de cambio del input de mes
-document
-.getElementById("month-picker")
-.addEventListener("change", async (event) => {
-  const mesSeleccionado = event.target.value; // Obtener el valor del mes seleccionado
-  const data = await fetchDivisiones(mesSeleccionado); // Llamar a la API con el mes seleccionado
-  updateCards(data); // Actualizar las tarjetas
-  actualizarGrafica(data); // Actualizar la gráfica
+  // Manejar el evento de cambio del input de mes
+  document
+    .getElementById("month-picker")
+    .addEventListener("change", async (event) => {
+      const mesSeleccionado = event.target.value; // Obtener el valor del mes seleccionado
+      const data = await fetchDivisiones(mesSeleccionado); // Llamar a la API con el mes seleccionado
+      updateCards(data); // Actualizar las tarjetas
+      actualizarGrafica(data); // Actualizar la gráfica
+    });
+
+  // Inicializar al cargar la página
+  window.onload = init;
 });
-
-window.onload = init;
-})
