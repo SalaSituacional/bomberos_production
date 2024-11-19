@@ -547,8 +547,11 @@ class Retencion_Preventiva(models.Model):
   capacidad = models.CharField(max_length=50)
   serial = models.CharField(max_length=50)
   nro_constancia_retencion = models.CharField(max_length=50)
-  descripcion = models.CharField(max_length=50)
-  material_utilizado = models.CharField(max_length=50)
+  nombre = models.CharField(max_length=40)
+  apellidos = models.CharField(max_length=40)
+  cedula = models.CharField(max_length=10)
+  descripcion = models.CharField(max_length=150)
+  material_utilizado = models.CharField(max_length=100)
   status = models.CharField(max_length=50)
   
   def __str__(self):
