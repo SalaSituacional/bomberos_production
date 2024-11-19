@@ -450,7 +450,7 @@ def generar_excel_personal(request):
     # Crear un libro de trabajo y una hoja
     workbook = openpyxl.Workbook()
     hoja = workbook.active
-    hoja.title = "Procedimientos"
+    hoja.title = "Personal"
 
     # Agregar encabezados a la primera fila
     encabezados = [
@@ -899,7 +899,7 @@ def obtener_procedimientos_parroquias(request):
 
 # Api para generar valores para las graficas de pie de la seccion de estadistica
 def api_procedimientos_division(request):
-    division_id = request.GET.get('division_id')
+    division_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar por división
@@ -919,7 +919,7 @@ def api_procedimientos_division(request):
 
 # Api para generar valores para las graficas de donut de la seccion de estadistica
 def api_procedimientos_division_parroquias(request):
-    division_id = request.GET.get('division_id')
+    division_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar por división
@@ -942,7 +942,7 @@ def api_procedimientos_division_parroquias(request):
 
 # Api para generar valores para la grafica de procedimientos por tipo
 def api_procedimientos_tipo(request):
-    tipo_procedimiento_id = request.GET.get('tipo_procedimiento_id')
+    tipo_procedimiento_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar por tipo de procedimiento
@@ -965,7 +965,7 @@ def api_procedimientos_tipo(request):
 
 # Api para generar valores para la grafica de procedimientos por tipo
 def api_procedimientos_tipo_parroquias(request):
-    tipo_procedimiento_id = request.GET.get('tipo_procedimiento_id')
+    tipo_procedimiento_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar por tipo de procedimiento
@@ -989,7 +989,7 @@ def api_procedimientos_tipo_parroquias(request):
 # Api procedimiento por tipo de servicio - Tipo de detalles
 # API para generar valores para la gráfica de procedimientos por tipo y detalles específicos
 def api_procedimientos_tipo_detalles(request):
-    tipo_procedimiento_id = request.GET.get('tipo_procedimiento_id')
+    tipo_procedimiento_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar procedimientos por tipo de procedimiento y mes
