@@ -28,27 +28,28 @@ confirmarEliminar.onclick = function () {
 };
 
 // Función para eliminar procedimiento
-function eliminarProcedimiento(id) {
-  fetch("/operaciones/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": getCookie("csrftoken"), // Asegúrate de incluir el token CSRF
-    },
-    body: JSON.stringify({ id: id }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        // Eliminar el procedimiento de la vista
-        document
-          .querySelector(`button[data-id="${id}"]`)
-          .parentElement.remove();
-        location.reload();
-      } else {
-        alert("Error al eliminar el procedimiento");
-      }
+async function eliminarProcedimiento(id) {
+  try {
+    const response = await fetchWithLoader("/operaciones/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"), // Asegúrate de incluir el token CSRF
+      },
+      body: JSON.stringify({ id: id }),
     });
+
+    if (response.success) {
+      // Eliminar el procedimiento de la vista
+      document.querySelector(`button[data-id="${id}"]`).parentElement.remove();
+      location.reload();
+    } else {
+      alert("Error al eliminar el procedimiento");
+    }
+  } catch (error) {
+    console.error("Error al intentar eliminar el procedimiento:", error);
+    alert("Ocurrió un error al eliminar el procedimiento. Inténtalo nuevamente.");
+  }
 }
 
 // Función para obtener el token CSRF

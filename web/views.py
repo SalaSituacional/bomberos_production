@@ -98,7 +98,7 @@ def descargar_base_datos(request):
     
     elif 'postgresql' in db_engine:
         # Obtener la URL de conexión completa de la base de datos
-        db_url = "postgresql://data_rad4_user:Akjqm5bt9mEcBcxEhx9JsikkQ5RwMnDu@dpg-cskgpc3tq21c73dohb3g-a.oregon-postgres.render.com/data_rad4"
+        db_url = "postgresql://bomberos_db_user:5wuTseoCTH2EvZaKsR7Ct529uc8sdpVg@dpg-csp2esm8ii6s73a525sg-a.oregon-postgres.render.com/bomberos_db"
         url_parsed = urlparse(db_url)
 
         # Extraer información de la URL
@@ -304,6 +304,12 @@ def generar_excel(request):
             personas_presentes.append(f"{detalles.nombre} {detalles.apellidos} {detalles.cedula}")
             descripciones_proc.append(detalles.descripcion)
 
+        # Retencion_Preventiva
+        for detalles in procedimiento.retencion_preventiva_set.all():
+            detalles_procedimientos.append(f"Tipo Cilindro: {detalles.tipo_cilindro} {detalles.capacidad}")
+            personas_presentes.append(f"{detalles.nombre} {detalles.apellidos} {detalles.cedula}")
+            descripciones_proc.append(detalles.descripcion)
+
         # Artificios_Pirotecnicos
         for artificio in procedimiento.artificios_pirotecnicos_set.all():
             detalles_procedimientos.append(f"{artificio.tipo_procedimiento.tipo}")
@@ -450,7 +456,7 @@ def generar_excel_personal(request):
     # Crear un libro de trabajo y una hoja
     workbook = openpyxl.Workbook()
     hoja = workbook.active
-    hoja.title = "Procedimientos"
+    hoja.title = "Personal"
 
     # Agregar encabezados a la primera fila
     encabezados = [
@@ -899,7 +905,7 @@ def obtener_procedimientos_parroquias(request):
 
 # Api para generar valores para las graficas de pie de la seccion de estadistica
 def api_procedimientos_division(request):
-    division_id = request.GET.get('division_id')
+    division_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar por división
@@ -919,7 +925,7 @@ def api_procedimientos_division(request):
 
 # Api para generar valores para las graficas de donut de la seccion de estadistica
 def api_procedimientos_division_parroquias(request):
-    division_id = request.GET.get('division_id')
+    division_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar por división
@@ -942,7 +948,7 @@ def api_procedimientos_division_parroquias(request):
 
 # Api para generar valores para la grafica de procedimientos por tipo
 def api_procedimientos_tipo(request):
-    tipo_procedimiento_id = request.GET.get('tipo_procedimiento_id')
+    tipo_procedimiento_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar por tipo de procedimiento
@@ -965,7 +971,7 @@ def api_procedimientos_tipo(request):
 
 # Api para generar valores para la grafica de procedimientos por tipo
 def api_procedimientos_tipo_parroquias(request):
-    tipo_procedimiento_id = request.GET.get('tipo_procedimiento_id')
+    tipo_procedimiento_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar por tipo de procedimiento
@@ -989,7 +995,7 @@ def api_procedimientos_tipo_parroquias(request):
 # Api procedimiento por tipo de servicio - Tipo de detalles
 # API para generar valores para la gráfica de procedimientos por tipo y detalles específicos
 def api_procedimientos_tipo_detalles(request):
-    tipo_procedimiento_id = request.GET.get('tipo_procedimiento_id')
+    tipo_procedimiento_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
 
     # Filtrar procedimientos por tipo de procedimiento y mes
@@ -2801,16 +2807,25 @@ def View_Procedimiento(request):
                 capacidad = retencion_preventiva.cleaned_data["capacidad"]
                 serial = retencion_preventiva.cleaned_data["serial"]
                 nro_constancia_retencion = retencion_preventiva.cleaned_data["nro_constancia_retencion"]
+                nombre = retencion_preventiva.cleaned_data["nombre"]
+                apellido = retencion_preventiva.cleaned_data["apellidos"]
+                nacionalidad = retencion_preventiva.cleaned_data["nacionalidad"]
+                cedula = retencion_preventiva.cleaned_data["cedula"]
                 descripcion = retencion_preventiva.cleaned_data["descripcion"]
                 material_utilizado = retencion_preventiva.cleaned_data["material_utilizado"]
                 status = retencion_preventiva.cleaned_data["status"]
 
+                tipo_cilindro_instance = Tipo_Cilindro.objects.get(id=tipo_cilindro)
+
                 nuevo_proc_reten = Retencion_Preventiva(
                     id_procedimiento = nuevo_procedimiento,
-                    tipo_cilindro = tipo_cilindro,
+                    tipo_cilindro = tipo_cilindro_instance,
                     capacidad = capacidad,
                     serial = serial,
                     nro_constancia_retencion = nro_constancia_retencion,
+                    nombre = nombre,
+                    apellidos = apellido,
+                    cedula = f"{nacionalidad}-{cedula}",
                     descripcion=descripcion,
                     material_utilizado=material_utilizado,
                     status=status
@@ -4175,11 +4190,14 @@ def obtener_procedimiento(request, id):
     if str(procedimiento.id_tipo_procedimiento.id) == "21":
         detalle_procedimiento = get_object_or_404(Retencion_Preventiva, id_procedimiento=id)
         data = dict(data,
-                    tipo_retencion = "Cilindro GLP",
+                
                     tipo_cilindro = detalle_procedimiento.tipo_cilindro,
                     capacidad = detalle_procedimiento.capacidad,
                     serial = detalle_procedimiento.serial,
                     nro_constancia = detalle_procedimiento.nro_constancia_retencion,
+                    nombre = detalle_procedimiento.nombre,
+                    apellidos = detalle_procedimiento.apellidos,
+                    cedula = detalle_procedimiento.cedula,
                     descripcion = detalle_procedimiento.descripcion,
                     material_utilizado = detalle_procedimiento.material_utilizado,
                     status = detalle_procedimiento.status,

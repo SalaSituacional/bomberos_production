@@ -198,9 +198,8 @@ class Procedimientos(models.Model):
     direccion = models.CharField(max_length=50)
     id_tipo_procedimiento = models.ForeignKey(Tipos_Procedimientos, on_delete=models.CASCADE)
 
-  
     def __str__(self):
-      return self.id_division.division + " -- " + self.id_solicitante.jerarquia + " " + self.id_solicitante.nombres + " " + self.id_solicitante.apellidos + " -- " + self.unidad.nombre_unidad + " -- " + self.id_jefe_comision.jerarquia + " " + self.id_jefe_comision.nombres + " " + self.id_jefe_comision.apellidos + " -- " + self.efectivos_enviados + " -- " + self.id_municipio.municipio + " -- " + self.id_parroquia.parroquia + " -- " + str(self.fecha) + " " + str(self.hora) + " -- " + self.direccion + " -- " + self.id_tipo_procedimiento.tipo_procedimiento
+      return self.id_division.division + " -- " + self.id_municipio.municipio + " -- " + self.id_parroquia.parroquia + " -- " + str(self.fecha) + " " + str(self.hora) + " -- " + self.direccion + " -- " + self.id_tipo_procedimiento.tipo_procedimiento
 
 # Modelos de los detalles por procedimiento
 
@@ -548,8 +547,11 @@ class Retencion_Preventiva(models.Model):
   capacidad = models.CharField(max_length=50)
   serial = models.CharField(max_length=50)
   nro_constancia_retencion = models.CharField(max_length=50)
-  descripcion = models.CharField(max_length=50)
-  material_utilizado = models.CharField(max_length=50)
+  nombre = models.CharField(max_length=40)
+  apellidos = models.CharField(max_length=40)
+  cedula = models.CharField(max_length=10)
+  descripcion = models.CharField(max_length=150)
+  material_utilizado = models.CharField(max_length=100)
   status = models.CharField(max_length=50)
   
   def __str__(self):

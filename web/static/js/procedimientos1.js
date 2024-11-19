@@ -1,44 +1,3 @@
-// Función fetch con pantalla de carga
-async function fetchWithLoader(url, options = {}) {
-  try {
-      // Muestra la pantalla de carga
-      document.getElementById("loadingScreen").style.display = "block";
-
-      // Realiza la petición fetch
-      const response = await fetch(url, options);
-
-      // Verifica si la respuesta es exitosa
-      if (!response.ok) {
-          throw new Error("Error en la solicitud: " + response.status);
-      }
-
-      // Intenta convertir la respuesta a JSON
-      return await response.json();
-  } catch (error) {
-      console.error("Error al consumir la API:", error);
-      throw error;
-  } finally {
-      // Oculta la pantalla de carga, independientemente de si la solicitud fue exitosa o falló
-      document.getElementById("loadingScreen").style.display = "none";
-  }
-}
-
-// Manejo de formularios y navegación
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll("form").forEach((form) => {
-    form.addEventListener("submit", function () {
-      document.getElementById("loadingScreen").style.display = "block";
-    });
-  });
-
-  window.addEventListener("beforeunload", function () {
-    document.getElementById("loadingScreen").style.display = "block";
-  });
-});
-
-
-
-
 function eliminarOpciones(select_id, opc) {
   const select = document.getElementById(`${select_id}`);
   const opcionesAEliminar = [`${opc}`]; // Valores de las opciones a eliminar
@@ -50,18 +9,19 @@ function eliminarOpciones(select_id, opc) {
   }
 }
 
-eliminarOpciones("id_form2-solicitante", "4")
-eliminarOpciones("id_form2-jefe_comision", "4")
 eliminarOpciones("id_form2-jefe_comision", "0")
+eliminarOpciones("id_form_capacitacion-instructor", "0")
 
 const opcionesPorCategoriaUnidad = {
   "": [{ value: "-", text: "Elige Una Division" }],
   // Rescate
   1: [
+    { value: "26", text: "Estacion" },
     { value: "16", text: "R-1 (Elevación)" },
   ],
   // Operaciones
   2: [
+    { value: "26", text: "Estacion" },
     { value: "5", text: "Supresión 01" },
     { value: "6", text: "Supresión 02" },
     { value: "7", text: "Supresión 03" },
@@ -76,6 +36,7 @@ const opcionesPorCategoriaUnidad = {
   ],
   // Grumae
   4: [
+    { value: "26", text: "Estacion" },
     { value: "17", text: "Lince 01" },
     { value: "18", text: "Lince 02" },
     { value: "19", text: "Lince 03" },
@@ -88,6 +49,7 @@ const opcionesPorCategoriaUnidad = {
   ],
   // PreHospitalaria
   5: [
+    { value: "26", text: "Estacion" },
     { value: "2", text: "Alfa 1" },
     { value: "3", text: "Alfa 2" },
     { value: "4", text: "Alfa 3" },
@@ -343,6 +305,7 @@ const opcionesPorCategoria = {
     { value: "14", text: "Evaluación de Riesgos" },
     { value: "15", text: "Puesto de Avanzada" },
     { value: "22", text: "Artificios Piroctenicos" },
+    { value: "21", text: "Retencion Preventiva" },
   ],
   2: [
     { value: "1", text: "Abastecimiento de agua" },
@@ -359,6 +322,7 @@ const opcionesPorCategoria = {
     { value: "13", text: "Mitigación de Riesgos" },
     { value: "14", text: "Evaluación de Riesgos" },
     { value: "22", text: "Artificios Piroctenicos" },
+    { value: "21", text: "Retencion Preventiva" },
   ],
   3: [
     { value: "14", text: "Evaluacion de Riesgos" },
@@ -568,7 +532,6 @@ document
     };
 
     let campos;
-    console.log(this.value)
     switch (this.value) {
       case "1":
         requiredFalse();
