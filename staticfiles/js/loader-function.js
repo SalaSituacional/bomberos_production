@@ -45,8 +45,6 @@ window.addEventListener("load", async function () {
 
   // Si tienes peticiones iniciales, agrégalas aquí
   const initialLoadPromises = [
-    fetchWithLoader("/api/initial-data"),
-    fetchWithLoader("/api/another-data"),
   ];
 
   try {
