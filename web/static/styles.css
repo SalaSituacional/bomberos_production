@@ -1877,6 +1877,7 @@ summary > * {
   width: 100%;
 }
 .social-media> a{
+  text-decoration: none;
   svg:hover{
     transform: scale(1.1);
     transition: all .1s ease-in-out;
