@@ -1451,6 +1451,21 @@ def blog_prevencion(request):
 def blog_serviciosmedicos(request):
     return render(request, 'Blog/sections/blog_serviciosmedicos.html') 
 
+def salasituacional(request):
+    return render(request, 'Blog/area/salasituacional.html') 
+
+def drones(request):
+    return render(request, 'Blog/area/drones.html') 
+
+def glp(request):
+    return render(request, 'Blog/area/glp.html') 
+
+def operaciones_incendios(request):
+    return render(request, 'Blog/area/operaciones-incendios.html') 
+
+def brigadajuvenil(request):
+    return render(request, 'Blog/area/brigada.html') 
+
 
 def noticias(request):
     # Obtener todas las publicaciones, ordenadas por fecha (más recientes primero)
