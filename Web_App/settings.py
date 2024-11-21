@@ -102,14 +102,14 @@ WSGI_APPLICATION = 'Web_App.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         # 'NAME': BASE_DIR / 'db.sqlite3', comentada para el render esta es original
-#         # nueva linea para el render 
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3', comentada para el render esta es original
+        # nueva linea para el render 
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # DATABASES = {
 #     'default': {
@@ -128,9 +128,9 @@ WSGI_APPLICATION = 'Web_App.wsgi.application'
 # }
 
 # Base de Datos del Render (Sala Situacional)
-DATABASES = {
-    'default': dj_database_url.config(default="postgresql://bomberos_db_user:5wuTseoCTH2EvZaKsR7Ct529uc8sdpVg@dpg-csp2esm8ii6s73a525sg-a.oregon-postgres.render.com/bomberos_db")
-}
+# DATABASES = {
+#     'default': dj_database_url.config(default="postgresql://bomberos_db_user:5wuTseoCTH2EvZaKsR7Ct529uc8sdpVg@dpg-csp2esm8ii6s73a525sg-a.oregon-postgres.render.com/bomberos_db")
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

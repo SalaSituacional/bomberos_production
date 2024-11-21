@@ -1970,26 +1970,40 @@ summary > * {
   justify-content: center;
   margin: 1rem;
   a{
+    text-align: center;
+    font-size: 2rem;
+    font-family: var(--Londrina);
     text-decoration: none;
     color: #FFF;
   }
 }
-/*            Imagenes de las cards         */
-/* .card-operation:hover{
-  filter: sepia(1) saturate(10000%) hue-rotate(0deg) brightness(50%);
+.card-operation:hover{
+  filter: sepia(0.5) saturate(200%) hue-rotate(0deg) brightness(120%) contrast(90%);
 }
-.card-operation:nth-child(1){
-  background-color: red;
+.card-operation a:hover{
+  color: red;
+}
+/*            Imagenes de las cards         */
+/* .card-operation:nth-child(1){
+    background-image: url();
+  background-position: center;
+  background-size: cover;
 }
 .card-operation:nth-child(2){
-  background-color: blue;
+  background-image: url();
+  background-position: center;
+  background-size: cover;
 }
 .card-operation:nth-child(3){
-  background-color: cyan;
-}
-.card-operation:nth-child(4){
-  background-color: steelblue;
+    background-image: url();
+  background-position: center;
+  background-size: cover;
 } */
+.card-operation:nth-child(4){
+  background-image: url(https://i.postimg.cc/qvJshg4d/IMG-20241119-143800-edit3.jpg);
+  background-position: center;
+  background-size: cover;
+}
 
 .institutional-comand{
   margin-top: 4rem;
@@ -2131,6 +2145,13 @@ summary > * {
   background-position: center center;
   /* background-position: -280px center; */
 }
+.to-psicologa{
+  background-image: url(https://i.postimg.cc/59wXz4Xn/IMG-20240605-WA04046.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-position: center 0px ;
+}
 
 .text-inter{
   margin-left: 4rem;
@@ -2169,17 +2190,31 @@ summary > * {
     margin-bottom: 2rem;
   }
 }
+.aling-center{
+  align-items: flex-start;
+}
 .content-text{
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   color: #4F4F51;
   width: 40%;
   height: auto;
   p{
+    font-size: 1.4rem;
     text-align: justify;
+  }
+  a{
+    margin: 0 auto;
+    button{
+      font-size: 1.1rem;
+      width: 30rem;
+    }
   }
 }
 .content-image{
+  display: flex;
+  justify-content: center;
   width: 45%;
   height: auto;
   img{
@@ -2446,4 +2481,55 @@ summary > * {
 }
 .expand-img{
   width: 100%;
+}
+.border-red{
+  padding: 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--color-button);
+  margin: 0 auto;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  width: 90%;
+}
+.gallery-row{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.card-gallery{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  img{
+    width: 20rem;
+    height: auto;
+    border-radius: 20px;
+  }
+  p{
+    text-align: center;
+    width: 60%;
+    font-size: 1.4rem;
+    font-family: var(--Londrina);
+  }
+}
+.edit{
+  width: 30rem;
+  height: auto;
+}
+.center{
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  h2{
+    text-align: center;
+  }
+}
+.reduct-img{
+  width: 10rem;
+  height: auto;
 }
