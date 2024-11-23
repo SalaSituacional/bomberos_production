@@ -23,5 +23,3 @@ C:\Users\usuario\Desktop\CuerpoBomberos\Cuerpo_bomberos
 ### Ejecutar:
 
 "python manage.py runserver" -- Ejecuta el proyecto en la web
-
-postgresql://data_rad4_user:Akjqm5bt9mEcBcxEhx9JsikkQ5RwMnDu@dpg-cskgpc3tq21c73dohb3g-a.oregon-postgres.render.com/data_rad4
