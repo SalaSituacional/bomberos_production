@@ -1985,21 +1985,23 @@ summary > * {
   color: red;
 }
 /*            Imagenes de las cards         */
-/* .card-operation:nth-child(1){
-    background-image: url();
+.card-operation:nth-child(1){
+  background-image: url(https://i.postimg.cc/13TDCQLg/IMG-20241119-084717.jpg);
   background-position: center;
   background-size: cover;
 }
+  /*
 .card-operation:nth-child(2){
   background-image: url();
   background-position: center;
   background-size: cover;
 }
+*/
 .card-operation:nth-child(3){
-    background-image: url();
+  background-image: url(https://i.postimg.cc/d38sG8GQ/IMG-20241112-131708.jpg);
   background-position: center;
   background-size: cover;
-} */
+}
 .card-operation:nth-child(4){
   background-image: url(https://i.postimg.cc/qvJshg4d/IMG-20241119-143800-edit3.jpg);
   background-position: center;
@@ -2125,6 +2127,21 @@ summary > * {
   background-size: cover;
   background-position: center;
 }
+.image-capacitation-1{
+  background-image: url(https://i.postimg.cc/Vvw4SBzW/IMG-20241122-120803.jpg);
+  background-size: cover;
+  background-position: center;
+}
+.image-capacitation-2{
+  background-image: url(https://i.postimg.cc/W192XXKt/IMG-20241122-120856.jpg);
+  background-size: cover;
+  background-position: center;
+}
+.image-capacitation-3{
+  background-image: url();
+  background-size: cover;
+  background-position: center;
+}
 .background-general{
   width: 100%;
   height: 30rem;
@@ -2153,6 +2170,12 @@ summary > * {
   background-position: center center;
   background-position: center 0px ;
 }
+.to-capacitation{
+  background-image: url(https://i.postimg.cc/BQ9fgdnm/IMG-20241122-120250.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center top;
+}
 
 .text-inter{
   margin-left: 4rem;
@@ -2175,8 +2198,8 @@ summary > * {
   align-items: center;
   align-content: center;
   flex-wrap: wrap;
-  margin-top: 4rem;
-  margin-bottom: 4rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
   width: 100%;
   height: auto;
   h2{
