@@ -3,8 +3,7 @@ const info_modal = document.getElementById("info_modal");
 
 document.querySelectorAll(".button-info").forEach((button) => {
   button.onclick = async function () {
-
-    info_modal.textContent = ""
+    info_modal.textContent = "";
 
     const id = this.getAttribute("data-id");
     const id_tipo_procedimiento = this.getAttribute("data-id_procedimiento");
@@ -49,6 +48,33 @@ document.querySelectorAll(".button-info").forEach((button) => {
                   <p><b>Fecha: </b> ${data.fecha}</p>
                   <p><b>Hora: </b> ${data.hora}</p>
                   </section>`;
+        if (data.comisiones && data.comisiones.length > 0) {
+          baseInfo += `
+                      
+                    `;
+
+          // Iterar sobre cada comisión y agregar su contenido
+          data.comisiones.forEach((comision, index) => {
+            baseInfo += `
+                      <section class="datos_comisiones">
+                        <h4>Comision Presente ${index + 1}</h4>
+                          <p><b>Tipo de Comisión: </b> ${comision.comision}</p>
+                          <p><b>Nombre del Oficial: </b> ${
+                            comision.nombre_oficial
+                          } ${comision.apellido_oficial}</p>
+                          <p><b>Cédula del Oficial: </b> ${
+                            comision.cedula_oficial
+                          }</p>
+                          <p><b>Número de Unidad: </b> ${
+                            comision.nro_unidad
+                          }</p>
+                          <p><b>Número de Cuadrante: </b> ${
+                            comision.nro_cuadrante
+                          }</p>
+                        </section>
+                      `;
+          });
+        }
       }
       if (division == "Enfermeria") {
         baseInfo = ` 
@@ -699,15 +725,9 @@ document.querySelectorAll(".button-info").forEach((button) => {
                   <p><b>Numero de Constancia de Retencion: </b>#${
                     data.nro_constancia
                   }</p>
-                  <p><b>Nombre de la Persona: </b>${
-                    data.nombre
-                  }</p>
-                  <p><b>Apellido de la Persona: </b>${
-                    data.apellidos
-                  }</p>
-                  <p><b>Cedula de la Persona: </b>${
-                    data.cedula
-                  }</p>
+                  <p><b>Nombre de la Persona: </b>${data.nombre}</p>
+                  <p><b>Apellido de la Persona: </b>${data.apellidos}</p>
+                  <p><b>Cedula de la Persona: </b>${data.cedula}</p>
                     </section>`;
           break;
         case "Traslados":

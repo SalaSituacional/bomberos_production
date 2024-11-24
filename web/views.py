@@ -1683,8 +1683,13 @@ def View_Procedimiento(request):
         form_inv_vehiculo = Formulario_Investigacion_Vehiculo(request.POST, prefix='form_inv_vehiculo')
         form_inv_comercio = Formulario_Investigacion_Comercio(request.POST, prefix='form_inv_comercio')
         form_inv_estructura = Formulario_Investigacion_Estructura_Vivienda(request.POST, prefix='form_inv_estructura')
+        
+        form_comision = Datos_Comision(request.POST, prefix='form_comision')
+        datos_comision_uno = Comision_Uno(request.POST, prefix='datos_comision_uno')
+        datos_comision_dos = Comision_Dos(request.POST, prefix='datos_comision_dos')
+        datos_comision_tres = Comision_Tres(request.POST, prefix='datos_comision_tres')
+        
         # Imprimir request.POST para depuración
-
         if not form.is_valid():
             print("Errores en form1:", form.errors)
             result = True
@@ -1704,7 +1709,7 @@ def View_Procedimiento(request):
             division = form.cleaned_data["opciones"]
             tipo_procedimiento = ""
 
-            if (division == "1" or division == "2" or division == "3" or division == "4" or division == "5") and (form2.is_valid() and form3.is_valid() and form4.is_valid()):
+            if (division == "1" or division == "2" or division == "3" or division == "4" or division == "5") and (form2.is_valid() and form3.is_valid() and form4.is_valid() and form_comision.is_valid() and datos_comision_uno.is_valid() and datos_comision_dos.is_valid() and datos_comision_tres.is_valid()):
                 solicitante = form2.cleaned_data["solicitante"]
                 solicitante_externo = form2.cleaned_data["solicitante_externo"]
                 efectivos_enviados = form2.cleaned_data["efectivos_enviados"]
@@ -1726,7 +1731,7 @@ def View_Procedimiento(request):
 
 
                 if solicitante_externo=="":
-                    solicitante_externo = ""
+                    solicitante_externo = ""                    
 
                 # # Crear una nueva instancia del modelo Procedimientos
                 nuevo_procedimiento = Procedimientos(
@@ -1753,6 +1758,44 @@ def View_Procedimiento(request):
                     nuevo_procedimiento.unidad=unidad_instance
 
                 nuevo_procedimiento.save()
+
+                if form_comision.cleaned_data["agregar"] == True:
+                    nueva_comsion = Comisiones(
+                        procedimiento = nuevo_procedimiento,
+                        comision = Tipos_Comision.objects.get(id=datos_comision_uno.cleaned_data["comision"]),
+                        nombre_oficial = datos_comision_uno.cleaned_data["nombre_oficial"],
+                        apellido_oficial = datos_comision_uno.cleaned_data["apellido_oficial"],
+                        cedula_oficial = datos_comision_uno.cleaned_data["cedula_oficial"],
+                        nro_unidad = datos_comision_uno.cleaned_data["nro_unidad"],
+                        nro_cuadrante = datos_comision_uno.cleaned_data["nro_cuadrante"],
+                    )
+
+                    nueva_comsion.save()
+
+                    if datos_comision_uno.cleaned_data["agregar"] == True:
+                        nueva_comsion = Comisiones(
+                            procedimiento = nuevo_procedimiento,
+                            comision = Tipos_Comision.objects.get(id=datos_comision_dos.cleaned_data["comision"]),
+                            nombre_oficial = datos_comision_dos.cleaned_data["nombre_oficial"],
+                            apellido_oficial = datos_comision_dos.cleaned_data["apellido_oficial"],
+                            cedula_oficial = datos_comision_dos.cleaned_data["cedula_oficial"],
+                            nro_unidad = datos_comision_dos.cleaned_data["nro_unidad"],
+                            nro_cuadrante = datos_comision_dos.cleaned_data["nro_cuadrante"],
+                        )
+                        nueva_comsion.save()
+
+                        if datos_comision_dos.cleaned_data["agregar"] == True:
+                            nueva_comsion = Comisiones(
+                                procedimiento = nuevo_procedimiento,
+                                comision = Tipos_Comision.objects.get(id=datos_comision_tres.cleaned_data["comision"]),
+                                nombre_oficial = datos_comision_tres.cleaned_data["nombre_oficial"],
+                                apellido_oficial = datos_comision_tres.cleaned_data["apellido_oficial"],
+                                cedula_oficial = datos_comision_tres.cleaned_data["cedula_oficial"],
+                                nro_unidad = datos_comision_tres.cleaned_data["nro_unidad"],
+                                nro_cuadrante = datos_comision_tres.cleaned_data["nro_cuadrante"],
+                            )
+                            
+                            nueva_comsion.save()
 
             if division == "6" and form_enfermeria.is_valid():
                 dependencia = form_enfermeria.cleaned_data["dependencia"]
@@ -3166,6 +3209,11 @@ def View_Procedimiento(request):
         form_inv_comercio = Formulario_Investigacion_Comercio(prefix='form_inv_comercio')
         form_inv_estructura = Formulario_Investigacion_Estructura_Vivienda(prefix='form_inv_estructura')
 
+        form_comision = Datos_Comision(prefix='form_comision')
+        datos_comision_uno = Comision_Uno(prefix='datos_comision_uno')
+        datos_comision_dos = Comision_Dos(prefix='datos_comision_dos')
+        datos_comision_tres = Comision_Tres(prefix='datos_comision_tres')
+
     return render(request, "procedimientos.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
@@ -3237,6 +3285,10 @@ def View_Procedimiento(request):
         "form_inv_vehiculo": form_inv_vehiculo,
         "form_inv_comercio": form_inv_comercio,
         "form_inv_estructura": form_inv_estructura,
+        "form_comision": form_comision,
+        "comision_uno": datos_comision_uno,
+        "comision_dos": datos_comision_dos,
+        "comision_tres": datos_comision_tres,
         })
 
 # Vista de la seccion de Estadisticas
@@ -3673,7 +3725,7 @@ def obtener_procedimiento(request, id):
 
     division = procedimiento.id_division.division
 
-    if division == "Rescate" or division == "Operaciones" or division == "Prevencion" or division == "GRUMAE" or division == "PreHospitalaria":
+    if division == "Rescate" or division == "Operaciones" or division == "Prevencion" or division == "GRUMAE" or division == "PreHospitalaria":        
         data = {
             'id': procedimiento.id,
             'division': procedimiento.id_division.division,
@@ -3689,6 +3741,25 @@ def obtener_procedimiento(request, id):
             'hora': procedimiento.hora,
             'tipo_procedimiento': procedimiento.id_tipo_procedimiento.tipo_procedimiento,
         }
+
+        # Obteniendo las comisiones relacionadas con el procedimiento
+        comisiones = Comisiones.objects.filter(procedimiento=procedimiento)
+
+        # Formateando las comisiones en una lista
+        comisiones_lista = [
+            {
+                'comision': comision.comision.tipo_comision,
+                'nombre_oficial': comision.nombre_oficial,
+                'apellido_oficial': comision.apellido_oficial,
+                'cedula_oficial': comision.cedula_oficial,
+                'nro_unidad': comision.nro_unidad,
+                'nro_cuadrante': comision.nro_cuadrante,
+            }
+            for comision in comisiones
+        ]
+
+        # Agregando la lista de comisiones al diccionario
+        data['comisiones'] = comisiones_lista
     
     if division == "Enfermeria":
         data = {

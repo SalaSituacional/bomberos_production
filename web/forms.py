@@ -3,37 +3,21 @@ from.models import *
 from django.db.models import Q
 from django.db.models import Case, When
 
-def Asignar_ops_Personal():
-    jerarquias = [
-        "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", 
-        "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", 
-        "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero"
-    ]
+def Asignar_ops_Personal(): 
+    jerarquias = [ "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+    personal = Personal.objects.filter(status="Activo").order_by("id").exclude(id=4)
+    personal_ordenado = personal.order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) )
+    op = [("", "Seleccione Una Opcion")] 
+    for persona in personal_ordenado: op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}")) 
+    return op 
 
-    personal = Personal.objects.all().order_by("id").exclude(id=4)
-    # Filtro y ordenación de acuerdo a las jerarquías
-
-    personal_ordenado =personal.order_by(
-        Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)])
-    )
-    op = [("", "Seleccione Una Opcion")]
-    for persona in personal_ordenado:
-        op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}"))
+def Asignar_ops_Solicitante(): 
+    jerarquias = ["General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+    personal = Personal.objects.filter(status="Activo").order_by("id").exclude(id=4)
+    personal_ordenado = personal.order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) ) 
+    op = [("", "Seleccione Una Opcion"), ("0", "Externo")] 
+    for persona in personal_ordenado: op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}")) 
     return op
-
-def Asignar_ops_Solicitante():
-    personal = Personal.objects.filter(
-        Q(jerarquia="General") | 
-        Q(jerarquia="Coronel") | 
-        Q(jerarquia="Teniente Coronel") | 
-        Q(jerarquia__isnull=True) | 
-        Q(jerarquia="")
-    ).order_by("id").exclude(id=4)
-    op = [("", "Seleccione Una Opcion")]
-    for persona in personal:
-        op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}"))
-    return op
-
 
 def Asignar_op_Doctores():
     personal = Doctores.objects.all()
@@ -190,6 +174,13 @@ def Asignar_op_Investigacion():
        op.append((str(procedimiento.id), procedimiento.tipo_investigacion))
    return op
 
+def Asignar_op_Comsion():
+   procedimientos = Tipos_Comision.objects.all()
+   op = [("", "Seleccione Una Opcion")]
+   for procedimiento in procedimientos:
+       op.append((str(procedimiento.id), procedimiento.tipo_comision))
+   return op
+
 
 class FormularioRegistroPersonal(forms.Form):
     opc = [
@@ -272,6 +263,38 @@ class Datos_Ubicacion(forms.Form):
     )
     hora = forms.TimeField(
         widget=forms.TimeInput(attrs={'type': 'time'}, format='%H:%M'))  # Especificar explícitamente el tipo de input
+
+# Agregando Apartado Comisiones Presentes
+class Datos_Comision(forms.Form):
+    agregar = forms.BooleanField(required=False, label="Agregar Comision Presente")
+
+class Comision_Uno(forms.Form):
+    comision = forms.ChoiceField(choices=Asignar_op_Comsion, required=False, widget=forms.Select(attrs={"class": "disable-first-option"}))
+    nombre_oficial = forms.CharField(max_length=60, required=False)
+    apellido_oficial = forms.CharField(max_length=60, required=False)
+    cedula_oficial = forms.CharField(max_length=60, required=False)
+    nro_unidad = forms.CharField(max_length=60, required=False)
+    nro_cuadrante = forms.CharField(max_length=60, required=False)
+
+    agregar = forms.BooleanField(required=False, label="Agregar Segunda Comision Presente")
+
+class Comision_Dos(forms.Form):
+    comision = forms.ChoiceField(choices=Asignar_op_Comsion, required=False, widget=forms.Select(attrs={"class": "disable-first-option"}))
+    nombre_oficial = forms.CharField(max_length=60, required=False)
+    apellido_oficial = forms.CharField(max_length=60, required=False)
+    cedula_oficial = forms.CharField(max_length=60, required=False)
+    nro_unidad = forms.CharField(max_length=60, required=False)
+    nro_cuadrante = forms.CharField(max_length=60, required=False)
+
+    agregar = forms.BooleanField(required=False, label="Agregar Tercera Comision Presente")
+
+class Comision_Tres(forms.Form):
+    comision = forms.ChoiceField(choices=Asignar_op_Comsion, required=False, widget=forms.Select(attrs={"class": "disable-first-option"}))
+    nombre_oficial = forms.CharField(max_length=60, required=False)
+    apellido_oficial = forms.CharField(max_length=60, required=False)
+    cedula_oficial = forms.CharField(max_length=60, required=False)
+    nro_unidad = forms.CharField(max_length=60, required=False)
+    nro_cuadrante = forms.CharField(max_length=60, required=False)
 
 # Form4
 class Selecc_Tipo_Procedimiento(forms.Form):

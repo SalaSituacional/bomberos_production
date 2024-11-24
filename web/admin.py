@@ -3,7 +3,7 @@ from .models import *
 
 # Register your models here.
 admin.site.register(Usuarios)
-# admin.site.register(Personal)
+admin.site.register(Personal)
 # admin.site.register(Divisiones)
 # admin.site.register(Municipios)
 # admin.site.register(Parroquias)
@@ -65,5 +65,7 @@ admin.site.register(Psicologa)
 # admin.site.register(Inspeccion_Otros)
 admin.site.register(Tipos_Investigacion)
 # admin.site.register(InstagramPost)
+admin.site.register(Tipos_Comision)
+admin.site.register(Comisiones)
 
 

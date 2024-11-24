@@ -181,13 +181,19 @@ class Tipos_Investigacion(models.Model):
   def __str__(self):
     return self.tipo_investigacion
 
+class Tipos_Comision(models.Model):
+  tipo_comision = models.CharField(max_length=50)
+
+  def __str__(self):
+    return self.tipo_comision
+
 # Modelo Proncipal para todos los Procedimientos
 class Procedimientos(models.Model):
     id_division = models.ForeignKey(Divisiones, on_delete=models.CASCADE, default=0, blank=True)
     tipo_servicio = models.CharField(max_length=50, blank=True)
     id_solicitante = models.ForeignKey(Personal, on_delete=models.CASCADE, related_name="personal1", null=True, blank=True)
     solicitante_externo = models.CharField(max_length=20, default="Interno", blank=True)
-    unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE, default=1)
+    unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE, default=27)
     id_jefe_comision = models.ForeignKey(Personal, on_delete=models.CASCADE, related_name="personal2", null=True, blank=True)
     dependencia = models.CharField(max_length=80, blank=True)
     efectivos_enviados = models.CharField(max_length=40, blank=True)
@@ -200,6 +206,19 @@ class Procedimientos(models.Model):
 
     def __str__(self):
       return self.id_division.division + " -- " + self.id_municipio.municipio + " -- " + self.id_parroquia.parroquia + " -- " + str(self.fecha) + " " + str(self.hora) + " -- " + self.direccion + " -- " + self.id_tipo_procedimiento.tipo_procedimiento
+
+# Modelo Para las comisiones presentes
+class Comisiones(models.Model):
+  procedimiento = models.ForeignKey(Procedimientos, on_delete=models.CASCADE)
+  comision = models.ForeignKey(Tipos_Comision, on_delete=models.CASCADE)
+  nombre_oficial = models.CharField(max_length=80)
+  apellido_oficial = models.CharField(max_length=80)
+  cedula_oficial = models.CharField(max_length=80)
+  nro_unidad = models.CharField(max_length=80)
+  nro_cuadrante = models.CharField(max_length=80)
+
+  def __str__(self):
+    return self.procedimiento.id_tipo_procedimiento.tipo_procedimiento + " -- " + self.comision.tipo_comision + " -- " + self.nombre_oficial + " -- " + self.apellido_oficial + " -- " + self.cedula_oficial + " -- " + self.nro_unidad + " -- " + self.nro_cuadrante
 
 # Modelos de los detalles por procedimiento
 

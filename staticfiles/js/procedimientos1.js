@@ -92,7 +92,10 @@ actualizarOpcionesUnidad();
 // Evento cuando cambia el primer select
 selectOpciones_Unidad.addEventListener("change", actualizarOpcionesUnidad);
 
-
+function ocultarCheckbox(id) {
+  const checkbox = document.getElementById(id);
+  checkbox.checked = false; // Desmarcar el checkbox
+}
 
 function ocultElement(element) {
   document.getElementById(`${element}`).style.display = "none";
@@ -102,12 +105,22 @@ function ocultElement(element) {
     .forEach((ele) => {
       ele.removeAttribute("required");
     });
+    document.getElementById(element).querySelectorAll("input[type='checkbox']").checked = false;
 }
 function mostrarElement(element) {
   document.getElementById(`${element}`).style.display = "flex";
   document
     .getElementById(`${element}`)
     .querySelectorAll("input, select")
+    .forEach((ele) => {
+      ele.setAttribute("required", "true");
+    });
+}
+function mostrarElementNoRequired(element) {
+  document.getElementById(`${element}`).style.display = "flex";
+  document
+    .getElementById(`${element}`)
+    .querySelectorAll("input:not([type='checkbox']), select")
     .forEach((ele) => {
       ele.setAttribute("required", "true");
     });
@@ -120,6 +133,9 @@ function mostrarElementBlock(element) {
     .forEach((ele) => {
       ele.setAttribute("required", "true");
     });
+}
+function mostrarElementBlockNoRequired(element) {
+  document.getElementById(`${element}`).style.display = "block";
 }
 
 document
@@ -138,6 +154,38 @@ document
         document.getElementById("id_form2-unidad").parentElement.style.display = "flex"
         document.getElementById("id_form2-unidad").setAttribute("required", true)
         requiredFalse()
+        
+        mostrarElementBlockNoRequired("form_comisionoes")
+
+        document.getElementById("id_form_comision-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_uno")
+          } else {
+            ocultElement("comision_uno")
+            ocultarCheckbox("id_datos_comision_uno-agregar")
+            ocultElement("comision_tres")
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+          }
+        })
+        
+        document.getElementById("id_datos_comision_uno-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_dos")
+          } else {
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+            ocultElement("comision_tres")
+          }
+        })
+        document.getElementById("id_datos_comision_dos-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_tres")
+          } else {
+            ocultElement("comision_tres")
+          }
+        })
+
         break;
       case "2":
         // operaciones
@@ -150,6 +198,38 @@ document
         requiredFalse()
         document.getElementById("id_form2-unidad").parentElement.style.display = "flex"
         document.getElementById("id_form2-unidad").setAttribute("required", true)
+
+        
+        mostrarElementBlockNoRequired("form_comisionoes")
+
+        document.getElementById("id_form_comision-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_uno")
+          } else {
+            ocultElement("comision_uno")
+            ocultarCheckbox("id_datos_comision_uno-agregar")
+            ocultElement("comision_tres")
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+          }
+        })
+        
+        document.getElementById("id_datos_comision_uno-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_dos")
+          } else {
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+            ocultElement("comision_tres")
+          }
+        })
+        document.getElementById("id_datos_comision_dos-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_tres")
+          } else {
+            ocultElement("comision_tres")
+          }
+        })
         break;
       case "3":
         // Prevencion
@@ -163,6 +243,38 @@ document
         document.getElementById("id_form2-unidad").parentElement.style.display = "none"
         document.getElementById("id_form2-unidad").removeAttribute("required")
         requiredFalse()
+
+        
+        mostrarElementBlockNoRequired("form_comisionoes")
+
+        document.getElementById("id_form_comision-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_uno")
+          } else {
+            ocultElement("comision_uno")
+            ocultarCheckbox("id_datos_comision_uno-agregar")
+            ocultElement("comision_tres")
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+          }
+        })
+        
+        document.getElementById("id_datos_comision_uno-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_dos")
+          } else {
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+            ocultElement("comision_tres")
+          }
+        })
+        document.getElementById("id_datos_comision_dos-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_tres")
+          } else {
+            ocultElement("comision_tres")
+          }
+        })
         break;
       case "4":
         // Grumae
@@ -176,6 +288,38 @@ document
         document.getElementById("id_form2-unidad").parentElement.style.display = "flex"
         document.getElementById("id_form2-unidad").setAttribute("required", true)
         requiredFalse()
+
+        
+        mostrarElementBlockNoRequired("form_comisionoes")
+
+        document.getElementById("id_form_comision-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_uno")
+          } else {
+            ocultElement("comision_uno")
+            ocultarCheckbox("id_datos_comision_uno-agregar")
+            ocultElement("comision_tres")
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+          }
+        })
+        
+        document.getElementById("id_datos_comision_uno-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_dos")
+          } else {
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+            ocultElement("comision_tres")
+          }
+        })
+        document.getElementById("id_datos_comision_dos-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_tres")
+          } else {
+            ocultElement("comision_tres")
+          }
+        })
         break;
       case "5":
         // prehospitalaria
@@ -189,6 +333,38 @@ document
         document.getElementById("id_form2-unidad").parentElement.style.display = "flex"
         document.getElementById("id_form2-unidad").setAttribute("required", true)
         requiredFalse()
+
+        
+        mostrarElementBlockNoRequired("form_comisionoes")
+
+        document.getElementById("id_form_comision-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_uno")
+          } else {
+            ocultElement("comision_uno")
+            ocultarCheckbox("id_datos_comision_uno-agregar")
+            ocultElement("comision_tres")
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+          }
+        })
+        
+        document.getElementById("id_datos_comision_uno-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_dos")
+          } else {
+            ocultarCheckbox("id_datos_comision_dos-agregar")
+            ocultElement("comision_dos")
+            ocultElement("comision_tres")
+          }
+        })
+        document.getElementById("id_datos_comision_dos-agregar").addEventListener("change", function () {
+          if (this.checked == true) {
+            mostrarElementNoRequired("comision_tres")
+          } else {
+            ocultElement("comision_tres")
+          }
+        })
         break;
       case "6":
         // enfermeria
