@@ -2557,3 +2557,10 @@ summary > * {
   width: 10rem;
   height: auto;
 }
+.margin-bottom{
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
