@@ -2562,4 +2562,8 @@ summary > * {
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
+  width: 80%;
+}
+#form_comisionoes{
+  width: 100%;
 }
