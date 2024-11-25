@@ -17,14 +17,21 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import handler404
 from django.urls import path
-from web.views import *
+from web.views.views import *
+from web.views.views_api import *
+from web.views.views_blog import *
+from web.views.views_descargas import *
+from web.views.views_tables import *
 
 handler404 = custom_404_view
 
 #Se crean las rutas que se podran visitar en la aplicacion web.
 urlpatterns = [
+    # Admin
     path('alpha04/', admin.site.urls),
-    path('login/', Home, name="home"),
+    path('logout/', logout, name='logout'),
+
+    # BLOG
     path('', inicio, name="inicio"),
     path('informacion/', information,name='informacion'),
     path('salasituacional/', salasituacional,name='salasituacional'),
@@ -40,9 +47,14 @@ urlpatterns = [
     path('blog_prevencion/', blog_prevencion,name='prevencion_inf'),
     path('blog_serviciosmedicos/', blog_serviciosmedicos,name='serviciosmedicos_inf'),
     path('noticias/', noticias,name='noticias'),
-    path('dashboard/', Dashboard,name='dashboard') ,
+
+    # SISTEMA
+    path('login/', Home, name="home"),
+    path('dashboard/', Dashboard,name='dashboard'),
     path('personal/', View_personal) ,
     path('prueba/', Prueba),
+    
+    # Tablas
     path('tablageneral/', tabla_general),
     path('procedimientos/', View_Procedimiento, name='view_procedimiento'),
     path('estadisticas/', View_Estadisticas),
@@ -55,17 +67,15 @@ urlpatterns = [
     path('enfermeria/', View_enfermeria),
     path('serviciosmedicos/', View_serviciosmedicos),
     path('psicologia/', View_psicologia),
+
+    # APIs
     path('api/procedimientos/<int:id>/', obtener_procedimiento, name='obtener_procedimiento'),
     path('api/meses/', obtener_meses, name='obtener_meses'),
     path('api/porcentajes/<str:periodo>/', obtener_porcentajes, name='api_porcentajes'),
-    path('logout/', logout, name='logout'),
     path('api/parroquias/', obtener_procedimientos_parroquias, name='obtener_parroquias'),
     path('api/divisiones/', obtener_divisiones, name='obtener_divisiones'),
     path('api/divisiones_estadisticas/', obtener_divisiones_estadistica, name='obtener_divisiones_estadistica'),
-    path('descargar-excel/', generar_excel, name='descargar_excel'),
-    path('descargar-excel_personal/', generar_excel_personal, name='descargar_excel_personal'),
     path('api/generar_estadistica/', generar_resultados, name='generar_estadistica'),
-    path('descargar-base-datos/', descargar_base_datos, name='descargar_base_datos'),
     path('api/procedimientos_division/', api_procedimientos_division, name='procedimientos_division'),
     path('api/procedimientos_division_parroquia/', api_procedimientos_division_parroquias, name='procedimientos_division_parroquia'),
     path('api/procedimientos_tipo/', api_procedimientos_tipo, name='procedimientos_tipo'),
@@ -74,4 +84,9 @@ urlpatterns = [
      path('editar_personal/', edit_personal, name='edit_personal'),
     path('api/procedimientos_tipo_detalles/', api_procedimientos_tipo_detalles, name='procedimientos_tipo_detalles'),
     path('instagram/', instagram_feed, name='instagram_feed'),
+
+    # Descargas
+    path('descargar-excel/', generar_excel, name='descargar_excel'),
+    path('descargar-excel_personal/', generar_excel_personal, name='descargar_excel_personal'),
+    path('descargar-base-datos/', descargar_base_datos, name='descargar_base_datos'),
 ]

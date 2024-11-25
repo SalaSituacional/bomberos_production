@@ -82,15 +82,6 @@
       </div>
       <h4>Datos de la Ubicacion</h4>
       <div class="form-style">{{ form3.as_div }}</div>
-      
-      <section id="form_comisionoes" style="display: none;">
-        <h4>Datos Comisiones Presentes</h4>
-        <div class="form-style data_form margin-bottom" id="checkbox_agg">{{ form_comision.as_div }}
-          <article class="margin-bottom" id="comision_uno" style="display: none;">{{ comision_uno.as_div }}</article>
-          <article class="margin-bottom" id="comision_dos" style="display: none;">{{ comision_dos.as_div }}</article>
-          <article class="margin-bottom" id="comision_tres" style="display: none;">{{ comision_tres.as_div }}</article>
-        </div>
-      </section>
 
       <h4 id="tipos_procedimientos_title">Tipo de Procedimientos</h4>
       <div class="form-style" id="tipos_procedimientos">{{ form4.as_div }}</div>
@@ -462,6 +453,15 @@
 
       </article>
 
+      <section id="form_comisionoes" style="display: none;">
+        <h4>Datos Comisiones Presentes</h4>
+        <div class="form-style data_form margin-bottom" id="checkbox_agg">{{ form_comision.as_div }}
+          <article class="margin-bottom" id="comision_uno" style="display: none;">{{ comision_uno.as_div }}</article>
+          <article class="margin-bottom" id="comision_dos" style="display: none;">{{ comision_dos.as_div }}</article>
+          <article class="margin-bottom" id="comision_tres" style="display: none;">{{ comision_tres.as_div }}</article>
+        </div>
+      </section>
+      
       <!-- Boton Enviar -->
       <button type="submit" id="button_submit" class="disp-none">
         Aceptar
