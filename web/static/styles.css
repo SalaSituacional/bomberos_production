@@ -1794,6 +1794,9 @@ summary > * {
 /* blog style */
 .nav {
   display: flex;
+  position: fixed;
+  z-index: 99999999;
+  background-color: white;
   justify-content: center;
   height: auto;
   width: 100%;
@@ -1990,13 +1993,12 @@ summary > * {
   background-position: center;
   background-size: cover;
 }
-  /*
+ 
 .card-operation:nth-child(2){
-  background-image: url();
-  background-position: center;
+  background-image: url(https://i.postimg.cc/fRLJcQj2/IMG-20241126-101517-edit.jpg);
+  background-position: center top;
   background-size: cover;
 }
-*/
 .card-operation:nth-child(3){
   background-image: url(https://i.postimg.cc/d38sG8GQ/IMG-20241112-131708.jpg);
   background-position: center;
@@ -2021,6 +2023,7 @@ summary > * {
   text-align: justify;
   flex-wrap: wrap;
 }
+
 .card-comand{
   background-color: gray;
   background-image: url('https://i.postimg.cc/gj3sMWYw/general-y-Alcalde.avif');
@@ -2029,6 +2032,16 @@ summary > * {
   border-radius: 20px;
   width: 35rem;
   height: 35rem;
+}
+.two-comand{
+  background-image: url('https://i.postimg.cc/8C3MfXLf/IMG-20241126-133718.jpg');
+  background-position: center;
+  background-size: cover;
+}
+.three-comand{
+  background-image: url('');
+  background-position: center;
+  background-size: cover;
 }
 .content-card-comand{
   display: flex;
@@ -2171,7 +2184,25 @@ summary > * {
   background-repeat: no-repeat;
   background-position: center top;
 }
+.to-services-medicos{
+  background-image: url(https://i.postimg.cc/SQrj2KbF/IMG-20241112-132519.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.to-brigate{
+  background-image: url(https://i.postimg.cc/MKYbTDHq/IMG-20241127-WA0032-edit.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+}
+.to-situacional{
+  background-image: url(https://i.postimg.cc/k49WqRCB/IMG-20241126-140327.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center top;
 
+}
 .text-inter{
   margin-left: 4rem;
   border-left: .6rem solid white;
@@ -2220,6 +2251,7 @@ summary > * {
   width: 40%;
   height: auto;
   ul li{
+    text-align: justify;
     font-size: 1.4rem;
   }
   p{
