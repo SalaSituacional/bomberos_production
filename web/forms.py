@@ -5,7 +5,7 @@ from django.db.models import Case, When
 
 def Asignar_ops_Personal(): 
     jerarquias = [ "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
-    personal = Personal.objects.filter(status="Activo").order_by("id").exclude(id=4)
+    personal = Personal.objects.filter(status="Activo").filter(rol="Bombero").order_by("id").exclude(id=4)
     personal_ordenado = personal.order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) )
     op = [("", "Seleccione Una Opcion")] 
     for persona in personal_ordenado: op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}")) 
@@ -13,7 +13,7 @@ def Asignar_ops_Personal():
 
 def Asignar_ops_Solicitante(): 
     jerarquias = ["General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
-    personal = Personal.objects.filter(status="Activo").order_by("id").exclude(id=4)
+    personal = Personal.objects.filter(status="Activo").filter(rol="Bombero").order_by("id").exclude(id=4)
     personal_ordenado = personal.order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) ) 
     op = [("", "Seleccione Una Opcion"), ("0", "Externo")] 
     for persona in personal_ordenado: op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}")) 
