@@ -445,7 +445,10 @@ summary > * {
   background-color: black;
 }
 
-/* ******************** Components UI ******************** */
+/* =============================== Media Querys ========================================== */
+
+
+  /* ******************** Components UI ******************** */
 
 /********************Login************/
 
@@ -1834,6 +1837,7 @@ summary > * {
 }
 .nav-bar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: end;
   align-content: end;
@@ -2602,3 +2606,395 @@ summary > * {
 #form_comisionoes{
   width: 100%;
 }
+
+@media (min-width: 1400px){
+  .inicial-carrousel-one{
+    height: 40rem;
+  }
+  .carousel-inner{
+    height: 100%;
+  }
+  .carousel-inner img{
+    object-fit: cover;
+  }
+  .content-card-comand{
+    font-size: 1.5rem;
+  }
+  .information-background p{
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 1366px) {
+  .icon-to-title{
+    margin: 0;
+  }
+  .link-to-system{
+    width: 15%;
+  }
+  .inicial-carrousel-one{
+    margin-top: 4rem;
+    width: 100%;
+  }
+  .carousel-inner img {
+    object-fit: cover;
+  }
+  .content-card-comand{
+    width: 45%;
+    font-size: 1.5rem;
+    padding: 18px;
+  }
+  .contain-comand{
+    align-items: center;
+  }
+  .information-background{
+    width: 75%;
+  }
+}
+
+@media (max-width: 1024px) {
+    .icon-to-title{
+      margin: 0;
+    }
+    .link-to-system{
+      margin: 0;
+      width: 20%;
+    }
+  
+    .inicial-carrousel-one{
+      margin-top: 5rem;
+      width: 100%;
+    }
+    .carousel-inner{
+      height: 100%;
+    }
+    .carousel-inner img {
+      object-fit: cover;
+    }
+    .link-function{
+      width: 100%;
+    }
+    .atention-person{
+      width: 45%;
+      margin-top: 10px;
+    }
+    .atention-person span{
+      text-align: center;
+      font-size: 14px;
+    }
+    .name-fuction h3{
+      text-align: center;
+    }
+    .card-comand{
+      width: 45%;
+      height: 25rem;
+    }
+    .content-card-comand{
+      width: 45%;
+      font-size: 17px;
+      padding: 18px;
+    }
+    .contain-comand{
+      align-items: center;
+    }
+    .content-card-comand h2{
+      font-size: 1.5rem;
+      text-align: center;
+      width: auto;
+    }
+    .client-info{
+      width: 100%;
+      height: 40rem;
+      margin-bottom: 2rem;
+    }
+    .background-img-info{
+      width: 100%;
+      background-position: -310px;
+    }
+    .background-img-localitation{
+      width: 100%;
+      display: none;
+    }
+    .information-background h3{
+      font-size: 2rem
+    }
+    .log-social-media{
+      flex-wrap: wrap;
+    }
+    .social-media{
+      margin: 1rem 0;
+    }
+    .social-media a{
+      margin: 0.5rem;
+    }
+    .title-blog span, .title-blog p{
+      text-align: center;
+    }
+  
+}
+
+@media (max-width: 720px) {
+  .nav{
+    max-width: 100%;
+  }
+  .icon-to-title{
+    margin: 0;
+    max-width: 100%;
+  }
+  .link-to-system{
+    margin: 0;
+    width: 35%;
+  }
+
+  .inicial-carrousel-one{
+    margin-top: 5rem;
+    width: 100%;
+  }
+  .carousel-inner{
+    height: 100%;
+  }
+  .carousel-inner img {
+    object-fit: cover;
+    object-position: top 80%;
+  }
+  .link-function{
+    width: 100%;
+  }
+  .atention-person{
+    width: 45%;
+    margin-top: 10px;
+  }
+  .atention-person span{
+    text-align: center;
+    font-size: 14px;
+  }
+  .name-fuction h3{
+    text-align: center;
+  }
+  .card-comand{
+    width: 45%;
+    height: 20rem;
+  }
+  .content-card-comand{
+    width: 45%;
+    font-size: 17px;
+    padding: 18px;
+  }
+  .contain-comand{
+    align-items: center;
+  }
+  .content-card-comand h2{
+    font-size: 1.5rem;
+    text-align: center;
+    width: auto;
+  }
+  .client-info{
+    width: 100%;
+    height: 40rem;
+    margin-bottom: 2rem;
+  }
+  .background-img-info{
+    width: 100%;
+    background-position: -310px;
+  }
+  .background-img-localitation{
+    width: 100%;
+    display: none;
+  }
+  .information-background h3{
+    font-size: 2rem
+  }
+  .log-social-media{
+    flex-wrap: wrap;
+  }
+  .social-media{
+    margin: 1rem 0;
+  }
+  .social-media a{
+    margin: 0.5rem;
+  }
+  .title-blog span, .title-blog p{
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav{
+    max-width: 100%;
+  }
+  .nav-item{
+    width: 45%;
+    text-align: center;
+  }
+  .icon-to-title{
+    margin: 0;
+    max-width: 100%;
+  }
+  .link-to-system{
+    margin: 0;
+    width: 45%;
+  }
+
+  .inicial-carrousel-one{
+    margin-top: 15.2rem;
+    width: 100%;
+  }
+  .carousel-inner{
+    height: 100%;
+  }
+  .carousel-inner img {
+    object-fit: cover;
+    object-position: top 80%;
+  }
+  .link-function{
+    width: 100%;
+  }
+  .atention-person{
+    width: 45%;
+    margin-top: 10px;
+  }
+  .atention-person span{
+    text-align: center;
+    font-size: 14px;
+  }
+  .name-fuction h3{
+    text-align: center;
+  }
+  .card-comand{
+    width: 95%;
+    height: 20rem;
+  }
+  .content-card-comand{
+    width: 100%;
+    font-size: 17px;
+    padding: 18px;
+  }
+  .content-card-comand h2{
+    font-size: 1.5rem;
+    text-align: center;
+    width: auto;
+  }
+  .segundo .contain-comand .two-comand{
+    /* Estilos */
+    order: -1;
+  }
+  .client-info{
+    width: 100%;
+    height: 40rem;
+    margin-bottom: 2rem;
+  }
+  .background-img-info{
+    width: 100%;
+    background-position: -310px;
+  }
+  .background-img-localitation{
+    width: 100%;
+    display: none;
+  }
+  .information-background h3{
+    font-size: 1.5rem
+  }
+  .log-social-media{
+    flex-wrap: wrap;
+  }
+  .social-media{
+    margin: 1rem 0;
+  }
+  .social-media a{
+    margin: 0.5rem;
+  }
+  .title-blog span, .title-blog p{
+    text-align: center;
+  }
+}
+
+@media (max-width: 375px) {
+  .nav{
+    max-width: 100%;
+  }
+  .nav-item{
+    width: 45%;
+    text-align: center;
+  }
+  .icon-to-title{
+    margin: 0;
+    max-width: 100%;
+  }
+  .link-to-system{
+    margin: 0;
+    width: 45%;
+  }
+
+  .inicial-carrousel-one{
+    margin-top: 15.2rem;
+    width: 100%;
+  }
+  .carousel-inner{
+    height: 100%;
+  }
+  .carousel-inner img {
+    object-fit: cover;
+    object-position: top 80%;
+  }
+  .link-function{
+    width: 100%;
+  }
+  .atention-person{
+    width: 45%;
+    margin-top: 10px;
+  }
+  .atention-person span{
+    text-align: center;
+    font-size: 14px;
+  }
+  .name-fuction h3{
+    text-align: center;
+  }
+  .card-comand{
+    width: 95%;
+    height: 20rem;
+  }
+  .content-card-comand{
+    width: 100%;
+    font-size: 17px;
+    padding: 18px;
+  }
+  .content-card-comand h2{
+    font-size: 1.5rem;
+    text-align: center;
+    width: auto;
+  }
+  .segundo .contain-comand .two-comand{
+    /* Estilos */
+    order: -1;
+  }
+  .client-info{
+    width: 100%;
+    height: 40rem;
+    margin-bottom: 2rem;
+  }
+  .background-img-info{
+    width: 100%;
+    background-position: -310px;
+  }
+  .background-img-localitation{
+    width: 100%;
+    display: none;
+  }
+  .information-background h3{
+    font-size: 1.5rem
+  }
+  .log-social-media{
+    flex-wrap: wrap;
+  }
+  .social-media{
+    margin: 1rem 0;
+  }
+  .social-media a{
+    margin: 0.5rem;
+  }
+  .title-blog span, .title-blog p{
+    text-align: center;
+  }
+}
+
