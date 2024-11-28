@@ -1659,7 +1659,7 @@ summary > * {
   align-content: center;
   justify-content: flex-start;
   a {
-    padding-left: 2rem;
+    padding-left: 1rem;
   }
   a:hover {
     transform: scale(1.1);
@@ -2049,8 +2049,8 @@ summary > * {
   background-size: cover;
 }
 .three-comand{
-  background-image: url('');
-  background-position: center;
+  background-image: url('https://i.postimg.cc/cCFyvy2f/IMG-20241128-131758.jpg');
+  background-position: center bottom;
   background-size: cover;
 }
 .content-card-comand{
@@ -2390,7 +2390,7 @@ summary > * {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
+  z-index: 999999999;
 }
 .spinner-border {
   position: relative;
@@ -2417,7 +2417,7 @@ summary > * {
   display: flex;
   justify-content: space-around;
   padding: 2rem;
-
+  flex-wrap: wrap;
 }
 /*------------------ instagram feed ----------*/
 
@@ -2641,6 +2641,38 @@ summary > * {
   .information-background p{
     font-size: 1.3rem;
   }
+  .to-glp{
+    background-position: center -100px;
+  }
+  .to-capacitation{
+    background-position: center 65px;
+  }
+  /* Psicologia */
+  .to-psicologa{
+    background-position: center 60px;
+  }
+  .content-text{
+    a{
+      button{
+        width: 100%;
+      }
+    }
+  }
+     /* information */
+     .to-information{
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+    .form-content{
+      height: auto;
+      padding: 2rem;
+      img{
+        position: initial;
+      }
+    }
+    .title-login{
+      font-size: 4rem;
+    }
 }
 
 @media (max-width: 1366px) {
@@ -2649,6 +2681,7 @@ summary > * {
   }
   .link-to-system{
     width: 15%;
+    margin-right: 0;
   }
   .inicial-carrousel-one{
     margin-top: 4rem;
@@ -2668,6 +2701,33 @@ summary > * {
   .information-background{
     width: 75%;
   }
+  .to-capacitation{
+    background-position: -20px 60px;
+  }
+
+  /* Psicologia */
+  .to-psicologa{
+    background-position: center 60px;
+  }
+  .content-text{
+    a{
+      button{
+        width: 100%;
+      }
+    }
+  }
+     /* information */
+     .to-information{
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+    .form-content{
+      height: auto;
+      padding: 2rem;
+      img{
+        position: initial;
+      }
+    }
 }
 
 @media (max-width: 1024px) {
@@ -2676,7 +2736,7 @@ summary > * {
     }
     .link-to-system{
       margin: 0;
-      width: 20%;
+      width: 15%;
     }
   
     .inicial-carrousel-one{
@@ -2749,7 +2809,97 @@ summary > * {
       text-align: center;
     }
   
+    /* Seccion GLP */
+   .text-inter{
+    margin: 0;
+
+    h2{ 
+      font-size: 2.3rem;
+    }
+  }
+  .to-glp{
+    background-position: center 40px;
+  }
+  .title-information-section{
+    font-size: 2.5rem;
+    padding: 1rem;
+    margin-top: 8rem;
+  }
+  .row-information{
+    flex-direction: column;
+  }
+  .content-text{
+    width: 90% ;
+  }
+  .content-image{
+    width: 90%;
+    /* height: 12rem; */
+    img{
+      border-radius: 2rem;
+    }
+  }
+  .order-by{
+    order: 1;
+  }
+  .content-text{
+    margin: 1.5rem auto;
+  }
+
+  .to-capacitation{
+    background-position: -20px 110px;
+  }
+
+  /* Psicologia */
+  .to-psicologa{
+    background-position: center 100px;
+  }
+  .content-text{
+    a{
+      button{
+        width: 100%;
+      }
+    }
+  }
+     /* information */
+     .to-information{
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+
+  /* Contacto */
+  .to-contact{
+    background-size: cover;
+    background-position: -270px;
+  }
+  .text-inter h2{
+    font-size: 1.5rem;
+  }
+  .localitation{
+    width: 80%;
+    height: 12rem;
+    flex-wrap: wrap;
+    padding: .5rem;
+  }
+  .ubication{
+    width: 70%;
+    padding: .5rem;
+    order: 1;
+  }
+  #stationInfo{
+    padding: .5rem;
+    #stationAddress{
+      margin-top: .5rem;
+      display: block;
+      text-align: center;
+    }
+    
+  }
+  .iframe-maps{
+    width: 100%;
+    bottom: 12rem;
+  }
 }
+
 @media (max-width: 990px) {
   .navbar-collapse{
     order: 1;
@@ -2758,6 +2908,13 @@ summary > * {
     margin: 0;
     width: 25%;
   }
+   /* information */
+   .to-information{
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+
+  
 }
 
 @media (max-width: 720px) {
@@ -2843,19 +3000,146 @@ summary > * {
   .title-blog span, .title-blog p{
     text-align: center;
   }
+   /* Seccion GLP */
+   .text-inter{
+    margin: 0;
+
+    h2{ 
+      font-size: 2.3rem;
+    }
+  }
+  .to-glp{
+    background-position: -250px 40px;
+  }
+  .title-information-section{
+    font-size: 2.5rem;
+    padding: 1rem;
+  }
+  .row-information{
+    flex-direction: column;
+  }
+  .content-text{
+    width: 90% ;
+  }
+  .content-image{
+    width: 90%;
+    /* height: 12rem; */
+    img{
+      border-radius: 2rem;
+    }
+  }
+  .order-by{
+    order: 1;
+  }
+  .content-text{
+    margin: 1.5rem auto;
+  }
+  .to-capacitation{
+    background-position: -320px 65px;
+  }
+
+  /* Psicologia */
+  .to-psicologa{
+    background-position: center 60px;
+  }
+  .content-text{
+    a{
+      button{
+        width: 100%;
+      }
+    }
+  }
+   /* information */
+   .to-information{
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+   /* Captacion */
+   .title-information-section{
+    margin-top: 9rem
+  }
+  .content-text{
+    h3{
+      font-size: 2.5rem;
+    }
+  }
+
+  /* ZOEDAN */
+.information-aboutme{
+  h3{
+    font-size: 2rem;
+  }
+}
+.list-valores{
+  flex-direction: column;
+  align-items: center;
+  ul{
+    width: 70%;
+    margin: 0;
+  }
+  ul li a{
+    font-size: 2rem;
+    
+  }  
+} 
+.content-image{
+  width: 95%;
+  height: 20rem;
+}
+
+/* Contacto */
+.to-contact{
+  background-size: cover;
+  background-position: -270px;
+}
+.text-inter h2{
+  font-size: 1.5rem;
+}
+.localitation{
+  width: 80%;
+  height: 12rem;
+  flex-wrap: wrap;
+  padding: .5rem;
+}
+.ubication{
+  width: 70%;
+  padding: .5rem;
+  order: 1;
+}
+#stationInfo{
+  padding: .5rem;
+  #stationAddress{
+    margin-top: .5rem;
+    display: block;
+    text-align: center;
+  }
+  
+}
+.iframe-maps{
+  width: 100%;
+  bottom: 12rem;
+}
+
+/*Loginn  */
+.link-to-back{
+  a{
+    padding: 0;
+  }
+}
 }
 
 @media (max-width: 480px) {
-  .nav{
-    max-width: 100%;
-  }
   .nav-item{
     width: 45%;
     text-align: center;
   }
   .icon-to-title{
-    margin: 0;
-    max-width: 100%;
+    margin: 0 3rem;
+    width: 70%;
+    order: -1;
+  }
+  .navbar-toggler{
+    width: auto;
   }
   .link-to-system{
     margin: 0;
@@ -2863,7 +3147,7 @@ summary > * {
   }
 
   .inicial-carrousel-one{
-    margin-top: 15.2rem;
+    margin-top: 8rem;
     width: 100%;
   }
   .carousel-inner{
@@ -2932,12 +3216,161 @@ summary > * {
   }
   .title-blog span, .title-blog p{
     text-align: center;
+  }
+
+  /* Seccion GLP */
+  .text-inter{
+    margin: 0;
+
+    h2{ 
+      font-size: 2.3rem;
+    }
+  }
+  .to-glp{
+    background-position: -550px 40px;
+  }
+  .title-information-section{
+    font-size: 2.5rem;
+    padding: 1rem;
+  }
+  .row-information{
+    flex-direction: column;
+  }
+  .content-text{
+    width: 90% ;
+  }
+  .content-image{
+    width: 90%;
+    /* height: 12rem; */
+    img{
+      border-radius: 2rem;
+    }
+  }
+  .order-by{
+    order: 1;
+  }
+  .content-text{
+    margin: 1.5rem auto;
+  }
+
+  .to-brigate{
+    background-position: center 40px;
+  }
+  /*  Seguridad y Prevencion */
+  .to-prevencion{
+    background-position: -280px 40px;
+  }
+
+  /* Capacitacion */
+  .to-capacitation{
+    background-position: -400px 130px;
+  }
+  .image-information{
+    width: 100%;
+  }
+
+  /* Psicologia */
+  .to-psicologa{
+    background-position: center 130px;
+  }
+  .content-text{
+    a{
+      button{
+        width: 100%;
+      }
+    }
+  }
+ /* information */
+ .to-information{
+  background-repeat: no-repeat;
+  background-position: -350px center;
+}
+ /* Captacion */
+ .title-information-section{
+  margin-top: 9rem
+}
+.content-text{
+  h3{
+    font-size: 2.5rem;
   }
 }
 
+/* ZOEDAN */
+.information-aboutme{
+  h3{
+    font-size: 2rem;
+  }
+}
+.list-valores{
+  flex-direction: column;
+  align-items: center;
+  ul{
+    width: 70%;
+    margin: 0;
+  }
+  ul li a{
+    font-size: 2rem;
+    
+  }  
+} 
+.content-image{
+  width: 95%;
+  height: 15rem;
+}
+
+/* Contacto */
+.to-contact{
+  background-size: cover;
+  background-position: -270px;
+}
+.text-inter h2{
+  font-size: 1.5rem;
+}
+.localitation{
+  width: 80%;
+  height: 12rem;
+  flex-wrap: wrap;
+  padding: .5rem;
+}
+.ubication{
+  width: 70%;
+  padding: .5rem;
+  order: 1;
+}
+#stationInfo{
+  padding: .5rem;
+  #stationAddress{
+    margin-top: .5rem;
+    display: block;
+    text-align: center;
+  }
+  
+}
+.iframe-maps{
+  width: 100%;
+  bottom: 12rem;
+}
+
+/*Loginn  */
+.icons{
+  img{
+    width: 4rem;
+  }
+}
+.title-login{
+  font-size: 2.5rem;
+}
+.link-to-back{
+  a{
+    padding: 0;
+  }
+}
+}
+
 @media (max-width: 375px) {
+  /* Blog e Inicio */
   .nav{
-    max-width: 100%;
+    width: 100%;
   }
   .nav-item{
     width: 45%;
@@ -2945,7 +3378,8 @@ summary > * {
   }
   .icon-to-title{
     margin: 0;
-    max-width: 100%;
+    width: 100%;
+    order: -1;
   }
   .link-to-system{
     margin: 0;
@@ -2953,7 +3387,7 @@ summary > * {
   }
 
   .inicial-carrousel-one{
-    margin-top: 15.2rem;
+    margin-top: 6rem;
     width: 100%;
   }
   .carousel-inner{
@@ -3022,5 +3456,120 @@ summary > * {
   }
   .title-blog span, .title-blog p{
     text-align: center;
+  }
+
+  /* Seccion GLP */
+  .text-inter{
+    margin: 0;
+
+    h2{ 
+      font-size: 2.3rem;
+    }
+  }
+  .to-glp{
+    background-position: -550px 40px;
+  }
+  .title-information-section{
+    font-size: 2.5rem;
+    margin-bottom: 0;
+  }
+  .row-information{
+    flex-direction: column;
+    padding: .5rem;
+  }
+  .content-text{
+    width: 90% ;
+  }
+  .content-image{
+    width: 90%;
+    /* height: 12rem; */
+    img{
+      border-radius: 2rem;
+    }
+  }
+  .order-by{
+    order: 1;
+  }
+  .content-text{
+    margin: 1.5rem auto;
+  }
+  /* Brigada */
+  .to-brigate{
+    background-position: center 40px;
+  }
+  /*  sERVICIOS mEDICOS */
+  .to-services-medicos{
+    background-position: right top;
+  }
+  /*  Seguridad y Prevencion */
+  .to-prevencion{
+    background-position: -280px 40px;
+  }
+  /* Capacitacion */
+  .to-capacitation{
+    background-position: -400px 130px;
+  }
+  .image-information{
+    width: 100%;
+  }
+  /* Psicologia */
+  .to-psicologa{
+    background-position: center 130px;
+  }
+  .content-text{
+    a{
+      button{
+        width: 100%;
+      }
+    }
+  }
+  /* information */
+  .to-information{
+    background-repeat: no-repeat;
+    background-position: -400px center;
+  }
+  /* Captacion */
+  .title-information-section{
+    margin-top: 9rem
+  }
+  .content-text{
+    h3{
+      font-size: 2.5rem;
+    }
+  }
+  /* ZOEDAN */
+  .information-aboutme{
+    h3{
+      font-size: 2rem;
+    }
+  }
+  .list-valores{
+    ul{
+      width: 100%;
+      margin: 0;
+    }
+    ul li a{
+      font-size: 1.3rem;
+      
+    }  
+  } 
+  .content-image{
+    width: 100%;
+    height: 15rem;
+  }
+
+  /*Loginn  */
+  .icons{
+    img{
+      width: 3.5rem;
+    }
+  }
+  .title-login{
+    font-size: 2rem;
+  }
+  .link-to-back{
+    a{
+      padding: 0;
+    }
   }
 }
