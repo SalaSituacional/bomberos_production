@@ -2205,7 +2205,18 @@ summary > * {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center top;
-
+}
+.to-glp{
+  background-image: url(https://i.postimg.cc/Y9f024Sy/IMG-20241128-WA0063.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center -20px;
+}
+.to-prevencion{
+  background-image: url(https://i.postimg.cc/h4YvDq4n/IMG-20241128-WA0033.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center top;
 }
 .text-inter{
   margin-left: 4rem;
