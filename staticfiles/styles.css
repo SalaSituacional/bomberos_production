@@ -550,6 +550,7 @@ summary > * {
     transition: all 0.2s ease-in-out;
   }
 }
+
 .icons-footer {
   position: absolute;
   bottom: 2rem;
@@ -1798,11 +1799,16 @@ summary > * {
 .nav {
   display: flex;
   position: fixed;
-  z-index: 99999999;
-  background-color: white;
-  justify-content: center;
-  height: auto;
   width: 100%;
+  height: auto;
+  z-index: 99999999;
+  align-items: center;
+  background-color: white;
+  justify-content: space-evenly;
+}
+.navbar-toggler-icon{
+  width: 4rem;
+  height: auto;
 }
 .icon-to-title {
   margin-left: 1rem;
@@ -2118,6 +2124,7 @@ summary > * {
   font-size: 4rem;
   color: #B2150C;
   font-family: var(--Londrina);  
+  margin-top: 5rem;
 }
 .rows-images-information{
   width: 100%;
@@ -2743,6 +2750,15 @@ summary > * {
     }
   
 }
+@media (max-width: 990px) {
+  .navbar-collapse{
+    order: 1;
+  }
+  .link-to-system{
+    margin: 0;
+    width: 25%;
+  }
+}
 
 @media (max-width: 720px) {
   .nav{
@@ -2754,7 +2770,7 @@ summary > * {
   }
   .link-to-system{
     margin: 0;
-    width: 35%;
+    width: 30%;
   }
 
   .inicial-carrousel-one{
@@ -3008,4 +3024,3 @@ summary > * {
     text-align: center;
   }
 }
-

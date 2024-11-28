@@ -16,7 +16,32 @@
     <link rel="stylesheet" href="../static/styles.css" />
   </head>
   <body>
-    <div class="nav">
+    <div class="nav navbar-expand-lg bg-body-tertiary">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="120"
+            height="120"
+            class="bi"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
+            ></path>
+          </svg>
+        </span>
+      </button>
       <div class="icon-to-title">
         <div class="icon">
           <img src="../static/assets/logo bomberos 2.svg" alt="Logo bomberos" />
@@ -26,72 +51,88 @@
           <span>Disciplina y Abnegacion</span>
         </div>
       </div>
-      <nav class="nav-bar">
-        <li class="nav-item">
-          <a class="nav-link" href="/">Inicio</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            data-bs-toggle="dropdown"
-            href="/informacion/"
-            role="button"
-            aria-expanded="false"
-            >Informacion</a
-          >
-          <ul class="dropdown-menu">
-            <li>
-              <a class="dropdown-item" href="/informacion/">Reseña Historica</a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="/informacion/#mision">Mision</a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="/informacion/#vision">Vision</a>
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            data-bs-toggle="dropdown"
-            href="/noticias/"
-            role="button"
-            aria-expanded="false"
-            >Noticias</a
-          >
-          <ul class="dropdown-menu">
-            <li>
-              <a class="dropdown-item" href="/proceso_captacion/"
-                >Proceso de Captacion</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" href="/noticias/#publicaciones"
-                >Publicaciones</a
-              >
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            data-bs-toggle="dropdown"
-            href="/zoedan/"
-            role="button"
-            aria-expanded="false"
-            >Zoedan Tachira</a
-          >
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/zoedan/#informacion-zoedan">Informacion</a></li>
-            <li><a class="dropdown-item" href="/zoedan/#Ubicaciones-zoedan">Ubicaciones</a></li>
-            <li><a class="dropdown-item" href="/zoedan/#estaciones-zoedan">Estaciones</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/contacto/">Contacto</a>
-        </li>
-      </nav>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <nav class="nav-bar">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Inicio</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="/informacion/"
+              role="button"
+              aria-expanded="false"
+              >Informacion</a
+            >
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="/informacion/"
+                  >Reseña Historica</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="/informacion/#mision">Mision</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/informacion/#vision">Vision</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="/noticias/"
+              role="button"
+              aria-expanded="false"
+              >Noticias</a
+            >
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="/proceso_captacion/"
+                  >Proceso de Captacion</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="/noticias/#publicaciones"
+                  >Publicaciones</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              data-bs-toggle="dropdown"
+              href="/zoedan/"
+              role="button"
+              aria-expanded="false"
+              >Zoedan Tachira</a
+            >
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="/zoedan/#informacion-zoedan"
+                  >Informacion</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="/zoedan/#Ubicaciones-zoedan"
+                  >Ubicaciones</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="/zoedan/#estaciones-zoedan"
+                  >Estaciones</a
+                >
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/contacto/">Contacto</a>
+          </li>
+        </nav>
+      </div>
       <div class="link-to-system">
         <a href="/login/">
           <svg
