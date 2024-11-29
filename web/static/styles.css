@@ -2728,6 +2728,10 @@ summary > * {
         position: initial;
       }
     }
+
+    .content-image{
+      height: auto;
+    }
 }
 
 @media (max-width: 1024px) {
@@ -3084,7 +3088,7 @@ summary > * {
 } 
 .content-image{
   width: 95%;
-  height: 20rem;
+  height: auto;
 }
 
 /* Contacto */
@@ -3122,9 +3126,28 @@ summary > * {
 
 /*Loginn  */
 .link-to-back{
+  width: 3rem;
   a{
     padding: 0;
   }
+}
+.icons{
+  img{
+    height: 4rem;
+  }
+}
+.title-login{
+  font-size: 2.5rem;
+}
+.icons-footer{
+  position: absolute;
+  bottom: 0;
+}
+.img-background{
+  background-position: -250px;
+}
+.form-content img{
+  height: 5rem;
 }
 }
 
@@ -3315,7 +3338,7 @@ summary > * {
 } 
 .content-image{
   width: 95%;
-  height: 15rem;
+  height: auto;
 }
 
 /* Contacto */
@@ -3354,7 +3377,7 @@ summary > * {
 /*Loginn  */
 .icons{
   img{
-    width: 4rem;
+    width: 3rem;
   }
 }
 .title-login{
@@ -3364,6 +3387,21 @@ summary > * {
   a{
     padding: 0;
   }
+}
+
+.form-content {
+  padding: 1rem;
+}
+
+.form-content img{
+  height: 5rem;
+}
+.icons-footer{
+  position: absolute;
+  bottom: 0;
+}
+.img-background{
+  background-position: -250px;
 }
 }
 
@@ -3555,7 +3593,7 @@ summary > * {
   } 
   .content-image{
     width: 100%;
-    height: 15rem;
+    height: auto;
   }
 
   /*Loginn  */
@@ -3564,6 +3602,9 @@ summary > * {
       width: 3.5rem;
     }
   }
+  .img-background{
+    background-position: -250px;
+  }
   .title-login{
     font-size: 2rem;
   }
@@ -3571,5 +3612,12 @@ summary > * {
     a{
       padding: 0;
     }
+  }
+  .form-content img{
+    height: 5rem;
+  }
+  .icons-footer{
+    position: absolute;
+    bottom: 0;
   }
 }
