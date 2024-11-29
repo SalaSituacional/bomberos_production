@@ -2573,13 +2573,15 @@ summary > * {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  margin-top: 2rem;
 }
 .card-gallery{
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   align-content: center;
+  width: 25%;
   img{
     width: 20rem;
     height: auto;
@@ -2902,6 +2904,11 @@ summary > * {
     width: 100%;
     bottom: 12rem;
   }
+
+  /* Galeria */
+  .card-gallery{
+    width: 30%;
+  }
 }
 
 @media (max-width: 990px) {
@@ -3148,6 +3155,11 @@ summary > * {
 }
 .form-content img{
   height: 5rem;
+}
+
+/* Galeria */
+.card-gallery{
+  width: 85%;
 }
 }
 
