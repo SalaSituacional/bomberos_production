@@ -139,7 +139,7 @@
   </div>
 </div>  
 <!-- div general-dashboard fin -->
-<div class="modal fade" tabindex="-1" id="modal-info">
+<div class="modal fade personal_modal" tabindex="-1" id="modal-info">
   <div class="modal-dialog modal-xl">
     <div class="modal-content modal-content-two">
       <div class="modal-header header-dashboard-two">
@@ -156,7 +156,7 @@
           <h2>Registrar Personal</h2>
             <form action="" method="post">
               {% csrf_token %}
-              <div class="form-style" id="form_general">{{ form_personal.as_div }}</div>
+              <div class="form-style form_personal" id="form_general">{{ form_personal.as_div }}</div>
               <!-- Boton Enviar -->
               <div class="modal-footer modal-footer-personal">
                 <button type="submit" id="button_submit" class="btn btn-danger btn-center">
@@ -173,8 +173,8 @@
   </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="modal-mod">
-  <div class="modal-dialog modal-xl">
+<div class="modal fade personal_modal" tabindex="-1" id="modal-mod">
+  <div class="modal-dialog modal-xl ">
     <div class="modal-content modal-content-two">
       <div class="modal-header header-dashboard-two">
         <section class="title-icon">
@@ -186,7 +186,7 @@
         <section class="info-modal personal-register" id="info_modal">
           <h2>Editar Personal</h2>
           <form action="{% url 'edit_personal' %}" method="POST">
-            <div class="form-style">
+            <div class="form-style form_personal">
               {% csrf_token %}
 
               <!-- Campo oculto para el ID -->
