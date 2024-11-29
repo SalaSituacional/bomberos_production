@@ -3351,7 +3351,7 @@ summary > * {
 }
 .localitation{
   width: 80%;
-  height: 12rem;
+  height: auto;
   flex-wrap: wrap;
   padding: .5rem;
 }
