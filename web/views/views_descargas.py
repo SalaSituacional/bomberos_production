@@ -420,7 +420,7 @@ def generar_excel_personal(request):
 
     # Configurar la respuesta HTTP para descargar el archivo
     response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    response["Content-Disposition"] = "attachment; filename=procedimientos.xlsx"
+    response["Content-Disposition"] = "attachment; filename=personal.xlsx"
     workbook.save(response)
     return response
 
