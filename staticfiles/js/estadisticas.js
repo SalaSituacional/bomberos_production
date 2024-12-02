@@ -308,6 +308,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
   let chart; // Declarar chart fuera de las funciones para que sea accesible
+  const ctx6 = document.getElementById("bar").getContext("2d");
 
   // Función para obtener datos de la API con la función fetchWithLoader
   async function fetchDivisiones(mes = "") {
@@ -324,9 +325,7 @@ document.addEventListener("DOMContentLoaded", function () {
     for (const [division, detalles] of Object.entries(data)) {
       const count = detalles.total || 0; // Solo total
 
-      const card = document.querySelector(
-        `li[data-division="${division}"] .count`
-      );
+      const card = document.querySelector(`li[data-division="${division}"] .count`);
       if (card) {
         card.textContent = count;
       }
@@ -335,12 +334,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Extrae divisiones y totales para la gráfica
   function obtenerDivisiones(data) {
-    const divisionesList = [];
-    for (const [division, detalles] of Object.entries(data)) {
-      // Solo tomar el total
-      divisionesList.push({ division, count: detalles.total || 0 });
-    }
-    return divisionesList;
+    return Object.entries(data).map(([division, detalles]) => ({
+      division,
+      count: detalles.total || 0,
+    }));
   }
 
   // Función para inicializar los datos
@@ -350,13 +347,13 @@ document.addEventListener("DOMContentLoaded", function () {
     actualizarGrafica(data); // Crear la gráfica
   }
 
-  // Actualiza o crea la gráfica de barras
+  // Crear o actualizar el gráfico de barras con los datos proporcionados
   function actualizarGrafica(data) {
     const divisiones = obtenerDivisiones(data);
     const labels = divisiones.map((item) => item.division);
     const values = divisiones.map((item) => item.count);
 
-    const ctx6 = document.getElementById("bar").getContext("2d");
+    const fontSize = window.innerWidth < 376 ? 10 : 15; // Tamaño dinámico de fuente
 
     // Destruir el gráfico existente si ya está creado
     if (chart) {
@@ -373,8 +370,8 @@ document.addEventListener("DOMContentLoaded", function () {
             label: "Procedimientos",
             data: values,
             borderWidth: 1,
-            backgroundColor: colors,
-            borderColor: colors,
+            backgroundColor: colors, // Colores para las barras
+            borderColor: colors, // Colores de bordes
           },
         ],
       },
@@ -384,23 +381,31 @@ document.addEventListener("DOMContentLoaded", function () {
           legend: { display: false },
         },
         scales: {
-          x: { ticks: { font: { size: 15 } } },
-          y: { ticks: { font: { size: 18 } } },
+          x: { ticks: { font: { size: fontSize } } },
+          y: { ticks: { font: { size: fontSize + 3 } } }, // Incremento para el eje Y
         },
       },
     });
   }
 
+  // Ajusta el tamaño de fuente del gráfico según el tamaño de la ventana
+  async function updateChartOnResize() {
+    const data = await fetchDivisiones(); // Obtener los datos actuales
+    actualizarGrafica(data); // Reconstruir el gráfico con el nuevo tamaño de fuente
+  }
+
   // Manejar el evento de cambio del input de mes
-  document
-    .getElementById("month-picker")
-    .addEventListener("change", async (event) => {
-      const mesSeleccionado = event.target.value; // Obtener el valor del mes seleccionado
-      const data = await fetchDivisiones(mesSeleccionado); // Llamar a la API con el mes seleccionado
-      updateCards(data); // Actualizar las tarjetas
-      actualizarGrafica(data); // Actualizar la gráfica
-    });
+  document.getElementById("month-picker").addEventListener("change", async (event) => {
+    const mesSeleccionado = event.target.value; // Obtener el valor del mes seleccionado
+    const data = await fetchDivisiones(mesSeleccionado); // Llamar a la API con el mes seleccionado
+    updateCards(data); // Actualizar las tarjetas
+    actualizarGrafica(data); // Actualizar la gráfica
+  });
+
+  // Ajustar el tamaño de fuente al cambiar el tamaño de la ventana
+  window.addEventListener("resize", updateChartOnResize);
 
   // Inicializar al cargar la página
-  window.onload = init;
+  init();
 });
+

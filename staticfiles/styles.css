@@ -3563,8 +3563,63 @@ summary > * {
 .mod-title-width{
   width: auto;
 }
+.title-icon h1{
+  font-size: 1.2rem;
+}
+.title-icon img{
+  width: 2.2rem;
+  margin-right: 1rem;
+}
+.navbar-toggler-icon{
+  width: 2.2rem;
+}
 
-/* Quedo Pendiente Hacer las medias apartir de los formularios de "Procedimientos" */
+.div-user-name{
+  padding: 0;
+  justify-content: center;
+}
+
+.section-filter{
+  flex-direction: column;
+}
+.filter-search {
+  width: 100%;
+  input, select{
+    width: 17rem;
+  }
+}
+.totals-procediments{
+  width: 55%;
+  align-self: flex-start;
+  text-align: start;
+}
+.table {
+  width: 380%;
+}
+.division-title{
+  margin-left: 0.5rem;
+}
+.section-left section{
+  max-height: 100%;
+}
+.stadist-column{
+  width: 100%;
+}
+.graphic-bar{
+  width: 100%;
+}
+.barts{
+  height: 510px;
+}
+.bar-graphic{
+padding: 0 1rem;
+}
+.title-bar{
+  width: 100%;
+}
+.feed-instagram{
+  width: 100%;
+}
 }
 
 @media (max-width: 375px) {
@@ -3781,5 +3836,112 @@ summary > * {
   .icons-footer{
     position: absolute;
     bottom: 0;
+  }
+
+  /* SISTEMA */
+
+  .card-parroquies {
+    width: 45%;
+
+    p{
+      font-size: 1rem;
+    }
+    span{
+      font-size: 1.5rem;
+    }
+  }
+  #btn-total-one, #btn-month-one, #btn-today-one, #btn-total, #btn-month, #btn-today, #total, #mes{
+    padding: 0 .5rem;
+  }
+  .title-procediments{
+    font-size: 1.1rem;
+  }
+  .user-name{
+    p{
+      font-size: .9rem;
+    }
+  }
+  .items-row{
+    flex-direction: column;
+  }
+  .style-two{
+    width: 100%;
+  }
+  .items-list li{
+    margin: .5rem 0;
+  }
+  .title-stadist-parroquies {
+    width: 70%;
+  }
+  .graphic-statistics {
+    height: 400px;
+  }
+  .analitics-filters{
+    width: 100%;
+  }
+  .tools-exit-help {
+    img {
+      width: 1.5rem;
+    } 
+  }
+  .title-icon{
+    margin-left: .3rem;
+  }
+  .title-icon img{
+    width: 1.8rem;
+    margin-left: 1.2rem;
+  }
+  .user-name{
+    p{
+      font-size: 0.8rem;
+    }
+  }
+  .offcanvas {
+    width: 80% !important;
+  }
+  .nav-item {
+    width: 80%;
+    text-align: start;
+  }
+  .progress{
+    margin-top: 0;
+  }
+  .division-title{
+    font-size: 1rem
+  }
+  .accion-personal{
+    font-size: 1.1rem;
+  }
+  .accion-personal button svg{
+    max-width: 70%;
+  }
+  .title-icon{
+    font-size: 1.1rem;
+  }
+  .personal-register{
+    width: 90%;
+  }
+  .form-style {
+    width: 100%;
+  }
+  .data_form form {
+    width: 85%;
+  }
+  .totals-procediments{
+    width: 80%;
+  }
+  .filter-search {
+    input, select {
+        width: 11rem;
+    }
+  }
+  .table {
+    width: 520%;
+  }
+  .info-modal p{
+    font-size: .9rem;
+  }
+  .title-icon h2{
+    font-size: 1.5rem;
   }
 }
