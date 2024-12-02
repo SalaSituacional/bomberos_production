@@ -2026,13 +2026,14 @@ summary > * {
   height: 35rem;
 }
 .two-comand{
-  background-image: url('https://i.postimg.cc/8C3MfXLf/IMG-20241126-133718.jpg');
+  background-image: url('');
   background-position: center;
   background-size: cover;
+  background-color: gray;
 }
 .three-comand{
-  background-image: url('https://i.postimg.cc/cCFyvy2f/IMG-20241128-131758.jpg');
-  background-position: center bottom;
+  background-image: url('https://i.postimg.cc/KjPxpBDR/IMG-20241202-080606.jpg');
+  background-position: center top;
   background-size: cover;
 }
 .content-card-comand{
@@ -2292,6 +2293,7 @@ summary > * {
   display: flex;
   flex-direction: column;
   align-content: center;
+  justify-content: center;
   width: 70%;
   height: auto;
   h3{
