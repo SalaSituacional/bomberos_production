@@ -2973,7 +2973,7 @@ summary > * {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .nav{
     max-width: 100%;
   }
@@ -3222,7 +3222,7 @@ summary > * {
   width: 220%;
 }
 .filter-search{
-  width: 68%;
+  width: 80%;
   justify-content: space-between;
 }
 .division-title{
@@ -3249,6 +3249,22 @@ summary > * {
 #detalles-form{
     width: 100%;
   }
+  .accion-filter{
+    width: 100%;
+    order: 1;
+  }
+.personal-register {
+  width: 100%;
+}
+.section-left {
+  section {
+      max-height: 100%;
+  }
+}
+}
+
+@media (max-width: 720px) {
+ 
 }
 
 @media (max-width: 480px) {
