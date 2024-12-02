@@ -895,7 +895,7 @@ summary > * {
   align-items: flex-start;
   border-radius: 2rem;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   margin-top: 2rem;
   margin-bottom: 2rem;
@@ -931,9 +931,6 @@ summary > * {
     outline: none;
     border: thin solid rgb(114, 114, 114);
   }
-}
-.mod-title-width {
-  width: 58rem;
 }
 .position {
   position: relative;
@@ -2602,12 +2599,14 @@ summary > * {
 .margin-bottom{
   margin-bottom: 1rem;
   display: flex;
-  justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
-  width: 80%;
+  width: 85%;
 }
 #form_comisionoes{
+  width: 100%;
+}
+#detalles-form{
   width: 100%;
 }
 
