@@ -2973,7 +2973,7 @@ summary > * {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .nav{
     max-width: 100%;
   }
@@ -3249,10 +3249,10 @@ summary > * {
 #detalles-form{
     width: 100%;
   }
-  .accion-filter{
+.accion-filter{
     width: 100%;
     order: 1;
-  }
+}
 .personal-register {
   width: 100%;
 }
@@ -3261,10 +3261,6 @@ summary > * {
       max-height: 100%;
   }
 }
-}
-
-@media (max-width: 720px) {
- 
 }
 
 @media (max-width: 480px) {
@@ -3967,7 +3963,7 @@ padding: 0 1rem;
   }
   .filter-search {
     input, select {
-        width: 11rem;
+        width: 10rem;
     }
   }
   .table {
@@ -3987,4 +3983,95 @@ padding: 0 1rem;
   .form-style{
     width: 20rem;
   }
+  .input-group-text{
+    font-size: 0.8rem;
+  }
+  .offcanvas-title{
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .icon-to-title{
+    justify-content: center;
+  }
+  .title-blog {
+    width: auto;
+    span{
+      font-size: 0.9rem;
+    }
+    p{
+      font-size: 1.1rem;
+    }
+  } 
+  .link-to-system{
+    height: 2.2rem;
+    width: 35%;
+    font-size: 1rem;
+    align-items: center;
+    svg{
+      width: 1.5rem;
+    }
+  }
+  .icon{
+    img{
+      width: 3rem;
+      margin: 0 0.5rem;
+    }
+  }
+  .inicial-carrousel-one{
+    margin-top: 5rem;
+  }
+  .to-capacitation {
+    background-position: -406px 85px;
+  }
+  .text-inter {
+    h2 {
+        font-size: 2rem;
+    }
+}
+.to-psicologa {
+  background-position: center 85px;
+}
+.iframe-maps {
+  bottom: 13rem;
+}
+.nav-item{
+  width: 90%;
+}
+.form-style {
+  width: 16rem;
+}
+.filter-search{
+  input{
+    width: 8rem;
+  }
+}
+.totals-procediments{
+  b{
+    font-size: 1rem;
+  }
+  span{
+    font-size: 0.9rem;
+  }
+}
+.table{
+  width: 600%;
+}
+.barts {
+  height: 320px;
+}
+.feed-instagram{
+  padding: 1rem;
+}
+.form-feed-instagram{
+  flex-direction: column;
+  width: 100%;
+
+  button{
+    margin: .5rem auto;
+    width: 70%;
+  }
+}
+
 }
