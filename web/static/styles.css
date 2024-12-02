@@ -3235,6 +3235,21 @@ summary > * {
 .cards-stadist-rows{
   width: 30rem;
 }
+.data_form > form{
+  width: 100%;
+}
+.mod-title-width{
+  width: auto;
+}
+.form-style div {
+  width: 40%;
+}
+.form-style select, .form-style input {
+    width: 100%;
+  }
+#detalles-form{
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -3622,6 +3637,9 @@ padding: 0 1rem;
 .feed-instagram{
   width: 100%;
 }
+.data_form > form{
+  width: 100%;
+}
 }
 
 @media (max-width: 375px) {
@@ -3822,7 +3840,7 @@ padding: 0 1rem;
     }
   }
   .img-background{
-    background-position: -250px;
+    background-position: -445px;
   }
   .title-login{
     font-size: 2rem;
@@ -3945,5 +3963,13 @@ padding: 0 1rem;
   }
   .title-icon h2{
     font-size: 1.5rem;
+  }
+  .items-list-procediments {
+    li {
+        font-size: 1rem;
+    }
+  }
+  .form-style{
+    width: 20rem;
   }
 }

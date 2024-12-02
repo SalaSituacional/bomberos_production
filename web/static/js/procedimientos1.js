@@ -376,6 +376,9 @@ document
         mostrarElement("tipos_procedimientos")
         mostrarElement("tipos_procedimientos_title")
         document.getElementById("id_form4-tipo_procedimiento").parentElement.querySelector("label").textContent = "Tipo de Atencion"
+
+        ocultElement("form_comisionoes")
+
         requiredFalse()
         break;
       case "7":
@@ -387,6 +390,7 @@ document
         ocultElement("psicologia")
         mostrarElement("tipos_procedimientos")
         mostrarElement("tipos_procedimientos_title")
+        ocultElement("form_comisionoes")
         requiredFalse()
         break;
       case "8":
@@ -398,6 +402,7 @@ document
         mostrarElement("psicologia")
         mostrarElement("tipos_procedimientos")
         mostrarElement("tipos_procedimientos_title")
+        ocultElement("form_comisionoes")
         requiredFalse()
         break;
       case "9":
@@ -409,6 +414,7 @@ document
         ocultElement("tipos_procedimientos")
         ocultElement("tipos_procedimientos_title")
         mostrarElement("capacitacion")
+        ocultElement("form_comisionoes")
         requiredFalse()
         let input_solicitante = document.getElementById("id_form_capacitacion-solicitante")
         let seleccion = document.getElementById("id_form_capacitacion-dependencia")
