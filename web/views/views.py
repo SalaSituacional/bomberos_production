@@ -360,12 +360,16 @@ def View_Procedimiento(request):
                 nuevo_procedimiento.save()
 
                 if form_comision.cleaned_data["agregar"] == True:
+                    cedula = datos_comision_uno.cleaned_data["cedula_oficial"] 
+                    nacionalidad = datos_comision_uno.cleaned_data["nacionalidad"]
+
+
                     nueva_comsion = Comisiones(
                         procedimiento = nuevo_procedimiento,
                         comision = Tipos_Comision.objects.get(id=datos_comision_uno.cleaned_data["comision"]),
                         nombre_oficial = datos_comision_uno.cleaned_data["nombre_oficial"],
                         apellido_oficial = datos_comision_uno.cleaned_data["apellido_oficial"],
-                        cedula_oficial = datos_comision_uno.cleaned_data["cedula_oficial"],
+                        cedula_oficial = f"{nacionalidad}- {cedula}",
                         nro_unidad = datos_comision_uno.cleaned_data["nro_unidad"],
                         nro_cuadrante = datos_comision_uno.cleaned_data["nro_cuadrante"],
                     )
@@ -373,24 +377,30 @@ def View_Procedimiento(request):
                     nueva_comsion.save()
 
                     if datos_comision_uno.cleaned_data["agregar"] == True:
+                        cedula = datos_comision_dos.cleaned_data["cedula_oficial"] 
+                        nacionalidad = datos_comision_dos.cleaned_data["nacionalidad"]
+
                         nueva_comsion = Comisiones(
                             procedimiento = nuevo_procedimiento,
                             comision = Tipos_Comision.objects.get(id=datos_comision_dos.cleaned_data["comision"]),
                             nombre_oficial = datos_comision_dos.cleaned_data["nombre_oficial"],
                             apellido_oficial = datos_comision_dos.cleaned_data["apellido_oficial"],
-                            cedula_oficial = datos_comision_dos.cleaned_data["cedula_oficial"],
+                            cedula_oficial = f"{nacionalidad}- {cedula}",
                             nro_unidad = datos_comision_dos.cleaned_data["nro_unidad"],
                             nro_cuadrante = datos_comision_dos.cleaned_data["nro_cuadrante"],
                         )
                         nueva_comsion.save()
 
                         if datos_comision_dos.cleaned_data["agregar"] == True:
+                            cedula = datos_comision_tres.cleaned_data["cedula_oficial"] 
+                            nacionalidad = datos_comision_tres.cleaned_data["nacionalidad"]
+
                             nueva_comsion = Comisiones(
                                 procedimiento = nuevo_procedimiento,
                                 comision = Tipos_Comision.objects.get(id=datos_comision_tres.cleaned_data["comision"]),
                                 nombre_oficial = datos_comision_tres.cleaned_data["nombre_oficial"],
                                 apellido_oficial = datos_comision_tres.cleaned_data["apellido_oficial"],
-                                cedula_oficial = datos_comision_tres.cleaned_data["cedula_oficial"],
+                                cedula_oficial = f"{nacionalidad}- {cedula}",
                                 nro_unidad = datos_comision_tres.cleaned_data["nro_unidad"],
                                 nro_cuadrante = datos_comision_tres.cleaned_data["nro_cuadrante"],
                             )
