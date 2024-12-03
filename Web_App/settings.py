@@ -68,6 +68,7 @@ MIDDLEWARE = [
     'web.middleware.LogoutIfAuthenticatedMiddleware',  # Tu middleware existente
     'web.middleware.NoCacheMiddleware',  # Ajusta esto según tu estructura
     'web.middleware.LoadingScreenMiddleware',
+    'web.middleware.RegistroPeticionesMiddleware',
 ]
 
 LOGIN_URL = 'home'  # Cambia esto al nombre de tu URL de inicio de sesión
@@ -155,12 +156,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'America/Caracas'
-
 USE_I18N = True
 
+SESSION_COOKIE_SECURE = False  # Usar cookies seguras solo en HTTPS
+CSRF_COOKIE_SECURE = False  # Usar cookies seguras para CSRF
+
 USE_TZ = True
+TIME_ZONE = 'America/Caracas'  # Usa la zona horaria de tu región
 
 
 # Static files (CSS, JavaScript, Images)

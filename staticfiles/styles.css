@@ -1132,7 +1132,13 @@ summary > * {
   padding: 0;
   width: 90%;
 }
-
+.fixed-width {
+  width: 150px; /* Ancho fijo */
+  max-width: 150px; /* Limitar el ancho máximo */
+  white-space: nowrap; /* Evitar el salto de línea */
+  overflow: hidden; /* Ocultar el contenido que sobresale */
+  text-overflow: ellipsis; /* Mostrar puntos suspensivos (...) */
+}
 .info-modal {
   position: relative;
   width: 80%;
@@ -1144,6 +1150,7 @@ summary > * {
   p {
     font-size: 1.1rem;
     margin: 0.3rem;
+    max-width: 100%;
   }
   h4 {
     text-align: center;

@@ -53,6 +53,7 @@ urlpatterns = [
     path('dashboard/', Dashboard,name='dashboard'),
     path('personal/', View_personal) ,
     path('prueba/', Prueba),
+    path('registros/', ver_registros),
     
     # Tablas
     path('tablageneral/', tabla_general),
