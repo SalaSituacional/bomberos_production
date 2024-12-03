@@ -2014,6 +2014,7 @@ summary > * {
 .contain-comand{
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 100%;
   height: auto;
   text-align: justify;
@@ -2021,6 +2022,8 @@ summary > * {
 }
 
 .card-comand{
+  justify-content: center;
+  align-items: center;
   background-color: gray;
   background-image: url('https://i.postimg.cc/gj3sMWYw/general-y-Alcalde.avif');
   background-position: center;
@@ -2030,8 +2033,8 @@ summary > * {
   height: 35rem;
 }
 .two-comand{
-  background-image: url('');
-  background-position: center;
+  background-image: url('https://i.postimg.cc/d37z7WFT/IMG-20241203-143833.jpg');
+  background-position: center right;
   background-size: cover;
   background-color: gray;
 }
@@ -2054,6 +2057,7 @@ summary > * {
   }
   p{
     color: #4F4F51;
+    font-size: 1.3rem;
   }
 }
 .decoration-none{text-decoration: none;}
@@ -2700,11 +2704,13 @@ summary > * {
   }
   .content-card-comand{
     width: 45%;
-    font-size: 1.5rem;
+    height: auto;
+    font-size: 1.2rem;
     padding: 18px;
   }
   .contain-comand{
     align-items: center;
+    align-content: center;
   }
   .information-background{
     width: 75%;
