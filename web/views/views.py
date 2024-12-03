@@ -1914,3 +1914,16 @@ def View_Estadisticas(request):
         "apellidos": user["apellidos"],
     })
 
+def ver_registros(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+
+    registros = RegistroPeticiones.objects.all().order_by('-fecha_hora')
+    return render(request, 'ver_registros.html', {'registros': registros,
+                                                  "user": user,
+                                                  "jerarquia": user["jerarquia"],
+                                                  "nombres": user["nombres"],
+                                                  "apellidos": user["apellidos"],
+                                                  })
