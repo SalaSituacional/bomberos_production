@@ -2216,6 +2216,14 @@ summary > * {
   background-repeat: no-repeat;
   background-position: center top;
 }
+.to-drone{
+  margin-top: 3rem;
+  background-image: url(https://i.postimg.cc/66Szkhv2/Unidades.png);
+  background-image: url(https://i.postimg.cc/DZRsMBM7/portada.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center top;
+}
 .text-inter{
   margin-left: 4rem;
   border-left: .6rem solid white;
@@ -2286,6 +2294,23 @@ summary > * {
   height: auto;
   img{
     border-radius: 3rem;
+  }
+}
+.rows-video{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+.content-video{
+  margin: 0 auto;
+  width: 50%;
+  height: 30rem;
+  padding: 1rem;
+  iframe{
+    border-radius: 20px;
+    width: 100%;
+    height: 100%;
   }
 }
 .information-center{
@@ -3029,12 +3054,14 @@ summary > * {
     height: 20rem;
   }
   .content-card-comand{
-    width: 45%;
+    width: 70%;
     font-size: 17px;
     padding: 18px;
   }
   .contain-comand{
     align-items: center;
+    flex-direction: column;
+    
   }
   .content-card-comand h2{
     font-size: 1.5rem;
@@ -3273,6 +3300,9 @@ summary > * {
   section {
       max-height: 100%;
   }
+}
+.content-video{
+  width: 100%;
 }
 }
 
