@@ -189,6 +189,7 @@ document
         break;
       case "2":
         // operaciones
+        ocultElement("capacitacion")
         ocultElement("form_enfermeria");
         mostrarElement("form_general");
         ocultElement("servicios_medicos");
