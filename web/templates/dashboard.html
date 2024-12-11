@@ -295,9 +295,29 @@
     <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
+
+<!-- Modal -->
+<div class="modal fade" id="registroExitosoModal" tabindex="-1" aria-labelledby="registroExitosoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-procediment-register">
+      <div class="modal-content ">
+          <div class="modal-header">
+              <h5 class="modal-title" id="registroExitosoLabel">Registro Exitoso</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              ¡El Procedimiento se ha guardado correctamente!
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Aceptar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
 <!-- fin resumen de procedimientos -->
 <script src="../static/js/animate.js"></script>
 <script src="../static/js/graphic.js"></script>
+<script src="../static/js/modal-dashboard.js"></script>
 {% endblock %}
 
 
