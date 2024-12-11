@@ -123,14 +123,14 @@ WSGI_APPLICATION = 'Web_App.wsgi.application'
 #     }
 # }
 
-# Base de Datos del Render (Eber)
+# Base de Datos del Render (Sala Situacional)
 # DATABASES = {
-#     'default': dj_database_url.config(default="postgresql://data_rad4_user:Akjqm5bt9mEcBcxEhx9JsikkQ5RwMnDu@dpg-cskgpc3tq21c73dohb3g-a.oregon-postgres.render.com/data_rad4")
+#     'default': dj_database_url.config(default="postgresql://bomberos_db_user:5wuTseoCTH2EvZaKsR7Ct529uc8sdpVg@dpg-csp2esm8ii6s73a525sg-a.oregon-postgres.render.com/bomberos_db")
 # }
 
-# Base de Datos del Render (Sala Situacional)
+# Conexion base de datos del Render (Sala Situacional) 2
 DATABASES = {
-    'default': dj_database_url.config(default="postgresql://bomberos_db_user:5wuTseoCTH2EvZaKsR7Ct529uc8sdpVg@dpg-csp2esm8ii6s73a525sg-a.oregon-postgres.render.com/bomberos_db")
+    'default': dj_database_url.config(default="postgresql://bomberos_dbs_user:sB0cG00nvzS11aSYoROt2wNSWPnSIDyR@dpg-ctct69btq21c7380aogg-a.oregon-postgres.render.com/bomberos_dbs")
 }
 
 # Password validation
