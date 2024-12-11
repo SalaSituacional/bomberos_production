@@ -1741,7 +1741,7 @@ def View_Procedimiento(request):
                 new_detalles_psicologia.save()
 
             # Redirige a /dashboard/ después de guardar los datos
-            return redirect('/dashboard/')
+            return redirect('/dashboard/?registro_exitoso=true')
     else:
         form = SelectorDivision(prefix='form1')
         form2 = SeleccionarInfo(prefix='form2')
