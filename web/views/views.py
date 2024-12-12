@@ -1927,3 +1927,388 @@ def ver_registros(request):
                                                   "nombres": user["nombres"],
                                                   "apellidos": user["apellidos"],
                                                   })
+
+def Antecedentes(request):
+    datos_combinados = []
+    form = FormularioBusquedaCedula(request.GET or None)
+
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    
+    procedimientos_ids = set()
+
+    if form.is_valid():
+        nacionalidad = form.cleaned_data['nacionalidad']
+        numero_cedula = form.cleaned_data['numero_cedula']
+
+        busqueda = f"{nacionalidad}-{numero_cedula}"
+
+        procedimientos_ids = set()  # Para almacenar los IDs de procedimientos
+        datos_detallados = []  # Para almacenar los datos adicionales como nombre, apellido, cédula
+
+        # Buscar en cada tabla hija
+        ids_abastecimiento = Abastecimiento_agua.objects.filter(cedula=busqueda).values('id_procedimiento', 'nombres', 'apellidos')
+        ids_fallecidos = Fallecidos.objects.filter(cedula=busqueda).values('id_procedimiento', 'nombres', 'apellidos')
+        # Buscar rescates asociados al número de cédula
+        ids_rescate_personas = Rescate_Persona.objects.filter(cedula=busqueda).values(
+            'id_rescate__id_procedimientos',
+            'nombre', 'apellidos', 'cedula'
+        )
+        ids_incendio = Persona_Presente.objects.filter(cedula=busqueda).values(
+            'id_incendio__id_procedimientos',
+            'nombre', 'apellidos', 'cedula'
+        )
+        ids_emergencias_medicas = Emergencias_Medicas.objects.filter(cedula=busqueda).values(
+            'id_atencion__id_procedimientos',
+            'nombres', 'apellidos', 'cedula'
+        )
+        ids_traslados = Traslado_Prehospitalaria.objects.filter(cedula=busqueda).values(
+            'id_procedimiento',
+            'nombre', 'apellido', 'cedula'
+        )
+        ids_accidentes = Lesionados.objects.filter(cedula=busqueda).values(
+            'id_accidente__id_atencion__id_procedimientos',
+            'nombres', 'apellidos', 'cedula'
+        )
+        ids_evaluacion = Persona_Presente_Eval.objects.filter(cedula=busqueda).values(
+            'id_persona__id_procedimientos',
+            'nombre', 'apellidos', 'cedula'
+        )
+        ids_asesoramiento = Asesoramiento.objects.filter(cedula=busqueda).values(
+            'id_procedimiento',
+            'nombres', 'apellidos', 'cedula'
+        )
+        ids_reispeccion = Reinspeccion_Prevencion.objects.filter(cedula=busqueda).values(
+            'id_procedimiento',
+            'nombre', 'apellidos', 'cedula'
+        )
+        ids_retencion = Retencion_Preventiva.objects.filter(cedula=busqueda).values(
+            'id_procedimiento',
+            'nombre', 'apellidos', 'cedula'
+        )
+        ids_incendio_art = Persona_Presente_Art.objects.filter(cedula=busqueda).values(
+            'id_incendio__id_procedimientos__id_procedimiento',
+            'nombre', 'apellidos', 'cedula'
+        )
+        ids_lesionados_art = Lesionados_Art.objects.filter(cedula=busqueda).values(
+            'id_accidente__id_procedimiento',
+            'nombres', 'apellidos', 'cedula'
+        )
+        ids_fallecidos_art = Fallecidos_Art.objects.filter(cedula=busqueda).values(
+            'id_procedimiento__id_procedimiento',
+            'nombres', 'apellidos', 'cedula'
+        )
+        ids_inspeccion_art = Inspeccion_Establecimiento_Art.objects.filter(encargado_cedula=busqueda).values(
+            'id_proc_artificio',
+            'encargado_nombre', 'encargado_apellidos', 'encargado_cedula'
+        )
+        ids_valoracion_medica = Valoracion_Medica.objects.filter(cedula=busqueda).values(
+            'id_procedimientos',
+            'nombre', 'apellido', 'cedula'
+        )
+        ids_enfermeria = Detalles_Enfermeria.objects.filter(cedula=busqueda).values(
+            'id_procedimientos',
+            'nombre', 'apellido', 'cedula'
+        )
+        ids_psicologia = Procedimientos_Psicologia.objects.filter(cedula=busqueda).values(
+            'id_procedimientos',
+            'nombre', 'apellido', 'cedula'
+        )
+        ids_inspeccion_prevencion_i = Inspeccion_Prevencion_Asesorias_Tecnicas.objects.filter(cedula_propietario=busqueda).values(
+            'id_procedimientos',
+            'propietario', 'cedula_propietario'
+        )
+        ids_inspeccion_prevencion_ii = Inspeccion_Prevencion_Asesorias_Tecnicas.objects.filter(persona_sitio_cedula=busqueda).values(
+            'id_procedimientos',
+            'persona_sitio_nombre', 'persona_sitio_apellido', 'persona_sitio_cedula'
+        )
+        ids_habitabilidad = Inspeccion_Habitabilidad.objects.filter(persona_sitio_cedula=busqueda).values(
+            'id_procedimientos',
+            'persona_sitio_nombre', 'persona_sitio_apellido', 'persona_sitio_cedula'
+        )
+        ids_inspeccion_otros = Inspeccion_Otros.objects.filter(persona_sitio_cedula=busqueda).values(
+            'id_procedimientos',
+            'persona_sitio_nombre', 'persona_sitio_apellido', 'persona_sitio_cedula'
+        )
+        ids_inspeccion_arbol = Inspeccion_Arbol.objects.filter(persona_sitio_cedula=busqueda).values(
+            'id_procedimientos',
+            'persona_sitio_nombre', 'persona_sitio_apellido', 'persona_sitio_cedula'
+        )
+        ids_investigacion_vehiculo = Investigacion_Vehiculo.objects.filter(cedula_propietario=busqueda).values(
+            'id_investigacion__id_procedimientos',
+            'nombre_propietario', 'apellido_propietario', 'cedula_propietario'
+        )
+        ids_investigacion_comercio = Investigacion_Comercio.objects.filter(cedula_propietario=busqueda).values(
+            'id_investigacion__id_procedimientos',
+            'nombre_propietario', 'apellido_propietario', 'cedula_propietario'
+        )
+        ids_investigacion_estructura = Investigacion_Estructura_Vivienda.objects.filter(cedula=busqueda).values(
+            'id_investigacion__id_procedimientos',
+            'nombre', 'apellido', 'cedula'
+        )
+
+        # Procesar los resultados de cada tabla
+        for item in ids_abastecimiento:
+            procedimientos_ids.add(item['id_procedimiento'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimiento'],
+                'nombres': item['nombres'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_fallecidos:
+            procedimientos_ids.add(item['id_procedimiento'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimiento'],
+                'nombres': item['nombres'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_rescate_personas:
+            procedimientos_ids.add(item['id_rescate__id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_rescate__id_procedimientos'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_incendio:
+            procedimientos_ids.add(item['id_incendio__id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_incendio__id_procedimientos'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_emergencias_medicas:
+            procedimientos_ids.add(item['id_atencion__id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_atencion__id_procedimientos'],
+                'nombres': item['nombres'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_traslados:
+            procedimientos_ids.add(item['id_procedimiento'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimiento'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellido'],
+                'cedula': busqueda
+            })
+
+        for item in ids_accidentes:
+            procedimientos_ids.add(item['id_accidente__id_atencion__id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_accidente__id_atencion__id_procedimientos'],
+                'nombres': item['nombres'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_evaluacion:
+            procedimientos_ids.add(item['id_persona__id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_persona__id_procedimientos'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_asesoramiento:
+            procedimientos_ids.add(item['id_procedimiento'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimiento'],
+                'nombres': item['nombres'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_reispeccion:
+            procedimientos_ids.add(item['id_procedimiento'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimiento'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_retencion:
+            procedimientos_ids.add(item['id_procedimiento'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimiento'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_incendio_art:
+            procedimientos_ids.add(item['id_incendio__id_procedimientos__id_procedimiento'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_incendio__id_procedimientos__id_procedimiento'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+        
+        for item in ids_lesionados_art:
+            procedimientos_ids.add(item['id_accidente__id_procedimiento'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_accidente__id_procedimiento'],
+                'nombres': item['nombres'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+        
+        for item in ids_fallecidos_art:
+            procedimientos_ids.add(item['id_procedimiento__id_procedimiento'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimiento__id_procedimiento'],
+                'nombres': item['nombres'],
+                'apellidos': item['apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_inspeccion_art:
+            procedimientos_ids.add(item['id_proc_artificio'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_proc_artificio'],
+                'nombres': item['encargado_nombre'],
+                'apellidos': item['encargado_apellidos'],
+                'cedula': busqueda
+            })
+
+        for item in ids_valoracion_medica:
+            procedimientos_ids.add(item['id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimientos'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellido'],
+                'cedula': busqueda
+            })
+
+        for item in ids_enfermeria:
+            procedimientos_ids.add(item['id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimientos'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellido'],
+                'cedula': busqueda
+            })
+
+        for item in ids_psicologia:
+            procedimientos_ids.add(item['id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimientos'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellido'],
+                'cedula': busqueda
+            })
+
+        for item in ids_inspeccion_prevencion_i:
+            procedimientos_ids.add(item['id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimientos'],
+                'nombres': item['propietario'],
+                'cedula': busqueda
+            })
+
+        for item in ids_inspeccion_prevencion_ii:
+            procedimientos_ids.add(item['id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimientos'],
+                'nombres': item['persona_sitio_nombre'],
+                'apellidos': item['persona_sitio_apellido'],
+                'cedula': busqueda
+            })
+
+        for item in ids_habitabilidad:
+            procedimientos_ids.add(item['id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimientos'],
+                'nombres': item['persona_sitio_nombre'],
+                'apellidos': item['persona_sitio_apellido'],
+                'cedula': busqueda
+            })
+
+        for item in ids_inspeccion_otros:
+            procedimientos_ids.add(item['id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimientos'],
+                'nombres': item['persona_sitio_nombre'],
+                'apellidos': item['persona_sitio_apellido'],
+                'cedula': busqueda
+            })
+
+        for item in ids_inspeccion_arbol:
+            procedimientos_ids.add(item['id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_procedimientos'],
+                'nombres': item['persona_sitio_nombre'],
+                'apellidos': item['persona_sitio_apellido'],
+                'cedula': busqueda
+            })
+
+        for item in ids_investigacion_vehiculo:
+            procedimientos_ids.add(item['id_investigacion__id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_investigacion__id_procedimientos'],
+                'nombres': item['nombre_propietario'],
+                'apellidos': item['apellido_propietario'],
+                'cedula': busqueda
+            })
+
+        for item in ids_investigacion_comercio:
+            procedimientos_ids.add(item['id_investigacion__id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_investigacion__id_procedimientos'],
+                'nombres': item['nombre_propietario'],
+                'apellidos': item['apellido_propietario'],
+                'cedula': busqueda
+            })
+
+        for item in ids_investigacion_estructura:
+            procedimientos_ids.add(item['id_investigacion__id_procedimientos'])
+            datos_detallados.append({
+                'id_procedimiento': item['id_investigacion__id_procedimientos'],
+                'nombres': item['nombre'],
+                'apellidos': item['apellido'],
+                'cedula': busqueda
+            })
+
+        # Agrega más tablas si es necesario
+
+        # Filtrar procedimientos principales
+        procedimientos = Procedimientos.objects.filter(id__in=procedimientos_ids)
+
+        # Convertir datos_detallados a un diccionario para un acceso rápido
+        datos_detallados_dict = {dato['id_procedimiento']: dato for dato in datos_detallados}
+
+        # Asegurarte de que solo emparejas procedimientos con datos detallados válidos
+        datos_combinados = []
+        for procedimiento in procedimientos:
+            id_procedimiento = procedimiento.id
+            if id_procedimiento in datos_detallados_dict:
+                datos_combinados.append({
+                    'procedimiento': procedimiento,
+                    'detalles': datos_detallados_dict[id_procedimiento]
+                })
+
+    # Renderizar la vista con los datos combinados correctamente
+    return render(request, 'antecedentes.html', 
+                {
+                    "user": user,
+                    "jerarquia": user["jerarquia"],
+                    "nombres": user["nombres"],
+                    "apellidos": user["apellidos"],
+                    "form": form,
+                    'datos': datos_combinados,  # Lista de diccionarios con 'procedimiento' y 'detalles'
+                })
+

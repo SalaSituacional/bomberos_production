@@ -2402,6 +2402,7 @@ summary > * {
   z-index: 2;
   opacity: 20%;
 }
+
 /* Bloquear interacción con el sitio */
 #loadingScreen {
   position: fixed;

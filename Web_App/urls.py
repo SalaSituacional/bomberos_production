@@ -54,6 +54,7 @@ urlpatterns = [
     path('personal/', View_personal) ,
     path('prueba/', Prueba),
     path('registros/', ver_registros),
+    path('antecedentes/', Antecedentes),
     
     # Tablas
     path('tablageneral/', tabla_general),
