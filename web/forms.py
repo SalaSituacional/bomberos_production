@@ -182,6 +182,10 @@ def Asignar_op_Comsion():
    return op
 
 
+class FormularioBusquedaCedula(forms.Form):
+    nacionalidad = forms.ChoiceField(choices=[("V", "V"),("E", "E") ], label="Nacionalidad")
+    numero_cedula = forms.CharField(max_length=20, label="Número de Cédula")
+
 class FormularioRegistroPersonal(forms.Form):
     opc = [
         ("", "Seleccione Una Opcion"),
