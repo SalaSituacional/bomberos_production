@@ -157,7 +157,7 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
             display: true,
             labels: {
               font: {
-                size: 16,
+                size: 14,
               },
             },
           },
