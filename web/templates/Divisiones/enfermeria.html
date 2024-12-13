@@ -126,7 +126,7 @@
           <td>{{ row.dependencia }}</td>
           {% if row.solicitante_externo == "" %}
           <!-- prettier-ignore -->
-          <td>{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres}} {{ row.id_solicitante.apellidos}}</td>
+          <td>{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{ row.id_solicitante.apellidos.split|first }}</td>
           {% else %}
           <!-- prettier-ignore -->
           <td>{{ row.solicitante_externo }}</td>

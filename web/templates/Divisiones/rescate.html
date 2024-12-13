@@ -126,13 +126,13 @@
           <th scope="row">{{ forloop.counter }}</th>
           {% if row.solicitante_externo == "" %}
           <!-- prettier-ignore -->
-          <td>{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres}} {{ row.id_solicitante.apellidos}}</td>
+          <td>{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{ row.id_solicitante.apellidos.split|first }}</td>
           {% else %}
           <!-- prettier-ignore -->
           <td>{{ row.solicitante_externo }}</td>
           {% endif %}
           <!-- prettier-ignore -->
-          <td>{{ row.id_jefe_comision.jerarquia }} {{ row.id_jefe_comision.nombres}} {{ row.id_jefe_comision.apellidos}}</td>
+          <td>{{ row.id_jefe_comision.jerarquia }} {{ row.id_jefe_comision.nombres.split|first }} {{ row.id_jefe_comision.apellidos.split|first }}</td>
           <!-- prettier-ignore -->
           <td>{{ row.unidad }}</td>
           <!-- prettier-ignore -->
