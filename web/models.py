@@ -734,6 +734,26 @@ class Procedimientos_Capacitacion(models.Model):
             self.status
         )
 
+class Procedimientos_Brigada(models.Model):
+  id_procedimientos = models.ForeignKey(Procedimientos, on_delete=models.CASCADE)
+  tipo_capacitacion = models.CharField(max_length=40)
+  tipo_clasificacion = models.CharField(max_length=40)
+  personas_beneficiadas = models.CharField(max_length=4)
+  descripcion = models.TextField()
+  material_utilizado = models.TextField()
+  status = models.CharField(max_length=50)
+
+  def __str__(self):
+        return (
+            self.id_procedimientos.id_tipo_procedimiento.tipo_procedimiento + " -- " +
+            self.tipo_capacitacion + " -- " +
+            self.tipo_clasificacion + " -- " +
+            self.personas_beneficiadas + " -- " +
+            self.descripcion + " -- " +
+            self.material_utilizado + " -- " +
+            self.status
+        )
+
 class Procedimientos_Frente_Preventivo(models.Model):
   id_procedimientos = models.ForeignKey(Procedimientos, on_delete=models.CASCADE)
   nombre_actividad = models.TextField()

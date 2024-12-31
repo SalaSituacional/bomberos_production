@@ -378,7 +378,20 @@ document
         mostrarElement("tipos_procedimientos_title")
         document.getElementById("id_form4-tipo_procedimiento").parentElement.querySelector("label").textContent = "Tipo de Atencion"
 
+        document.getElementById("id_form_enfermeria-especifique").parentElement.style.display = "none"
+        document.getElementById("id_form_enfermeria-especifique").removeAttribute("required")
+
         ocultElement("form_comisionoes")
+
+        document.getElementById("id_form_enfermeria-encargado_area").addEventListener("change", function () {
+          if (this.value === "Otro"){
+            document.getElementById("id_form_enfermeria-especifique").parentElement.style.display = "block"
+            document.getElementById("id_form_enfermeria-especifique").setAttribute("required", true)
+          } else{
+            document.getElementById("id_form_enfermeria-especifique").parentElement.style.display = "none"
+            document.getElementById("id_form_enfermeria-especifique").removeAttribute("required")
+          }
+        })
 
         requiredFalse()
         break;
@@ -437,11 +450,35 @@ document
           if (this.value === "Capacitacion") {
             mostrarElementBlock("detalles_capacitacion")
             ocultElement("detalles_frente_preventivo")
+            ocultElement("detalles_brigada")
             document.getElementById("button_submit").style.display = "block";
             
+          } else if (this.value === "Brigada Juvenil") {
+            console.log("holaa")
+            mostrarElementBlock("detalles_brigada")
+            ocultElement("detalles_capacitacion")
+            ocultElement("detalles_frente_preventivo")
+            document.getElementById("button_submit").style.display = "block";
+
+            // document.getElementById("id_form_brigada-tipo_capacitacion").parentElement.style.display = "none"
+            document.getElementById("id_form_brigada-otros").parentElement.style.display = "none"
+            document.getElementById("id_form_brigada-otros").removeAttribute("required")
+
+            document.getElementById("id_form_brigada-tipo_capacitacion").addEventListener("change", function (){
+              if (this.value == "Otros"){
+                document.getElementById("id_form_brigada-otros").parentElement.style.display = "block"
+                document.getElementById("id_form_brigada-otros").setAttribute("required", true)
+              } else {
+                document.getElementById("id_form_brigada-otros").parentElement.style.display = "none"
+                document.getElementById("id_form_brigada-otros").removeAttribute("required")
+              }
+            })
+
+
           } else {
             mostrarElementBlock("detalles_frente_preventivo")
             ocultElement("detalles_capacitacion")
+            ocultElement("detalles_brigada")
             document.getElementById("button_submit").style.display = "block";
           }
         })
