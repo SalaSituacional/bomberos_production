@@ -270,6 +270,7 @@ def View_Procedimiento(request):
         form_detalles_psicologia = Formulario_Procedimientos_Psicologia(request.POST, prefix='form_detalles_psicologia')
         
         form_capacitacion = Formulario_Capacitacion_Proc(request.POST,prefix='form_capacitacion')
+        form_brigada = Formulario_Brigada(request.POST,prefix='form_brigada')
         form_frente_preventivo = Formulario_Frente_Preventivo(request.POST,prefix='form_frente_preventivo')
         form_jornada_medica = Formulario_Jornada_Medica(request.POST, prefix='form_jornada_medica')
 
@@ -421,6 +422,9 @@ def View_Procedimiento(request):
                 municipio_instance = Municipios.objects.get(id=municipio)
                 tipo_procedimiento_instance = Tipos_Procedimientos.objects.get(id=tipo_procedimiento)
 
+                if encargado_area == "Otro":
+                    encargado_area = form_enfermeria.cleaned_data["especifique"]
+
                 # # Crear una nueva instancia del modelo Procedimientos
                 nuevo_procedimiento = Procedimientos(
                     id_division=division_instance,
@@ -569,6 +573,29 @@ def View_Procedimiento(request):
                     )
 
                     new_detalles_capacitacion.save()
+
+                if dependencia == "Brigada Juvenil" and form_brigada.is_valid():
+                    tipo_capacitacion = form_brigada.cleaned_data["tipo_capacitacion"]
+                    tipo_clasificacion = form_brigada.cleaned_data["tipo_clasificacion"]
+                    personas_beneficiadas = form_brigada.cleaned_data["personas_beneficiadas"]
+                    descripcion = form_brigada.cleaned_data["descripcion"]
+                    material_utilizado = form_brigada.cleaned_data["material_utilizado"]
+                    status = form_brigada.cleaned_data["status"]
+
+                    if tipo_capacitacion == "Otros":
+                        tipo_capacitacion = form_brigada.cleaned_data["otros"]
+
+                    new_detalles_brigada = Procedimientos_Brigada(
+                        id_procedimientos = nuevo_procedimiento,
+                        tipo_capacitacion = tipo_capacitacion,
+                        tipo_clasificacion = tipo_clasificacion,
+                        personas_beneficiadas = personas_beneficiadas,
+                        descripcion = descripcion,
+                        material_utilizado = material_utilizado,
+                        status = status
+                    )
+
+                    new_detalles_brigada.save()
 
                 if dependencia == "Frente Preventivo" and form_frente_preventivo.is_valid():
                     nombre_actividad = form_frente_preventivo.cleaned_data["nombre_actividad"]
@@ -1806,6 +1833,7 @@ def View_Procedimiento(request):
         form_detalles_psicologia = Formulario_Procedimientos_Psicologia(prefix='form_detalles_psicologia')
 
         form_capacitacion = Formulario_Capacitacion_Proc(prefix='form_capacitacion')
+        form_brigada = Formulario_Brigada(prefix='form_brigada')
         form_frente_preventivo = Formulario_Frente_Preventivo(prefix='form_frente_preventivo')
 
         form_inspecciones = Formulario_Inspecciones(prefix='form_inspecciones')
@@ -1899,6 +1927,7 @@ def View_Procedimiento(request):
         "comision_uno": datos_comision_uno,
         "comision_dos": datos_comision_dos,
         "comision_tres": datos_comision_tres,
+        "form_brigada": form_brigada,
         })
 
 # Vista de la seccion de Estadisticas

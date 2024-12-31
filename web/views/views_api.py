@@ -1652,6 +1652,18 @@ def obtener_procedimiento(request, id):
                     status = detalles.status
                     )
         
+        if procedimiento.dependencia == "Brigada Juvenil":
+            detalles = get_object_or_404(Procedimientos_Brigada, id_procedimientos = id)
+
+            data = dict(data,
+                    tipo_capacitacion = detalles.tipo_capacitacion,
+                    tipo_clasificacion = detalles.tipo_clasificacion,
+                    personas_beneficiadas = detalles.personas_beneficiadas,
+                    descripcion = detalles.descripcion,
+                    material_utilizado = detalles.material_utilizado,
+                    status = detalles.status
+                    )
+        
         if procedimiento.dependencia == "Frente Preventivo":
             detalles = get_object_or_404(Procedimientos_Frente_Preventivo, id_procedimientos = id)
 

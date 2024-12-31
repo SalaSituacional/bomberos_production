@@ -28,7 +28,7 @@ def Asignar_op_Doctores():
 
 def Asignar_op_Enfermeros():
     personal = Enfermeros.objects.all()
-    op = [("", "Seleccione Una Opcion")]
+    op = [("", "Seleccione Una Opcion"), ("Otro", "Otro")]
     for persona in personal:
         op.append((f"{persona.enfermeros}", f"{persona.enfermeros}"))
     return op
@@ -312,6 +312,7 @@ class Formulario_Enfermeria(forms.Form):
 
     dependencia = forms.ChoiceField(choices=opc, widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
     encargado_area = forms.ChoiceField(choices=Asignar_op_Enfermeros, widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
+    especifique = forms.CharField(required=False)
 
 class Formulario_Servicios_medicos(forms.Form):
     opc = [("", "Seleccione Una Opcion"),("Consultas Medicas", "Consultas Medicas"), ("Servicios Medicos", "Servicios Medicos")]
@@ -323,7 +324,7 @@ class Formulario_psicologia(forms.Form):
     jefe_area = forms.ChoiceField(choices=Asignar_op_Psicologa(), widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
     
 class Formulario_capacitacion(forms.Form):
-    opc = [("", "Seleccione Una Opcion"),("Capacitacion", "Capacitacion"), ("Frente Preventivo", "Frente Preventivo")]
+    opc = [("", "Seleccione Una Opcion"),("Capacitacion", "Capacitacion"), ("Frente Preventivo", "Frente Preventivo"), ("Brigada Juvenil", "Brigada Juvenil")]
 
     dependencia = forms.ChoiceField(choices=opc ,required=False, label="Dependencia")
     instructor = forms.ChoiceField(choices=Asignar_ops_Personal(), required=False, label="Instructor")
@@ -733,6 +734,19 @@ class Formulario_Capacitacion_Proc(forms.Form):
     descripcion = forms.CharField(required=False)
     material_utilizado = forms.CharField(required=False)
     status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Culminado", "Culminado"), ("En Proceso", "En Proceso")], widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
+
+class Formulario_Brigada(forms.Form):
+    opc = [("", "Seleccione Una Opcion"), ("Charla", "Charla"), ("Taller", "Taller"), ("Curso", "Curso"), ("Otros", "Otros")]
+    opc2 = [("", "Seleccione Una Opcion"), ("Publica", "Publica"), ("Privada", "Privada")]
+
+    tipo_capacitacion = forms.ChoiceField(choices=opc, widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
+    tipo_clasificacion = forms.ChoiceField(choices=opc2, widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
+    otros = forms.CharField(required=False)
+    personas_beneficiadas = forms.IntegerField(widget=forms.NumberInput(attrs={'maxlength': '5'}), required=False)
+    descripcion = forms.CharField(required=False)
+    material_utilizado = forms.CharField(required=False)
+    status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Culminado", "Culminado"), ("En Proceso", "En Proceso")], widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
+
 
 class Formulario_Frente_Preventivo(forms.Form):
     nombre_actividad = forms.CharField(max_length=100, required=False)

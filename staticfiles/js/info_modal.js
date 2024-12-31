@@ -1145,6 +1145,21 @@ document.querySelectorAll(".button-info").forEach((button) => {
                     <p><b>Status: </b> ${data.status}</p>
                     </section>`;
           }
+          if (data.dependencia === "Brigada Juvenil") {
+            detalles = `
+            <h4>Capacitacion</h4>
+                    <section class="detalles_procedimiento">
+                    <p><b>Tipo de Capacitacion: </b> ${data.tipo_capacitacion}</p>
+                    <p><b>Clasificacion: </b> ${data.tipo_clasificacion}</p>
+                    <p><b>Personas Beneficiadas: </b> ${data.personas_beneficiadas}</p>
+                    </section>
+                    <h4>Detalles</h4>
+                    <section class="detalles_procedimiento">
+                    <p><b>Descripcion: </b> ${data.descripcion}</p>
+                    <p><b>Material Utilizado: </b> ${data.material_utilizado}</p>
+                    <p><b>Status: </b> ${data.status}</p>
+                    </section>`;
+          }
           if (data.dependencia === "Frente Preventivo") {
             detalles = `
             <h4>Capacitacion</h4>
