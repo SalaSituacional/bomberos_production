@@ -1166,7 +1166,7 @@ summary > * {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    max-height: 15rem;
+    max-height: 30rem;
   }
 }
 .offcanvas-title {
