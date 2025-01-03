@@ -1937,10 +1937,10 @@ document
 
     if (this.value !== "1") {
       select2.disabled = true;
-      select2.setAttribute("required", "required"); // Agrega el atributo `required`
+      select2.removeAttribute("required"); // Agrega el atributo `required`
     } else {
       select2.disabled = false;
-      select2.removeAttribute("required"); // Elimina el atributo `required`
+      select2.setAttribute("required", "true"); // Elimina el atributo `required`
     }
   });
 
