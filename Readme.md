@@ -23,3 +23,7 @@ C:\Users\usuario\Desktop\CuerpoBomberos\Cuerpo_bomberos
 ### Ejecutar:
 
 "python manage.py runserver" -- Ejecuta el proyecto en la web
+
+### Recordar:
+
+"colectstatic" para los cambios en el frontend
