@@ -18,6 +18,7 @@ const opcionesPorCategoriaUnidad = {
   1: [
     { value: "26", text: "Estacion" },
     { value: "16", text: "R-1 (Elevación)" },
+    { value: "28", text: "Rescate 0039 " },
   ],
   // Operaciones
   2: [

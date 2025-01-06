@@ -289,6 +289,7 @@ document.querySelectorAll(".button-info").forEach((button) => {
                   <p><b>Cedula:</b> ${lesionado.cedula}</p>
                   <p><b>Edad:</b> ${lesionado.edad}</p>
                   <p><b>Sexo:</b> ${lesionado.sexo}</p>
+                  <p><b>IDX:</b> ${lesionado.idx}</p>
                   <p><b>Descripción:</b> ${lesionado.descripcion}</p>
                   `;
                 // Verificamos si el lesionado tiene traslados asociados
@@ -741,7 +742,7 @@ document.querySelectorAll(".button-info").forEach((button) => {
                   <p><b>Sexo: </b> ${data.sexo}</p>
                   <p><b>idx: </b> ${data.idx}</p>
                   </section>
-                  <h4>Hopsital De Traslado</h4>
+                  <h4>Hospital De Traslado</h4>
                   <section class="detalles_procedimiento">
                   <p><b>Hospital: </b> ${data.hospital}</p>
                   <p><b>Medico Receptor: </b> ${data.medico}</p>

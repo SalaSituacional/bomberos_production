@@ -83,9 +83,11 @@ urlpatterns = [
     path('api/procedimientos_tipo/', api_procedimientos_tipo, name='procedimientos_tipo'),
     path('api/procedimientos_tipo_parroquias/', api_procedimientos_tipo_parroquias, name='procedimientos_tipo_parroquias'),
     path('get_persona/<int:persona_id>/', get_persona, name='get_persona'),
-     path('editar_personal/', edit_personal, name='edit_personal'),
+    path('editar_personal/', edit_personal, name='edit_personal'),
     path('api/procedimientos_tipo_detalles/', api_procedimientos_tipo_detalles, name='procedimientos_tipo_detalles'),
     path('instagram/', instagram_feed, name='instagram_feed'),
+
+    path('editar_procedimiento/<int:id>/', editar_procedimiento, name='editar_procedimiento'),
 
     # Descargas
     path('descargar-excel/', generar_excel, name='descargar_excel'),
