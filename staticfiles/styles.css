@@ -2650,6 +2650,22 @@ summary > * {
   width: 100%;
 }
 
+#cargar_mas_btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#cargar_mas_btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
 @media (min-width: 1400px){
   .inicial-carrousel-one{
     height: 40rem;

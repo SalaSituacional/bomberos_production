@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from datetime import datetime
 import json
 from datetime import timedelta
+from django.utils.timezone import make_aware
 
 # Vista de la Seccion de Operaciones
 def View_Operaciones(request):
@@ -373,40 +374,82 @@ def View_psicologia(request):
 def tabla_general(request):
     user = request.session.get('user')
     if not user:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
-    # Filtra los procedimientos de las divisiones 1 a 5
     divisiones = range(1, 6)
-    datos_combined = Procedimientos.objects.filter(id_division__in=divisiones).order_by('-fecha')  # Orden descendente
 
-    # Corrige el conteo
+    conteo_total = Procedimientos.objects.filter(id_division__in=divisiones)
+    conteo_total = conteo_total.count()
+
+    # Obtener la fecha enviada desde el frontend
+    fecha_carga = request.GET.get('fecha', None)
+    if fecha_carga:
+        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
+        fecha_fin = fecha_inicio + timedelta(days=1)
+    else:
+        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
+        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        fecha_fin = fecha_inicio + timedelta(days=1)
+
+
+    # Filtrar procedimientos según la fecha
+    datos_combined = Procedimientos.objects.filter(
+        id_division__in=divisiones,
+        fecha__gte=fecha_inicio,
+        fecha__lt=fecha_fin
+    ).order_by('-fecha')
+
+    # Conteo total
     total = datos_combined.count()
 
-    # Obtener la fecha de hoy
-    hoy_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    hoy_fin = hoy_inicio + timedelta(days=1)
-
-
-    # Filtrar procedimientos con la fecha de hoy
-    procedimientos_hoy = datos_combined.filter(fecha__gte=hoy_inicio, fecha__lt=hoy_fin)
-    hoy_count = procedimientos_hoy.count()
-
+    # Manejo de eliminación por solicitud POST
     if request.method == 'POST':
-        data = json.loads(request.body)
-        id = data.get('id')
-        procedimiento = get_object_or_404(Procedimientos, id=id)
         try:
+            data = json.loads(request.body)
+            id = data.get('id')
+            procedimiento = get_object_or_404(Procedimientos, id=id)
             procedimiento.delete()
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
+        # Serializa los datos en un formato compatible con JSON
+        procedimientos = list(datos_combined.values(
+            'id', 
+            'id_division__division',  # Nombre de la division relacionada
+            'tipo_servicio', 
+            'id_solicitante__nombres',  # Nombre del solicitante relacionado
+            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
+            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
+            'solicitante_externo', 
+            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
+            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
+            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
+            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
+            'dependencia', 
+            'efectivos_enviados', 
+            'id_municipio__municipio',  # Nombre del municipio relacionado
+            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
+            'fecha', 
+            'hora', 
+            'direccion', 
+            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
+        ))
+
+        # Responder con los datos en formato JSON y la fecha para la siguiente carga
+        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
+    
+    # Renderizar la página normal
     return render(request, "tablageneral.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "datos": datos_combined,  # Ya en orden descendente
+        "datos": datos_combined,
         "total": total,
-        "hoy": hoy_count
+        "contador_total": conteo_total,
+        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
     })
