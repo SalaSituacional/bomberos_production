@@ -432,7 +432,7 @@ class Formulario_Persona_Presente(forms.Form):
     apellido = forms.CharField(max_length=100, required=False)
     nacionalidad = forms.ChoiceField(choices=[("V", "V"), ("E", "E")], required=False)
     cedula = forms.IntegerField(widget=forms.NumberInput(attrs={'maxlength': '15'}), required=False)
-    edad = forms.IntegerField(widget=forms.NumberInput(attrs={'maxlength': '3'}), required=False)
+    edad = forms.IntegerField(label="Telefono:",widget=forms.NumberInput(attrs={'maxlength': '3'}), required=False)
 
 class Formulario_Detalles_Vehiculos_Incendio(forms.Form):
     modelo = forms.CharField(required=False)
