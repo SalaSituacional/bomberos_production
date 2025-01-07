@@ -254,7 +254,6 @@
           {% endfor %}
         </div>
       </tbody>
-      <button id="cargar_mas_btn">Cargar más</button>
       <input type="hidden" id="fecha_actual" value="{{ fecha_actual }}">
     </table>
   </div>
@@ -263,6 +262,7 @@
   <section class="buttons-items">
     <a href="{% url 'descargar_excel' %}" class="btn btn-danger download-link">Descargar Excel</a>
   </section>
+  <button id="cargar_mas_btn" class="btn btn-danger">Más Procedimientos</button>
 
 </div>
         
@@ -331,18 +331,27 @@
 
 <!-- Modal para editar procedimiento -->
 <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="">
-  <div class="modal-dialog">
-      <div class="modal-content">
+  <div class="modal-dialog modal-xl">
+      <div class="modal-content modal-content-two">
+        <div class="modal-header header-dashboard-two">
+          <section class="title-icon">
+            <img
+              src="../static/assets/logo bomberos 2.svg"
+              alt="Logo de bomberos"
+            />
+            <h2>Cuerpo de Bomberos</h2>
+          </section>
+        </div>
           <div class="modal-header">
               <h5 class="modal-title" id="editarModalLabel">Editar Procedimiento</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body">
-            <form id="editar-form">
+          <div class="modal-body data_form  modify-width">
+            <form id="editar-form" class="form-style modify-width">
               {% csrf_token %}
               <input type="hidden" id="editar-id" name="id"/>
               
-              <div class="form-group">
+              <div class="form-group ">
                   <label for="editar-division">Division</label>
                   <input type="text" id="editar-division" name="division" disabled/>
               </div>
@@ -744,7 +753,7 @@
 
               <div class="form-group">
                   <label for="editar-direccion">Direccion</label>
-                  <textarea id="editar-direccion" name="direccion"></textarea>
+                  <input id="editar-direccion" name="direccion"></input>
               </div>
 
               <div class="form-group">
@@ -764,9 +773,11 @@
               
               <div id="comision-fields"></div>
               <div id="dynamic-fields"></div> <!-- Contenedor para campos dinámicos -->
-              <button type="submit">Guardar</button>
+              <button class="btn btn-danger" type="submit">Guardar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                Cerrar
+              </button>
           </form>
-          
           </div>
       </div>
   </div>
