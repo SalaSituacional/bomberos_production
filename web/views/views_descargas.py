@@ -29,7 +29,8 @@ def descargar_base_datos(request):
     
     elif 'postgresql' in db_engine:
         # Obtener la URL de conexión completa de la base de datos
-        db_url = "postgresql://bomberos_db_user:5wuTseoCTH2EvZaKsR7Ct529uc8sdpVg@dpg-csp2esm8ii6s73a525sg-a.oregon-postgres.render.com/bomberos_db"
+        db_url = "postgresql://bomberos_dbs_user:sB0cG00nvzS11aSYoROt2wNSWPnSIDyR@dpg-ctct69btq21c7380aogg-a.oregon-postgres.render.com/bomberos_dbs"
+        
         url_parsed = urlparse(db_url)
 
         # Extraer información de la URL
@@ -42,13 +43,15 @@ def descargar_base_datos(request):
         filename = f"backup_{fecha_actual}.sql"
 
         # Configurar el comando pg_dump
+       # Cambiar el comando pg_dump para exportar en formato de texto plano
         dump_cmd = [
             "pg_dump",
             "-h", db_host,
             "-U", db_user,
             "-d", db_name,
-            "-F", "c"
+            "-F", "p"  # Cambiado a texto plano
         ]
+
 
         # Establecer la contraseña en la variable de entorno y ejecutar el comando
         os.environ['PGPASSWORD'] = db_password
