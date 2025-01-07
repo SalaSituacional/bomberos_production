@@ -1,38 +1,75 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Cargar datos en el modal al hacer clic en "Editar"
-    document.querySelectorAll(".btn-editar").forEach(button => {
-        button.addEventListener("click", function () {
-            const id = this.getAttribute("data-id");
-            fetch(`/editar_procedimiento/${id}/`) // Usar el endpoint unificado
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("editar-id").value = data.id;
-                    // Cargar datos generales en el modal
-                    document.getElementById("editar-division").value = data.division;
-                    document.getElementById("editar-solicitante").value = data.id_solicitante || "";
-                    document.getElementById("editar-solicitante-externo").value = data.id_solicitante_externo || "";
-                    document.getElementById("editar-jefe_comision").value = data.id_jefe_comision || "";
-                    document.getElementById("editar-unidad").value = data.unidad || "";
-                    document.getElementById("editar-efectivos").value = data.efectivos || "";
-                    document.getElementById("editar-municipio").value = data.municipio || "";
-                    document.getElementById("editar-parroquia").value = data.parroquia || "";
-                    document.getElementById("editar-direccion").value = data.direccion || "";
-                    document.getElementById("editar-fecha").value = data.fecha || "";
-                    document.getElementById("editar-hora").value = data.hora || "";
-                    document.getElementById("editar-tipo_procedimiento").value = data.tipo_procedimiento || "";
 
-                    // Generar campos dinámicos según el tipo de procedimiento
-                    // generateDynamicFields(data);
-                    // generateComisionForms(data.comisiones || []);
-                })
-                .catch(err => {
-                    console.error("Error al cargar los datos:", err);
-                    alert("Hubo un problema al cargar los datos.");
-                });
+
+// Delegar evento click en el contenedor padre
+document.querySelector("tbody").addEventListener("click", async function (event) {
+    // Verificar si el clic fue en un botón con la clase "btn-editar"
+    if (event.target.classList.contains("btn-editar")) {
+        const id = event.target.getAttribute("data-id");
+
+        try {
+            // Llamada a fetchWithLoader para cargar datos del procedimiento
+            const data = await fetchWithLoader(`/editar_procedimiento/${id}/`);
+
+            // Rellenar los campos del formulario con los datos obtenidos
+            document.getElementById("editar-id").value = data.id;
+            document.getElementById("editar-division").value = data.division;
+            document.getElementById("editar-solicitante").value = data.id_solicitante || "";
+            document.getElementById("editar-solicitante-externo").value = data.id_solicitante_externo || "";
+            document.getElementById("editar-jefe_comision").value = data.id_jefe_comision || "";
+            document.getElementById("editar-unidad").value = data.unidad || "";
+            document.getElementById("editar-efectivos").value = data.efectivos || "";
+            document.getElementById("editar-municipio").value = data.municipio || "";
+            document.getElementById("editar-parroquia").value = data.parroquia || "";
+            document.getElementById("editar-direccion").value = data.direccion || "";
+            document.getElementById("editar-fecha").value = data.fecha || "";
+            document.getElementById("editar-hora").value = data.hora || "";
+            document.getElementById("editar-tipo_procedimiento").value = data.tipo_procedimiento || "";
+        } catch (err) {
+            alert("Hubo un problema al cargar los datos.");
+        }
+    }
+});
+
+// Enviar los datos del formulario
+const form = document.getElementById("editar-form");
+form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    // Obtener los valores del formulario, incluidas las comisiones
+    const formData = new FormData(form);
+    const jsonData = Object.fromEntries(formData.entries());
+
+    // Obtener el ID del procedimiento
+    const id = document.getElementById("editar-id").value;
+
+    try {
+        // Llamada a fetchWithLoader para enviar los datos al servidor
+        await fetchWithLoader(`/editar_procedimiento/${id}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify(jsonData),
         });
-    });
+        location.reload(); // Recargar la página para reflejar los cambios
+    } catch (err) {
+        alert("Hubo un problema al guardar los cambios.");
+    }
+});
 
-    // function generateComisionForms(comisiones) {
+// Obtener el token CSRF
+function getCSRFToken() {
+    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    return csrfToken;
+}
+});
+
+
+
+
+// function generateComisionForms(comisiones) {
     //     const comisionContainer = document.getElementById("comision-fields");
     //     comisionContainer.innerHTML = ""; // Limpiar el contenedor
 
@@ -123,44 +160,3 @@ document.addEventListener("DOMContentLoaded", function () {
     //     // Insertar los campos dinámicos en el contenedor del formulario
     //     dynamicContainer.innerHTML = dynamicHTML;
     // }
-
-
-    // Enviar los datos del formulario
-    const form = document.getElementById("editar-form");
-    form.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        // Obtener los valores del formulario, incluidas las comisiones
-        const formData = new FormData(form);
-        const jsonData = Object.fromEntries(formData.entries());
-
-        // Obtener el ID del procedimiento
-        const id = document.getElementById("editar-id").value;
-
-        // Enviar los datos al servidor para guardar
-        fetch(`/editar_procedimiento/${id}/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCSRFToken(),
-            },
-            body: JSON.stringify(jsonData),
-        })
-        .then(response => {
-            if (response.ok) {
-                location.reload(); // Recargar la página para reflejar los cambios
-            } else {
-                return response.json().then(err => {
-                    console.error("Error al guardar los datos:", err);
-                    alert("Hubo un problema al guardar los cambios.");
-                });
-            }
-        });
-    });
-
-    // Obtener el token CSRF
-    function getCSRFToken() {
-        const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-        return csrfToken;
-    }
-})

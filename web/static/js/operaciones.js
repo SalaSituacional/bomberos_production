@@ -1,48 +1,76 @@
+document.addEventListener('DOMContentLoaded', function() {
+
 // Obtener elementos
 const infoProcedimiento = document.getElementById("infoProcedimiento");
 const confirmarEliminar = document.getElementById("confirmarEliminar");
 
-// Abrir modal y mostrar información
-document.querySelectorAll(".button_delete").forEach((button) => {
-  button.onclick = function () {
-    const id = this.getAttribute("data-id");
-    const id_mostrar = this.getAttribute("data-id_mostrar");
-    const solicitante = this.getAttribute("data-solicitante");
-    const jefe_comision = this.getAttribute("data-jefeComision");
-    const fecha = this.getAttribute("data-fecha");
-    const tipo_procedimiento = this.getAttribute("data-tipoProcedimiento");
-    infoProcedimiento.innerHTML = `
-      <p><b>ID: </b>${id_mostrar} </p>
-      <p><b>Solicitante:</b> ${solicitante}</p>
-      <p><b>Jefe de Comision:</b> ${jefe_comision}</p>
-      <p><b>Fecha:</b> ${fecha}</p>
-      <p><b>Tipo De Procedimiento:</b> ${tipo_procedimiento}</p>`;
-    confirmarEliminar.setAttribute("data-id", id);
-  };
-});
+const procedimientosContenedor = document.getElementById('procedimientos-container');
+if (procedimientosContenedor) {
+  // Delegar eventos a los botones dentro del contenedor de procedimientos
+  document.querySelector('tbody').addEventListener('click', function(event) {
+    // Acción de eliminar
+    if (event.target && event.target.matches('.button_delete')) { 
+      const id = event.target.getAttribute("data-id");
+      const id_mostrar = event.target.getAttribute("data-id_mostrar");
+      const solicitante = event.target.getAttribute("data-solicitante");
+      const jefe_comision = event.target.getAttribute("data-jefeComision");
+      const fecha = event.target.getAttribute("data-fecha");
+      const tipo_procedimiento = event.target.getAttribute("data-tipoProcedimiento");
 
-// Confirmar eliminación
-confirmarEliminar.onclick = function () {
+      // Mostrar la información del procedimiento en el modal
+      infoProcedimiento.innerHTML = `
+        <p><b>ID: </b>${id_mostrar} </p>
+        <p><b>Solicitante:</b> ${solicitante}</p>
+        <p><b>Jefe de Comision:</b> ${jefe_comision}</p>
+        <p><b>Fecha:</b> ${fecha}</p>
+        <p><b>Tipo De Procedimiento:</b> ${tipo_procedimiento}</p>`;
+
+      // Establecer el ID en el botón de confirmación
+      confirmarEliminar.setAttribute("data-id", id);
+    }
+  });
+} else {
+  console.error('El contenedor de procedimientos no se encuentra en el DOM.');
+}
+
+// Confirmar eliminación del procedimiento
+confirmarEliminar.onclick = async function () {
   const id = this.getAttribute("data-id");
-  eliminarProcedimiento(id);
+  if (!id) {
+    console.error("ID no encontrado para la eliminación.");
+    return;
+  }
+  await eliminarProcedimiento(id);
 };
 
 // Función para eliminar procedimiento
 async function eliminarProcedimiento(id) {
   try {
-    const response = await fetchWithLoader("/operaciones/", {
+    // Asegúrate de que el token CSRF esté correctamente incluido
+    const csrfToken = getCookie("csrftoken");
+    if (!csrfToken) {
+      alert("Token CSRF no encontrado.");
+      return;
+    }
+
+    const response = await fetch("/operaciones/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"), // Asegúrate de incluir el token CSRF
+        "X-CSRFToken": csrfToken,  // Asegúrate de incluir el token CSRF
       },
       body: JSON.stringify({ id: id }),
     });
 
-    if (response.success) {
+    const result = await response.json();  // Espera la respuesta en formato JSON
+
+    if (result.success) {
       // Eliminar el procedimiento de la vista
-      document.querySelector(`button[data-id="${id}"]`).parentElement.remove();
-      location.reload();
+      const button = document.querySelector(`button[data-id="${id}"]`);
+      if (button) {
+        button.parentElement.remove();  // Elimina el procedimiento de la interfaz
+      }
+      location.reload();  // Recargar la página para reflejar los cambios
     } else {
       alert("Error al eliminar el procedimiento");
     }
@@ -67,3 +95,4 @@ function getCookie(name) {
   }
   return cookieValue;
 }
+})
