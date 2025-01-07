@@ -515,6 +515,7 @@ document
 const opcionesPorCategoria = {
   "": [{ value: "-", text: "Elige Una Division" }],
   1: [
+    { value: "1", text: "Abastecimiento de agua" },
     { value: "2", text: "Apoyo a Otras Unidades" },
     { value: "3", text: "Guardia de Prevención" },
     { value: "6", text: "Falsa Alarma" },

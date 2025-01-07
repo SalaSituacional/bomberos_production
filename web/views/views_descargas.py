@@ -84,14 +84,14 @@ def generar_excel(request):
         solicitante = (f"{procedimiento.id_solicitante.jerarquia} "
                        f"{procedimiento.id_solicitante.nombres} "
                        f"{procedimiento.id_solicitante.apellidos}") \
-                      if procedimiento.id_solicitante.id != 0 \
+                      if procedimiento.id_solicitante is not None and procedimiento.id_solicitante.id != 0 \
                       else procedimiento.solicitante_externo
 
         jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} "
                          f"{procedimiento.id_jefe_comision.nombres} "
                          f"{procedimiento.id_jefe_comision.apellidos}") \
-                        if procedimiento.id_jefe_comision.id != 0 else ""
-
+                        if procedimiento.id_jefe_comision is not None and procedimiento.id_jefe_comision.id != 0 \
+                        else ""
         # Recopilar datos de "Personas Presentes" desde todas las tablas relacionadas
         personas_presentes = []
         detalles_procedimientos = []
