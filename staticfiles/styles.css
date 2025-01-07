@@ -2650,7 +2650,7 @@ summary > * {
   width: 100%;
 }
 
-#cargar_mas_btn {
+/* #cargar_mas_btn {
   margin-top: 20px;
   padding: 10px 20px;
   background-color: #007bff;
@@ -2658,11 +2658,15 @@ summary > * {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-}
+} */
 
 #cargar_mas_btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.modify-width{
+  width: 100%;
 }
 
 
