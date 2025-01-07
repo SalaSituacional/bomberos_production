@@ -303,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
                       lesionado.traslados.forEach((traslado, trasladoIndex) => {
                         // Añadimos una sub-sección para cada traslado
                         detalles += `
-                          <p><b>Traslado</b></p>
+                          <h4><b>Traslado</b></h4>
                           <p><b>Hospital:</b> ${traslado.hospital}</p>
                           <p><b>Médico receptor:</b> ${traslado.medico}</p>
                           <p><b>MPPS CMT:</b> ${traslado.mpps_cmt}</p>
@@ -370,7 +370,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p><b>Nombre: </b> ${data.nombre}</p>
                         <p><b>Apellido: </b> ${data.apellidos}</p>
                         <p><b>Cedula: </b> ${data.cedula}</p>
-                        <p><b>Edad: </b> ${data.edad}</p>
+                        <p><b>Telefono: </b> ${data.edad}</p>
                         </section>`
                           : ""
                       }
