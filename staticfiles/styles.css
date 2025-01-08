@@ -908,7 +908,7 @@ summary > * {
     flex-direction: column;
     align-items: flex-start;
     flex-wrap: wrap;
-    margin: 1.2rem;
+    margin: 1.4rem;
     padding-bottom: 1rem;
     font-family: var(--sofia-sans);
     font-size: 1rem;
@@ -1046,9 +1046,12 @@ summary > * {
     margin: 0;
   }
   h5 {
-    margin: 0;
+    margin: 0;                                                         
     padding: 0;
   }
+}
+.style-delete{
+  height: 16rem; 
 }
 
 .general-dashboard ul {
@@ -1523,6 +1526,10 @@ summary > * {
 }
 .buttons-items {
   display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 0 auto;
+  width: 100%;
   button {
     display: flex;
     align-items: center;
@@ -1530,7 +1537,7 @@ summary > * {
     justify-content: center;
     border: none;
     padding: 0.5rem;
-    border-radius: 20px;
+    border-radius: 5px;
     width: 12rem;
     height: auto;
     font-size: 1rem;
@@ -2670,7 +2677,7 @@ summary > * {
 }
 
 
-@media (min-width: 1400px){
+@media (min-width: 1400px ){
   .inicial-carrousel-one{
     height: 40rem;
   }
@@ -2722,7 +2729,7 @@ summary > * {
   /* Sistema */
   .form-style{
     div{
-      width: 45%;
+      width: 80%;
       select, input{
         width: 100%;
       }
@@ -3305,7 +3312,7 @@ summary > * {
   width: auto;
 }
 .form-style div {
-  width: 40%;
+  width: 80%;
 }
 .form-style select, .form-style input {
     width: 100%;
@@ -3718,6 +3725,12 @@ padding: 0 1rem;
 .data_form > form{
   width: 100%;
 }
+.buttons-items{
+  flex-direction: column;
+  button{
+    margin-bottom: 1rem;
+  }
+} 
 }
 
 @media (max-width: 375px) {
@@ -4061,6 +4074,12 @@ padding: 0 1rem;
       width: 15rem;
     }
   }
+  .buttons-items{
+    flex-direction: column;
+    button{
+      margin-bottom: 1rem;
+    }
+  } 
 }
 
 @media (max-width: 320px) {
@@ -4145,5 +4164,10 @@ padding: 0 1rem;
     width: 70%;
   }
 }
-
+.buttons-items{
+  flex-direction: column;
+  button{
+    margin-bottom: 1rem;
+  }
+} 
 }
