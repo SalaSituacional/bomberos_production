@@ -92,7 +92,7 @@ urlpatterns = [
     path('editar_procedimiento/<int:id>/', editar_procedimiento, name='editar_procedimiento'),
 
     # Descargas
-    path('descargar-excel/', generar_excel_capacitacion, name='descargar_excel'),
+    path('descargar-excel/', generar_excel, name='descargar_excel'),
     path('descargar-excel_personal/', generar_excel_personal, name='descargar_excel_personal'),
     path('descargar-base-datos/', descargar_base_datos, name='descargar_base_datos'),
 ]
