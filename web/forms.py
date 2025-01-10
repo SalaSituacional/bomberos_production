@@ -426,7 +426,19 @@ class Formulario_Incendio(forms.Form):
     material_utilizado = forms.CharField(required=False)
     status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Culminado", "Culminado"), ("En Proceso", "En Proceso")], widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
     check_agregar_persona = forms.BooleanField(required=False,label="Agregar Persona")
-    
+    check_retencion = forms.BooleanField(required=False,label="Agregar Retencion Preventiva")
+
+class Formulario_Retencion_Preventiva_Incendio(forms.Form):
+    tipo_cilindro = forms.ChoiceField(choices=Asignar_opc_cilindros, widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
+    capacidad = forms.CharField(max_length=50, required=False)
+    serial = forms.CharField(max_length=50, required=False)
+    nro_constancia_retencion = forms.CharField(max_length=50, required=False)
+    nombre = forms.CharField(max_length=100, required=False)
+    apellidos = forms.CharField(max_length=100, required=False)
+    nacionalidad = forms.ChoiceField(choices=[("V", "V"), ("E", "E")], required=False)
+    cedula = forms.IntegerField(widget=forms.NumberInput(attrs={'maxlength': '15'}), required=False)
+
+
 class Formulario_Persona_Presente(forms.Form):
     nombre = forms.CharField(max_length=100, required=False)
     apellido = forms.CharField(max_length=100, required=False)

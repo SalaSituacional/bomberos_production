@@ -59,6 +59,7 @@ urlpatterns = [
     # Tablas
     path('tablageneral/', tabla_general),
     path('procedimientos/', View_Procedimiento, name='view_procedimiento'),
+    path('editar_procedimientos/', View_Procedimiento_Editar, name='view_procedimiento_editar'),
     path('estadisticas/', View_Estadisticas),
     path('rescate/', View_Rescate),
     path('operaciones/', View_Operaciones),
@@ -87,6 +88,7 @@ urlpatterns = [
     path('api/procedimientos_tipo_detalles/', api_procedimientos_tipo_detalles, name='procedimientos_tipo_detalles'),
     path('instagram/', instagram_feed, name='instagram_feed'),
 
+    path('api/obtener_informacion/<int:id>/', obtener_informacion_editar, name='obtener_informacion'),
     path('editar_procedimiento/<int:id>/', editar_procedimiento, name='editar_procedimiento'),
 
     # Descargas

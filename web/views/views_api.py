@@ -1259,6 +1259,21 @@ def obtener_procedimiento(request, id):
           })
       else:
           pass
+      
+      if Retencion_Preventiva_Incendios.objects.filter(id_procedimiento=detalle_procedimiento.id).exists():
+          retencion_incendios = Retencion_Preventiva_Incendios.objects.get(id_procedimiento=detalle_procedimiento.id)
+          data = dict(data,
+                    retencion = True,
+                    tipo_cilindro = retencion_incendios.tipo_cilindro,
+                    capacidad = retencion_incendios.capacidad,
+                    serial = retencion_incendios.serial,
+                    nro_constancia = retencion_incendios.nro_constancia_retencion,
+                    nombre = retencion_incendios.nombre,
+                    apellidos = retencion_incendios.apellidos,
+                    cedula = retencion_incendios.cedula,
+                    )
+      else:
+          pass
 
       if Detalles_Vehiculos.objects.filter(id_vehiculo=detalle_procedimiento.id).exists():
           vehiculo_detalles = Detalles_Vehiculos.objects.get(id_vehiculo=detalle_procedimiento.id)
@@ -1684,10 +1699,18 @@ def obtener_procedimiento(request, id):
 @csrf_exempt
 def editar_procedimiento(request, id):
     procedimiento = get_object_or_404(Procedimientos, pk=id)
+    n = procedimiento = Procedimientos.objects.select_related(
+    'id_division', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
+        ).prefetch_related(
+            'incendios_set__retencion_preventiva_incendios_set',
+            'incendios_set__persona_presente_set',
+            'incendios_set__detalles_vehiculos_set'
+        ).get(pk=124)
+
+    print(n)
 
     if request.method == "GET":
         # Obtener los datos del procedimiento
-        division = procedimiento.id_division.division
 
         data = {
             'id': procedimiento.id,
@@ -1761,3 +1784,772 @@ def editar_procedimiento(request, id):
         return JsonResponse({'success': True, 'message': 'Procedimiento actualizado correctamente.'})
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+def obtener_informacion_editar(request, id):
+    
+    procedimiento = get_object_or_404(Procedimientos, pk=id)
+
+    division = procedimiento.id_division.division
+
+    if division == "Rescate" or division == "Operaciones" or division == "Prevencion" or division == "GRUMAE" or division == "PreHospitalaria":        
+        data = {
+            'id': procedimiento.id,
+            'division': str(procedimiento.id_division),
+            'id_division': int(procedimiento.id_division.id),
+            'solicitante': int(procedimiento.id_solicitante.id),
+            'solicitante_externo': str(procedimiento.solicitante_externo),
+            'jefe_comision': int(procedimiento.id_jefe_comision.id),
+            'unidad': int(procedimiento.unidad.id),
+            'efectivos': int(procedimiento.efectivos_enviados),
+            'parroquia': int(procedimiento.id_parroquia.id),
+            'municipio': int(procedimiento.id_municipio.id),
+            'direccion': str(procedimiento.direccion),
+            'fecha': str(procedimiento.fecha),
+            'hora': str(procedimiento.hora),
+            'tipo_procedimiento': int(procedimiento.id_tipo_procedimiento.id),
+            'mostrar_tipo_procedimiento': str(procedimiento.id_tipo_procedimiento.tipo_procedimiento),
+        }
+
+        # Obteniendo las comisiones relacionadas con el procedimiento
+        comisiones = Comisiones.objects.filter(procedimiento=procedimiento)
+
+        # Formateando las comisiones en una lista
+        comisiones_lista = [
+            {
+                'comision': comision.comision.id,
+                'nombre_oficial': comision.nombre_oficial,
+                'apellido_oficial': comision.apellido_oficial,
+                'cedula_oficial': comision.cedula_oficial,
+                'nro_unidad': comision.nro_unidad,
+                'nro_cuadrante': comision.nro_cuadrante,
+            }
+            for comision in comisiones
+        ]
+
+        # Agregando la lista de comisiones al diccionario
+        data['comisiones'] = comisiones_lista
+    
+    if division == "Enfermeria":
+        data = {
+            'id': procedimiento.id,
+            'division': procedimiento.id_division.division,
+            'id_division': procedimiento.id_division.id,
+            'dependencia': procedimiento.dependencia,
+            'solicitante_externo': procedimiento.solicitante_externo,
+            'parroquia': procedimiento.id_parroquia.id,
+            'municipio': procedimiento.id_municipio.id,
+            'direccion': procedimiento.direccion,
+            'fecha': procedimiento.fecha,
+            'hora': procedimiento.hora,
+            'tipo_procedimiento': procedimiento.id_tipo_procedimiento.id,
+        }
+
+    if division == "Servicios Medicos":
+        data = {
+            'id': procedimiento.id,
+            'division': procedimiento.id_division.division,
+            'id_division': procedimiento.id_division.id,
+            'tipo_servicio': procedimiento.tipo_servicio,
+            'solicitante_externo': procedimiento.solicitante_externo,
+            'efectivos': procedimiento.efectivos_enviados,
+            'parroquia': procedimiento.id_parroquia.id,
+            'municipio': procedimiento.id_municipio.id,
+            'direccion': procedimiento.direccion,
+            'fecha': procedimiento.fecha,
+            'hora': procedimiento.hora,
+            'tipo_procedimiento': procedimiento.id_tipo_procedimiento.id,
+        }
+
+    if division == "Psicologia":
+            data = {
+                'id': procedimiento.id,
+                'division': procedimiento.id_division.division,
+                'id_division': procedimiento.id_division.id,
+                'solicitante_externo': procedimiento.solicitante_externo,
+                'parroquia': procedimiento.id_parroquia.id,
+                'municipio': procedimiento.id_municipio.id,
+                'direccion': procedimiento.direccion,
+                'fecha': procedimiento.fecha,
+                'hora': procedimiento.hora,
+                'tipo_procedimiento': procedimiento.id_tipo_procedimiento.id,
+            }
+    
+    if division == "Capacitacion":
+        data = {
+            'id': procedimiento.id,
+            'division': procedimiento.id_division.division,
+            'id_division': procedimiento.id_division.id,
+            'solicitante': procedimiento.id_solicitante.id,
+            'solicitante_externo': procedimiento.solicitante_externo,
+            'jefe_comision': procedimiento.id_jefe_comision.id,
+            'dependencia': procedimiento.dependencia,
+            'parroquia': procedimiento.id_parroquia.id,
+            'municipio': procedimiento.id_municipio.id,
+            'direccion': procedimiento.direccion,
+            'fecha': procedimiento.fecha,
+            'hora': procedimiento.hora,
+            'tipo_procedimiento': procedimiento.id_tipo_procedimiento.id,
+        }
+    
+    if str(procedimiento.id_tipo_procedimiento.id) == "1":
+        detalle_procedimiento = get_object_or_404(Abastecimiento_agua, id_procedimiento=id)
+
+        data = dict(data,
+                    ente_suministrado = detalle_procedimiento.id_tipo_servicio.id,
+                    nombres = detalle_procedimiento.nombres,
+                    apellidos = detalle_procedimiento.apellidos,
+                    cedula = detalle_procedimiento.cedula,
+                    ltrs_agua = detalle_procedimiento.ltrs_agua,
+                    personas_atendidas = detalle_procedimiento.personas_atendidas,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status)
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "2":
+        detalle_procedimiento = get_object_or_404(Apoyo_Unidades, id_procedimiento=id)
+        data = dict(data,
+                    tipo_apoyo = detalle_procedimiento.id_tipo_apoyo.id,
+                    unidad_apoyada = detalle_procedimiento.unidad_apoyada,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "3":
+        detalle_procedimiento = get_object_or_404(Guardia_prevencion, id_procedimiento=id)
+        data = dict(data,
+                    motivo_prevencion = detalle_procedimiento.id_motivo_prevencion.id,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "4":
+        detalle_procedimiento = get_object_or_404(Atendido_no_Efectuado, id_procedimiento=id)
+        data = dict(data,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "5":
+        detalle_procedimiento = get_object_or_404(Despliegue_Seguridad, id_procedimiento=id)
+        data = dict(data,
+                    motivo_despliegue = detalle_procedimiento. motivo_despliegue.id,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "6":
+        detalle_procedimiento = get_object_or_404(Falsa_Alarma, id_procedimiento=id)
+        data = dict(data,
+                    motivo_alarma = detalle_procedimiento.motivo_alarma.id,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "7":
+        # Obtener el detalle del procedimiento
+        detalle_procedimiento = get_object_or_404(Atenciones_Paramedicas, id_procedimientos=id)
+
+        # Agregar detalles del procedimiento a los datos
+        data = dict(data,
+                    tipo_atencion=detalle_procedimiento.tipo_atencion,
+                    )
+
+        if detalle_procedimiento.tipo_atencion == "Emergencias Medicas":
+            emergencia = Emergencias_Medicas.objects.get(id_atencion=detalle_procedimiento.id)
+            data = dict(data,
+                emergencia = True,
+                nombres = emergencia.nombres,
+                apellidos = emergencia.apellidos,
+                cedula = emergencia.cedula,
+                edad = emergencia.edad,
+                sexo = emergencia.sexo,
+                idx = emergencia.idx,
+                descripcion = emergencia.descripcion,
+                material_utilizado = emergencia.material_utilizado,
+                status = emergencia.status,
+            )
+
+            if Traslado.objects.filter(id_lesionado=emergencia.id).exists():
+                traslado = Traslado.objects.get(id_lesionado = emergencia.id)
+
+                data = dict(data,
+                            traslado = True,
+                            hospital = traslado.hospital_trasladado,
+                            medico = traslado.medico_receptor,
+                            mpps_cmt = traslado.mpps_cmt,
+                        )
+
+        if detalle_procedimiento.tipo_atencion == "Accidentes de Transito":
+            accidente = Accidentes_Transito.objects.get(id_atencion=detalle_procedimiento.id)
+            data = dict(data,
+                accidente = True,
+                tipo_accidente=accidente.tipo_de_accidente.id,
+                cantidad_lesionados=accidente.cantidad_lesionados,
+                material_utilizado=accidente.material_utilizado,
+                status=accidente.status,
+            )
+
+            # Filtrar todos los vehículos relacionados con el accidente
+            vehiculos = Detalles_Vehiculos_Accidente.objects.filter(id_vehiculo=accidente.id)
+
+            # Si hay vehículos, recopilarlos en una lista
+            if vehiculos:
+                data = dict(data,
+                    vehiculo = True
+                )
+                vehiculos_list = []
+                for vehiculo in vehiculos:
+                    vehiculos_list.append({
+                        'marca': vehiculo.marca,
+                        'modelo': vehiculo.modelo,
+                        'color': vehiculo.color,
+                        'año': vehiculo.año,
+                        'placas': vehiculo.placas,
+                        # Añade aquí otros campos que necesites
+                    })
+                data['vehiculos'] = vehiculos_list  # Agrega la lista de vehículos a 'data'
+            else:
+                data['vehiculos'] = []  # O puedes omitir esta línea si prefieres no agregar la clave
+
+            # Filtrar los lesionados asociados al accidente
+            lesionados = Lesionados.objects.filter(id_accidente=accidente.id)
+
+            # Si hay lesionados, recopilarlos en una lista
+            if lesionados:
+                data = dict(data,
+                    lesionado = True
+                )
+                lesionados_list = []
+                for lesionado in lesionados:
+                    lesionado_data = {
+                        'nombre': lesionado.nombres,
+                        'apellidos': lesionado.apellidos,
+                        'cedula': lesionado.cedula,
+                        'edad': lesionado.edad,
+                        'sexo': lesionado.sexo,
+                        'idx': lesionado.idx,
+                        'descripcion': lesionado.descripcion,
+                        # Añade aquí otros campos que necesites
+                    }
+
+                    # Filtrar traslados asociados a cada lesionado
+                    traslados = Traslado_Accidente.objects.filter(id_lesionado=lesionado.id)
+
+                    # Si hay traslados, añadirlos a los datos del lesionado
+                    if traslados:
+                        traslados_list = []
+                        for traslado in traslados:
+                            traslados_list.append({
+                                'hospital': traslado.hospital_trasladado,
+                                'medico': traslado.medico_receptor,
+                                'mpps_cmt': traslado.mpps_cmt,
+                            })
+                        lesionado_data['traslados'] = traslados_list
+                    else:
+                        lesionado_data['traslados'] = []
+
+                    # Añadir cada lesionado a la lista
+                    lesionados_list.append(lesionado_data)
+
+                data['lesionados'] = lesionados_list  # Agregar la lista de lesionados a 'data'
+            else:
+                data['lesionados'] = []  # Si no hay lesionados, agregar una lista vacía
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "9":
+        detalle_procedimiento = get_object_or_404(Servicios_Especiales, id_procedimientos=id)
+        data = dict(data,
+                    tipo_servicio = detalle_procedimiento.tipo_servicio.id,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "10":
+        detalle_procedimiento = get_object_or_404(Rescate, id_procedimientos=id)
+        data = dict(data,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    tipo_rescate = detalle_procedimiento.tipo_rescate.id,
+                    )
+
+        if detalle_procedimiento.tipo_rescate.tipo_rescate == "Rescate de Animal":
+            detalle_tipo_rescate = get_object_or_404(Rescate_Animal, id_rescate=detalle_procedimiento.id)
+            data = dict(data,
+                        especie = detalle_tipo_rescate.especie,
+                        descripcion = detalle_tipo_rescate.descripcion,
+                        )
+
+        else:
+            detalle_tipo_rescate = get_object_or_404(Rescate_Persona, id_rescate=detalle_procedimiento.id)
+            data = dict(data,
+                        nombres = detalle_tipo_rescate.nombre,
+                        apellidos = detalle_tipo_rescate.apellidos,
+                        cedula = detalle_tipo_rescate.cedula,
+                        edad = detalle_tipo_rescate.edad,
+                        sexo = detalle_tipo_rescate.sexo,
+                        descripcion = detalle_tipo_rescate.descripcion,
+                        )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "11":
+      # Obtener el detalle del procedimiento
+      detalle_procedimiento = get_object_or_404(Incendios, id_procedimientos=id)
+
+      # Agregar detalles del procedimiento a los datos
+      data = dict(data,
+                  tipo_incendio=detalle_procedimiento.id_tipo_incendio.id,
+                  descripcion=detalle_procedimiento.descripcion,
+                  status=detalle_procedimiento.status,
+                  material_utilizado=detalle_procedimiento.material_utilizado,
+                )
+
+      if Persona_Presente.objects.filter(id_incendio=detalle_procedimiento.id).exists():
+          persona_presente_detalles = Persona_Presente.objects.get(id_incendio=detalle_procedimiento.id)
+          data.update({
+              "persona": True,
+              "nombre": persona_presente_detalles.nombre,
+              "apellidos": persona_presente_detalles.apellidos,
+              "cedula": persona_presente_detalles.cedula,
+              "edad": persona_presente_detalles.edad,
+          })
+      else:
+          pass
+      
+      if Retencion_Preventiva_Incendios.objects.filter(id_procedimiento=detalle_procedimiento.id).exists():
+          retencion_incendios = Retencion_Preventiva_Incendios.objects.get(id_procedimiento=detalle_procedimiento.id)
+          data = dict(data,
+                    retencion = True,
+                    tipo_cilindro = retencion_incendios.tipo_cilindro,
+                    capacidad = retencion_incendios.capacidad,
+                    serial = retencion_incendios.serial,
+                    nro_constancia = retencion_incendios.nro_constancia_retencion,
+                    nombre = retencion_incendios.nombre,
+                    apellidos = retencion_incendios.apellidos,
+                    cedula = retencion_incendios.cedula,
+                    )
+      else:
+          pass
+
+      if Detalles_Vehiculos.objects.filter(id_vehiculo=detalle_procedimiento.id).exists():
+          vehiculo_detalles = Detalles_Vehiculos.objects.get(id_vehiculo=detalle_procedimiento.id)
+          data.update({
+              "vehiculo": True,
+              "modelo": vehiculo_detalles.modelo,
+              "marca": vehiculo_detalles.marca,
+              "color": vehiculo_detalles.color,
+              "año": vehiculo_detalles.año,
+              "placas": vehiculo_detalles.placas,
+          })
+      else:
+          pass
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "12":
+        detalle_procedimiento = get_object_or_404(Fallecidos, id_procedimiento=id)
+        data = dict(data,
+                    motivo_fallecimiento = detalle_procedimiento.motivo_fallecimiento,
+                    nombres = detalle_procedimiento.nombres,
+                    apellidos = detalle_procedimiento.apellidos,
+                    cedula = detalle_procedimiento.cedula,
+                    edad = detalle_procedimiento.edad,
+                    sexo = detalle_procedimiento.sexo,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "13":
+        detalle_procedimiento = get_object_or_404(Mitigacion_Riesgos, id_procedimientos=id)
+        data = dict(data,
+                    tipo_servicio = detalle_procedimiento.id_tipo_servicio.id,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "14":
+        detalle_procedimiento = get_object_or_404(Evaluacion_Riesgo, id_procedimientos=id)
+        data = dict(data,
+                    tipo_de_evaluacion = detalle_procedimiento.id_tipo_riesgo.id,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+        if str(detalle_procedimiento.id_procedimientos.id_division) == "Prevencion":
+            detalle_persona = get_object_or_404(Persona_Presente_Eval, id_persona=detalle_procedimiento.id)
+            data = dict(data,
+                        nombre = detalle_persona.nombre,
+                        apellido = detalle_persona.apellidos,
+                        cedula = detalle_persona.cedula,
+                        telefono = detalle_persona.telefono,
+                        )
+        if detalle_procedimiento.tipo_estructura:
+            data = dict(data,
+                        tipo_estructura = detalle_procedimiento.tipo_estructura)
+
+        else:
+            data = dict(data,
+                        tipo_estructura = "")
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "15":
+        detalle_procedimiento = get_object_or_404(Puesto_Avanzada, id_procedimientos=id)
+        data = dict(data,
+                    tipo_de_servicio = detalle_procedimiento.id_tipo_servicio.id,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "16":
+        detalle_procedimiento = get_object_or_404(Traslado_Prehospitalaria, id_procedimiento=id)
+        data = dict(data,
+                    traslado = detalle_procedimiento.id_tipo_traslado.id,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    nombre = detalle_procedimiento.nombre,
+                    apellido = detalle_procedimiento.apellido,
+                    cedula = detalle_procedimiento.cedula,
+                    edad = detalle_procedimiento.edad,
+                    sexo = detalle_procedimiento.sexo,
+                    idx = detalle_procedimiento.idx,
+                    hospital = detalle_procedimiento.hospital_trasladado,
+                    medico = detalle_procedimiento.medico_receptor,
+                    mpps = detalle_procedimiento.mpps_cmt
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "17":
+        detalle_procedimiento = get_object_or_404(Asesoramiento, id_procedimiento=id)
+        data = dict(data,
+                    nombre_comercio = detalle_procedimiento.nombre_comercio,
+                    rif_comercio = detalle_procedimiento.rif_comercio,
+                    nombre = detalle_procedimiento.nombres,
+                    apellido = detalle_procedimiento.apellidos,
+                    cedula = detalle_procedimiento.cedula,
+                    sexo = detalle_procedimiento.sexo,
+                    telefono = detalle_procedimiento.telefono,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "18":  # Supongamos que 18 es el ID de Procedimiento
+        # Diccionario para mapear tipos de inspección a sus modelos
+        inspection_models = {
+            "Prevención": Inspeccion_Prevencion_Asesorias_Tecnicas,
+            "Habitabilidad": Inspeccion_Habitabilidad,
+            "Otros": Inspeccion_Otros,
+            "Arbol": Inspeccion_Arbol
+        }
+
+        # Intentar obtener la instancia de inspección
+        for tipo_inspeccion, model_class in inspection_models.items():
+            try:
+                detalle_procedimiento = model_class.objects.get(id_procedimientos=id)
+
+                # Actualizar datos en función del tipo de inspección
+                data.update({
+                    "tipo_inspeccion": detalle_procedimiento.tipo_inspeccion,
+                    "persona_sitio_nombre": detalle_procedimiento.persona_sitio_nombre,
+                    "persona_sitio_apellido": detalle_procedimiento.persona_sitio_apellido,
+                    "persona_sitio_cedula": detalle_procedimiento.persona_sitio_cedula,
+                    "persona_sitio_telefono": detalle_procedimiento.persona_sitio_telefono,
+                    "material_utilizado": detalle_procedimiento.material_utilizado,
+                    "status": detalle_procedimiento.status,
+                })
+
+                # Actualizar campos específicos según el tipo de inspección
+                if tipo_inspeccion == "Prevención":
+                    data.update({
+                        "nombre_comercio": detalle_procedimiento.nombre_comercio,
+                        "propietario": detalle_procedimiento.propietario,
+                        "cedula_propietario": detalle_procedimiento.cedula_propietario,
+                        "descripcion": detalle_procedimiento.descripcion,
+                    })
+                elif tipo_inspeccion == "Habitabilidad":
+                    data.update({
+                        "descripcion": detalle_procedimiento.descripcion,
+                    })
+                elif tipo_inspeccion == "Otros":
+                    data.update({
+                        "especifique": detalle_procedimiento.especifique,
+                        "descripcion": detalle_procedimiento.descripcion,
+                    })
+                elif tipo_inspeccion == "Arbol":
+                    data.update({
+                        "especie": detalle_procedimiento.especie,
+                        "altura_aprox": detalle_procedimiento.altura_aprox,
+                        "ubicacion_arbol": detalle_procedimiento.ubicacion_arbol,
+                        "descripcion": detalle_procedimiento.descripcion,
+                    })
+
+                # Salir del ciclo una vez que se haya encontrado y procesado la inspección
+                break
+
+            except model_class.DoesNotExist:
+                # Si no se encuentra la inspección, continuar con el siguiente tipo
+                continue
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "19":
+        investigacion = get_object_or_404(Investigacion, id_procedimientos=id)
+        data.update({
+            "tipo_investigacion": investigacion.id_tipo_investigacion.id,
+            "tipo_siniestro": investigacion.tipo_siniestro,
+        })
+        
+        if investigacion.tipo_siniestro == "Vehiculo":
+            vehiculo = Investigacion_Vehiculo.objects.filter(id_investigacion=investigacion).first()
+            if vehiculo:
+                data.update({
+                    "marca": vehiculo.marca,
+                    "modelo": vehiculo.modelo,
+                    "color": vehiculo.color,
+                    "placas": vehiculo.placas,
+                    "año": vehiculo.año,
+                    "nombre_propietario": vehiculo.nombre_propietario,
+                    "apellido_propietario": vehiculo.apellido_propietario,
+                    "cedula_propietario": vehiculo.cedula_propietario,
+                    "descripcion": vehiculo.descripcion,
+                    "material_utilizado": vehiculo.material_utilizado,
+                    "status": vehiculo.status,
+                })
+
+        elif investigacion.tipo_siniestro == "Comercio":
+            comercio = Investigacion_Comercio.objects.filter(id_investigacion=investigacion).first()
+            if comercio:
+                data.update({
+                    "nombre_comercio_investigacion": comercio.nombre_comercio,
+                    "rif_comercio_investigacion": comercio.rif_comercio,
+                    "nombre_propietario_comercio": comercio.nombre_propietario,
+                    "apellido_propietario_comercio": comercio.apellido_propietario,
+                    "cedula_propietario_comercio": comercio.cedula_propietario,
+                    "descripcion_comercio": comercio.descripcion,
+                    "material_utilizado_comercio": comercio.material_utilizado,
+                    "status_comercio": comercio.status,
+                })
+
+        elif investigacion.tipo_siniestro == "Estructura" or investigacion.tipo_siniestro == "Vivienda":
+            estructura = Investigacion_Estructura_Vivienda.objects.filter(id_investigacion=investigacion).first()
+            if estructura:
+                data.update({
+                    "tipo_estructura": estructura.tipo_estructura,
+                    "nombre_propietario_estructura": estructura.nombre,
+                    "apellido_propietario_estructura": estructura.apellido,
+                    "cedula_propietario_estructura": estructura.cedula,
+                    "descripcion_estructura": estructura.descripcion,
+                    "material_utilizado_estructura": estructura.material_utilizado,
+                    "status_estructura": estructura.status,
+                })
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "20":
+        detalle_procedimiento = get_object_or_404(Reinspeccion_Prevencion, id_procedimiento=id)
+        data = dict(data,
+                    nombre_comercio = detalle_procedimiento.nombre_comercio,
+                    rif_comercio = detalle_procedimiento.rif_comercio,
+                    nombre = detalle_procedimiento.nombre,
+                    apellido = detalle_procedimiento.apellidos,
+                    cedula = detalle_procedimiento.cedula,
+                    sexo = detalle_procedimiento.sexo,
+                    telefono = detalle_procedimiento.telefono,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "21":
+        detalle_procedimiento = get_object_or_404(Retencion_Preventiva, id_procedimiento=id)
+        data = dict(data,
+                
+                    tipo_cilindro = detalle_procedimiento.tipo_cilindro,
+                    capacidad = detalle_procedimiento.capacidad,
+                    serial = detalle_procedimiento.serial,
+                    nro_constancia = detalle_procedimiento.nro_constancia_retencion,
+                    nombre = detalle_procedimiento.nombre,
+                    apellidos = detalle_procedimiento.apellidos,
+                    cedula = detalle_procedimiento.cedula,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "22":
+        detalle_procedimiento = get_object_or_404(Artificios_Pirotecnicos, id_procedimiento=id)
+
+        data = dict(data,
+                   nombre_comercio = detalle_procedimiento.nombre_comercio,
+                    rif_comercio = detalle_procedimiento.rif_comerciante,
+                    tipo_procedimiento_art = detalle_procedimiento.tipo_procedimiento.tipo,
+                )
+
+        if detalle_procedimiento.tipo_procedimiento.id == 1:
+            incendio = get_object_or_404(Incendios_Art, id_procedimientos=detalle_procedimiento.id)
+            data.update({
+                'tipo_incendio': incendio.id_tipo_incendio.tipo_incendio,
+                'descripcion': incendio.descripcion,
+                'material_utilizado': incendio.material_utilizado,
+                'status': incendio.status,
+            })
+
+            try:
+                if get_object_or_404(Persona_Presente_Art, id_incendio=incendio.id):
+                    persona = get_object_or_404(Persona_Presente_Art, id_incendio=incendio.id)
+                    data = dict(data,
+                                person = True,
+                                nombre = persona.nombre,
+                                apellidos = persona.apellidos,
+                                cedula = persona.cedula,
+                                edad = persona.edad,
+                                )
+            except: 
+                pass
+
+            if incendio.id_tipo_incendio.tipo_incendio == "Incendio de Vehiculo":
+                vehiculo = get_object_or_404(Detalles_Vehiculos_Art, id_vehiculo=incendio.id)
+                data = dict(data,
+                            carro = True,
+                            modelo = vehiculo.modelo,
+                            marca = vehiculo.marca,
+                            color = vehiculo.color,
+                            año = vehiculo.año,
+                            placas = vehiculo.placas,
+                            )
+
+        if detalle_procedimiento.tipo_procedimiento.id == 2:
+            lesionado = get_object_or_404(Lesionados_Art, id_accidente=detalle_procedimiento.id)
+            data.update({
+                'nombres': lesionado.nombres,
+                'apellidos': lesionado.apellidos,
+                'cedula': lesionado.cedula,
+                'edad': lesionado.edad,
+                'sexo': lesionado.sexo,
+                'idx': lesionado.idx,
+                'descripcion': lesionado.descripcion,
+                'status': lesionado.status,
+            })
+
+        if detalle_procedimiento.tipo_procedimiento.id == 3:
+            fallecido = get_object_or_404(Fallecidos_Art, id_procedimiento=detalle_procedimiento.id)
+            data.update({
+                'motivo_fallecimiento': fallecido.motivo_fallecimiento,
+                'nombres': fallecido.nombres,
+                'apellidos': fallecido.apellidos,
+                'cedula': fallecido.cedula,
+                'edad': fallecido.edad,
+                'sexo': fallecido.sexo,
+                'descripcion': fallecido.descripcion,
+                'material_utilizado': fallecido.material_utilizado,
+                'status': fallecido.status,
+            })
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "23":
+        detalle_procedimiento = get_object_or_404(Inspeccion_Establecimiento_Art, id_proc_artificio=id)
+        data = dict(data,
+                    nombre_comercio = detalle_procedimiento.nombre_comercio,
+                    rif_comercio = detalle_procedimiento.rif_comercio,
+                    encargado_nombre = detalle_procedimiento.encargado_nombre,
+                    encargado_apellidos = detalle_procedimiento.encargado_apellidos,
+                    encargado_cedula = detalle_procedimiento.encargado_cedula,
+                    encargado_sexo = detalle_procedimiento.encargado_sexo,
+                    descripcion = detalle_procedimiento.descripcion,
+                    material_utilizado = detalle_procedimiento.material_utilizado,
+                    status = detalle_procedimiento.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "24":
+        detalles = get_object_or_404(Valoracion_Medica, id_procedimientos = id)
+
+        data = dict(data,
+                    nombres = detalles.nombre,
+                    apellidos = detalles.apellido,
+                    cedula = detalles.cedula,
+                    edad = detalles.edad,
+                    sexo = detalles.sexo,
+                    telefono = detalles.telefono,
+                    descripcion = detalles.descripcion,
+                    material_utilizado = detalles.material_utilizado,
+                    status = detalles.status,
+                    )
+        
+    if str(procedimiento.id_tipo_procedimiento.id) == "25":
+        detalles = get_object_or_404(Jornada_Medica, id_procedimientos = id)
+
+        data = dict(data,
+                    nombre_jornada = detalles.nombre_jornada,
+                    cant_personas = detalles.cant_personas_aten,
+                    descripcion = detalles.descripcion,
+                    material_utilizado = detalles.material_utilizado,
+                    status = detalles.status,
+                    )
+
+    if str(procedimiento.id_tipo_procedimiento.id) == "26" or str(procedimiento.id_tipo_procedimiento.id) == "27" or str(procedimiento.id_tipo_procedimiento.id) == "28" or str(procedimiento.id_tipo_procedimiento.id) == "29" or str(procedimiento.id_tipo_procedimiento.id) == "30" or str(procedimiento.id_tipo_procedimiento.id) == "31" or str(procedimiento.id_tipo_procedimiento.id) == "32" or str(procedimiento.id_tipo_procedimiento.id) == "33" or str(procedimiento.id_tipo_procedimiento.id) == "34":
+        detalles = get_object_or_404(Detalles_Enfermeria, id_procedimientos = id)
+
+        data = dict(data,
+                    nombres = detalles.nombre,
+                    apellidos = detalles.apellido,
+                    cedula = detalles.cedula,
+                    edad = detalles.edad,
+                    sexo = detalles.sexo,
+                    telefono = detalles.telefono,
+                    descripcion = detalles.descripcion,
+                    material_utilizado = detalles.material_utilizado,
+                    status = detalles.status,
+                    )
+        
+    if str(procedimiento.id_tipo_procedimiento.id) == "35" or str(procedimiento.id_tipo_procedimiento.id) == "36" or str(procedimiento.id_tipo_procedimiento.id) == "37" or str(procedimiento.id_tipo_procedimiento.id) == "38" or str(procedimiento.id_tipo_procedimiento.id) == "39" or str(procedimiento.id_tipo_procedimiento.id) == "40" or str(procedimiento.id_tipo_procedimiento.id) == "41":
+        detalles = get_object_or_404(Procedimientos_Psicologia, id_procedimientos = id)
+
+        data = dict(data,
+                    nombres = detalles.nombre,
+                    apellidos = detalles.apellido,
+                    cedula = detalles.cedula,
+                    edad = detalles.edad,
+                    sexo = detalles.sexo,
+                    descripcion = detalles.descripcion,
+                    material_utilizado = detalles.material_utilizado,
+                    status = detalles.status,
+                    )
+        
+    if str(procedimiento.id_tipo_procedimiento.id) == "45":
+        if procedimiento.dependencia == "Capacitacion":
+            detalles = get_object_or_404(Procedimientos_Capacitacion, id_procedimientos = id)
+
+            data = dict(data,
+                    tipo_capacitacion = detalles.tipo_capacitacion,
+                    tipo_clasificacion = detalles.tipo_clasificacion,
+                    personas_beneficiadas = detalles.personas_beneficiadas,
+                    descripcion = detalles.descripcion,
+                    material_utilizado = detalles.material_utilizado,
+                    status = detalles.status
+                    )
+        
+        if procedimiento.dependencia == "Brigada Juvenil":
+            detalles = get_object_or_404(Procedimientos_Brigada, id_procedimientos = id)
+
+            data = dict(data,
+                    tipo_capacitacion = detalles.tipo_capacitacion,
+                    tipo_clasificacion = detalles.tipo_clasificacion,
+                    personas_beneficiadas = detalles.personas_beneficiadas,
+                    descripcion = detalles.descripcion,
+                    material_utilizado = detalles.material_utilizado,
+                    status = detalles.status
+                    )
+        
+        if procedimiento.dependencia == "Frente Preventivo":
+            detalles = get_object_or_404(Procedimientos_Frente_Preventivo, id_procedimientos = id)
+
+            data = dict(data,
+                    nombre_actividad = detalles.nombre_actividad,
+                    estrategia = detalles.estrategia,
+                    personas_beneficiadas = detalles.personas_beneficiadas,
+                    descripcion = detalles.descripcion,
+                    material_utilizado = detalles.material_utilizado,
+                    status = detalles.status
+                    )
+        
+    print(data)
+    return JsonResponse(data)

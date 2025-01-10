@@ -9,61 +9,54 @@ document.querySelector("tbody").addEventListener("click", async function (event)
 
         try {
             // Llamada a fetchWithLoader para cargar datos del procedimiento
-            const data = await fetchWithLoader(`/editar_procedimiento/${id}/`);
+            const data = await fetchWithLoader(`/api/obtener_informacion/${id}/`);
+            // const data = await fetchWithLoader(`/api/obtener_informacion/149/`);
 
-            // Rellenar los campos del formulario con los datos obtenidos
-            document.getElementById("editar-id").value = data.id;
-            document.getElementById("editar-division").value = data.division;
-            document.getElementById("editar-solicitante").value = data.id_solicitante || "";
-            document.getElementById("editar-solicitante-externo").value = data.id_solicitante_externo || "";
-            document.getElementById("editar-jefe_comision").value = data.id_jefe_comision || "";
-            document.getElementById("editar-unidad").value = data.unidad || "";
-            document.getElementById("editar-efectivos").value = data.efectivos || "";
-            document.getElementById("editar-municipio").value = data.municipio || "";
-            document.getElementById("editar-parroquia").value = data.parroquia || "";
-            document.getElementById("editar-direccion").value = data.direccion || "";
-            document.getElementById("editar-fecha").value = data.fecha || "";
-            document.getElementById("editar-hora").value = data.hora || "";
-            document.getElementById("editar-tipo_procedimiento").value = data.tipo_procedimiento || "";
+            // Guardar la información en localStorage
+            localStorage.setItem('fetchedData', JSON.stringify(data));
+
+            // Redirigir a la página destino
+            window.location.href = '/editar_procedimientos/';
+
         } catch (err) {
             alert("Hubo un problema al cargar los datos.");
         }
     }
 });
 
-// Enviar los datos del formulario
-const form = document.getElementById("editar-form");
-form.addEventListener("submit", async function (event) {
-    event.preventDefault();
+// // Enviar los datos del formulario
+// const form = document.getElementById("editar-form");
+// form.addEventListener("submit", async function (event) {
+//     event.preventDefault();
 
-    // Obtener los valores del formulario, incluidas las comisiones
-    const formData = new FormData(form);
-    const jsonData = Object.fromEntries(formData.entries());
+//     // Obtener los valores del formulario, incluidas las comisiones
+//     const formData = new FormData(form);
+//     const jsonData = Object.fromEntries(formData.entries());
 
-    // Obtener el ID del procedimiento
-    const id = document.getElementById("editar-id").value;
+//     // Obtener el ID del procedimiento
+//     const id = document.getElementById("editar-id").value;
 
-    try {
-        // Llamada a fetchWithLoader para enviar los datos al servidor
-        await fetchWithLoader(`/editar_procedimiento/${id}/`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCSRFToken(),
-            },
-            body: JSON.stringify(jsonData),
-        });
-        location.reload(); // Recargar la página para reflejar los cambios
-    } catch (err) {
-        alert("Hubo un problema al guardar los cambios.");
-    }
-});
+//     try {
+//         // Llamada a fetchWithLoader para enviar los datos al servidor
+//         await fetchWithLoader(`/editar_procedimiento/${id}/`, {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "X-CSRFToken": getCSRFToken(),
+//             },
+//             body: JSON.stringify(jsonData),
+//         });
+//         location.reload(); // Recargar la página para reflejar los cambios
+//     } catch (err) {
+//         alert("Hubo un problema al guardar los cambios.");
+//     }
+// });
 
-// Obtener el token CSRF
-function getCSRFToken() {
-    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-    return csrfToken;
-}
+// // Obtener el token CSRF
+// function getCSRFToken() {
+//     const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+//     return csrfToken;
+// }
 });
 
 
