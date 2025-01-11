@@ -374,6 +374,23 @@ document.addEventListener("DOMContentLoaded", function () {
                         </section>`
                           : ""
                       }
+                      ${
+                        data.retencion
+                          ? `
+                            <h4>Datos del Cilindro</h4>
+                            <section class="detalles_procedimiento">
+                            <p><b>Tipo de Cilindro: </b> ${data.tipo_cilindro}</p>
+                            <p><b>Capacidad: </b> ${data.capacidad}</p>
+                            <p><b>serial: </b> ${data.serial}</p>
+                            <p><b>Numero de Constancia de Retencion: </b>#${
+                              data.nro_constancia
+                            }</p>
+                            <p><b>Nombre de la Persona: </b>${data.nombre}</p>
+                            <p><b>Apellido de la Persona: </b>${data.apellidos}</p>
+                            <p><b>Cedula de la Persona: </b>${data.cedula}</p>
+                            </section>`
+                            : ""
+                      }
                         ${
                           data.vehiculo
                             ? `

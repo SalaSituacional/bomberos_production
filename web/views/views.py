@@ -2379,7 +2379,6 @@ def View_Procedimiento_Editar(request):
 
     if request.method == 'POST':
         id = request.POST["id_editar"]
-        print(id)
         form = SelectorDivision(request.POST, prefix='form1')
         form2 = SeleccionarInfo(request.POST, prefix='form2')
         form3 = Datos_Ubicacion(request.POST, prefix='form3')
