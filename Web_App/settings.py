@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-usf!gyb)c_93(yhk-ab2gm%&_(hlk1ough81m110qhhrn4$cvy
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Debug true significa desarrollo modo de pruebas
-DEBUG = True
+DEBUG = False
 
 #------------- modo produccion-----------------
 # Debug false significa produccion quiere decir listo para usarse
@@ -112,16 +112,16 @@ WSGI_APPLICATION = 'Web_App.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bomberos_db',
-        'USER': 'postgres',
-        'PASSWORD': 'anthonym7',
-        'PORT': '5432',
-        'HOST': 'localhost'
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'bomberos_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'anthonym7',
+#         'PORT': '5432',
+#         'HOST': 'localhost'
+#     }
+# }
 
 # Base de Datos del Render (Sala Situacional)
 # DATABASES = {
@@ -129,9 +129,9 @@ DATABASES = {
 # }
 
 # Conexion base de datos del Render (Sala Situacional) 2
-# DATABASES = {
-#     'default': dj_database_url.config(default="postgresql://bomberos_dbs_user:sB0cG00nvzS11aSYoROt2wNSWPnSIDyR@dpg-ctct69btq21c7380aogg-a.oregon-postgres.render.com/bomberos_dbs")
-# }
+DATABASES = {
+    'default': dj_database_url.config(default="postgresql://bomberos_dbs_user:sB0cG00nvzS11aSYoROt2wNSWPnSIDyR@dpg-ctct69btq21c7380aogg-a.oregon-postgres.render.com/bomberos_dbs")
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

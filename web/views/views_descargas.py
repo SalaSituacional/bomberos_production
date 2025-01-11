@@ -9,8 +9,6 @@ import subprocess
 from urllib.parse import urlparse
 import pandas as pd
 
-
-
 # Vista para descargar la base de datos
 def descargar_base_datos(request):
     # Crear un nombre de archivo basado en la fecha actual
@@ -66,8 +64,6 @@ def descargar_base_datos(request):
         # Otros motores de base de datos
         return HttpResponse("Motor de base de datos no compatible", status=400)
 
-
-
 # Api para crear el excel de exportacion de la tabla
 def generar_excel_personal(request):
     # Crear un libro de trabajo y una hoja
@@ -110,12 +106,11 @@ def generar_excel_personal(request):
     workbook.save(response)
     return response
 
-
-def generar_excel(request):
+def generar_excel_capacitacion(request):
     # Crear un libro de trabajo y una hoja
     workbook = openpyxl.Workbook()
     hoja = workbook.active
-    hoja.title = "Procedimientos"
+    hoja.title = "Capacitacion"
 
     # Agregar encabezados a la primera fila
     encabezados = [
@@ -126,291 +121,79 @@ def generar_excel(request):
     hoja.append(encabezados)
 
     division = 9
-
     # Obtener datos de los procedimientos
     procedimientos = Procedimientos.objects.filter(id_division=division)
 
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        for item in set_relacionado:
+            # Persona
+            if hasattr(item, 'cedula'):
+                personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
+            if hasattr(item, 'nombre_propietario'):
+                personas.append(f"{item.nombre_propietario} {item.apellido_propietario} {item.cedula_propietario}")
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+        return personas, detalles
+
     # Agregar datos a la hoja
     for procedimiento in procedimientos:
-        # Determinar los datos de solicitante y jefe de comisión
-        solicitante = (f"{procedimiento.id_solicitante.jerarquia} "
-                       f"{procedimiento.id_solicitante.nombres} "
-                       f"{procedimiento.id_solicitante.apellidos}") \
-                      if procedimiento.id_solicitante is not None and procedimiento.id_solicitante.id != 0 \
-                      else procedimiento.solicitante_externo
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
 
-        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} "
-                         f"{procedimiento.id_jefe_comision.nombres} "
-                         f"{procedimiento.id_jefe_comision.apellidos}") \
-                        if procedimiento.id_jefe_comision is not None and procedimiento.id_jefe_comision.id != 0 \
-                        else ""
-        # Recopilar datos de "Personas Presentes" desde todas las tablas relacionadas
-        personas_presentes = []
-        detalles_procedimientos = []
-        descripciones_proc = []
+        personas_presentes, detalles_procedimientos = [], []
 
-        # Abastecimiento_agua
-        for detalles in procedimiento.abastecimiento_agua_set.all():
-            personas_presentes.append(f"{detalles.nombres} {detalles.apellidos} {detalles.cedula}")
-            detalles_procedimientos.append(f"{detalles.id_tipo_servicio.nombre_institucion}")
-            descripciones_proc.append(detalles.descripcion)
-
-        # Apoyo_Unidades
-        for detalles in procedimiento.apoyo_unidades_set.all():
-            detalles_procedimientos.append(detalles.id_tipo_apoyo.tipo_apoyo)
-            descripciones_proc.append(detalles.descripcion)
-
-        # Guardia_Prevencion
-        for detalles in procedimiento.guardia_prevencion_set.all():
-            detalles_procedimientos.append(detalles.id_motivo_prevencion.motivo)
-            descripciones_proc.append(detalles.descripcion)
-
-        # Atendido_no_Efectuado
-        for detalles in procedimiento.atendido_no_efectuado_set.all():
-            descripciones_proc.append(detalles.descripcion)
-
-        # Despliegue_Seguridad
-        for detalles in procedimiento.despliegue_seguridad_set.all():
-            detalles_procedimientos.append(detalles.motivo_despliegue.motivo)
-            descripciones_proc.append(detalles.descripcion)
-
-        # Fallecidos
-        for detalles in procedimiento.fallecidos_set.all():
-            personas_presentes.append(f"{detalles.nombres} {detalles.apellidos} {detalles.cedula}")
-            detalles_procedimientos.append(detalles.motivo_fallecimiento)
-            descripciones_proc.append(detalles.descripcion)
-
-        # Falsa_Alarma
-        for detalles in procedimiento.falsa_alarma_set.all():
-            detalles_procedimientos.append(detalles.motivo_alarma.motivo)
-            descripciones_proc.append(detalles.descripcion)
-
-        # Servicios_Especiales
-        for detalles in procedimiento.servicios_especiales_set.all():
-            detalles_procedimientos.append(detalles.tipo_servicio.serv_especiales)
-            descripciones_proc.append(detalles.descripcion)
-
-        for rescate in procedimiento.rescate_set.all():
-            # Añadir el tipo de rescate al listado de detalles
-            detalles_procedimientos.append(rescate.tipo_rescate.tipo_rescate)
-            
-            # Detalles de personas rescatadas
-            detalles_personas = []
-            for persona in rescate.rescate_persona_set.all():
-                detalles_personas.append(f"{persona.nombre} {persona.apellidos} {persona.cedula}")
-                descripciones_proc.append(persona.descripcion)
-            
-            # Añadir detalles de personas rescatadas, si existen
-            if detalles_personas:
-                personas_presentes.append(f"{''.join(detalles_personas)}")
-
-            # Detalles de animales rescatados
-            detalles_animales = []
-            for animal in rescate.rescate_animal_set.all():
-                detalles_animales.append(f"Especie: {animal.especie}")
-                descripciones_proc.append(animal.descripcion)
-            
-            # Añadir detalles de animales rescatados, si existen
-            if detalles_animales:
-                detalles_procedimientos.append(f"{''.join(detalles_animales)}")
-
-        # Incendios -> Persona_Presente
-        for incendio in procedimiento.incendios_set.all():
-            detalles_procedimientos.append(incendio.id_tipo_incendio.tipo_incendio)
-            descripciones_proc.append(incendio.descripcion)
-            for persona in incendio.persona_presente_set.all():
-                personas_presentes.append(f"{persona.nombre} {persona.apellidos} {persona.cedula}")
-
-       # Atenciones Paramédicas
-        for atencion in procedimiento.atenciones_paramedicas_set.all():
-            # Añadir el tipo de atención
-            detalles_procedimientos.append(atencion.tipo_atencion)
-
-            # Detalles de Emergencias Médicas
-            detalles_emergencias = []
-            for emergencia in atencion.emergencias_medicas_set.all():
-                detalles_emergencias.append(f"{emergencia.nombres} {emergencia.apellidos} {emergencia.cedula}")
-                descripciones_proc.append(emergencia.descripcion)
-            
-            # Añadir detalles de emergencias médicas, si existen
-            if detalles_emergencias:
-                personas_presentes.append(f"{''.join(detalles_emergencias)}")
-
-            # Detalles de Accidentes de Tránsito
-            for accidente in atencion.accidentes_transito_set.all():
-                # Añadir tipo de accidente
-                detalles_procedimientos.append(accidente.tipo_de_accidente.tipo_accidente)
-                
-                # Detalles de Lesionados
-                detalles_lesionados = []
-                for lesionado in accidente.lesionados_set.all():
-                    detalles_lesionados.append(f"{lesionado.nombres} {lesionado.apellidos} {lesionado.cedula}, ")
-                    descripciones_proc.append(lesionado.descripcion)
-                
-                # Añadir detalles de lesionados, si existen
-                if detalles_lesionados:
-                    personas_presentes.append(f"{''.join(detalles_lesionados)}")
-
-        # Traslado_Prehospitalaria
-        for traslado in procedimiento.traslado_prehospitalaria_set.all():
-            detalles_procedimientos.append(traslado.id_tipo_traslado.tipo_traslado)
-            personas_presentes.append(f"{traslado.nombre} {traslado.apellido} {traslado.cedula}")
-            descripciones_proc.append(traslado.descripcion)
-
-        # Evaluacion_Riesgo -> Persona_Presente_Eval
-        for evaluacion in procedimiento.evaluacion_riesgo_set.all():
-            detalles_procedimientos.append(evaluacion.id_tipo_riesgo.tipo_riesgo)
-            detalles_procedimientos.append(evaluacion.tipo_estructura)
-            descripciones_proc.append(evaluacion.descripcion)
-            for persona in evaluacion.persona_presente_eval_set.all():
-                personas_presentes.append(f"{persona.nombre} {persona.apellidos} {persona.cedula}")
-
-        # Mitigacion_Riesgos
-        for mitigacion in procedimiento.mitigacion_riesgos_set.all():
-            detalles_procedimientos.append(mitigacion.id_tipo_servicio.tipo_servicio)
-            descripciones_proc.append(mitigacion.descripcion)
-
-        # Puesto_Avanzada
-        for avanzada in procedimiento.puesto_avanzada_set.all():
-            detalles_procedimientos.append(avanzada.id_tipo_servicio.tipo_servicio)
-            descripciones_proc.append(avanzada.descripcion)
-
-        # Asesoramiento
-        for asesoramiento in procedimiento.asesoramiento_set.all():
-            detalles_procedimientos.append(f"Comercio: {asesoramiento.nombre_comercio} {asesoramiento.rif_comercio}")
-            personas_presentes.append(f"{asesoramiento.nombres} {asesoramiento.apellidos} {asesoramiento.cedula}")
-            descripciones_proc.append(asesoramiento.descripcion)
-
-        # Reinspeccion_Prevencion
-        for detalles in procedimiento.reinspeccion_prevencion_set.all():
-            detalles_procedimientos.append(f"Comercio: {detalles.nombre_comercio} {detalles.rif_comercio}")
-            personas_presentes.append(f"{detalles.nombre} {detalles.apellidos} {detalles.cedula}")
-            descripciones_proc.append(detalles.descripcion)
-
-        # Retencion_Preventiva
-        for detalles in procedimiento.retencion_preventiva_set.all():
-            detalles_procedimientos.append(f"Tipo Cilindro: {detalles.tipo_cilindro} {detalles.capacidad}")
-            personas_presentes.append(f"{detalles.nombre} {detalles.apellidos} {detalles.cedula}")
-            descripciones_proc.append(detalles.descripcion)
-
-        # Artificios_Pirotecnicos
-        for artificio in procedimiento.artificios_pirotecnicos_set.all():
-            detalles_procedimientos.append(f"{artificio.tipo_procedimiento.tipo}")
-            
-            # Incendios_Art -> Persona_Presente_Art
-            for incendio in artificio.incendios_art_set.all():
-                descripciones_proc.append(incendio.descripcion)
-                for persona in incendio.persona_presente_art_set.all():
-                    personas_presentes.append(f"{persona.nombre} {persona.apellidos} {persona.cedula}")
-
-            # Lesionados_Art
-            for lesionado in artificio.lesionados_art_set.all():
-                descripciones_proc.append(lesionado.descripcion)
-                personas_presentes.append(f"{lesionado.nombres} {lesionado.apellidos} {lesionado.cedula}")
-
-            # Fallecidos_Art
-            for fallecido in artificio.fallecidos_art_set.all():
-                descripciones_proc.append(fallecido.descripcion)
-                personas_presentes.append(f"{fallecido.nombres} {fallecido.apellidos} {fallecido.cedula}")
-
-        # Inspeccion_Establecimiento_Art
-        for inspeccion in procedimiento.inspeccion_establecimiento_art_set.all():
-            detalles_procedimientos.append(f"Comercio: {inspeccion.nombre_comercio} {inspeccion.rif_comercio}")
-            descripciones_proc.append(inspeccion.descripcion)
-            personas_presentes.append(f"{inspeccion.encargado_nombre} {inspeccion.encargado_apellidos} {inspeccion.encargado_cedula}")
-
-        # Valoracion_Medica
-        for valoracion in procedimiento.valoracion_medica_set.all():
-            detalles_procedimientos.append(procedimiento.tipo_servicio)
-            personas_presentes.append(f"{valoracion.nombre} {valoracion.apellido} {valoracion.cedula}")
-            descripciones_proc.append(valoracion.descripcion)
-
-        # Detalles_Enfermeria
-        for enfermeria in procedimiento.detalles_enfermeria_set.all():
-            detalles_procedimientos.append(procedimiento.dependencia)
-            personas_presentes.append(f"{enfermeria.nombre} {enfermeria.apellido} {enfermeria.cedula}")
-            descripciones_proc.append(enfermeria.descripcion)
-
-        # Procedimientos_Psicologia
-        for psicologia in procedimiento.procedimientos_psicologia_set.all():
-            detalles_procedimientos.append("Consultas Psicologicas")
-            personas_presentes.append(f"{psicologia.nombre} {psicologia.apellido} {psicologia.cedula}")
-            descripciones_proc.append(psicologia.descripcion)
-
-        # Procedimientos_Capacitacion
-        for capacitacion in procedimiento.procedimientos_capacitacion_set.all():
-            detalles_procedimientos.append(f"Dependencia: {procedimiento.dependencia} - Capacitación: {capacitacion.tipo_capacitacion} - Clasificacion: {capacitacion.tipo_clasificacion}")
-            descripciones_proc.append(capacitacion.descripcion)
+        # Agregar detalles de las distintas relaciones
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),
+            (procedimiento.atendido_no_efectuado_set.all(), None),
+            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
+            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
+            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
+            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
+            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
+            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
+            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
+            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
+            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
+            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
+            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
+            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
+            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
+            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
+            (procedimiento.valoracion_medica_set.all(), None),
+            (procedimiento.detalles_enfermeria_set.all(), None),
+            (procedimiento.procedimientos_psicologia_set.all(), None),
+            (procedimiento.procedimientos_capacitacion_set.all(), None),
+            (procedimiento.procedimientos_brigada_set.all(), None),
+            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
+            (procedimiento.jornada_medica_set.all(), None),
+            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
+            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
+        ]
         
-        # Procedimientos_Capacitacion
-        for brigada in procedimiento.procedimientos_brigada_set.all():
-            detalles_procedimientos.append(f"Dependencia: {procedimiento.dependencia} - Capacitación: {brigada.tipo_capacitacion} - Clasificacion: {brigada.tipo_clasificacion}")
-            descripciones_proc.append(capacitacion.descripcion)
+        # Procesar cada conjunto de datos
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
 
-        # Procedimientos_Frente_Preventivo
-        for frente_preventivo in procedimiento.procedimientos_frente_preventivo_set.all():
-            detalles_procedimientos.append(f"Dependencia: {procedimiento.dependencia} - Actividad: {frente_preventivo.nombre_actividad} - Estrategia: {frente_preventivo.estrategia}")
-            descripciones_proc.append(frente_preventivo.descripcion)
-
-        # Datos de la Jornada Médica
-        for jornada in procedimiento.jornada_medica_set.all():
-            detalles_procedimientos.append(f"{jornada.nombre_jornada} - {jornada.cant_personas_aten}")
-            descripciones_proc.append(f"{jornada.descripcion}")  # Incluyendo la cantidad
-
-        # Inspecciones
-        for inspeccion in procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all():
-            detalles_procedimientos.append(inspeccion.tipo_inspeccion)
-            personas_presentes.append(f"{inspeccion.persona_sitio_nombre} {inspeccion.persona_sitio_apellido} ({inspeccion.persona_sitio_cedula})")
-            descripciones_proc.append(inspeccion.descripcion)
-
-        for inspeccion in procedimiento.inspeccion_habitabilidad_set.all():
-            detalles_procedimientos.append(inspeccion.tipo_inspeccion)
-            personas_presentes.append(f"{inspeccion.persona_sitio_nombre} {inspeccion.persona_sitio_apellido} ({inspeccion.persona_sitio_cedula})")
-            descripciones_proc.append(inspeccion.descripcion)
-
-        for inspeccion in procedimiento.inspeccion_otros_set.all():
-            detalles_procedimientos.append(inspeccion.tipo_inspeccion)
-            personas_presentes.append(f"{inspeccion.persona_sitio_nombre} {inspeccion.persona_sitio_apellido} ({inspeccion.persona_sitio_cedula})")
-            descripciones_proc.append(inspeccion.descripcion)
-
-        for inspeccion in procedimiento.inspeccion_arbol_set.all():
-            detalles_procedimientos.append(f"{inspeccion.tipo_inspeccion} -- {inspeccion.especie} ({inspeccion.altura_aprox})")
-            personas_presentes.append(f"{inspeccion.persona_sitio_nombre} {inspeccion.persona_sitio_apellido} {inspeccion.persona_sitio_cedula}")
-            descripciones_proc.append(inspeccion.descripcion)
-
-        # Para cada registro de 'Investigacion' asociado con 'Procedimientos'
-        for investigacion in procedimiento.investigacion_set.all():
-            # Añadir el tipo de investigación y el tipo de siniestro
-            detalles_procedimientos.append(f"{investigacion.id_tipo_investigacion.tipo_investigacion} - {investigacion.tipo_siniestro}")
-            
-            # Investigacion -> Investigacion_Vehiculo
-            detalles_propietario = []
-            for vehiculo in investigacion.investigacion_vehiculo_set.all():
-                detalles_propietario.append(f"{vehiculo.nombre_propietario} {vehiculo.apellido_propietario} {vehiculo.cedula_propietario}")
-                descripciones_proc.append(vehiculo.descripcion)
-            if detalles_propietario:
-                personas_presentes.append(f"{''.join(detalles_propietario)}")
-            
-            # Investigacion -> Investigacion_Comercio
-            detalles_comercios = []
-            for comercio in investigacion.investigacion_comercio_set.all():
-                detalles_comercios.append(f"{comercio.nombre_propietario} {comercio.apellido_propietario} {comercio.cedula_propietario}")
-                descripciones_proc.append(comercio.descripcion)
-            if detalles_comercios:
-                personas_presentes.append(f"{''.join(detalles_comercios)}")
-            
-            # Investigacion -> Investigacion_Estructura_Vivienda
-            detalles_estructuras = []
-            for estructura in investigacion.investigacion_estructura_vivienda_set.all():
-                detalles_estructuras.append(f"{estructura.nombre} {estructura.apellido} {estructura.cedula}")
-                descripciones_proc.append(estructura.descripcion)
-            if detalles_estructuras:
-                personas_presentes.append(f"{''.join(detalles_estructuras)}")
-
-        # Convertir lista de personas presentes a string separado por punto y coma
+        # Convertir listas a cadenas separadas por ' -- '
         personas_presentes_str = " -- ".join(personas_presentes)
-        detalles_str = " -- ".join(detalles_procedimientos)  # Convertir descripciones a string
-        descripcion_str = " -- ".join(descripciones_proc)  # Convertir descripciones a string
+        detalles_str = " -- ".join(detalles_procedimientos)
+        descripcion_str = " -- ".join(detalles_procedimientos)
 
         # Agregar la fila de datos
         hoja.append([
@@ -435,207 +218,953 @@ def generar_excel(request):
 
     # Configurar la respuesta HTTP para descargar el archivo
     response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    response["Content-Disposition"] = "attachment; filename=procedimientos.xlsx"
+    response["Content-Disposition"] = "attachment; filename=Capacitacion.xlsx"
     workbook.save(response)
     return response
 
-# def generar_excel_capacitacion(request):
-#     # Filtramos la división de capacitación (ID 9)
-#     division_capacitacion = Divisiones.objects.get(id=9)
+def generar_excel_grumae(request):
+    # Crear un libro de trabajo y una hoja
+    workbook = openpyxl.Workbook()
+    hoja = workbook.active
+    hoja.title = "Grumae"
 
-#     # Obtenemos todos los procedimientos relacionados con la división de capacitación
-#     procedimientos = Procedimientos.objects.filter(id_division=division_capacitacion)
+    # Agregar encabezados a la primera fila
+    encabezados = [
+        "División", "Solicitante", "Jefe Comisión", "Municipio", 
+        "Parroquia", "Fecha", "Hora", "Dirección", 
+        "Tipo de Procedimiento", "Detalles", "Persona Presente", "Descripcion"
+    ]
+    hoja.append(encabezados)
 
-#     # Mostramos los datos en consola
-#     for procedimiento in procedimientos:
-#         print(f"Division: {procedimiento.id_division.division}, "
-#               f"Solicitante: {procedimiento.id_solicitante if procedimiento.id_solicitante else 'N/A'}, "
-#               f"Solicitante Externo: {procedimiento.solicitante_externo}, "
-#               f"Unidad: {procedimiento.unidad}, "
-#               f"Fecha: {procedimiento.fecha}, "
-#               f"Hora: {procedimiento.hora}, "
-#               f"Dirección: {procedimiento.direccion}, "
-#               f"Tipo Procedimiento: {procedimiento.id_tipo_procedimiento.tipo_procedimiento}")
+    division = 4
+    # Obtener datos de los procedimientos
+    procedimientos = Procedimientos.objects.filter(id_division=division)
 
-#     # Crear DataFrame con los datos de los procedimientos
-#     data = []
-#     for procedimiento in procedimientos:
-#         # Formateamos la fecha en un formato estándar
-#         fecha_formateada = procedimiento.fecha.strftime('%Y-%m-%d')  # Ajustar formato de la fecha
-#         data.append({
-#             'Division': procedimiento.id_division.division,
-#             'Solicitante': procedimiento.id_solicitante if procedimiento.id_solicitante else 'N/A',
-#             'Solicitante Externo': procedimiento.solicitante_externo,
-#             'Unidad': procedimiento.unidad,
-#             'Fecha': fecha_formateada,  # Usamos la fecha formateada
-#             'Hora': procedimiento.hora,
-#             'Dirección': procedimiento.direccion,
-#             'Tipo Procedimiento': procedimiento.id_tipo_procedimiento.tipo_procedimiento
-#         })
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        for item in set_relacionado:
+            # Persona
+            if hasattr(item, 'cedula'):
+                personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
+            if hasattr(item, 'nombre_propietario'):
+                personas.append(f"{item.nombre_propietario} {item.apellido_propietario} {item.cedula_propietario}")
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+        return personas, detalles
 
-#     df = pd.DataFrame(data)
+    # Agregar datos a la hoja
+    for procedimiento in procedimientos:
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
 
-#     # Convertir el DataFrame a Excel
-#     response = HttpResponse(content_type='application/vnd.ms-excel')
-#     response['Content-Disposition'] = 'attachment; filename="procedimientos_capacitacion.xlsx"'
-    
-#     # Usamos pandas para escribir el DataFrame en un archivo Excel
-#     with pd.ExcelWriter(response, engine='xlsxwriter') as writer:
-#         df.to_excel(writer, index=False, sheet_name='Procedimientos')
+        personas_presentes, detalles_procedimientos = [], []
 
-#         # Accedemos al libro de trabajo y la hoja activa
-#         workbook  = writer.book
-#         worksheet = writer.sheets['Procedimientos']
-
-#         # Ajustar el ancho de las columnas automáticamente
-#         for col_num, col_name in enumerate(df.columns.values):
-#             max_len = max(df[col_name].astype(str).apply(len).max(), len(col_name))  # Encuentra el máximo tamaño
-#             worksheet.set_column(col_num, col_num, max_len + 2)  # Añade un pequeño margen
-
-#     return response
-
-# def generar_excel_capacitacion(request):
-#     # Filtramos la división de capacitación (ID 9)
-#     division_capacitacion = Divisiones.objects.get(id=9)
-
-#     # Obtenemos todos los procedimientos relacionados con la división de capacitación
-#     procedimientos = Procedimientos.objects.filter(id_division=division_capacitacion)
-
-#     # Crear DataFrame con los datos de los procedimientos
-#     data = []
-
-    
-#     for procedimiento in procedimientos:
-#         # Obtenemos los detalles adicionales del procedimiento desde Procedimientos_Capacitacion
-#         try:
-#             procedimiento_capacitacion = Procedimientos_Capacitacion.objects.get(id_procedimientos=procedimiento)
-#             tipo_capacitacion = procedimiento_capacitacion.tipo_capacitacion
-#             tipo_clasificacion = procedimiento_capacitacion.tipo_clasificacion
-#             personas_beneficiadas = procedimiento_capacitacion.personas_beneficiadas
-#             descripcion = procedimiento_capacitacion.descripcion
-#             material_utilizado = procedimiento_capacitacion.material_utilizado
-#             status = procedimiento_capacitacion.status
-#         except Procedimientos_Capacitacion.DoesNotExist:
-#             # Si no hay datos en Procedimientos_Capacitacion, asignamos valores por defecto
-#             tipo_capacitacion = 'N/A'
-#             tipo_clasificacion = 'N/A'
-#             personas_beneficiadas = '0'
-#             descripcion = 'N/A'
-#             material_utilizado = 'N/A'
-#             status = 'N/A'
-
-#         # Formateamos la fecha en un formato estándar
-#         fecha_formateada = procedimiento.fecha.strftime('%Y-%m-%d')
-
-#         # Agregamos los datos al DataFrame
-#         data.append({
-#             'Division': procedimiento.id_division.division,
-#             'Solicitante': procedimiento.id_solicitante if procedimiento.id_solicitante else 'N/A',
-#             'Solicitante Externo': procedimiento.solicitante_externo,
-#             'Unidad': procedimiento.unidad,
-#             'Fecha': fecha_formateada,
-#             'Hora': procedimiento.hora,
-#             'Dirección': procedimiento.direccion,
-#             'Tipo Procedimiento': procedimiento.id_tipo_procedimiento.tipo_procedimiento,
-#             'Tipo Capacitación': tipo_capacitacion,
-#             'Tipo Clasificación': tipo_clasificacion,
-#             'Personas Beneficiadas': personas_beneficiadas,
-#             'Descripción': descripcion,
-#             'Material Utilizado': material_utilizado,
-#             'Status': status,
-#         })
-
-#     # Convertir el DataFrame a Excel
-#     df = pd.DataFrame(data)
-
-#     # Crear la respuesta de Excel
-#     response = HttpResponse(content_type='application/vnd.ms-excel')
-#     response['Content-Disposition'] = 'attachment; filename="procedimientos_capacitacion.xlsx"'
-    
-#     # Usamos pandas para escribir el DataFrame en un archivo Excel
-#     with pd.ExcelWriter(response, engine='xlsxwriter') as writer:
-#         df.to_excel(writer, index=False, sheet_name='Procedimientos')
-
-#         # Accedemos al libro de trabajo y la hoja activa
-#         workbook = writer.book
-#         worksheet = writer.sheets['Procedimientos']
-
-#         # Ajustar el ancho de las columnas automáticamente
-#         for col_num, col_name in enumerate(df.columns.values):
-#             max_len = max(df[col_name].astype(str).apply(len).max(), len(col_name))  # Encuentra el máximo tamaño
-#             worksheet.set_column(col_num, col_num, max_len + 2)  # Añade un pequeño margen
-
-#     return response
-
-# def generar_excel_capacitacion(request):
-#     # Filtramos la división de capacitación (ID 9)
-#     division_capacitacion = Divisiones.objects.get(id=9)
-
-#     # Obtenemos todos los procedimientos relacionados con la división de capacitación
-#     procedimientos = Procedimientos.objects.filter(id_division=division_capacitacion)
-
-#     # Crear DataFrame con los datos de los procedimientos
-#     data = []
-#     for procedimiento in procedimientos:
-#         # Obtenemos los detalles adicionales del procedimiento desde Procedimientos_Capacitacion
-#         procedimiento_capacitacion = Procedimientos_Capacitacion.objects.filter(id_procedimientos=procedimiento).first()
+        # Agregar detalles de las distintas relaciones
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),
+            (procedimiento.atendido_no_efectuado_set.all(), None),
+            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
+            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
+            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
+            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
+            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
+            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
+            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
+            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
+            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
+            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
+            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
+            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
+            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
+            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
+            (procedimiento.valoracion_medica_set.all(), None),
+            (procedimiento.detalles_enfermeria_set.all(), None),
+            (procedimiento.procedimientos_psicologia_set.all(), None),
+            (procedimiento.procedimientos_capacitacion_set.all(), None),
+            (procedimiento.procedimientos_brigada_set.all(), None),
+            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
+            (procedimiento.jornada_medica_set.all(), None),
+            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
+            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
+        ]
         
-#         if procedimiento_capacitacion:
-#             tipo_capacitacion = procedimiento_capacitacion.tipo_capacitacion
-#             tipo_clasificacion = procedimiento_capacitacion.tipo_clasificacion
-#             personas_beneficiadas = procedimiento_capacitacion.personas_beneficiadas
-#             descripcion = procedimiento_capacitacion.descripcion
-#             material_utilizado = procedimiento_capacitacion.material_utilizado
-#             status = procedimiento_capacitacion.status
-#         else:
-#             # Si no hay datos en Procedimientos_Capacitacion, asignamos valores por defecto
-#             tipo_capacitacion = 'N/A'
-#             tipo_clasificacion = 'N/A'
-#             personas_beneficiadas = '0'
-#             descripcion = 'N/A'
-#             material_utilizado = 'N/A'
-#             status = 'N/A'
+        # Procesar cada conjunto de datos
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
 
-#         # Formateamos la fecha en un formato estándar
-#         fecha_formateada = procedimiento.fecha.strftime('%Y-%m-%d')
+        # Convertir listas a cadenas separadas por ' -- '
+        personas_presentes_str = " -- ".join(personas_presentes)
+        detalles_str = " -- ".join(detalles_procedimientos)
+        descripcion_str = " -- ".join(detalles_procedimientos)
 
-#         # Agregamos los datos al DataFrame
-#         data.append({
-#             'Division': procedimiento.id_division.division,
-#             'Solicitante': procedimiento.id_solicitante if procedimiento.id_solicitante else 'N/A',
-#             'Solicitante Externo': procedimiento.solicitante_externo,
-#             'Unidad': procedimiento.unidad,
-#             'Fecha': fecha_formateada,
-#             'Hora': procedimiento.hora,
-#             'Dirección': procedimiento.direccion,
-#             'Tipo Procedimiento': procedimiento.id_tipo_procedimiento.tipo_procedimiento,
-#             'Tipo Capacitación': tipo_capacitacion,
-#             'Tipo Clasificación': tipo_clasificacion,
-#             'Personas Beneficiadas': personas_beneficiadas,
-#             'Descripción': descripcion,
-#             'Material Utilizado': material_utilizado,
-#             'Status': status,
-#         })
+        # Agregar la fila de datos
+        hoja.append([
+            procedimiento.id_division.division,
+            solicitante,
+            jefe_comision,
+            procedimiento.id_municipio.municipio,
+            procedimiento.id_parroquia.parroquia,
+            procedimiento.fecha,
+            procedimiento.hora,
+            procedimiento.direccion,
+            procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            detalles_str,
+            personas_presentes_str,
+            descripcion_str,
+        ])
 
-#     # Convertir el DataFrame a Excel
-#     df = pd.DataFrame(data)
+    # Ajustar el ancho de las columnas
+    for column in hoja.columns:
+        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
+        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
 
-#     # Crear la respuesta de Excel
-#     response = HttpResponse(content_type='application/vnd.ms-excel')
-#     response['Content-Disposition'] = 'attachment; filename="procedimientos_capacitacion.xlsx"'
+    # Configurar la respuesta HTTP para descargar el archivo
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = "attachment; filename=Grumae.xlsx"
+    workbook.save(response)
+    return response
+
+def generar_excel_rescate(request):
+    # Crear un libro de trabajo y una hoja
+    workbook = openpyxl.Workbook()
+    hoja = workbook.active
+    hoja.title = "Rescate"
+
+    # Agregar encabezados a la primera fila
+    encabezados = [
+        "División", "Solicitante", "Jefe Comisión", "Municipio", 
+        "Parroquia", "Fecha", "Hora", "Dirección", 
+        "Tipo de Procedimiento", "Detalles", "Persona Presente", "Descripcion"
+    ]
+    hoja.append(encabezados)
+
+    division = 1
+    # Obtener datos de los procedimientos
+    procedimientos = Procedimientos.objects.filter(id_division=division)
+
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        for item in set_relacionado:
+            # Persona
+            if hasattr(item, 'cedula'):
+                personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
+            if hasattr(item, 'nombre_propietario'):
+                personas.append(f"{item.nombre_propietario} {item.apellido_propietario} {item.cedula_propietario}")
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+        return personas, detalles
+
+    # Agregar datos a la hoja
+    for procedimiento in procedimientos:
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+
+        personas_presentes, detalles_procedimientos = [], []
+
+        # Agregar detalles de las distintas relaciones
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),
+            (procedimiento.atendido_no_efectuado_set.all(), None),
+            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
+            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
+            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
+            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
+            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
+            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
+            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
+            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
+            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
+            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
+            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
+            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
+            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
+            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
+            (procedimiento.valoracion_medica_set.all(), None),
+            (procedimiento.detalles_enfermeria_set.all(), None),
+            (procedimiento.procedimientos_psicologia_set.all(), None),
+            (procedimiento.procedimientos_capacitacion_set.all(), None),
+            (procedimiento.procedimientos_brigada_set.all(), None),
+            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
+            (procedimiento.jornada_medica_set.all(), None),
+            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
+            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
+        ]
+        
+        # Procesar cada conjunto de datos
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
+
+        # Convertir listas a cadenas separadas por ' -- '
+        personas_presentes_str = " -- ".join(personas_presentes)
+        detalles_str = " -- ".join(detalles_procedimientos)
+        descripcion_str = " -- ".join(detalles_procedimientos)
+
+        # Agregar la fila de datos
+        hoja.append([
+            procedimiento.id_division.division,
+            solicitante,
+            jefe_comision,
+            procedimiento.id_municipio.municipio,
+            procedimiento.id_parroquia.parroquia,
+            procedimiento.fecha,
+            procedimiento.hora,
+            procedimiento.direccion,
+            procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            detalles_str,
+            personas_presentes_str,
+            descripcion_str,
+        ])
+
+    # Ajustar el ancho de las columnas
+    for column in hoja.columns:
+        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
+        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
+
+    # Configurar la respuesta HTTP para descargar el archivo
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = "attachment; filename=Rescate.xlsx"
+    workbook.save(response)
+    return response
+
+def generar_excel_prehospitalaria(request):
+    # Crear un libro de trabajo y una hoja
+    workbook = openpyxl.Workbook()
+    hoja = workbook.active
+    hoja.title = "Prehospitalaria"
+
+    # Agregar encabezados a la primera fila
+    encabezados = [
+        "División", "Solicitante", "Jefe Comisión", "Municipio", 
+        "Parroquia", "Fecha", "Hora", "Dirección", 
+        "Tipo de Procedimiento", "Detalles", "Persona Presente", "Descripcion"
+    ]
+    hoja.append(encabezados)
+
+    division = 5
+    # Obtener datos de los procedimientos
+    procedimientos = Procedimientos.objects.filter(id_division=division)
+
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        for item in set_relacionado:
+            # Verifica los atributos según el modelo
+            if hasattr(item, 'cedula'):
+                # Para el modelo Traslado_Prehospitalaria, usa 'nombre', 'apellido' y 'cedula'
+                if hasattr(item, 'nombre') and hasattr(item, 'apellido') and hasattr(item, 'cedula'):
+                    personas.append(f"{item.nombre} {item.apellido} {item.cedula}")
+                # Otros modelos pueden tener un formato diferente para los datos
+                elif hasattr(item, 'nombre_propietario') and hasattr(item, 'apellido_propietario'):
+                    personas.append(f"{item.nombre_propietario} {item.apellido_propietario} {item.cedula_propietario}")
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+        return personas, detalles
+
+    # Agregar datos a la hoja
+    for procedimiento in procedimientos:
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+
+        personas_presentes, detalles_procedimientos = [], []
+
+        # Agregar detalles de las distintas relaciones
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),
+            (procedimiento.atendido_no_efectuado_set.all(), None),
+            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
+            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
+            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
+            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
+            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
+            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
+            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
+            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),  # Aquí agregamos Traslado_Prehospitalaria
+            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
+            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
+            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
+            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
+            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
+            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
+            (procedimiento.valoracion_medica_set.all(), None),
+            (procedimiento.detalles_enfermeria_set.all(), None),
+            (procedimiento.procedimientos_psicologia_set.all(), None),
+            (procedimiento.procedimientos_capacitacion_set.all(), None),
+            (procedimiento.procedimientos_brigada_set.all(), None),
+            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
+            (procedimiento.jornada_medica_set.all(), None),
+            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
+            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
+        ]
+        
+        # Procesar cada conjunto de datos
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
+
+        # Convertir listas a cadenas separadas por ' -- '
+        personas_presentes_str = " -- ".join(personas_presentes)
+        detalles_str = " -- ".join(detalles_procedimientos)
+        descripcion_str = " -- ".join(detalles_procedimientos)
+
+        # Agregar la fila de datos
+        hoja.append([
+            procedimiento.id_division.division,
+            solicitante,
+            jefe_comision,
+            procedimiento.id_municipio.municipio,
+            procedimiento.id_parroquia.parroquia,
+            procedimiento.fecha,
+            procedimiento.hora,
+            procedimiento.direccion,
+            procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            detalles_str,
+            personas_presentes_str,
+            descripcion_str,
+        ])
+
+    # Ajustar el ancho de las columnas
+    for column in hoja.columns:
+        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
+        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
+
+    # Configurar la respuesta HTTP para descargar el archivo
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = "attachment; filename=Prehospitalaria.xlsx"
+    workbook.save(response)
+    return response
+
+def generar_excel_enfermeria(request):
+    # Crear un libro de trabajo y una hoja
+    workbook = openpyxl.Workbook()
+    hoja = workbook.active
+    hoja.title = "Enfermeria"
+
+    # Agregar encabezados a la primera fila
+    encabezados = [
+        "División", "Solicitante", "Jefe Comisión", "Municipio", 
+        "Parroquia", "Fecha", "Hora", "Dirección", 
+        "Tipo de Procedimiento", "Detalles", "Persona Presente", "Descripcion"
+    ]
+    hoja.append(encabezados)
+
+    division = 6
+    # Obtener datos de los procedimientos
+    procedimientos = Procedimientos.objects.filter(id_division=division)
+
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        for item in set_relacionado:
+            # Persona
+            if hasattr(item, 'cedula'):
+                # Usar los campos de 'Detalles_Enfermeria' según los detalles proporcionados
+                if hasattr(item, 'nombre') and hasattr(item, 'apellido') and hasattr(item, 'cedula'):
+                    personas.append(f"{item.nombre} {item.apellido} {item.cedula}")
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+        return personas, detalles
+
+    # Agregar datos a la hoja
+    for procedimiento in procedimientos:
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+
+        personas_presentes, detalles_procedimientos = [], []
+
+        # Agregar detalles de las distintas relaciones
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),
+            (procedimiento.atendido_no_efectuado_set.all(), None),
+            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
+            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
+            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
+            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
+            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
+            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
+            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
+            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
+            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
+            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
+            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
+            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
+            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
+            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
+            (procedimiento.valoracion_medica_set.all(), None),
+            (procedimiento.detalles_enfermeria_set.all(), None),
+            (procedimiento.procedimientos_psicologia_set.all(), None),
+            (procedimiento.procedimientos_capacitacion_set.all(), None),
+            (procedimiento.procedimientos_brigada_set.all(), None),
+            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
+            (procedimiento.jornada_medica_set.all(), None),
+            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
+            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
+        ]
+        
+        # Procesar cada conjunto de datos
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
+
+        # Convertir listas a cadenas separadas por ' -- '
+        personas_presentes_str = " -- ".join(personas_presentes)
+        detalles_str = " -- ".join(detalles_procedimientos)
+        descripcion_str = " -- ".join(detalles_procedimientos)
+
+        # Agregar la fila de datos
+        hoja.append([
+            procedimiento.id_division.division,
+            solicitante,
+            jefe_comision,
+            procedimiento.id_municipio.municipio,
+            procedimiento.id_parroquia.parroquia,
+            procedimiento.fecha,
+            procedimiento.hora,
+            procedimiento.direccion,
+            procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            detalles_str,
+            personas_presentes_str,
+            descripcion_str,
+        ])
+
+    # Ajustar el ancho de las columnas
+    for column in hoja.columns:
+        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
+        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
+
+    # Configurar la respuesta HTTP para descargar el archivo
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = "attachment; filename=Enfermeria.xlsx"
+    workbook.save(response)
+    return response
+
+def generar_excel_serviciosmedicos(request):
+    # Crear un libro de trabajo y una hoja
+    workbook = openpyxl.Workbook()
+    hoja = workbook.active
+    hoja.title = "Servicios Medicos"
+
+    # Agregar encabezados a la primera fila
+    encabezados = [
+        "División", "Solicitante", "Jefe Comisión", "Municipio", 
+        "Parroquia", "Fecha", "Hora", "Dirección", 
+        "Tipo de Procedimiento", "Detalles", "Persona Presente", "Descripcion"
+    ]
+    hoja.append(encabezados)
+
+    division = 7
+    # Obtener datos de los procedimientos
+    procedimientos = Procedimientos.objects.filter(id_division=division)
+
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        for item in set_relacionado:
+            # Persona
+            if hasattr(item, 'cedula'):
+                # Verificar si el objeto tiene los atributos 'nombres' y 'apellidos'
+                if hasattr(item, 'nombres') and hasattr(item, 'apellidos') and hasattr(item, 'cedula'):
+                    personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
+                elif hasattr(item, 'nombre') and hasattr(item, 'apellido') and hasattr(item, 'cedula'):
+                    # Si no tiene 'nombres' y 'apellidos', pero tiene 'nombre' y 'apellido'
+                    personas.append(f"{item.nombre} {item.apellido} {item.cedula}")
+                else:
+                    # Si no tiene esos campos, agregar una forma genérica
+                    personas.append(f"{item.cedula}")  # Solo agregar la cédula
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+        return personas, detalles
+
+    # Agregar datos a la hoja
+    for procedimiento in procedimientos:
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+
+        personas_presentes, detalles_procedimientos = [], []
+
+        # Agregar detalles de las distintas relaciones
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),
+            (procedimiento.atendido_no_efectuado_set.all(), None),
+            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
+            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
+            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
+            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
+            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
+            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
+            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
+            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
+            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
+            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
+            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
+            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
+            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
+            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
+            (procedimiento.valoracion_medica_set.all(), None),
+            (procedimiento.detalles_enfermeria_set.all(), None),
+            (procedimiento.procedimientos_psicologia_set.all(), None),
+            (procedimiento.procedimientos_capacitacion_set.all(), None),
+            (procedimiento.procedimientos_brigada_set.all(), None),
+            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
+            (procedimiento.jornada_medica_set.all(), None),
+            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
+            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
+        ]
+        
+        # Procesar cada conjunto de datos
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
+
+        # Convertir listas a cadenas separadas por ' -- '
+        personas_presentes_str = " -- ".join(personas_presentes)
+        detalles_str = " -- ".join(detalles_procedimientos)
+        descripcion_str = " -- ".join(detalles_procedimientos)
+
+        # Agregar la fila de datos
+        hoja.append([
+            procedimiento.id_division.division,
+            solicitante,
+            jefe_comision,
+            procedimiento.id_municipio.municipio,
+            procedimiento.id_parroquia.parroquia,
+            procedimiento.fecha,
+            procedimiento.hora,
+            procedimiento.direccion,
+            procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            detalles_str,
+            personas_presentes_str,
+            descripcion_str,
+        ])
+
+    # Ajustar el ancho de las columnas
+    for column in hoja.columns:
+        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
+        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
+
+    # Configurar la respuesta HTTP para descargar el archivo
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = "attachment; filename=Servicios_Medicos.xlsx"
+    workbook.save(response)
+    return response
+
+def generar_excel_psicologia(request):
+    # Crear un libro de trabajo y una hoja
+    workbook = openpyxl.Workbook()
+    hoja = workbook.active
+    hoja.title = "Psicologia"
+
+    # Agregar encabezados a la primera fila
+    encabezados = [
+        "División", "Solicitante", "Jefe Comisión", "Municipio", 
+        "Parroquia", "Fecha", "Hora", "Dirección", 
+        "Tipo de Procedimiento", "Detalles", "Persona Presente", "Descripcion"
+    ]
+    hoja.append(encabezados)
+
+    division = 8
+    # Obtener datos de los procedimientos
+    procedimientos = Procedimientos.objects.filter(id_division=division)
+
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        for item in set_relacionado:
+            # Persona (en este caso del modelo Procedimientos_Psicologia)
+            if hasattr(item, 'cedula'):
+                # Accedemos a los campos correctos: 'nombre' y 'apellido' en lugar de 'nombres' y 'apellidos'
+                personas.append(f"{item.nombre} {item.apellido} {item.cedula}")
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+        return personas, detalles
+
+    # Agregar datos a la hoja
+    for procedimiento in procedimientos:
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+
+        personas_presentes, detalles_procedimientos = [], []
+
+        # Agregar detalles de las distintas relaciones
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),
+            (procedimiento.atendido_no_efectuado_set.all(), None),
+            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
+            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
+            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
+            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
+            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
+            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
+            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
+            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
+            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
+            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
+            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
+            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
+            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
+            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
+            (procedimiento.valoracion_medica_set.all(), None),
+            (procedimiento.detalles_enfermeria_set.all(), None),
+            (procedimiento.procedimientos_psicologia_set.all(), None),
+            (procedimiento.procedimientos_capacitacion_set.all(), None),
+            (procedimiento.procedimientos_brigada_set.all(), None),
+            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
+            (procedimiento.jornada_medica_set.all(), None),
+            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
+            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
+        ]
+        
+        # Procesar cada conjunto de datos
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
+
+        # Convertir listas a cadenas separadas por ' -- '
+        personas_presentes_str = " -- ".join(personas_presentes)
+        detalles_str = " -- ".join(detalles_procedimientos)
+        descripcion_str = " -- ".join(detalles_procedimientos)
+
+        # Agregar la fila de datos
+        hoja.append([
+            procedimiento.id_division.division,
+            solicitante,
+            jefe_comision,
+            procedimiento.id_municipio.municipio,
+            procedimiento.id_parroquia.parroquia,
+            procedimiento.fecha,
+            procedimiento.hora,
+            procedimiento.direccion,
+            procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            detalles_str,
+            personas_presentes_str,
+            descripcion_str,
+        ])
+
+    # Ajustar el ancho de las columnas
+    for column in hoja.columns:
+        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
+        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
+
+    # Configurar la respuesta HTTP para descargar el archivo
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = "attachment; filename=Psicologia.xlsx"
+    workbook.save(response)
+    return response
+
+# operaciones 
+def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+    """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+    personas = []
+    detalles = []
     
-#     # Usamos pandas para escribir el DataFrame en un archivo Excel
-#     with pd.ExcelWriter(response, engine='xlsxwriter') as writer:
-#         df.to_excel(writer, index=False, sheet_name='Procedimientos')
+    for item in set_relacionado:
+        # Verificar si el objeto tiene los atributos 'nombres', 'apellidos' y 'cedula'
+        if hasattr(item, 'nombres') and hasattr(item, 'apellidos') and hasattr(item, 'cedula'):
+            # Persona con 'nombres', 'apellidos' y 'cedula'
+            personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
+        elif hasattr(item, 'nombre') and hasattr(item, 'apellido') and hasattr(item, 'cedula_propietario'):
+            # Persona con 'nombre', 'apellido' y 'cedula_propietario' (para objetos como 'Retencion_Preventiva')
+            personas.append(f"{item.nombre} {item.apellido} {item.cedula_propietario}")
+        else:
+            # Si no tiene esos atributos, agregar algo por defecto o vacío
+            personas.append("Persona desconocida")
 
-#         # Accedemos al libro de trabajo y la hoja activa
-#         workbook = writer.book
-#         worksheet = writer.sheets['Procedimientos']
+        # Detalle
+        detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
 
-#         # Ajustar el ancho de las columnas automáticamente
-#         for col_num, col_name in enumerate(df.columns.values):
-#             max_len = max(df[col_name].astype(str).apply(len).max(), len(col_name))  # Encuentra el máximo tamaño
-#             worksheet.set_column(col_num, col_num, max_len + 2)  # Añade un pequeño margen
+    return personas, detalles
 
-#     return response
+def generar_excel_operaciones(request):
+    # Crear un libro de trabajo y una hoja
+    workbook = openpyxl.Workbook()
+    hoja = workbook.active
+    hoja.title = "Operaciones"
+
+    # Agregar encabezados a la primera fila
+    encabezados = [
+        "División", "Solicitante", "Jefe Comisión", "Municipio", 
+        "Parroquia", "Fecha", "Hora", "Dirección", 
+        "Tipo de Procedimiento", "Detalles", "Persona Presente", "Descripcion"
+    ]
+    hoja.append(encabezados)
+
+    division = 2
+    # Obtener datos de los procedimientos
+    procedimientos = Procedimientos.objects.filter(id_division=division)
+
+    # Agregar datos a la hoja
+    for procedimiento in procedimientos:
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+
+        personas_presentes, detalles_procedimientos = [], []
+
+        # Agregar detalles de las distintas relaciones
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),
+            (procedimiento.atendido_no_efectuado_set.all(), None),
+            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
+            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
+            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
+            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
+            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
+            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
+            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
+            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
+            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
+            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
+            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
+            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
+            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
+            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
+            (procedimiento.valoracion_medica_set.all(), None),
+            (procedimiento.detalles_enfermeria_set.all(), None),
+            (procedimiento.procedimientos_psicologia_set.all(), None),
+            (procedimiento.procedimientos_capacitacion_set.all(), None),
+            (procedimiento.procedimientos_brigada_set.all(), None),
+            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
+            (procedimiento.jornada_medica_set.all(), None),
+            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
+            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
+        ]
+        
+        # Procesar cada conjunto de datos
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
+
+        # Convertir listas a cadenas separadas por ' -- '
+        personas_presentes_str = " -- ".join(personas_presentes)
+        detalles_str = " -- ".join(detalles_procedimientos)
+        descripcion_str = " -- ".join(detalles_procedimientos)
+
+        # Agregar la fila de datos
+        hoja.append([
+            procedimiento.id_division.division,
+            solicitante,
+            jefe_comision,
+            procedimiento.id_municipio.municipio,
+            procedimiento.id_parroquia.parroquia,
+            procedimiento.fecha,
+            procedimiento.hora,
+            procedimiento.direccion,
+            procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            detalles_str,
+            personas_presentes_str,
+            descripcion_str,
+        ])
+
+    # Ajustar el ancho de las columnas
+    for column in hoja.columns:
+        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
+        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
+
+    # Configurar la respuesta HTTP para descargar el archivo
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = "attachment; filename=Operaciones.xlsx"
+    workbook.save(response)
+    return response
+
+def generar_excel_prevencion(request):
+    # Crear un libro de trabajo y una hoja
+    workbook = openpyxl.Workbook()
+    hoja = workbook.active
+    hoja.title = "Prevencion"
+
+    # Agregar encabezados a la primera fila
+    encabezados = [
+        "División", "Solicitante", "Jefe Comisión", "Municipio", 
+        "Parroquia", "Fecha", "Hora", "Dirección", 
+        "Tipo de Procedimiento", "Detalles", "Persona Presente", "Descripcion"
+    ]
+    hoja.append(encabezados)
+
+    division = 3
+    # Obtener datos de los procedimientos
+    procedimientos = Procedimientos.objects.filter(id_division=division)
+
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        for item in set_relacionado:
+            # Persona
+            if hasattr(item, 'nombre') and hasattr(item, 'apellidos') and hasattr(item, 'cedula'):
+                personas.append(f"{item.nombre} {item.apellidos} {item.cedula}")
+            elif hasattr(item, 'persona_sitio_nombre') and hasattr(item, 'persona_sitio_apellido') and hasattr(item, 'persona_sitio_cedula'):
+                # Para InspeccionPrevencionAsesoriasTecnicas
+                personas.append(f"{item.persona_sitio_nombre} {item.persona_sitio_apellido} {item.persona_sitio_cedula}")
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+        return personas, detalles
+
+    # Agregar datos a la hoja
+    for procedimiento in procedimientos:
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+
+        personas_presentes, detalles_procedimientos = [], []
+
+        # Agregar detalles de las distintas relaciones
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),  # Usar 'motivo'
+            (procedimiento.atendido_no_efectuado_set.all(), None),
+            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
+            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
+            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
+            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
+            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
+            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
+            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
+            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
+            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
+            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
+            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
+            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
+            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
+            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
+            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
+            (procedimiento.valoracion_medica_set.all(), None),
+            (procedimiento.detalles_enfermeria_set.all(), None),
+            (procedimiento.procedimientos_psicologia_set.all(), None),
+            (procedimiento.procedimientos_capacitacion_set.all(), None),
+            (procedimiento.procedimientos_brigada_set.all(), None),
+            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
+            (procedimiento.jornada_medica_set.all(), None),
+            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
+            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
+            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
+        ]
+        
+        # Procesar cada conjunto de datos
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
+
+        # Convertir listas a cadenas separadas por ' -- '
+        personas_presentes_str = " -- ".join(personas_presentes)
+        detalles_str = " -- ".join(detalles_procedimientos)
+        descripcion_str = " -- ".join(detalles_procedimientos)
+
+        # Agregar la fila de datos
+        hoja.append([
+            procedimiento.id_division.division,
+            solicitante,
+            jefe_comision,
+            procedimiento.id_municipio.municipio,
+            procedimiento.id_parroquia.parroquia,
+            procedimiento.fecha,
+            procedimiento.hora,
+            procedimiento.direccion,
+            procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            detalles_str,
+            personas_presentes_str,
+            descripcion_str,
+        ])
+
+    # Ajustar el ancho de las columnas
+    for column in hoja.columns:
+        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
+        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
+
+    # Configurar la respuesta HTTP para descargar el archivo
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = "attachment; filename=Prevencion.xlsx"
+    workbook.save(response)
+    return response
 

@@ -91,7 +91,16 @@ urlpatterns = [
     path('api/obtener_informacion/<int:id>/', obtener_informacion_editar, name='obtener_informacion'),
 
     # Descargas
-    path('descargar-excel/', generar_excel, name='descargar_excel'),
     path('descargar-excel_personal/', generar_excel_personal, name='descargar_excel_personal'),
     path('descargar-base-datos/', descargar_base_datos, name='descargar_base_datos'),
+    # divisiones exportacion excel
+    path('descargar-excel-capacitacion/', generar_excel_capacitacion, name='descargar_excel_capacitacion'),
+    path('descargar-excel-psicologia/', generar_excel_psicologia, name='descargar_excel_psicologia'),
+    path('descargar-excel-operaciones/', generar_excel_operaciones, name='descargar_excel_operaciones'),
+    path('descargar-excel-grumae/', generar_excel_grumae, name='descargar_excel_grumae'),
+    path('descargar-excel-prehospitalaria/', generar_excel_prehospitalaria, name='descargar_excel_prehospitalaria'),
+    path('descargar-excel-serviciosmedicos/', generar_excel_serviciosmedicos, name='descargar_excel_serviciosmedicos'),
+    path('descargar-excel-rescate/', generar_excel_rescate, name='descargar_excel_rescate'),
+    path('descargar-excel-prevencion/', generar_excel_prevencion, name='descargar_excel_prevencion'),
+    path('descargar-excel-enfermeria/', generar_excel_enfermeria, name='descargar_excel_enfermeria'),
 ]
