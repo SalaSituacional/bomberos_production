@@ -1,6 +1,4 @@
-
 document.addEventListener("DOMContentLoaded", function () {
-    
 
 // Leer los datos del localStorage
 const storedData = localStorage.getItem('fetchedData');
@@ -37,6 +35,8 @@ if (storedData) {
     const solicitanteSelect = document.getElementById("id_form2-solicitante");
     solicitanteSelect.dispatchEvent(event);
 
+    document.getElementById("id_form_enfermeria-encargado_area").dispatchEvent(event)
+
     document.getElementById("id_atenciones_paramedicas-tipo_atencion").dispatchEvent(event)
     document.getElementById("id_emergencias_medicas-trasladado").dispatchEvent(event)
     document.getElementById("id_formulario_accidentes_transito-agg_vehiculo").dispatchEvent(event)
@@ -59,6 +59,9 @@ if (storedData) {
     document.getElementById("id_form_comision-agregar").dispatchEvent(event)
     document.getElementById("id_datos_comision_uno-agregar").dispatchEvent(event)
     document.getElementById("id_datos_comision_dos-agregar").dispatchEvent(event)
+    document.getElementById("id_artificios_pirotecnico-tipo_procedimiento").dispatchEvent(event)
+    document.getElementById("id_incendio_art-tipo_incendio").dispatchEvent(event)
+    
     
 } else {
     console.error('No se encontraron datos en localStorage.');
@@ -105,7 +108,19 @@ function RellenarValores(datos) {
 
     } else if (division === 6) {
         inputsValor("id_form_enfermeria-dependencia", datos.dependencia)
-        inputsValor("id_form_enfermeria-encargado_area", datos.solicitante_externo)
+        
+        let encargado_area = ""
+        if (datos.solicitante_externo != "Lcda Evanny Contreras" || datos.solicitante_externo != "Lcdo Manuel Carrero" || datos.solicitante_externo != "Lcdo Alejandro Andrade" || datos.solicitante_externo != "Lcdo Jower Torres" || datos.solicitante_externo != "Lcdo Roger Rodriguez") {
+            encargado_area = "Otro"
+        } else {
+            encargado_area = datos.solicitante_externo
+        }
+        inputsValor("id_form_enfermeria-encargado_area", encargado_area)
+       
+        if (datos.solicitante_externo != "Lcda Evanny Contreras" || datos.solicitante_externo != "Lcdo Manuel Carrero" || datos.solicitante_externo != "Lcdo Alejandro Andrade" || datos.solicitante_externo != "Lcdo Jower Torres" || datos.solicitante_externo != "Lcdo Roger Rodriguez") {
+            inputsValor("id_form_enfermeria-especifique", datos.solicitante_externo)
+        }
+        
         inputsValor("id_form3-municipio", datos.municipio)
         inputsValor("id_form3-parroquia", datos.parroquia)   
         inputsValor("id_form3-direccion", datos.direccion)   
@@ -244,6 +259,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
         
         case 7:
             inputsValor("id_atenciones_paramedicas-tipo_atencion", inf.tipo_atencion)
+            atributeDisable("id_atenciones_paramedicas-tipo_atencion")
             if (inf.tipo_atencion === "Emergencias Medicas") {
                 inputsValor("id_emergencias_medicas-nombre", inf.nombres)
                 inputsValor("id_emergencias_medicas-apellido", inf.apellidos)
@@ -257,6 +273,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                 inputsValor("id_emergencias_medicas-status", inf.status)
                 if (inf.traslado == true) {
                     document.getElementById("id_emergencias_medicas-trasladado").checked = true
+                    atributeDisable("id_emergencias_medicas-trasladado")
                     inputsValor("id_traslados_emergencias-hospital_trasladado", inf.hospital)
                     inputsValor("id_traslados_emergencias-medico_receptor", inf.medico)
                     inputsValor("id_traslados_emergencias-mpps_cmt", inf.mpps_cmt)
@@ -269,6 +286,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                 
                 if (inf.vehiculos[0]) {
                     document.getElementById("id_formulario_accidentes_transito-agg_vehiculo").checked = true
+                    atributeDisable("id_formulario_accidentes_transito-agg_vehiculo")
                     inputsValor("id_detalles_vehiculos_accidentes-modelo", inf.vehiculos[0].modelo)
                     inputsValor("id_detalles_vehiculos_accidentes-marca", inf.vehiculos[0].marca)
                     inputsValor("id_detalles_vehiculos_accidentes-color", inf.vehiculos[0].color)
@@ -277,14 +295,16 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                     
                     if (inf.vehiculos[1]) {
                         document.getElementById("id_detalles_vehiculos_accidentes-agg_vehiculo").checked = true
+                        atributeDisable("id_detalles_vehiculos_accidentes-agg_vehiculo")
                         inputsValor("id_detalles_vehiculos_accidentes2-modelo", inf.vehiculos[1].modelo)
                         inputsValor("id_detalles_vehiculos_accidentes2-marca", inf.vehiculos[1].marca)
                         inputsValor("id_detalles_vehiculos_accidentes2-color", inf.vehiculos[1].color)
                         inputsValor("id_detalles_vehiculos_accidentes2-año", inf.vehiculos[1].año)
                         inputsValor("id_detalles_vehiculos_accidentes2-placas", inf.vehiculos[1].placas)
-
+                        
                         if (inf.vehiculos[2]) {
                             document.getElementById("id_detalles_vehiculos_accidentes2-agg_vehiculo").checked = true
+                            atributeDisable("id_detalles_vehiculos_accidentes2-agg_vehiculo")
                             inputsValor("id_detalles_vehiculos_accidentes3-modelo", inf.vehiculos[2].modelo)
                             inputsValor("id_detalles_vehiculos_accidentes3-marca", inf.vehiculos[2].marca)
                             inputsValor("id_detalles_vehiculos_accidentes3-color", inf.vehiculos[2].color)
@@ -296,6 +316,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                 
                 if (inf.lesionados[0]) {
                     document.getElementById("id_formulario_accidentes_transito-agg_lesionado").checked = true
+                    atributeDisable("id_formulario_accidentes_transito-agg_lesionado")
                     inputsValor("id_detalles_lesionados_accidentes-nombre", inf.lesionados[0].nombre)
                     inputsValor("id_detalles_lesionados_accidentes-apellido", inf.lesionados[0].apellidos)
                     inputsValor("id_detalles_lesionados_accidentes-nacionalidad", dividirCedula(inf.lesionados[0].cedula)[0])
@@ -307,6 +328,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                     
                     if (inf.lesionados[0].traslados[0]) {
                         document.getElementById("id_detalles_lesionados_accidentes-trasladado").checked = true
+                        atributeDisable("id_detalles_lesionados_accidentes-trasladado")
                         inputsValor("id_traslados_accidentes-hospital_trasladado", inf.lesionados[0].traslados[0].hospital)
                         inputsValor("id_traslados_accidentes-medico_receptor", inf.lesionados[0].traslados[0].medico)
                         inputsValor("id_traslados_accidentes-mpps_cmt", inf.lesionados[0].traslados[0].mpps_cmt)   
@@ -314,6 +336,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                     
                     if (inf.lesionados[1]) {
                         document.getElementById("id_detalles_lesionados_accidentes-otro_lesionado").checked = true
+                        atributeDisable("id_detalles_lesionados_accidentes-otro_lesionado")
                         inputsValor("id_detalles_lesionados_accidentes2-nombre", inf.lesionados[1].nombre)
                         inputsValor("id_detalles_lesionados_accidentes2-apellido", inf.lesionados[1].apellidos)
                         inputsValor("id_detalles_lesionados_accidentes2-nacionalidad", dividirCedula(inf.lesionados[1].cedula)[0])
@@ -325,6 +348,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                         
                         if (inf.lesionados[1].traslados[0]) {
                             document.getElementById("id_detalles_lesionados_accidentes2-trasladado").checked = true
+                            atributeDisable("id_detalles_lesionados_accidentes2-trasladado")
                             inputsValor("id_traslados_accidentes2-hospital_trasladado", inf.lesionados[1].traslados[0].hospital)
                             inputsValor("id_traslados_accidentes2-medico_receptor", inf.lesionados[1].traslados[0].medico)
                             inputsValor("id_traslados_accidentes2-mpps_cmt", inf.lesionados[1].traslados[0].mpps_cmt)   
@@ -332,6 +356,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                         
                         if (inf.lesionados[2]) {
                             document.getElementById("id_detalles_lesionados_accidentes2-otro_lesionado").checked = true
+                            atributeDisable("id_detalles_lesionados_accidentes2-otro_lesionado")
                             inputsValor("id_detalles_lesionados_accidentes3-nombre", inf.lesionados[2].nombre)
                             inputsValor("id_detalles_lesionados_accidentes3-apellido", inf.lesionados[2].apellidos)
                             inputsValor("id_detalles_lesionados_accidentes3-nacionalidad", dividirCedula(inf.lesionados[2].cedula)[0])
@@ -343,6 +368,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                             
                             if (inf.lesionados[2].traslados[0]) {
                                 document.getElementById("id_detalles_lesionados_accidentes3-trasladado").checked = true
+                                atributeDisable("id_detalles_lesionados_accidentes3-trasladado")
                                 inputsValor("id_traslados_accidentes3-hospital_trasladado", inf.lesionados[2].traslados[0].hospital)
                                 inputsValor("id_traslados_accidentes3-medico_receptor", inf.lesionados[2].traslados[0].medico)
                                 inputsValor("id_traslados_accidentes3-mpps_cmt", inf.lesionados[2].traslados[0].mpps_cmt)   
@@ -402,12 +428,14 @@ function RellenarDetalles(datos, tipo_procedimiento) {
             
         case 11:
             inputsValor("id_incendio_form-tipo_incendio", inf.tipo_incendio)
+            atributeDisable("id_incendio_form-tipo_incendio")
             inputsValor("id_incendio_form-material_utilizado", inf.material_utilizado)
             inputsValor("id_incendio_form-status", inf.status)
             inputsValor("id_incendio_form-descripcion", inf.descripcion)
             
             if (inf.persona) {
                 document.getElementById("id_incendio_form-check_agregar_persona").checked = true
+                atributeDisable("id_incendio_form-check_agregar_persona")
                 inputsValor("id_persona_presente_form-nombre", inf.nombre)
                 inputsValor("id_persona_presente_form-apellido", inf.nombre)
                 inputsValor("id_persona_presente_form-nacionalidad", dividirCedula(inf.cedula)[0])
@@ -417,6 +445,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
             
             if (inf.retencion) {
                 document.getElementById("id_incendio_form-check_retencion").checked = true
+                atributeDisable("id_incendio_form-check_retencion")
                 if (inf.tipo_cilindro === "Oxigeno") {
                     inf.tipo_cilindro = 2
                 } else if (inf.tipo_cilindro === "GLP"){
@@ -433,6 +462,14 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                 inputsValor("id_retencion_preventiva_incendio-nacionalidad", dividirCedula(inf.cedula)[0])
                 inputsValor("id_retencion_preventiva_incendio-cedula", dividirCedula(inf.cedula)[1])
                 
+            }
+
+            if (inf.tipo_incendio === 2) {
+                inputsValor("id_detalles_vehiculo_form-modelo", inf.modelo)
+                inputsValor("id_detalles_vehiculo_form-marca", inf.marca)
+                inputsValor("id_detalles_vehiculo_form-color", inf.color)
+                inputsValor("id_detalles_vehiculo_form-año", inf.año)
+                inputsValor("id_detalles_vehiculo_form-placas", inf.placas)
             }
 
             break;
@@ -518,6 +555,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
         
         case 18:
             inputsValor("id_form_inspecciones-tipo_inspeccion", inf.tipo_inspeccion)
+            atributeDisable("id_form_inspecciones-tipo_inspeccion")
 
             if (inf.tipo_inspeccion === "Prevención" || inf.tipo_inspeccion === "Asesorias Tecnicas") {
                 inputsValor("id_form_inspecciones_prevencion-nombre_comercio", inf.nombre_comercio)
@@ -575,6 +613,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
         case 19:
             inputsValor("id_form_investigacion-tipo_investigacion", inf.tipo_investigacion)
             inputsValor("id_form_investigacion-tipo_siniestro", inf.tipo_siniestro)
+            atributeDisable("id_form_investigacion-tipo_siniestro")
             
             if (inf.tipo_siniestro=="Estructura" || inf.tipo_siniestro=="Vivienda") {
                 inputsValor("id_form_inv_estructura-tipo_estructura", inf.tipo_estructura)
@@ -652,8 +691,144 @@ function RellenarDetalles(datos, tipo_procedimiento) {
             inputsValor("id_retencion_preventiva-status", inf.status)
             break;
 
+        case 22:
+            inputsValor("id_artificios_pirotecnico-nombre_comercio", inf.nombre_comercio)
+            inputsValor("id_artificios_pirotecnico-rif_comercio", inf.rif_comercio)
+            inputsValor("id_artificios_pirotecnico-tipo_procedimiento", inf.tipo_procedimiento_art)
+            atributeDisable("id_artificios_pirotecnico-tipo_procedimiento")
 
+
+            if (inf.tipo_procedimiento_art === 1) {
+                inputsValor("id_incendio_art-tipo_incendio", inf.tipo_incendio)
+                atributeDisable("id_incendio_art-tipo_incendio")
+                inputsValor("id_incendio_art-descripcion", inf.descripcion)
+                inputsValor("id_incendio_art-material_utilizado", inf.material_utilizado)
+                inputsValor("id_incendio_art-status", inf.status)
+
+                if (inf.person) {
+                    document.getElementById("id_incendio_art-check_agregar_persona").checked = true
+                    atributeDisable("id_incendio_art-check_agregar_persona")
+
+                    inputsValor("id_persona_presente_art-nombre", inf.nombre)
+                    inputsValor("id_persona_presente_art-apellido", inf.apellidos)
+                    inputsValor("id_persona_presente_art-nacionalidad", dividirCedula(inf.cedula)[0])
+                    inputsValor("id_persona_presente_art-cedula", dividirCedula(inf.cedula)[1])
+                    inputsValor("id_persona_presente_art-edad", inf.edad)
+                }
+
+                if (inf.carro) { 
+                    inputsValor("id_detalles_vehiculo_art-modelo", inf.modelo)
+                    inputsValor("id_detalles_vehiculo_art-marca", inf.marca)
+                    inputsValor("id_detalles_vehiculo_art-color", inf.color)
+                    inputsValor("id_detalles_vehiculo_art-año", inf.año)
+                    inputsValor("id_detalles_vehiculo_art-placas", inf.placas)
+                }
+            }
+
+            if (inf.tipo_procedimiento_art === 2) {
+                inputsValor("id_lesionados-nombre", inf.nombres)
+                inputsValor("id_lesionados-apellido", inf.apellidos)
+                inputsValor("id_lesionados-nacionalidad", dividirCedula(inf.cedula)[0])
+                inputsValor("id_lesionados-cedula", dividirCedula(inf.cedula)[1])
+                inputsValor("id_lesionados-edad", inf.edad)
+                inputsValor("id_lesionados-sexo", inf.sexo)
+                inputsValor("id_lesionados-idx", inf.idx)
+                inputsValor("id_lesionados-descripcion", inf.descripcion)
+                inputsValor("id_lesionados-status", inf.status)
+
+            }
+
+            if (inf.tipo_procedimiento_art === 3) {
+                inputsValor("id_fallecidos_art-motivo_fallecimiento", inf.motivo_fallecimiento)
+                inputsValor("id_fallecidos_art-nom_fallecido", inf.nombres)
+                inputsValor("id_fallecidos_art-apellido_fallecido", inf.apellidos)
+                inputsValor("id_fallecidos_art-nacionalidad", dividirCedula(inf.cedula)[0])
+                inputsValor("id_fallecidos_art-cedula_fallecido", dividirCedula(inf.cedula)[1])
+                inputsValor("id_fallecidos_art-edad", inf.edad)
+                inputsValor("id_fallecidos_art-sexo", inf.sexo)
+                inputsValor("id_fallecidos_art-descripcion", inf.descripcion)
+                inputsValor("id_fallecidos_art-material_utilizado", inf.material_utilizado)
+                inputsValor("id_fallecidos_art-status", inf.status)
+            }
+
+            break;
         
+        case 23:
+            inputsValor("id_inspeccion_artificios_pir-nombre_comercio", inf.nombre_comercio)
+            inputsValor("id_inspeccion_artificios_pir-rif_comercio", inf.rif_comercio)
+            inputsValor("id_inspeccion_artificios_pir-nombre_encargado", inf.encargado_nombre)
+            inputsValor("id_inspeccion_artificios_pir-apellido_encargado", inf.encargado_apellidos)
+            inputsValor("id_inspeccion_artificios_pir-nacionalidad", dividirCedula(inf.encargado_cedula)[0])
+            inputsValor("id_inspeccion_artificios_pir-cedula_encargado", dividirCedula(inf.encargado_cedula)[1])
+            inputsValor("id_inspeccion_artificios_pir-sexo", inf.encargado_sexo)
+            inputsValor("id_inspeccion_artificios_pir-descripcion", inf.descripcion)
+            inputsValor("id_inspeccion_artificios_pir-material_utilizado", inf.material_utilizado)
+            inputsValor("id_inspeccion_artificios_pir-status", inf.status)
+
+            break;
+
+        case 24:
+            inputsValor("id_form_valoracion_medica-nombre", inf.nombres)
+            inputsValor("id_form_valoracion_medica-apellido", inf.apellidos)
+            inputsValor("id_form_valoracion_medica-nacionalidad", dividirCedula(inf.cedula)[0])
+            inputsValor("id_form_valoracion_medica-cedula", dividirCedula(inf.cedula)[1])
+            inputsValor("id_form_valoracion_medica-edad", inf.edad)
+            inputsValor("id_form_valoracion_medica-sexo", inf.sexo)
+            inputsValor("id_form_valoracion_medica-telefono", inf.telefono)
+            inputsValor("id_form_valoracion_medica-descripcion", inf.descripcion)
+            inputsValor("id_form_valoracion_medica-material_utilizado", inf.material_utilizado)
+            inputsValor("id_form_valoracion_medica-status", inf.status)
+
+            break;
+
+        case 25:
+            inputsValor("id_form_jornada_medica-nombre_jornada", inf.nombre_jornada)
+            inputsValor("id_form_jornada_medica-cant_personas_aten", inf.cant_personas)
+            inputsValor("id_form_jornada_medica-descripcion", inf.descripcion)
+            inputsValor("id_form_jornada_medica-material_utilizado", inf.material_utilizado)
+            inputsValor("id_form_jornada_medica-status", inf.status)
+
+            break;
+
+        case 26:
+        case 27:
+        case 28:
+        case 29:
+        case 30:
+        case 31:
+        case 32:
+        case 33:
+        case 34:
+            inputsValor("id_form_detalles_enfermeria-nombre", inf.nombres);
+            inputsValor("id_form_detalles_enfermeria-apellido", inf.apellidos);
+            inputsValor("id_form_detalles_enfermeria-nacionalidad", dividirCedula(inf.cedula)[0]);
+            inputsValor("id_form_detalles_enfermeria-cedula", dividirCedula(inf.cedula)[1]);
+            inputsValor("id_form_detalles_enfermeria-edad", inf.edad);
+            inputsValor("id_form_detalles_enfermeria-sexo", inf.sexo);
+            inputsValor("id_form_detalles_enfermeria-telefono", inf.telefono);
+            inputsValor("id_form_detalles_enfermeria-descripcion", inf.descripcion);
+            inputsValor("id_form_detalles_enfermeria-material_utilizado", inf.material_utilizado);
+            inputsValor("id_form_detalles_enfermeria-status", inf.status);
+            break;
+        
+        case 35:
+        case 36:
+        case 37:
+        case 38:
+        case 39:
+        case 40:
+        case 41:
+            inputsValor("id_form_detalles_psicologia-nombre", inf.nombres)
+            inputsValor("id_form_detalles_psicologia-apellido", inf.apellidos)
+            inputsValor("id_form_detalles_psicologia-nacionalidad", dividirCedula(inf.cedula)[0])
+            inputsValor("id_form_detalles_psicologia-cedula", dividirCedula(inf.cedula)[1])
+            inputsValor("id_form_detalles_psicologia-edad", inf.edad)
+            inputsValor("id_form_detalles_psicologia-sexo", inf.sexo)
+            inputsValor("id_form_detalles_psicologia-descripcion", inf.descripcion)
+            inputsValor("id_form_detalles_psicologia-material_utilizado", inf.material_utilizado)
+            inputsValor("id_form_detalles_psicologia-status", inf.status)
+            break;
+
         case 45:
 
             if (inf.dependencia === "Capacitacion") {
@@ -699,19 +874,20 @@ function dividirCedula(cedula) {
 function inputsValor(id, valor) {
     document.getElementById(id).value = valor
 }
+
 function atributeDisable(id) {
-    document.getElementById(id).style = "pointer-events: none; background-color: #e9ecef;"
+    document.getElementById(id).parentElement.style = "pointer-events: none;"
+    document.getElementById(id).style = "background-color: #e9ecef;"
 }
 
+window.addEventListener('beforeunload', () => {
+    // Eliminar la clave del localStorage
+    localStorage.removeItem('fetchedData');
+});
 
-// window.addEventListener('beforeunload', () => {
-//     // Eliminar la clave del localStorage
-//     localStorage.removeItem('fetchedData');
-// });
-
-// window.addEventListener('popstate', () => {
-//     // Eliminar la clave del localStorage al retroceder
-//     localStorage.removeItem('fetchedData');
-// });
+window.addEventListener('popstate', () => {
+    // Eliminar la clave del localStorage al retroceder
+    localStorage.removeItem('fetchedData');
+});
 
 })

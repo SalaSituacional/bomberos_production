@@ -1694,96 +1694,7 @@ def obtener_procedimiento(request, id):
         
     return JsonResponse(data)
 
-# ====================================================================
-
-@csrf_exempt
-def editar_procedimiento(request, id):
-    procedimiento = get_object_or_404(Procedimientos, pk=id)
-    n = procedimiento = Procedimientos.objects.select_related(
-    'id_division', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
-        ).prefetch_related(
-            'incendios_set__retencion_preventiva_incendios_set',
-            'incendios_set__persona_presente_set',
-            'incendios_set__detalles_vehiculos_set'
-        ).get(pk=124)
-
-    print(n)
-
-    if request.method == "GET":
-        # Obtener los datos del procedimiento
-
-        data = {
-            'id': procedimiento.id,
-            'division': procedimiento.id_division.division,
-            'id_solicitante': procedimiento.id_solicitante.id,
-            'id_solicitante_externo': procedimiento.solicitante_externo,
-            'id_jefe_comision': procedimiento.id_jefe_comision.id if procedimiento.id_jefe_comision else None,
-            'unidad': procedimiento.unidad.id if procedimiento.unidad else None,
-            'efectivos': procedimiento.efectivos_enviados,
-            'parroquia': procedimiento.id_parroquia.id,
-            'municipio': procedimiento.id_municipio.id,
-            'direccion': procedimiento.direccion,
-            'fecha': procedimiento.fecha,
-            'hora': procedimiento.hora,
-            'tipo_procedimiento': procedimiento.id_tipo_procedimiento.tipo_procedimiento,
-            'id_tipo_procedimiento': procedimiento.id_tipo_procedimiento.id,
-        }
-
-        # if division in ["Rescate", "Operaciones", "Prevencion", "GRUMAE", "PreHospitalaria"]:
-        #     comisiones = Comisiones.objects.filter(procedimiento=procedimiento)
-        #     comisiones_lista = [
-        #         {
-        #             'id': comision.id,
-        #             'tipo_comision': comision.comision.tipo_comision,
-        #             'nombre_oficial': comision.nombre_oficial,
-        #             'apellido_oficial': comision.apellido_oficial,
-        #             'cedula_oficial': comision.cedula_oficial,
-        #             'nro_unidad': comision.nro_unidad,
-        #             'nro_cuadrante': comision.nro_cuadrante,
-        #         }
-        #         for comision in comisiones
-        #     ]
-        #     data['comisiones'] = comisiones_lista
-
-        # Agregar detalles específicos según el tipo de procedimiento
-        # if str(procedimiento.id_tipo_procedimiento.id) == "1":  # Abastecimiento de agua
-        #     detalle = get_object_or_404(Abastecimiento_agua, id_procedimiento=id)
-        #     data.update({
-        #         'nombres': detalle.nombres,
-        #         'apellidos': detalle.apellidos,
-        #         'ltrs_agua': detalle.ltrs_agua,
-        #     })
-
-        return JsonResponse(data)
-
-    elif request.method == "POST":
-        # Editar los datos del procedimiento
-        data = json.loads(request.body)
-
-        procedimiento.id_solicitante_id = data.get('solicitante', procedimiento.id_solicitante) 
-        procedimiento.solicitante_externo = data.get('solicitante_externo', '')
-        procedimiento.id_jefe_comision_id = data.get('jefecomision', procedimiento.id_jefe_comision)
-        procedimiento.direccion = data.get('direccion', procedimiento.direccion)
-        procedimiento.id_parroquia_id = data.get('parroquia', procedimiento.id_parroquia)
-        procedimiento.id_municipio_id = data.get('municipio', procedimiento.id_municipio)
-        procedimiento.unidad_id = data.get('unidad', procedimiento.unidad)
-        procedimiento.efectivos_enviados = data.get('efectivos', procedimiento.efectivos_enviados)
-        procedimiento.fecha = data.get('fecha', procedimiento.fecha)
-        procedimiento.hora = data.get('hora', procedimiento.hora)
-        procedimiento.id_tipo_procedimiento_id = data.get('id_tipo_procedimiento', procedimiento.id_tipo_procedimiento.id)
-        procedimiento.save()
-
-        # # Manejar campos específicos según el tipo de procedimiento
-        # if str(procedimiento.id_tipo_procedimiento.id) == "1":  # Abastecimiento de agua
-        #     detalle = get_object_or_404(Abastecimiento_agua, id_procedimiento=id)
-        #     detalle.nombres = data.get('nombres', detalle.nombres)
-        #     detalle.apellidos = data.get('apellidos', detalle.apellidos)
-        #     detalle.ltrs_agua = data.get('ltrs_agua', detalle.ltrs_agua)
-        #     detalle.save()
-
-        return JsonResponse({'success': True, 'message': 'Procedimiento actualizado correctamente.'})
-
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
+# ===================================================================
 
 def obtener_informacion_editar(request, id):
     
@@ -2382,13 +2293,13 @@ def obtener_informacion_editar(request, id):
         data = dict(data,
                    nombre_comercio = detalle_procedimiento.nombre_comercio,
                     rif_comercio = detalle_procedimiento.rif_comerciante,
-                    tipo_procedimiento_art = detalle_procedimiento.tipo_procedimiento.tipo,
+                    tipo_procedimiento_art = detalle_procedimiento.tipo_procedimiento.id,
                 )
 
         if detalle_procedimiento.tipo_procedimiento.id == 1:
             incendio = get_object_or_404(Incendios_Art, id_procedimientos=detalle_procedimiento.id)
             data.update({
-                'tipo_incendio': incendio.id_tipo_incendio.tipo_incendio,
+                'tipo_incendio': incendio.id_tipo_incendio.id,
                 'descripcion': incendio.descripcion,
                 'material_utilizado': incendio.material_utilizado,
                 'status': incendio.status,
@@ -2550,6 +2461,5 @@ def obtener_informacion_editar(request, id):
                     material_utilizado = detalles.material_utilizado,
                     status = detalles.status
                     )
-        
-    print(data)
+    
     return JsonResponse(data)

@@ -89,7 +89,6 @@ urlpatterns = [
     path('instagram/', instagram_feed, name='instagram_feed'),
 
     path('api/obtener_informacion/<int:id>/', obtener_informacion_editar, name='obtener_informacion'),
-    path('editar_procedimiento/<int:id>/', editar_procedimiento, name='editar_procedimiento'),
 
     # Descargas
     path('descargar-excel/', generar_excel, name='descargar_excel'),

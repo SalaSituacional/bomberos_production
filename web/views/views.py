@@ -2375,8 +2375,6 @@ def View_Procedimiento_Editar(request):
     if not user:
         return redirect('/')
 
-    
-    
     result = None
 
     if request.method == 'POST':
@@ -2543,63 +2541,44 @@ def View_Procedimiento_Editar(request):
 
                 if form_comision.cleaned_data["agregar"] == True:
                     # Obtén todas las comisiones relacionadas con el procedimiento
-                    detalles_comisiones = Comisiones.objects.filter(procedimiento=procedimiento)
-                    
-                    # Verifica si hay suficientes comisiones para modificar
-                    if len(detalles_comisiones) >= 1:
-                        # Modifica la primera comisión
-                        pos1 = detalles_comisiones[0]
-                        comision = datos_comision_uno.cleaned_data["comision"]
-                        cedula = datos_comision_uno.cleaned_data["cedula_oficial"]
-                        nacionalidad = datos_comision_uno.cleaned_data["nacionalidad"]
-                        
-                        tipo_comision_instance = Tipos_Comision.objects.get(id=comision)
-                        
-                        # Asigna los valores directamente, sin la coma extra
-                        pos1.comision = tipo_comision_instance
-                        pos1.nombre_oficial = datos_comision_uno.cleaned_data["nombre_oficial"]
-                        pos1.apellido_oficial = datos_comision_uno.cleaned_data["apellido_oficial"]
-                        pos1.cedula_oficial = f"{nacionalidad}-{cedula}"
-                        pos1.nro_unidad = datos_comision_uno.cleaned_data["nro_unidad"]
-                        pos1.nro_cuadrante = datos_comision_uno.cleaned_data["nro_cuadrante"]
-                        
-                        pos1.save()
+                    detalles_comisiones = list(Comisiones.objects.filter(procedimiento=procedimiento))
 
-                    if len(detalles_comisiones) >= 2:
-                        # Modifica la segunda comisión, si existe
-                        pos2 = detalles_comisiones[1]
-                        comision = datos_comision_dos.cleaned_data["comision"]
-                        cedula = datos_comision_dos.cleaned_data["cedula_oficial"]
-                        nacionalidad = datos_comision_dos.cleaned_data["nacionalidad"]
-                        
-                        tipo_comision_instance = Tipos_Comision.objects.get(id=comision)
-                        
-                        pos2.comision = tipo_comision_instance
-                        pos2.nombre_oficial = datos_comision_dos.cleaned_data["nombre_oficial"]
-                        pos2.apellido_oficial = datos_comision_dos.cleaned_data["apellido_oficial"]
-                        pos2.cedula_oficial = f"{nacionalidad}-{cedula}"
-                        pos2.nro_unidad = datos_comision_dos.cleaned_data["nro_unidad"]
-                        pos2.nro_cuadrante = datos_comision_dos.cleaned_data["nro_cuadrante"]
-                        
-                        pos2.save()
+                    # Listado de formularios de comisiones y sus datos
+                    formularios_comisiones = [
+                        datos_comision_uno,
+                        datos_comision_dos,
+                        datos_comision_tres,
+                    ]
 
-                    if len(detalles_comisiones) >= 3:
-                        # Modifica la tercera comisión, si existe
-                        pos3 = detalles_comisiones[2]
-                        comision = datos_comision_tres.cleaned_data["comision"]
-                        cedula = datos_comision_tres.cleaned_data["cedula_oficial"]
-                        nacionalidad = datos_comision_tres.cleaned_data["nacionalidad"]
-                        
-                        tipo_comision_instance = Tipos_Comision.objects.get(id=comision)
-                        
-                        pos3.comision = tipo_comision_instance
-                        pos3.nombre_oficial = datos_comision_tres.cleaned_data["nombre_oficial"]
-                        pos3.apellido_oficial = datos_comision_tres.cleaned_data["apellido_oficial"]
-                        pos3.cedula_oficial = f"{nacionalidad}-{cedula}"
-                        pos3.nro_unidad = datos_comision_tres.cleaned_data["nro_unidad"]
-                        pos3.nro_cuadrante = datos_comision_tres.cleaned_data["nro_cuadrante"]
-                        
-                        pos3.save()
+                    for idx, formulario in enumerate(formularios_comisiones):
+                        if formulario.is_valid():
+                            # Validar que el campo 'comision' no esté vacío antes de proceder
+                            comision = formulario.cleaned_data.get("comision")
+                            if not comision:
+                                continue  # Saltar este formulario si no tiene un valor válido para 'comision'
+
+                            cedula = formulario.cleaned_data["cedula_oficial"]
+                            nacionalidad = formulario.cleaned_data["nacionalidad"]
+                            tipo_comision_instance = Tipos_Comision.objects.get(id=comision)
+
+                            # Determinar si modificar o crear la comisión
+                            if idx < len(detalles_comisiones):
+                                # Modificar una comisión existente
+                                comision_instance = detalles_comisiones[idx]
+                            else:
+                                # Crear una nueva comisión
+                                comision_instance = Comisiones(procedimiento=procedimiento)
+
+                            # Asignar datos al objeto de comisión
+                            comision_instance.comision = tipo_comision_instance
+                            comision_instance.nombre_oficial = formulario.cleaned_data["nombre_oficial"]
+                            comision_instance.apellido_oficial = formulario.cleaned_data["apellido_oficial"]
+                            comision_instance.cedula_oficial = f"{nacionalidad}-{cedula}"
+                            comision_instance.nro_unidad = formulario.cleaned_data["nro_unidad"]
+                            comision_instance.nro_cuadrante = formulario.cleaned_data["nro_cuadrante"]
+                            comision_instance.save()
+
+
 
                     # Si necesitas manejar más comisiones, puedes seguir el patrón anterior
 
@@ -2613,12 +2592,14 @@ def View_Procedimiento_Editar(request):
                 municipio_instance = Municipios.objects.get(id=municipio)
                 tipo_procedimiento_instance = Tipos_Procedimientos.objects.get(id=tipo_procedimiento)
 
+                encargado_area = form_enfermeria.cleaned_data["encargado_area"]
+
                 if encargado_area == "Otro":
                     encargado_area = form_enfermeria.cleaned_data["especifique"]
 
                 procedimiento.id_division = division_instance
                 procedimiento.dependencia = form_enfermeria.cleaned_data["dependencia"]
-                procedimiento.solicitante_externo = form_enfermeria.cleaned_data["encargado_area"]
+                procedimiento.solicitante_externo = encargado_area
                 procedimiento.id_municipio = municipio_instance
                 procedimiento.direccion = form3.cleaned_data["direccion"]
                 procedimiento.fecha = form3.cleaned_data["fecha"]
@@ -2628,7 +2609,7 @@ def View_Procedimiento_Editar(request):
                 # # Solo asignar parroquia si está presente
                 if parroquia:
                     parroquia_instance = Parroquias.objects.get(id=parroquia)
-                    procedimiento.nuevo_procedimiento.id_parroquia = parroquia_instance
+                    procedimiento.id_parroquia = parroquia_instance
 
                 procedimiento.save()
             
@@ -2767,1179 +2748,1292 @@ def View_Procedimiento_Editar(request):
                     detalles_frente.save()
 
             # # Ahora dependiendo del tipo de procedimiento, verifica el formulario correspondiente y guarda la instancia
-            # if tipo_procedimiento == "1" and abast_agua.is_valid():
-            #     # Abastecimiento de Agua
-            #     nacionalidad=abast_agua.cleaned_data["nacionalidad"]
-            #     cedula=abast_agua.cleaned_data["cedula"]
+            # Terminado
+            if tipo_procedimiento == "1" and abast_agua.is_valid():
 
-            #     nuevo_abast_agua = Abastecimiento_agua(
-            #         id_procedimiento=nuevo_procedimiento,
-            #         id_tipo_servicio=Tipo_Institucion.objects.get(id=abast_agua.cleaned_data["tipo_servicio"]),
-            #         nombres=abast_agua.cleaned_data["nombres"],
-            #         apellidos=abast_agua.cleaned_data["apellidos"],
-            #         cedula=f"{nacionalidad}-{cedula}",
-            #         ltrs_agua=abast_agua.cleaned_data["ltrs_agua"],
-            #         personas_atendidas=abast_agua.cleaned_data["personas_atendidas"],
-            #         descripcion=abast_agua.cleaned_data["descripcion"],
-            #         material_utilizado=abast_agua.cleaned_data["material_utilizado"],
-            #         status=abast_agua.cleaned_data["status"]
-            #     )
-            #     nuevo_abast_agua.save()
+                detalles_procedimiento = Abastecimiento_agua.objects.get(id_procedimiento = procedimiento)
 
-            # if tipo_procedimiento == "2" and apoyo_unid.is_valid():
-            #     tipo_apoyo = apoyo_unid.cleaned_data["tipo_apoyo"]
-            #     unidad_apoyada = apoyo_unid.cleaned_data["unidad_apoyada"]
-            #     descripcion = apoyo_unid.cleaned_data["descripcion"]
-            #     material_utilizado = apoyo_unid.cleaned_data["material_utilizado"]
-            #     status = apoyo_unid.cleaned_data["status"]
+                # Abastecimiento de Agua
+                nacionalidad=abast_agua.cleaned_data["nacionalidad"]
+                cedula=abast_agua.cleaned_data["cedula"]
 
-            #     tipo_apoyo_instance = Tipo_apoyo.objects.get(id=tipo_apoyo)
+                detalles_procedimiento.id_tipo_servicio = Tipo_Institucion.objects.get(id=abast_agua.cleaned_data["tipo_servicio"])
+                detalles_procedimiento.nombres = abast_agua.cleaned_data["nombres"]
+                detalles_procedimiento.apellidos = abast_agua.cleaned_data["apellidos"]
+                detalles_procedimiento.cedula = f"{nacionalidad}-{cedula}"
+                detalles_procedimiento.ltrs_agua = abast_agua.cleaned_data["ltrs_agua"]
+                detalles_procedimiento.personas_atendidas = abast_agua.cleaned_data["personas_atendidas"]
+                detalles_procedimiento.descripcion = abast_agua.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = abast_agua.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = abast_agua.cleaned_data["status"]
 
-            #     nuevo_apoyo_unidad = Apoyo_Unidades(
-            #         id_procedimiento=nuevo_procedimiento,
-            #         id_tipo_apoyo=tipo_apoyo_instance,
-            #         unidad_apoyada=unidad_apoyada,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_apoyo_unidad.save()
+                detalles_procedimiento.save()
 
-            # if tipo_procedimiento == "3" and guard_prev.is_valid():
-            #     mot_prevencion = guard_prev.cleaned_data["motivo_prevencion"]
-            #     descripcion = guard_prev.cleaned_data["descripcion"]
-            #     material_utilizado = guard_prev.cleaned_data["material_utilizado"]
-            #     status = guard_prev.cleaned_data["status"]
+            # Terminado
+            if tipo_procedimiento == "2" and apoyo_unid.is_valid():
 
-            #     Tipo_Motivo_instance = Motivo_Prevencion.objects.get(id=mot_prevencion)
+                detalles_procedimiento = Apoyo_Unidades.objects.get(id_procedimiento = procedimiento)
 
-            #     nuevo_guard_prevencion = Guardia_prevencion(
-            #         id_procedimiento=nuevo_procedimiento,
-            #         id_motivo_prevencion=Tipo_Motivo_instance,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_guard_prevencion.save()
+                tipo_apoyo_instance = Tipo_apoyo.objects.get(id=apoyo_unid.cleaned_data["tipo_apoyo"])
 
-            # if tipo_procedimiento == "4" and atend_no_efec.is_valid():
-            #     descripcion = atend_no_efec.cleaned_data["descripcion"]
-            #     material_utilizado = atend_no_efec.cleaned_data["material_utilizado"]
-            #     status = atend_no_efec.cleaned_data["status"]
+                detalles_procedimiento.id_tipo_apoyo = tipo_apoyo_instance
+                detalles_procedimiento.unidad_apoyada = apoyo_unid.cleaned_data["unidad_apoyada"]
+                detalles_procedimiento.descripcion = apoyo_unid.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = apoyo_unid.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = apoyo_unid.cleaned_data["status"]
 
-            #     nuevo_atend_no_efect = Atendido_no_Efectuado(
-            #         id_procedimiento=nuevo_procedimiento,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_atend_no_efect.save()
+                detalles_procedimiento.save()
 
-            # if tipo_procedimiento == "5" and desp_seguridad.is_valid():
-            #     descripcion = desp_seguridad.cleaned_data["descripcion"]
-            #     material_utilizado = desp_seguridad.cleaned_data["material_utilizado"]
-            #     status =desp_seguridad.cleaned_data["status"]
-            #     motv_despliegue = desp_seguridad.cleaned_data["motv_despliegue"]
+            # Terminado
+            if tipo_procedimiento == "3" and guard_prev.is_valid():
 
-            #     Tipo_Motivo_instance = Motivo_Despliegue.objects.get(id=motv_despliegue)
+                detalles_procedimiento = Guardia_prevencion.objects.get(id_procedimiento = procedimiento)
+                Tipo_Motivo_instance = Motivo_Prevencion.objects.get(id=guard_prev.cleaned_data["motivo_prevencion"])
 
-            #     desp_seguridad = Despliegue_Seguridad(
-            #         id_procedimiento=nuevo_procedimiento,
-            #         motivo_despliegue = Tipo_Motivo_instance,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     desp_seguridad.save()
+                detalles_procedimiento.id_motivo_prevencion = Tipo_Motivo_instance 
+                detalles_procedimiento.descripcion = guard_prev.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = guard_prev.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = guard_prev.cleaned_data["status"]
 
-            # if tipo_procedimiento == "6" and fals_alarm.is_valid():
-            #     descripcion = fals_alarm.cleaned_data["descripcion"]
-            #     material_utilizado = fals_alarm.cleaned_data["material_utilizado"]
-            #     status = fals_alarm.cleaned_data["status"]
-            #     motv_alarma = fals_alarm.cleaned_data["motv_alarma"]
+                detalles_procedimiento.save()
 
-            #     Tipo_Motivo_instance = Motivo_Alarma.objects.get(id=motv_alarma)
-
-            #     nueva_falsa_alarma = Falsa_Alarma(
-            #         id_procedimiento=nuevo_procedimiento,
-            #         motivo_alarma = Tipo_Motivo_instance,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nueva_falsa_alarma.save()
-
-            # if tipo_procedimiento == "7" and atenciones_paramedicas.is_valid():
-
-            #     tipo_atencion = atenciones_paramedicas.cleaned_data["tipo_atencion"]
-
-            #     nueva_atencion_paramedica = Atenciones_Paramedicas(
-            #       id_procedimientos = nuevo_procedimiento,
-            #       tipo_atencion = tipo_atencion
-            #     )
-            #     nueva_atencion_paramedica.save()
-
-            #     if tipo_atencion == "Emergencias Medicas" and emergencias_medicas.is_valid():
-            #         nombre = emergencias_medicas.cleaned_data["nombre"]
-            #         apellido = emergencias_medicas.cleaned_data["apellido"]
-            #         nacionalidad = emergencias_medicas.cleaned_data["nacionalidad"]
-            #         cedula = emergencias_medicas.cleaned_data["cedula"]
-            #         edad = emergencias_medicas.cleaned_data["edad"]
-            #         sexo = emergencias_medicas.cleaned_data["sexo"]
-            #         idx = emergencias_medicas.cleaned_data["idx"]
-            #         descripcion = emergencias_medicas.cleaned_data["descripcion"]
-            #         material_utilizado = emergencias_medicas.cleaned_data["material_utilizado"]
-            #         status = emergencias_medicas.cleaned_data["status"]
-            #         trasladado = emergencias_medicas.cleaned_data["trasladado"]
-
-            #         nueva_emergencia_medica = Emergencias_Medicas(
-            #            id_atencion = nueva_atencion_paramedica,
-            #            nombres = nombre,
-            #            apellidos = apellido,
-            #            cedula = f"{nacionalidad}-{cedula}",
-            #            edad = edad,
-            #            sexo = sexo,
-            #            idx = idx,
-            #            descripcion = descripcion,
-            #            material_utilizado = material_utilizado,
-            #            status = status,
-            #         )
-            #         nueva_emergencia_medica.save()
-
-            #         if trasladado == True and traslados_emergencias.is_valid():
-            #             hospital = traslados_emergencias.cleaned_data["hospital_trasladado"]
-            #             medico = traslados_emergencias.cleaned_data["medico_receptor"]
-            #             mpps_cmt = traslados_emergencias.cleaned_data["mpps_cmt"]
-
-            #             nuevo_traslado_emergencia = Traslado(
-            #                id_lesionado = nueva_emergencia_medica,
-            #                hospital_trasladado = hospital,
-            #                medico_receptor = medico,
-            #                mpps_cmt = mpps_cmt,
-            #             )
-            #             nuevo_traslado_emergencia.save()
-
-            #     if tipo_atencion == "Accidentes de Transito" and formulario_accidentes_transito.is_valid():
-            #         tipo_accidente = formulario_accidentes_transito.cleaned_data["tipo_accidente"]
-            #         cantidad_lesionado = formulario_accidentes_transito.cleaned_data["cantidad_lesionado"]
-            #         material_utilizado = formulario_accidentes_transito.cleaned_data["material_utilizado"]
-            #         status = formulario_accidentes_transito.cleaned_data["status"]
-            #         agg_vehiculo = formulario_accidentes_transito.cleaned_data["agg_vehiculo"]
-            #         agg_lesionado = formulario_accidentes_transito.cleaned_data["agg_lesionado"]
-
-            #         tipo_accidente_instance = Tipo_Accidente.objects.get(id=tipo_accidente)
-
-            #         nuevo_accidente_transito = Accidentes_Transito(
-            #           id_atencion = nueva_atencion_paramedica,
-            #           tipo_de_accidente = tipo_accidente_instance,
-            #           cantidad_lesionados = cantidad_lesionado,
-            #           material_utilizado = material_utilizado,
-            #           status = status,
-            #         )
-            #         nuevo_accidente_transito.save()
-
-            #         if agg_vehiculo == True and detalles_vehiculo_accidentes.is_valid():
-            #             modelo1 = detalles_vehiculo_accidentes.cleaned_data["modelo"]
-            #             marca1 = detalles_vehiculo_accidentes.cleaned_data["marca"]
-            #             color1 = detalles_vehiculo_accidentes.cleaned_data["color"]
-            #             año1 = detalles_vehiculo_accidentes.cleaned_data["año"]
-            #             placas1 = detalles_vehiculo_accidentes.cleaned_data["placas"]
-            #             agg_vehiculo2 = detalles_vehiculo_accidentes.cleaned_data["agg_vehiculo"]
-
-            #             nuevo_vehiculo_accidente = Detalles_Vehiculos_Accidente(
-            #                 id_vehiculo = nuevo_accidente_transito,
-            #                 modelo = modelo1,
-            #                 marca = marca1,
-            #                 color = color1,
-            #                 año = año1,
-            #                 placas = placas1,
-            #             )
-            #             nuevo_vehiculo_accidente.save()
-
-            #             if agg_vehiculo2 == True and detalles_vehiculo_accidentes2.is_valid():
-            #                 modelo2 = detalles_vehiculo_accidentes2.cleaned_data["modelo"]
-            #                 marca2 = detalles_vehiculo_accidentes2.cleaned_data["marca"]
-            #                 color2 = detalles_vehiculo_accidentes2.cleaned_data["color"]
-            #                 año2 = detalles_vehiculo_accidentes2.cleaned_data["año"]
-            #                 placas2 = detalles_vehiculo_accidentes2.cleaned_data["placas"]
-            #                 agg_vehiculo3 = detalles_vehiculo_accidentes2.cleaned_data["agg_vehiculo"]
-
-            #                 nuevo_vehiculo_accidente2 = Detalles_Vehiculos_Accidente(
-            #                     id_vehiculo = nuevo_accidente_transito,
-            #                     modelo = modelo2,
-            #                     marca = marca2,
-            #                     color = color2,
-            #                     año = año2,
-            #                     placas = placas2,
-            #                 )
-            #                 nuevo_vehiculo_accidente2.save()
-
-            #                 if agg_vehiculo3 == True and detalles_vehiculo_accidentes3.is_valid():
-            #                     modelo3 = detalles_vehiculo_accidentes3.cleaned_data["modelo"]
-            #                     marca3 = detalles_vehiculo_accidentes3.cleaned_data["marca"]
-            #                     color3 = detalles_vehiculo_accidentes3.cleaned_data["color"]
-            #                     año3 = detalles_vehiculo_accidentes3.cleaned_data["año"]
-            #                     placas3 = detalles_vehiculo_accidentes3.cleaned_data["placas"]
-
-            #                     nuevo_vehiculo_accidente3 = Detalles_Vehiculos_Accidente(
-            #                         id_vehiculo = nuevo_accidente_transito,
-            #                         modelo = modelo3,
-            #                         marca = marca3,
-            #                         color = color3,
-            #                         año = año3,
-            #                         placas = placas3,
-            #                     )
-            #                     nuevo_vehiculo_accidente3.save()
-
-
-            #         if agg_lesionado == True and detalles_lesionados_accidentes.is_valid():
-            #             nombre = detalles_lesionados_accidentes.cleaned_data["nombre"]
-            #             apellido = detalles_lesionados_accidentes.cleaned_data["apellido"]
-            #             nacionalidad = detalles_lesionados_accidentes.cleaned_data["nacionalidad"]
-            #             cedula = detalles_lesionados_accidentes.cleaned_data["cedula"]
-            #             edad = detalles_lesionados_accidentes.cleaned_data["edad"]
-            #             sexo = detalles_lesionados_accidentes.cleaned_data["sexo"]
-            #             idx = detalles_lesionados_accidentes.cleaned_data["idx"]
-            #             descripcion = detalles_lesionados_accidentes.cleaned_data["descripcion"]
-            #             trasladado = detalles_lesionados_accidentes.cleaned_data["trasladado"]
-            #             otro_lesionado = detalles_lesionados_accidentes.cleaned_data["otro_lesionado"]
-
-            #             nuevo_lesionado = Lesionados(
-            #                 id_accidente = nuevo_accidente_transito,
-            #                 nombres = nombre,
-            #                 apellidos = apellido,
-            #                 cedula = f"{nacionalidad}-{cedula}",
-            #                 edad = edad,
-            #                 sexo = sexo,
-            #                 idx = idx,
-            #                 descripcion = descripcion,
-            #             )
-            #             nuevo_lesionado.save()
-
-            #             if trasladado == True and traslados_accidentes.is_valid():
-            #                 hospital = traslados_accidentes.cleaned_data["hospital_trasladado"]
-            #                 medico = traslados_accidentes.cleaned_data["medico_receptor"]
-            #                 mpps_cmt = traslados_accidentes.cleaned_data["mpps_cmt"]
-
-            #                 nuevo_traslado_accidente = Traslado_Accidente(
-            #                     id_lesionado = nuevo_lesionado,
-            #                     hospital_trasladado = hospital,
-            #                     medico_receptor = medico,
-            #                     mpps_cmt = mpps_cmt
-            #                 )
-            #                 nuevo_traslado_accidente.save()
-
-            #             if otro_lesionado == True and detalles_lesionados_accidentes2.is_valid():
-            #                 nombre = detalles_lesionados_accidentes2.cleaned_data["nombre"]
-            #                 apellido = detalles_lesionados_accidentes2.cleaned_data["apellido"]
-            #                 nacionalidad = detalles_lesionados_accidentes2.cleaned_data["nacionalidad"]
-            #                 cedula = detalles_lesionados_accidentes2.cleaned_data["cedula"]
-            #                 edad = detalles_lesionados_accidentes2.cleaned_data["edad"]
-            #                 sexo = detalles_lesionados_accidentes2.cleaned_data["sexo"]
-            #                 idx = detalles_lesionados_accidentes2.cleaned_data["idx"]
-            #                 descripcion = detalles_lesionados_accidentes2.cleaned_data["descripcion"]
-            #                 trasladado = detalles_lesionados_accidentes2.cleaned_data["trasladado"]
-            #                 otro_lesionado = detalles_lesionados_accidentes2.cleaned_data["otro_lesionado"]
-
-            #                 nuevo_lesionado = Lesionados(
-            #                     id_accidente = nuevo_accidente_transito,
-            #                     nombres = nombre,
-            #                     apellidos = apellido,
-            #                     cedula = f"{nacionalidad}-{cedula}",
-            #                     edad = edad,
-            #                     sexo = sexo,
-            #                     idx = idx,
-            #                     descripcion = descripcion,
-            #                 )
-            #                 nuevo_lesionado.save()
-
-            #                 if trasladado == True and traslados_accidentes2.is_valid():
-            #                     hospital = traslados_accidentes2.cleaned_data["hospital_trasladado"]
-            #                     medico = traslados_accidentes2.cleaned_data["medico_receptor"]
-            #                     mpps_cmt = traslados_accidentes2.cleaned_data["mpps_cmt"]
-
-            #                     nuevo_traslado_accidente = Traslado_Accidente(
-            #                         id_lesionado = nuevo_lesionado,
-            #                         hospital_trasladado = hospital,
-            #                         medico_receptor = medico,
-            #                         mpps_cmt = mpps_cmt
-            #                     )
-            #                     nuevo_traslado_accidente.save()
-
-            #                 if otro_lesionado == True and detalles_lesionados_accidentes3.is_valid():
-            #                     nombre = detalles_lesionados_accidentes3.cleaned_data["nombre"]
-            #                     apellido = detalles_lesionados_accidentes3.cleaned_data["apellido"]
-            #                     nacionalidad = detalles_lesionados_accidentes3.cleaned_data["nacionalidad"]
-            #                     cedula = detalles_lesionados_accidentes3.cleaned_data["cedula"]
-            #                     edad = detalles_lesionados_accidentes3.cleaned_data["edad"]
-            #                     sexo = detalles_lesionados_accidentes3.cleaned_data["sexo"]
-            #                     idx = detalles_lesionados_accidentes3.cleaned_data["idx"]
-            #                     descripcion = detalles_lesionados_accidentes3.cleaned_data["descripcion"]
-            #                     trasladado = detalles_lesionados_accidentes3.cleaned_data["trasladado"]
-
-            #                     nuevo_lesionado = Lesionados(
-            #                         id_accidente = nuevo_accidente_transito,
-            #                         nombres = nombre,
-            #                         apellidos = apellido,
-            #                         cedula = f"{nacionalidad}-{cedula}",
-            #                         edad = edad,
-            #                         sexo = sexo,
-            #                         idx = idx,
-            #                         descripcion = descripcion,
-            #                     )
-            #                     nuevo_lesionado.save()
-
-            #                     if trasladado == True and traslados_accidentes3.is_valid():
-            #                         hospital = traslados_accidentes3.cleaned_data["hospital_trasladado"]
-            #                         medico = traslados_accidentes3.cleaned_data["medico_receptor"]
-            #                         mpps_cmt = traslados_accidentes3.cleaned_data["mpps_cmt"]
-
-            #                         nuevo_traslado_accidente = Traslado_Accidente(
-            #                             id_lesionado = nuevo_lesionado,
-            #                             hospital_trasladado = hospital,
-            #                             medico_receptor = medico,
-            #                             mpps_cmt = mpps_cmt
-            #                         )
-            #                         nuevo_traslado_accidente.save()
-
-            # if tipo_procedimiento == "9" and serv_especial.is_valid():
-            #     descripcion = serv_especial.cleaned_data["descripcion"]
-            #     material_utilizado = serv_especial.cleaned_data["material_utilizado"]
-            #     status = serv_especial.cleaned_data["status"]
-            #     tipo_servicio = serv_especial.cleaned_data["tipo_servicio"]
-
-            #     tipo_servicio_instance = Tipo_servicios.objects.get(id=tipo_servicio)
-
-            #     nuevo_Servicio_especial = Servicios_Especiales(
-            #         id_procedimientos=nuevo_procedimiento,
-            #         tipo_servicio = tipo_servicio_instance,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_Servicio_especial.save()
-
-            # if tipo_procedimiento == "10" and rescate_form.is_valid():
-            #     material_utilizado = rescate_form.cleaned_data["material_utilizado"]
-            #     status = rescate_form.cleaned_data["status"]
-            #     id_tipo_rescate = rescate_form.cleaned_data["tipo_rescate"]
-
-
-            #     tipo_rescate_instance = Tipo_Rescate.objects.get(id=id_tipo_rescate)
-
-            #     nuevo_proc_rescate = Rescate(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         material_utilizado=material_utilizado,
-            #         tipo_rescate = tipo_rescate_instance,
-            #         status=status
-            #     )
-            #     nuevo_proc_rescate.save()
-
-            #     if id_tipo_rescate == "1" and rescate_form_animal.is_valid():
-            #         especie = rescate_form_animal.cleaned_data["especie"]
-            #         descripcion = rescate_form_animal.cleaned_data["descripcion"]
-
-            #         new_rescate_animal = Rescate_Animal(
-            #             id_rescate = nuevo_proc_rescate,
-            #             especie = especie,
-            #             descripcion = descripcion,
-            #         )
-            #         new_rescate_animal.save()
-
-            #         return redirect('/dashboard/')
-
-            #     else:
-            #         rescate_form_persona.is_valid()
-            #         nombre_persona = rescate_form_persona.cleaned_data["nombre_persona"]
-            #         apellido_persona = rescate_form_persona.cleaned_data["apellido_persona"]
-            #         nacionalidad = rescate_form_persona.cleaned_data["nacionalidad"]
-            #         cedula_persona = rescate_form_persona.cleaned_data["cedula_persona"]
-            #         edad_persona = rescate_form_persona.cleaned_data["edad_persona"]
-            #         sexo_persona = rescate_form_persona.cleaned_data["sexo_persona"]
-            #         descripcion = rescate_form_persona.cleaned_data["descripcion"]
-
-            #         new_rescate_persona = Rescate_Persona(
-            #             id_rescate = nuevo_proc_rescate,
-            #             nombre = nombre_persona,
-            #             apellidos = apellido_persona,
-            #             cedula = f"{nacionalidad}-{cedula_persona}",
-            #             edad = edad_persona,
-            #             sexo = sexo_persona,
-            #             descripcion = descripcion,
-            #         )
-            #         new_rescate_persona.save()
-
-            #         return redirect('/dashboard/')
-
-            # if tipo_procedimiento == "11" and incendio_form.is_valid():
-            #     id_tipo_incendio = incendio_form.cleaned_data["tipo_incendio"]
-            #     descripcion = incendio_form.cleaned_data["descripcion"]
-            #     material_utilizado = incendio_form.cleaned_data["material_utilizado"]
-            #     status = incendio_form.cleaned_data["status"]
-
-            #     tipo_incendio_instance = Tipo_Incendio.objects.get(id=id_tipo_incendio)
-
-            #     nuevo_proc_incendio = Incendios(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         id_tipo_incendio = tipo_incendio_instance,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_proc_incendio.save()
-
-            #     check_agregar_persona = incendio_form.cleaned_data["check_agregar_persona"]
-            #     check_retencion = incendio_form.cleaned_data["check_retencion"]
-
-            #     if check_agregar_persona == True and persona_presente_form.is_valid():
-            #         nombre = persona_presente_form.cleaned_data["nombre"]
-            #         apellido = persona_presente_form.cleaned_data["apellido"]
-            #         nacionalidad = persona_presente_form.cleaned_data["nacionalidad"]
-            #         cedula = persona_presente_form.cleaned_data["cedula"]
-            #         edad = persona_presente_form.cleaned_data["edad"]
-
-            #         new_persona_presente = Persona_Presente(
-            #             id_incendio = nuevo_proc_incendio,
-            #             nombre = nombre,
-            #             apellidos = apellido,
-            #             cedula = f"{nacionalidad}-{cedula}",
-            #             edad = edad,
-            #         )
-            #         new_persona_presente.save()
-
-            #     if check_retencion == True and retencion_preventiva_incendio.is_valid():
-            #         tipo_cilindro = retencion_preventiva_incendio.cleaned_data["tipo_cilindro"]
-            #         capacidad = retencion_preventiva_incendio.cleaned_data["capacidad"]
-            #         serial = retencion_preventiva_incendio.cleaned_data["serial"]
-            #         nro_constancia_retencion = retencion_preventiva_incendio.cleaned_data["nro_constancia_retencion"]
-            #         nombre = retencion_preventiva_incendio.cleaned_data["nombre"]
-            #         apellido = retencion_preventiva_incendio.cleaned_data["apellidos"]
-            #         nacionalidad = retencion_preventiva_incendio.cleaned_data["nacionalidad"]
-            #         cedula = retencion_preventiva_incendio.cleaned_data["cedula"]
-
-            #         tipo_cilindro_instance = Tipo_Cilindro.objects.get(id=tipo_cilindro)
-
-            #         nuevo_proc_reten_incendio = Retencion_Preventiva_Incendios(
-            #             id_procedimiento = nuevo_proc_incendio,
-            #             tipo_cilindro = tipo_cilindro_instance,
-            #             capacidad = capacidad,
-            #             serial = serial,
-            #             nro_constancia_retencion = nro_constancia_retencion,
-            #             nombre = nombre,
-            #             apellidos = apellido,
-            #             cedula = f"{nacionalidad}-{cedula}",
-            #         )
-            #         nuevo_proc_reten_incendio.save()
-
-            #     if id_tipo_incendio == "2" and detalles_vehiculo_form.is_valid():
-            #         modelo = detalles_vehiculo_form.cleaned_data["modelo"]
-            #         marca = detalles_vehiculo_form.cleaned_data["marca"]
-            #         color = detalles_vehiculo_form.cleaned_data["color"]
-            #         año = detalles_vehiculo_form.cleaned_data["año"]
-            #         placas = detalles_vehiculo_form.cleaned_data["placas"]
-
-            #         new_agregar_vehiculo = Detalles_Vehiculos(
-            #             id_vehiculo = nuevo_proc_incendio,
-            #             modelo = modelo,
-            #             marca = marca,
-            #             color = color,
-            #             año = año,
-            #             placas = placas,
-            #         )
-            #         new_agregar_vehiculo.save()
-
-            # if tipo_procedimiento == "12" and form_fallecido.is_valid():
-            #     motivo_fallecimiento = form_fallecido.cleaned_data["motivo_fallecimiento"]
-            #     nom_fallecido = form_fallecido.cleaned_data["nom_fallecido"]
-            #     apellido_fallecido = form_fallecido.cleaned_data["apellido_fallecido"]
-            #     nacionalidad = form_fallecido.cleaned_data["nacionalidad"]
-            #     cedula_fallecido = form_fallecido.cleaned_data["cedula_fallecido"]
-            #     edad = form_fallecido.cleaned_data["edad"]
-            #     sexo = form_fallecido.cleaned_data["sexo"]
-            #     descripcion = form_fallecido.cleaned_data["descripcion"]
-            #     material_utilizado = form_fallecido.cleaned_data["material_utilizado"]
-            #     status = form_fallecido.cleaned_data["status"]
-
-            #     nuevo_proc_fallecido = Fallecidos(
-            #         id_procedimiento = nuevo_procedimiento,
-            #         motivo_fallecimiento = motivo_fallecimiento,
-            #         nombres = nom_fallecido,
-            #         apellidos = apellido_fallecido,
-            #         cedula = f"{nacionalidad}-{cedula_fallecido}",
-            #         edad = edad,
-            #         sexo = sexo,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_proc_fallecido.save()
-
-            # if tipo_procedimiento == "13" and mitigacion_riesgo_form.is_valid():
-            #     tipo_riesgo = mitigacion_riesgo_form.cleaned_data["tipo_riesgo"]
-            #     descripcion = mitigacion_riesgo_form.cleaned_data["descripcion"]
-            #     material_utilizado = mitigacion_riesgo_form.cleaned_data["material_utilizado"]
-            #     status = mitigacion_riesgo_form.cleaned_data["status"]
-
-            #     tipo_riesgo_instance = Mitigacion_riesgo.objects.get(id=tipo_riesgo)
-
-            #     nuevo_proc_mit = Mitigacion_Riesgos(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         id_tipo_servicio = tipo_riesgo_instance,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_proc_mit.save()
-
-            # if tipo_procedimiento == "14" and evaluacion_riesgo_form.is_valid():
-            #     tipo_riesgo = evaluacion_riesgo_form.cleaned_data["tipo_riesgo"]
-            #     tipo_estructura = evaluacion_riesgo_form.cleaned_data["tipo_etructura"]
-            #     descripcion = evaluacion_riesgo_form.cleaned_data["descripcion"]
-            #     material_utilizado = evaluacion_riesgo_form.cleaned_data["material_utilizado"]
-            #     status = evaluacion_riesgo_form.cleaned_data["status"]
-
-            #     tipo_riesgo_instance = Motivo_Riesgo.objects.get(id=tipo_riesgo)
-
-            #     nuevo_proc_eval = Evaluacion_Riesgo(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         id_tipo_riesgo = tipo_riesgo_instance,
-            #         tipo_estructura = tipo_estructura,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-
-            #     nuevo_proc_eval.save()
-
-            #     if division == "3" and tipo_procedimiento == "14" and persona_presente_eval_form.is_valid():
-            #         nombre = persona_presente_eval_form.cleaned_data["nombre"]
-            #         apellido = persona_presente_eval_form.cleaned_data["apellidos"]
-            #         nacionalidad = persona_presente_eval_form.cleaned_data["nacionalidad"]
-            #         cedula = persona_presente_eval_form.cleaned_data["cedula"]
-            #         telefono = persona_presente_eval_form.cleaned_data["telefono"]
-
-            #         nuevo_per_presente = Persona_Presente_Eval(
-            #             id_persona = nuevo_proc_eval,
-            #             nombre = nombre,
-            #             apellidos = apellido,
-            #             cedula = f"{nacionalidad}-{cedula}",
-            #             telefono = telefono,
-            #         )
-            #         nuevo_per_presente.save()
-
-            # if tipo_procedimiento == "15" and puesto_avanzada_form.is_valid():
-            #     tipo_avanzada = puesto_avanzada_form.cleaned_data["tipo_avanzada"]
-            #     descripcion = puesto_avanzada_form.cleaned_data["descripcion"]
-            #     material_utilizado = puesto_avanzada_form.cleaned_data["material_utilizado"]
-            #     status = puesto_avanzada_form.cleaned_data["status"]
-
-            #     tipo_avanzada_instance = Motivo_Avanzada.objects.get(id=tipo_avanzada)
-
-            #     nuevo_proc_avan = Puesto_Avanzada(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         id_tipo_servicio = tipo_avanzada_instance,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_proc_avan.save()
-
-            # if tipo_procedimiento == "16" and traslados_prehospitalaria_form.is_valid():
-            #     tipo_traslado = traslados_prehospitalaria_form.cleaned_data["tipo_traslado"]
-            #     nombre = traslados_prehospitalaria_form.cleaned_data["nombre"]
-            #     apellido = traslados_prehospitalaria_form.cleaned_data["apellido"]
-            #     nacionalidad = traslados_prehospitalaria_form.cleaned_data["nacionalidad"]
-            #     cedula = traslados_prehospitalaria_form.cleaned_data["cedula"]
-            #     edad = traslados_prehospitalaria_form.cleaned_data["edad"]
-            #     sexo = traslados_prehospitalaria_form.cleaned_data["sexo"]
-            #     idx = traslados_prehospitalaria_form.cleaned_data["idx"]
-            #     hospital_trasladado = traslados_prehospitalaria_form.cleaned_data["hospital_trasladado"]
-            #     medico_receptor = traslados_prehospitalaria_form.cleaned_data["medico_receptor"]
-            #     mpps_cmt = traslados_prehospitalaria_form.cleaned_data["mpps_cmt"]
-            #     descripcion = traslados_prehospitalaria_form.cleaned_data["descripcion"]
-            #     material_utilizado = traslados_prehospitalaria_form.cleaned_data["material_utilizado"]
-            #     status = traslados_prehospitalaria_form.cleaned_data["status"]
-
-            #     tipo_traslado_instance = Tipos_Traslado.objects.get(id=tipo_traslado)
-
-            #     nuevo_proc_tras = Traslado_Prehospitalaria(
-            #         id_procedimiento = nuevo_procedimiento,
-            #         id_tipo_traslado = tipo_traslado_instance,
-            #         nombre = nombre,
-            #         apellido = apellido,
-            #         cedula = f"{nacionalidad}-{cedula}",
-            #         edad = edad,
-            #         sexo = sexo,
-            #         idx = idx,
-            #         hospital_trasladado = hospital_trasladado,
-            #         medico_receptor = medico_receptor,
-            #         mpps_cmt = mpps_cmt,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_proc_tras.save()
-
-            # if tipo_procedimiento == "17" and asesoramiento_form.is_valid():
-            #     nombre_comercio = asesoramiento_form.cleaned_data["nombre_comercio"]
-            #     rif_comercio = asesoramiento_form.cleaned_data["rif_comercio"]
-            #     nombre = asesoramiento_form.cleaned_data["nombres"]
-            #     apellido = asesoramiento_form.cleaned_data["apellidos"]
-            #     nacionalidad = asesoramiento_form.cleaned_data["nacionalidad"]
-            #     cedula = asesoramiento_form.cleaned_data["cedula"]
-            #     sexo = asesoramiento_form.cleaned_data["sexo"]
-            #     telefono = asesoramiento_form.cleaned_data["telefono"]
-            #     descripcion = asesoramiento_form.cleaned_data["descripcion"]
-            #     material_utilizado = asesoramiento_form.cleaned_data["material_utilizado"]
-            #     status = asesoramiento_form.cleaned_data["status"]
-
-            #     nuevo_proc_ase = Asesoramiento(
-            #         id_procedimiento = nuevo_procedimiento,
-            #         nombre_comercio = nombre_comercio,
-            #         rif_comercio = rif_comercio,
-            #         nombres = nombre,
-            #         apellidos = apellido,
-            #         cedula = f"{nacionalidad}-{cedula}",
-            #         sexo = sexo,
-            #         telefono = telefono,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_proc_ase.save()
+            # Terminado
+            if tipo_procedimiento == "4" and atend_no_efec.is_valid():
                 
-            # if tipo_procedimiento == "18" and form_inspecciones.is_valid():
-            #     tipo_inspeccion = form_inspecciones.cleaned_data["tipo_inspeccion"]
+                detalles_procedimiento = Atendido_no_Efectuado.objects.get(id_procedimiento = procedimiento)
 
-            #     if tipo_inspeccion == "Prevención" and form_inspecciones_prevencion.is_valid():
-            #         nombre_comercio = form_inspecciones_prevencion.cleaned_data["nombre_comercio"]
-            #         propietario = form_inspecciones_prevencion.cleaned_data["propietario"]
-            #         nacionalidad = form_inspecciones_prevencion.cleaned_data["nacionalidad"]
-            #         cedula_propietario = form_inspecciones_prevencion.cleaned_data["cedula_propietario"]
-            #         descripcion = form_inspecciones_prevencion.cleaned_data["descripcion"]
-            #         persona_sitio_nombre = form_inspecciones_prevencion.cleaned_data["persona_sitio_nombre"]
-            #         persona_sitio_apellido = form_inspecciones_prevencion.cleaned_data["persona_sitio_apellido"]
-            #         nacionalidad2 = form_inspecciones_prevencion.cleaned_data["nacionalidad2"]
-            #         persona_sitio_cedula = form_inspecciones_prevencion.cleaned_data["persona_sitio_cedula"]
-            #         persona_sitio_telefono = form_inspecciones_prevencion.cleaned_data["persona_sitio_telefono"]
-            #         material_utilizado = form_inspecciones_prevencion.cleaned_data["material_utilizado"]
-            #         status = form_inspecciones_prevencion.cleaned_data["status"]
+                detalles_procedimiento.descripcion = atend_no_efec.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = atend_no_efec.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = atend_no_efec.cleaned_data["status"]
 
-            #         nueva_inspeccion = Inspeccion_Prevencion_Asesorias_Tecnicas (
-            #             id_procedimientos = nuevo_procedimiento,
-            #             tipo_inspeccion = tipo_inspeccion,
-            #             nombre_comercio = nombre_comercio,
-            #             propietario = propietario,
-            #             cedula_propietario = f"{nacionalidad}-{cedula_propietario}",
-            #             descripcion = descripcion,
-            #             persona_sitio_nombre = persona_sitio_nombre,
-            #             persona_sitio_apellido = persona_sitio_apellido,
-            #             persona_sitio_cedula = f"{nacionalidad2}-{persona_sitio_cedula}",
-            #             persona_sitio_telefono = persona_sitio_telefono,
-            #             material_utilizado = material_utilizado,
-            #             status = status
-            #         )
+                detalles_procedimiento.save()
+
+            # Terminado
+            if tipo_procedimiento == "5" and desp_seguridad.is_valid():
+
+                detalles_procedimiento = Despliegue_Seguridad.objects.get(id_procedimiento = procedimiento) 
+                Tipo_Motivo_instance = Motivo_Despliegue.objects.get(id=desp_seguridad.cleaned_data["motv_despliegue"])
+
+                detalles_procedimiento.descripcion = desp_seguridad.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = desp_seguridad.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = desp_seguridad.cleaned_data["status"]
+                detalles_procedimiento.motivo_despliegue = Tipo_Motivo_instance
+
+                detalles_procedimiento.save()
+
+            # Terminado
+            if tipo_procedimiento == "6" and fals_alarm.is_valid():
                 
-            #         nueva_inspeccion.save()
+                detalles_procedimiento = Falsa_Alarma.objects.get(id_procedimiento = procedimiento) 
+                Tipo_Motivo_instance = Motivo_Alarma.objects.get(id=fals_alarm.cleaned_data["motv_alarma"])
 
-            #     if tipo_inspeccion == "Árbol" and form_inspecciones_arbol.is_valid():
-            #         especie = form_inspecciones_arbol.cleaned_data["especie"]
-            #         altura_aprox = form_inspecciones_arbol.cleaned_data["altura_aprox"]
-            #         ubicacion_arbol = form_inspecciones_arbol.cleaned_data["ubicacion_arbol"]
-            #         persona_sitio_nombre = form_inspecciones_arbol.cleaned_data["persona_sitio_nombre"]
-            #         persona_sitio_apellido = form_inspecciones_arbol.cleaned_data["persona_sitio_apellido"]
-            #         nacionalidad = form_inspecciones_arbol.cleaned_data["nacionalidad"]
-            #         persona_sitio_cedula = form_inspecciones_arbol.cleaned_data["persona_sitio_cedula"]
-            #         persona_sitio_telefono = form_inspecciones_arbol.cleaned_data["persona_sitio_telefono"]
-            #         descripcion = form_inspecciones_arbol.cleaned_data["descripcion"]
-            #         material_utilizado = form_inspecciones_arbol.cleaned_data["material_utilizado"]
-            #         status = form_inspecciones_arbol.cleaned_data["status"]
+                detalles_procedimiento.motivo_alarma = Tipo_Motivo_instance
+                detalles_procedimiento.descripcion = fals_alarm.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = fals_alarm.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = fals_alarm.cleaned_data["status"]
 
-            #         nueva_inspeccion = Inspeccion_Arbol (
-            #             id_procedimientos = nuevo_procedimiento,
-            #             tipo_inspeccion = tipo_inspeccion,
-            #             especie = especie,
-            #             altura_aprox = altura_aprox,
-            #             ubicacion_arbol = ubicacion_arbol,
-            #             persona_sitio_nombre = persona_sitio_nombre,
-            #             persona_sitio_apellido = persona_sitio_apellido,
-            #             persona_sitio_cedula = f"{nacionalidad}-{persona_sitio_cedula}",
-            #             persona_sitio_telefono = persona_sitio_telefono,
-            #             descripcion = descripcion,
-            #             material_utilizado = material_utilizado,
-            #             status = status
-            #         )
+                detalles_procedimiento.save()
+
+            # Terminado 
+            if tipo_procedimiento == "7" and atenciones_paramedicas.is_valid():
+
+                detalles_procedimiento = Atenciones_Paramedicas.objects.get(id_procedimientos = procedimiento) 
+
+                detalles_procedimiento.tipo_atencion = atenciones_paramedicas.cleaned_data["tipo_atencion"]
+
+                detalles_procedimiento.save()
+
+                if detalles_procedimiento.tipo_atencion == "Emergencias Medicas" and emergencias_medicas.is_valid():
+
+                    detalles_emergencias = Emergencias_Medicas.objects.get(id_atencion = detalles_procedimiento)
+                    nacionalidad = emergencias_medicas.cleaned_data["nacionalidad"]
+                    cedula = emergencias_medicas.cleaned_data["cedula"]
+
+                    detalles_emergencias.nombres = emergencias_medicas.cleaned_data["nombre"]
+                    detalles_emergencias.apellidos = emergencias_medicas.cleaned_data["apellido"]
+                    detalles_emergencias.cedula = f"{nacionalidad}-{cedula}"
+                    detalles_emergencias.edad = emergencias_medicas.cleaned_data["edad"]
+                    detalles_emergencias.sexo = emergencias_medicas.cleaned_data["sexo"]
+                    detalles_emergencias.idx = emergencias_medicas.cleaned_data["idx"]
+                    detalles_emergencias.descripcion = emergencias_medicas.cleaned_data["descripcion"]
+                    detalles_emergencias.material_utilizado = emergencias_medicas.cleaned_data["material_utilizado"]
+                    detalles_emergencias.status = emergencias_medicas.cleaned_data["status"]
+                    
+                    trasladado = emergencias_medicas.cleaned_data["trasladado"]
+
+                    detalles_emergencias.save()
+
+                    if trasladado == True and traslados_emergencias.is_valid():
+                        # Intenta obtener el traslado relacionado con el lesionado
+                        detalles_traslado = Traslado.objects.filter(id_lesionado=detalles_emergencias).first()
+
+                        if detalles_traslado:
+                            # Modifica el traslado existente
+                            detalles_traslado.hospital_trasladado = traslados_emergencias.cleaned_data["hospital_trasladado"]
+                            detalles_traslado.medico_receptor = traslados_emergencias.cleaned_data["medico_receptor"]
+                            detalles_traslado.mpps_cmt = traslados_emergencias.cleaned_data["mpps_cmt"]
+                        else:
+                            # Crea un nuevo traslado si no existe
+                            detalles_traslado = Traslado(
+                                id_lesionado=detalles_emergencias,
+                                hospital_trasladado=traslados_emergencias.cleaned_data["hospital_trasladado"],
+                                medico_receptor=traslados_emergencias.cleaned_data["medico_receptor"],
+                                mpps_cmt=traslados_emergencias.cleaned_data["mpps_cmt"],
+                            )
+
+                        detalles_traslado.save()
+
+                if detalles_procedimiento.tipo_atencion == "Accidentes de Transito" and formulario_accidentes_transito.is_valid():
+                    detalles_accidente = Accidentes_Transito.objects.get(id_atencion=detalles_procedimiento)
+                    tipo_accidente_instance = Tipo_Accidente.objects.get(id=formulario_accidentes_transito.cleaned_data["tipo_accidente"])
+
+                    # Actualizar detalles del accidente
+                    detalles_accidente.tipo_de_accidente = tipo_accidente_instance
+                    detalles_accidente.cantidad_lesionados = formulario_accidentes_transito.cleaned_data["cantidad_lesionado"]
+                    detalles_accidente.material_utilizado = formulario_accidentes_transito.cleaned_data["material_utilizado"]
+                    detalles_accidente.status = formulario_accidentes_transito.cleaned_data["status"]
+                    
+                    detalles_accidente.save()
+
+                    agg_vehiculo = formulario_accidentes_transito.cleaned_data["agg_vehiculo"]
+                    agg_lesionado = formulario_accidentes_transito.cleaned_data["agg_lesionado"]
+
+                    # Editar vehículos existentes
+                    if agg_vehiculo == True and detalles_vehiculo_accidentes.is_valid():
+                        placas1 = detalles_vehiculo_accidentes.cleaned_data["placas"]
+                        agg_vehiculo2 = detalles_vehiculo_accidentes.cleaned_data["agg_vehiculo"]
+
+                        # Buscar o crear el vehículo con la placa
+                        vehiculo, created = Detalles_Vehiculos_Accidente.objects.get_or_create(
+                            id_vehiculo=detalles_accidente,
+                            placas=placas1,
+                            defaults={
+                                "modelo": detalles_vehiculo_accidentes.cleaned_data["modelo"],
+                                "marca": detalles_vehiculo_accidentes.cleaned_data["marca"],
+                                "color": detalles_vehiculo_accidentes.cleaned_data["color"],
+                                "año": detalles_vehiculo_accidentes.cleaned_data["año"],
+                            }
+                        )
+                        if not created:  # Si ya existe, actualizar los datos
+                            vehiculo.modelo = detalles_vehiculo_accidentes.cleaned_data["modelo"]
+                            vehiculo.marca = detalles_vehiculo_accidentes.cleaned_data["marca"]
+                            vehiculo.color = detalles_vehiculo_accidentes.cleaned_data["color"]
+                            vehiculo.año = detalles_vehiculo_accidentes.cleaned_data["año"]
+                            vehiculo.save()
+
+                        # Verificar y manejar vehículos adicionales
+                        if detalles_vehiculo_accidentes2.is_valid() and agg_vehiculo2:
+                            placas2 = detalles_vehiculo_accidentes2.cleaned_data["placas"]
+                            agg_vehiculo3 = detalles_vehiculo_accidentes2.cleaned_data["agg_vehiculo"]
+
+                            vehiculo2, created = Detalles_Vehiculos_Accidente.objects.get_or_create(
+                                id_vehiculo=detalles_accidente,
+                                placas=placas2,
+                                defaults={
+                                    "modelo": detalles_vehiculo_accidentes2.cleaned_data["modelo"],
+                                    "marca": detalles_vehiculo_accidentes2.cleaned_data["marca"],
+                                    "color": detalles_vehiculo_accidentes2.cleaned_data["color"],
+                                    "año": detalles_vehiculo_accidentes2.cleaned_data["año"],
+                                }
+                            )
+                            if not created:
+                                vehiculo2.modelo = detalles_vehiculo_accidentes2.cleaned_data["modelo"]
+                                vehiculo2.marca = detalles_vehiculo_accidentes2.cleaned_data["marca"]
+                                vehiculo2.color = detalles_vehiculo_accidentes2.cleaned_data["color"]
+                                vehiculo2.año = detalles_vehiculo_accidentes2.cleaned_data["año"]
+                                vehiculo2.save()
+
+                            if detalles_vehiculo_accidentes3.is_valid() and agg_vehiculo3:
+                                placas3 = detalles_vehiculo_accidentes3.cleaned_data["placas"]
+
+                                vehiculo3, created = Detalles_Vehiculos_Accidente.objects.get_or_create(
+                                    id_vehiculo=detalles_accidente,
+                                    placas=placas3,
+                                    defaults={
+                                        "modelo": detalles_vehiculo_accidentes3.cleaned_data["modelo"],
+                                        "marca": detalles_vehiculo_accidentes3.cleaned_data["marca"],
+                                        "color": detalles_vehiculo_accidentes3.cleaned_data["color"],
+                                        "año": detalles_vehiculo_accidentes3.cleaned_data["año"],
+                                    }
+                                )
+                                if not created:
+                                    vehiculo3.modelo = detalles_vehiculo_accidentes3.cleaned_data["modelo"]
+                                    vehiculo3.marca = detalles_vehiculo_accidentes3.cleaned_data["marca"]
+                                    vehiculo3.color = detalles_vehiculo_accidentes3.cleaned_data["color"]
+                                    vehiculo3.año = detalles_vehiculo_accidentes3.cleaned_data["año"]
+                                    vehiculo3.save()
+
+                    # Editar o agregar lesionados existentes
+                    if agg_lesionado == True and detalles_lesionados_accidentes.is_valid():
+                        cedula1 = f"{detalles_lesionados_accidentes.cleaned_data['nacionalidad']}-{detalles_lesionados_accidentes.cleaned_data['cedula']}"
+                        agg_lesionado2 = detalles_lesionados_accidentes.cleaned_data["otro_lesionado"]
+
+                        # Buscar o crear el lesionado
+                        lesionado, created = Lesionados.objects.get_or_create(
+                            id_accidente=detalles_accidente,
+                            cedula=cedula1,
+                            defaults={
+                                "nombres": detalles_lesionados_accidentes.cleaned_data["nombre"],
+                                "apellidos": detalles_lesionados_accidentes.cleaned_data["apellido"],
+                                "edad": detalles_lesionados_accidentes.cleaned_data["edad"],
+                                "sexo": detalles_lesionados_accidentes.cleaned_data["sexo"],
+                                "idx": detalles_lesionados_accidentes.cleaned_data["idx"],
+                                "descripcion": detalles_lesionados_accidentes.cleaned_data["descripcion"],
+                            }
+                        )
+                        if not created:
+                            lesionado.nombres = detalles_lesionados_accidentes.cleaned_data["nombre"]
+                            lesionado.apellidos = detalles_lesionados_accidentes.cleaned_data["apellido"]
+                            lesionado.edad = detalles_lesionados_accidentes.cleaned_data["edad"]
+                            lesionado.sexo = detalles_lesionados_accidentes.cleaned_data["sexo"]
+                            lesionado.idx = detalles_lesionados_accidentes.cleaned_data["idx"]
+                            lesionado.descripcion = detalles_lesionados_accidentes.cleaned_data["descripcion"]
+                            lesionado.save()
+
+                        # Si el lesionado fue trasladado, manejar traslado
+                        if traslados_accidentes.is_valid() and detalles_lesionados_accidentes.cleaned_data["trasladado"]:
+                            traslado, created = Traslado_Accidente.objects.get_or_create(
+                                id_lesionado=lesionado,
+                                defaults={
+                                    "hospital_trasladado": traslados_accidentes.cleaned_data["hospital_trasladado"],
+                                    "medico_receptor": traslados_accidentes.cleaned_data["medico_receptor"],
+                                    "mpps_cmt": traslados_accidentes.cleaned_data["mpps_cmt"],
+                                }
+                            )
+                            if not created:
+                                traslado.hospital_trasladado = traslados_accidentes.cleaned_data["hospital_trasladado"]
+                                traslado.medico_receptor = traslados_accidentes.cleaned_data["medico_receptor"]
+                                traslado.mpps_cmt = traslados_accidentes.cleaned_data["mpps_cmt"]
+                                traslado.save()
+
+                        # Verificar y manejar otros lesionados
+                        if detalles_lesionados_accidentes2.is_valid() and agg_lesionado2:
+                            cedula2 = f"{detalles_lesionados_accidentes2.cleaned_data['nacionalidad']}-{detalles_lesionados_accidentes2.cleaned_data['cedula']}"
+                            agg_lesionado3 = detalles_lesionados_accidentes2.cleaned_data["otro_lesionado"]
+
+                            lesionado2, created = Lesionados.objects.get_or_create(
+                                id_accidente=detalles_accidente,
+                                cedula=cedula2,
+                                defaults={
+                                    "nombres": detalles_lesionados_accidentes2.cleaned_data["nombre"],
+                                    "apellidos": detalles_lesionados_accidentes2.cleaned_data["apellido"],
+                                    "edad": detalles_lesionados_accidentes2.cleaned_data["edad"],
+                                    "sexo": detalles_lesionados_accidentes2.cleaned_data["sexo"],
+                                    "idx": detalles_lesionados_accidentes2.cleaned_data["idx"],
+                                    "descripcion": detalles_lesionados_accidentes2.cleaned_data["descripcion"],
+                                }
+                            )
+                            if not created:
+                                lesionado2.nombres = detalles_lesionados_accidentes2.cleaned_data["nombre"]
+                                lesionado2.apellidos = detalles_lesionados_accidentes2.cleaned_data["apellido"]
+                                lesionado2.edad = detalles_lesionados_accidentes2.cleaned_data["edad"]
+                                lesionado2.sexo = detalles_lesionados_accidentes2.cleaned_data["sexo"]
+                                lesionado2.idx = detalles_lesionados_accidentes2.cleaned_data["idx"]
+                                lesionado2.descripcion = detalles_lesionados_accidentes2.cleaned_data["descripcion"]
+                                lesionado2.save()
+
+                            if traslados_accidentes2.is_valid() and detalles_lesionados_accidentes2.cleaned_data["trasladado"]:
+                                traslado, created = Traslado_Accidente.objects.get_or_create(
+                                    id_lesionado=lesionado2,
+                                    defaults={
+                                        "hospital_trasladado": traslados_accidentes2.cleaned_data["hospital_trasladado"],
+                                        "medico_receptor": traslados_accidentes2.cleaned_data["medico_receptor"],
+                                        "mpps_cmt": traslados_accidentes2.cleaned_data["mpps_cmt"],
+                                    }
+                                )
+                                if not created:
+                                    traslado.hospital_trasladado = traslados_accidentes2.cleaned_data["hospital_trasladado"]
+                                    traslado.medico_receptor = traslados_accidentes2.cleaned_data["medico_receptor"]
+                                    traslado.mpps_cmt = traslados_accidentes2.cleaned_data["mpps_cmt"]
+                                    traslado.save()
+
+                        if detalles_lesionados_accidentes3.is_valid() and agg_lesionado3:
+                            cedula3 = f"{detalles_lesionados_accidentes3.cleaned_data['nacionalidad']}-{detalles_lesionados_accidentes3.cleaned_data['cedula']}"
+
+                            lesionado3, created = Lesionados.objects.get_or_create(
+                                id_accidente=detalles_accidente,
+                                cedula=cedula3,
+                                defaults={
+                                    "nombres": detalles_lesionados_accidentes3.cleaned_data["nombre"],
+                                    "apellidos": detalles_lesionados_accidentes3.cleaned_data["apellido"],
+                                    "edad": detalles_lesionados_accidentes3.cleaned_data["edad"],
+                                    "sexo": detalles_lesionados_accidentes3.cleaned_data["sexo"],
+                                    "idx": detalles_lesionados_accidentes3.cleaned_data["idx"],
+                                    "descripcion": detalles_lesionados_accidentes3.cleaned_data["descripcion"],
+                                }
+                            )
+                            if not created:
+                                lesionado3.nombres = detalles_lesionados_accidentes3.cleaned_data["nombre"]
+                                lesionado3.apellidos = detalles_lesionados_accidentes3.cleaned_data["apellido"]
+                                lesionado3.edad = detalles_lesionados_accidentes3.cleaned_data["edad"]
+                                lesionado3.sexo = detalles_lesionados_accidentes3.cleaned_data["sexo"]
+                                lesionado3.idx = detalles_lesionados_accidentes3.cleaned_data["idx"]
+                                lesionado3.descripcion = detalles_lesionados_accidentes3.cleaned_data["descripcion"]
+                                lesionado3.save()
+
+                            if traslados_accidentes3.is_valid() and detalles_lesionados_accidentes3.cleaned_data["trasladado"]:
+                                traslado, created = Traslado_Accidente.objects.get_or_create(
+                                    id_lesionado=lesionado3,
+                                    defaults={
+                                        "hospital_trasladado": traslados_accidentes3.cleaned_data["hospital_trasladado"],
+                                        "medico_receptor": traslados_accidentes3.cleaned_data["medico_receptor"],
+                                        "mpps_cmt": traslados_accidentes3.cleaned_data["mpps_cmt"],
+                                    }
+                                )
+                                if not created:
+                                    traslado.hospital_trasladado = traslados_accidentes3.cleaned_data["hospital_trasladado"]
+                                    traslado.medico_receptor = traslados_accidentes3.cleaned_data["medico_receptor"]
+                                    traslado.mpps_cmt = traslados_accidentes3.cleaned_data["mpps_cmt"]
+                                    traslado.save()
+
+            # Terminado
+            if tipo_procedimiento == "9" and serv_especial.is_valid():
                 
-            #         nueva_inspeccion.save()
-
-            #     if tipo_inspeccion == "Asesorias Tecnicas" and form_inspecciones_prevencion.is_valid():
-            #         nombre_comercio = form_inspecciones_prevencion.cleaned_data["nombre_comercio"]
-            #         propietario = form_inspecciones_prevencion.cleaned_data["propietario"]
-            #         nacionalidad = form_inspecciones_prevencion.cleaned_data["nacionalidad"]
-            #         cedula_propietario = form_inspecciones_prevencion.cleaned_data["cedula_propietario"]
-            #         descripcion = form_inspecciones_prevencion.cleaned_data["descripcion"]
-            #         persona_sitio_nombre = form_inspecciones_prevencion.cleaned_data["persona_sitio_nombre"]
-            #         persona_sitio_apellido = form_inspecciones_prevencion.cleaned_data["persona_sitio_apellido"]
-            #         nacionalidad2 = form_inspecciones_prevencion.cleaned_data["nacionalidad2"]
-            #         persona_sitio_cedula = form_inspecciones_prevencion.cleaned_data["persona_sitio_cedula"]
-            #         persona_sitio_telefono = form_inspecciones_prevencion.cleaned_data["persona_sitio_telefono"]
-            #         material_utilizado = form_inspecciones_prevencion.cleaned_data["material_utilizado"]
-            #         status = form_inspecciones_prevencion.cleaned_data["status"]
-
-            #         nueva_inspeccion = Inspeccion_Prevencion_Asesorias_Tecnicas (
-            #             id_procedimientos = nuevo_procedimiento,
-            #             tipo_inspeccion = tipo_inspeccion,
-            #             nombre_comercio = nombre_comercio,
-            #             propietario = propietario,
-            #             cedula_propietario = f"{nacionalidad}-{cedula_propietario}",
-            #             descripcion = descripcion,
-            #             persona_sitio_nombre = persona_sitio_nombre,
-            #             persona_sitio_apellido = persona_sitio_apellido,
-            #             persona_sitio_cedula = f"{nacionalidad2}-{persona_sitio_cedula}",
-            #             persona_sitio_telefono = persona_sitio_telefono,
-            #             material_utilizado = material_utilizado,
-            #             status = status
-            #         )
+                detalles_procedimiento = Servicios_Especiales.objects.get(id_procedimientos = procedimiento)
+                tipo_servicio = serv_especial.cleaned_data["tipo_servicio"]
+                tipo_servicio_instance = Tipo_servicios.objects.get(id=tipo_servicio)
                 
-            #         nueva_inspeccion.save()
+                detalles_procedimiento.descripcion = serv_especial.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = serv_especial.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = serv_especial.cleaned_data["status"]
+                detalles_procedimiento.tipo_servicio = tipo_servicio_instance
 
-            #     if tipo_inspeccion == "Habitabilidad" and form_inspecciones_habitabilidad.is_valid():
-            #         descripcion = form_inspecciones_habitabilidad.cleaned_data["descripcion"]
-            #         persona_sitio_nombre = form_inspecciones_habitabilidad.cleaned_data["persona_sitio_nombre"]
-            #         persona_sitio_apellido = form_inspecciones_habitabilidad.cleaned_data["persona_sitio_apellido"]
-            #         nacionalidad = form_inspecciones_habitabilidad.cleaned_data["nacionalidad"]
-            #         persona_sitio_cedula = form_inspecciones_habitabilidad.cleaned_data["persona_sitio_cedula"]
-            #         persona_sitio_telefono = form_inspecciones_habitabilidad.cleaned_data["persona_sitio_telefono"]
-            #         material_utilizado = form_inspecciones_habitabilidad.cleaned_data["material_utilizado"]
-            #         status = form_inspecciones_habitabilidad.cleaned_data["status"]
+                detalles_procedimiento.save()
 
-            #         nueva_inspeccion = Inspeccion_Habitabilidad (
-            #             id_procedimientos = nuevo_procedimiento,
-            #             tipo_inspeccion = tipo_inspeccion,
-            #             descripcion = descripcion,
-            #             persona_sitio_nombre = persona_sitio_nombre,
-            #             persona_sitio_apellido = persona_sitio_apellido,
-            #             persona_sitio_cedula = f"{nacionalidad}-{persona_sitio_cedula}",
-            #             persona_sitio_telefono = persona_sitio_telefono,
-            #             material_utilizado = material_utilizado,
-            #             status = status
-            #         )
+            # Terminado
+            if tipo_procedimiento == "10" and rescate_form.is_valid():
+
+                detalles_procedimiento = Rescate.objects.get(id_procedimientos = procedimiento)
+                id_tipo_rescate = rescate_form.cleaned_data["tipo_rescate"]
+                tipo_rescate_instance = Tipo_Rescate.objects.get(id=id_tipo_rescate)
+
+                detalles_procedimiento.material_utilizado = rescate_form.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = rescate_form.cleaned_data["status"]
+                detalles_procedimiento.tipo_rescate = tipo_rescate_instance
+
+                detalles_procedimiento.save()
+
+                if id_tipo_rescate == "1" and rescate_form_animal.is_valid():
+
+                    detalles_rescate = Rescate_Animal.objects.get(id_rescate = detalles_procedimiento)
+
+                    detalles_rescate.especie = rescate_form_animal.cleaned_data["especie"]
+                    detalles_rescate.descripcion = rescate_form_animal.cleaned_data["descripcion"]
+
+                    detalles_rescate.save()
+
+                else:
+                    rescate_form_persona.is_valid()
+
+                    detalles_rescate = Rescate_Persona.objects.get(id_rescate = detalles_procedimiento)
+                    nacionalidad = rescate_form_persona.cleaned_data["nacionalidad"]
+                    cedula_persona = rescate_form_persona.cleaned_data["cedula_persona"]
+
+                    detalles_rescate.nombre = rescate_form_persona.cleaned_data["nombre_persona"]
+                    detalles_rescate.apellidos = rescate_form_persona.cleaned_data["apellido_persona"]
+                    detalles_rescate.cedula = f"{nacionalidad}-{cedula_persona}"
+                    detalles_rescate.edad = rescate_form_persona.cleaned_data["edad_persona"]
+                    detalles_rescate.sexo = rescate_form_persona.cleaned_data["sexo_persona"]
+                    detalles_rescate.descripcion = rescate_form_persona.cleaned_data["descripcion"]
+
+                    detalles_rescate.save()
+
+            # Terminado
+            if tipo_procedimiento == "11" and incendio_form.is_valid():
+
+                detalles_procedimiento = Incendios.objects.get(id_procedimientos = procedimiento)
+                id_tipo_incendio = incendio_form.cleaned_data["tipo_incendio"]
+                tipo_incendio_instance = Tipo_Incendio.objects.get(id=id_tipo_incendio)
+
+                detalles_procedimiento.id_tipo_incendio = tipo_incendio_instance
+                detalles_procedimiento.descripcion = incendio_form.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = incendio_form.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = incendio_form.cleaned_data["status"]
+
+                detalles_procedimiento.save()
+
+                check_agregar_persona = incendio_form.cleaned_data["check_agregar_persona"]
+                check_retencion = incendio_form.cleaned_data["check_retencion"]
                 
-            #         nueva_inspeccion.save()
+                if check_agregar_persona == True and persona_presente_form.is_valid():
+                    nacionalidad = persona_presente_form.cleaned_data["nacionalidad"]
+                    cedula = persona_presente_form.cleaned_data["cedula"]
 
-            #     if tipo_inspeccion == "Otros" and form_inspecciones_otros.is_valid():
-            #         especifique = form_inspecciones_otros.cleaned_data["especifique"]
-            #         descripcion = form_inspecciones_otros.cleaned_data["descripcion"]
-            #         persona_sitio_nombre = form_inspecciones_otros.cleaned_data["persona_sitio_nombre"]
-            #         persona_sitio_apellido = form_inspecciones_otros.cleaned_data["persona_sitio_apellido"]
-            #         nacionalidad = form_inspecciones_otros.cleaned_data["nacionalidad"]
-            #         persona_sitio_cedula = form_inspecciones_otros.cleaned_data["persona_sitio_cedula"]
-            #         persona_sitio_telefono = form_inspecciones_otros.cleaned_data["persona_sitio_telefono"]
-            #         material_utilizado = form_inspecciones_otros.cleaned_data["material_utilizado"]
-            #         status = form_inspecciones_otros.cleaned_data["status"]
+                    try:
+                        # Intentar obtener el registro existente
+                        detalles_persona = Persona_Presente.objects.get(id_incendio=detalles_procedimiento)
+                        # Actualizar campos si el registro existe
+                        detalles_persona.nombre = persona_presente_form.cleaned_data["nombre"]
+                        detalles_persona.apellidos = persona_presente_form.cleaned_data["apellido"]
+                        detalles_persona.cedula = f"{nacionalidad}-{cedula}"
+                        detalles_persona.edad = persona_presente_form.cleaned_data["edad"]
+                        detalles_persona.save()
+                    except Persona_Presente.DoesNotExist:
+                        # Crear un nuevo registro si no existe
+                        detalles_persona = Persona_Presente.objects.create(
+                            id_incendio=detalles_procedimiento,
+                            nombre=persona_presente_form.cleaned_data["nombre"],
+                            apellidos=persona_presente_form.cleaned_data["apellido"],
+                            cedula=f"{nacionalidad}-{cedula}",
+                            edad=persona_presente_form.cleaned_data["edad"],
+                        )
 
-            #         nueva_inspeccion = Inspeccion_Otros (
-            #             id_procedimientos = nuevo_procedimiento,
-            #             tipo_inspeccion = tipo_inspeccion,
-            #             especifique = especifique,
-            #             descripcion = descripcion,
-            #             persona_sitio_nombre = persona_sitio_nombre,
-            #             persona_sitio_apellido = persona_sitio_apellido,
-            #             persona_sitio_cedula = f"{nacionalidad}-{persona_sitio_cedula}",
-            #             persona_sitio_telefono = persona_sitio_telefono,
-            #             material_utilizado = material_utilizado,
-            #             status = status
-            #         )
-                
-            #         nueva_inspeccion.save()
+                if check_retencion == True and retencion_preventiva_incendio.is_valid():
+                    nacionalidad = retencion_preventiva_incendio.cleaned_data["nacionalidad"]
+                    cedula = retencion_preventiva_incendio.cleaned_data["cedula"]
+                    tipo_cilindro = retencion_preventiva_incendio.cleaned_data["tipo_cilindro"]
+                    tipo_cilindro_instance = Tipo_Cilindro.objects.get(id=tipo_cilindro)
 
-            # if tipo_procedimiento == "19" and form_investigacion.is_valid():
-            #     tipo_investigacion = form_investigacion.cleaned_data["tipo_investigacion"]
-            #     tipo_siniestro = form_investigacion.cleaned_data["tipo_siniestro"]
+                    try:
+                        # Intentar obtener el registro existente
+                        detalles_retencion = Retencion_Preventiva_Incendios.objects.get(id_procedimiento=detalles_procedimiento)
+                        # Actualizar campos si el registro existe
+                        detalles_retencion.tipo_cilindro = tipo_cilindro_instance
+                        detalles_retencion.capacidad = retencion_preventiva_incendio.cleaned_data["capacidad"]
+                        detalles_retencion.serial = retencion_preventiva_incendio.cleaned_data["serial"]
+                        detalles_retencion.nro_constancia_retencion = retencion_preventiva_incendio.cleaned_data["nro_constancia_retencion"]
+                        detalles_retencion.nombre = retencion_preventiva_incendio.cleaned_data["nombre"]
+                        detalles_retencion.apellidos = retencion_preventiva_incendio.cleaned_data["apellidos"]
+                        detalles_retencion.cedula = f"{nacionalidad}-{cedula}"
+                        detalles_retencion.save()
+                    except Retencion_Preventiva_Incendios.DoesNotExist:
+                        # Crear un nuevo registro si no existe
+                        detalles_retencion = Retencion_Preventiva_Incendios.objects.create(
+                            id_procedimiento=detalles_procedimiento,
+                            tipo_cilindro=tipo_cilindro_instance,
+                            capacidad=retencion_preventiva_incendio.cleaned_data["capacidad"],
+                            serial=retencion_preventiva_incendio.cleaned_data["serial"],
+                            nro_constancia_retencion=retencion_preventiva_incendio.cleaned_data["nro_constancia_retencion"],
+                            nombre=retencion_preventiva_incendio.cleaned_data["nombre"],
+                            apellidos=retencion_preventiva_incendio.cleaned_data["apellidos"],
+                            cedula=f"{nacionalidad}-{cedula}",
+                        )
 
-            #     tipo_investigacion_instance = Tipos_Investigacion.objects.get(id=tipo_investigacion)
+                if id_tipo_incendio == "2" and detalles_vehiculo_form.is_valid():
+                    modelo = detalles_vehiculo_form.cleaned_data["modelo"]
+                    marca = detalles_vehiculo_form.cleaned_data["marca"]
+                    color = detalles_vehiculo_form.cleaned_data["color"]
+                    año = detalles_vehiculo_form.cleaned_data["año"]
+                    placas = detalles_vehiculo_form.cleaned_data["placas"]
 
-            #     new_investigacion = Investigacion(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         id_tipo_investigacion = tipo_investigacion_instance,
-            #         tipo_siniestro = tipo_siniestro
-            #     )
-            #     new_investigacion.save()
+                    # Buscar registro existente por placas
+                    try:
+                        vehiculo = Detalles_Vehiculos.objects.get(placas=placas)
+                        # Actualizar campos del vehículo existente
+                        vehiculo.modelo = modelo
+                        vehiculo.marca = marca
+                        vehiculo.color = color
+                        vehiculo.año = año
+                        vehiculo.id_vehiculo = detalles_procedimiento  # Actualizar referencia si aplica
+                        vehiculo.save()
 
-            #     if tipo_siniestro == "Comercio" and form_inv_comercio.is_valid():
-            #         nombre_comercio = form_inv_comercio.cleaned_data["nombre_comercio"]
-            #         rif_comercio = form_inv_comercio.cleaned_data["rif_comercio"]
-            #         nombre_propietario = form_inv_comercio.cleaned_data["nombre_propietario"]
-            #         apellido_propietario = form_inv_comercio.cleaned_data["apellido_propietario"]
-            #         nacionalidad = form_inv_comercio.cleaned_data["nacionalidad"]
-            #         cedula_propietario = form_inv_comercio.cleaned_data["cedula_propietario"]
-            #         descripcion = form_inv_comercio.cleaned_data["descripcion"]
-            #         material_utilizado = form_inv_comercio.cleaned_data["material_utilizado"]
-            #         status = form_inv_comercio.cleaned_data["status"]
+                    except Detalles_Vehiculos.DoesNotExist:
+                        pass
 
-            #         new_inv_comercio = Investigacion_Comercio (
-            #             id_investigacion = new_investigacion,
-            #             nombre_comercio = nombre_comercio,
-            #             rif_comercio = rif_comercio,
-            #             nombre_propietario = nombre_propietario,
-            #             apellido_propietario = apellido_propietario,
-            #             cedula_propietario = f"{nacionalidad}-{cedula_propietario}",
-            #             descripcion = descripcion,
-            #             material_utilizado = material_utilizado,
-            #             status = status
-            #         )
-            #         new_inv_comercio.save()
+            # Terminado
+            if tipo_procedimiento == "12" and form_fallecido.is_valid():
 
-            #     if (tipo_siniestro == "Estructura" or tipo_siniestro == "Vivienda") and form_inv_estructura.is_valid():
-            #         tipo_estructura = form_inv_estructura.cleaned_data["tipo_estructura"]
-            #         nombre = form_inv_estructura.cleaned_data["nombre"]
-            #         apellido = form_inv_estructura.cleaned_data["apellido"]
-            #         nacionalidad = form_inv_estructura.cleaned_data["nacionalidad"]
-            #         cedula = form_inv_estructura.cleaned_data["cedula"]
-            #         descripcion = form_inv_estructura.cleaned_data["descripcion"]
-            #         material_utilizado = form_inv_estructura.cleaned_data["material_utilizado"]
-            #         status = form_inv_estructura.cleaned_data["status"]
+                detalles_procedimiento = Fallecidos.objects.get(id_procedimiento = procedimiento)
+                nacionalidad = form_fallecido.cleaned_data["nacionalidad"]
+                cedula_fallecido = form_fallecido.cleaned_data["cedula_fallecido"]
 
-            #         new_inv_estructura = Investigacion_Estructura_Vivienda (
-            #             id_investigacion = new_investigacion,
-            #             tipo_estructura = tipo_estructura,
-            #             nombre = nombre,
-            #             apellido = apellido,
-            #             cedula = f"{nacionalidad}-{cedula}",
-            #             descripcion = descripcion,
-            #             material_utilizado = material_utilizado,
-            #             status = status
-            #         )
-            #         new_inv_estructura.save()
+                detalles_procedimiento.motivo_fallecimiento = form_fallecido.cleaned_data["motivo_fallecimiento"]
+                detalles_procedimiento.nombres = form_fallecido.cleaned_data["nom_fallecido"]
+                detalles_procedimiento.apellidos = form_fallecido.cleaned_data["apellido_fallecido"]
+                detalles_procedimiento.cedula =  f"{nacionalidad}-{cedula_fallecido}"
+                detalles_procedimiento.edad = form_fallecido.cleaned_data["edad"]
+                detalles_procedimiento.sexo = form_fallecido.cleaned_data["sexo"]
+                detalles_procedimiento.descripcion = form_fallecido.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = form_fallecido.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = form_fallecido.cleaned_data["status"]
 
-            #     if tipo_siniestro == "Vehiculo" and form_inv_vehiculo.is_valid():
-            #         marca = form_inv_vehiculo.cleaned_data["marca"]
-            #         modelo = form_inv_vehiculo.cleaned_data["modelo"]
-            #         color = form_inv_vehiculo.cleaned_data["color"]
-            #         placas = form_inv_vehiculo.cleaned_data["placas"]
-            #         año = form_inv_vehiculo.cleaned_data["año"]
-            #         nombre_propietario = form_inv_vehiculo.cleaned_data["nombre_propietario"]
-            #         apellido_propietario = form_inv_vehiculo.cleaned_data["apellido_propietario"]
-            #         nacionalidad = form_inv_vehiculo.cleaned_data["nacionalidad"]
-            #         cedula_propietario = form_inv_vehiculo.cleaned_data["cedula_propietario"]
-            #         descripcion = form_inv_vehiculo.cleaned_data["descripcion"]
-            #         material_utilizado = form_inv_vehiculo.cleaned_data["material_utilizado"]
-            #         status = form_inv_vehiculo.cleaned_data["status"]
+                detalles_procedimiento.save()
 
-            #         new_inv_vehiculo = Investigacion_Vehiculo(
-            #             id_investigacion = new_investigacion,
-            #             marca = marca,
-            #             modelo = modelo,
-            #             color = color,
-            #             placas = placas,
-            #             año = año,
-            #             nombre_propietario = nombre_propietario,
-            #             apellido_propietario = apellido_propietario,
-            #             cedula_propietario = f"{nacionalidad}-{cedula_propietario}",
-            #             descripcion = descripcion,
-            #             material_utilizado = material_utilizado,
-            #             status = status,
-            #         )
-            #         new_inv_vehiculo.save()
+            # Terminado
+            if tipo_procedimiento == "13" and mitigacion_riesgo_form.is_valid():
 
-            # if tipo_procedimiento == "20" and reinspeccion_prevencion.is_valid():
-            #     nombre_comercio = reinspeccion_prevencion.cleaned_data["nombre_comercio"]
-            #     rif_comercio = reinspeccion_prevencion.cleaned_data["rif_comercio"]
-            #     nombre = reinspeccion_prevencion.cleaned_data["nombre"]
-            #     apellido = reinspeccion_prevencion.cleaned_data["apellidos"]
-            #     sexo = reinspeccion_prevencion.cleaned_data["sexo"]
-            #     nacionalidad = reinspeccion_prevencion.cleaned_data["nacionalidad"]
-            #     cedula = reinspeccion_prevencion.cleaned_data["cedula"]
-            #     sexo = reinspeccion_prevencion.cleaned_data["sexo"]
-            #     telefono = reinspeccion_prevencion.cleaned_data["telefono"]
-            #     descripcion = reinspeccion_prevencion.cleaned_data["descripcion"]
-            #     material_utilizado = reinspeccion_prevencion.cleaned_data["material_utilizado"]
-            #     status = reinspeccion_prevencion.cleaned_data["status"]
+                detalles_procedimiento = Mitigacion_Riesgos.objects.get(id_procedimientos = procedimiento)
+                tipo_riesgo = mitigacion_riesgo_form.cleaned_data["tipo_riesgo"]
+                tipo_riesgo_instance = Mitigacion_riesgo.objects.get(id=tipo_riesgo)
 
-            #     nuevo_proc_reins = Reinspeccion_Prevencion(
-            #         id_procedimiento = nuevo_procedimiento,
-            #         nombre_comercio = nombre_comercio,
-            #         rif_comercio = rif_comercio,
-            #         nombre = nombre,
-            #         apellidos = apellido,
-            #         cedula = f"{nacionalidad}-{cedula}",
-            #         sexo = sexo,
-            #         telefono = telefono,
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_proc_reins.save()
+                detalles_procedimiento.id_tipo_servicio = tipo_riesgo_instance
+                detalles_procedimiento.descripcion = mitigacion_riesgo_form.cleaned_data["descripcion"]
+                detalles_procedimiento.material_utilizado = mitigacion_riesgo_form.cleaned_data["material_utilizado"]
+                detalles_procedimiento.status = mitigacion_riesgo_form.cleaned_data["status"]
 
-            # if tipo_procedimiento == "21" and retencion_preventiva.is_valid():
-            #     tipo_cilindro = retencion_preventiva.cleaned_data["tipo_cilindro"]
-            #     capacidad = retencion_preventiva.cleaned_data["capacidad"]
-            #     serial = retencion_preventiva.cleaned_data["serial"]
-            #     nro_constancia_retencion = retencion_preventiva.cleaned_data["nro_constancia_retencion"]
-            #     nombre = retencion_preventiva.cleaned_data["nombre"]
-            #     apellido = retencion_preventiva.cleaned_data["apellidos"]
-            #     nacionalidad = retencion_preventiva.cleaned_data["nacionalidad"]
-            #     cedula = retencion_preventiva.cleaned_data["cedula"]
-            #     descripcion = retencion_preventiva.cleaned_data["descripcion"]
-            #     material_utilizado = retencion_preventiva.cleaned_data["material_utilizado"]
-            #     status = retencion_preventiva.cleaned_data["status"]
+                detalles_procedimiento.save()
 
-            #     tipo_cilindro_instance = Tipo_Cilindro.objects.get(id=tipo_cilindro)
+            # Terminado
+            if tipo_procedimiento == "14" and evaluacion_riesgo_form.is_valid():
+                # Obtener datos del formulario de evaluación de riesgo
+                tipo_riesgo = evaluacion_riesgo_form.cleaned_data.get("tipo_riesgo")
+                tipo_estructura = evaluacion_riesgo_form.cleaned_data.get("tipo_etructura")
+                descripcion = evaluacion_riesgo_form.cleaned_data.get("descripcion")
+                material_utilizado = evaluacion_riesgo_form.cleaned_data.get("material_utilizado")
+                status = evaluacion_riesgo_form.cleaned_data.get("status")
 
-            #     nuevo_proc_reten = Retencion_Preventiva(
-            #         id_procedimiento = nuevo_procedimiento,
-            #         tipo_cilindro = tipo_cilindro_instance,
-            #         capacidad = capacidad,
-            #         serial = serial,
-            #         nro_constancia_retencion = nro_constancia_retencion,
-            #         nombre = nombre,
-            #         apellidos = apellido,
-            #         cedula = f"{nacionalidad}-{cedula}",
-            #         descripcion=descripcion,
-            #         material_utilizado=material_utilizado,
-            #         status=status
-            #     )
-            #     nuevo_proc_reten.save()
+                try:
+                    tipo_riesgo_instance = Motivo_Riesgo.objects.get(id=tipo_riesgo)
+                except Motivo_Riesgo.DoesNotExist:
+                    tipo_riesgo_instance = None
 
-            # if tipo_procedimiento == "22" and artificios_pirotecnico.is_valid():
-            #     nombre_comercio = artificios_pirotecnico.cleaned_data["nombre_comercio"]
-            #     rif_comercio = artificios_pirotecnico.cleaned_data["rif_comercio"]
-            #     tipo_procedimiento_art = artificios_pirotecnico.cleaned_data["tipo_procedimiento"]
+                if tipo_riesgo_instance:
+                    try:
+                        # Intentar obtener la evaluación de riesgo existente
+                        nuevo_proc_eval = Evaluacion_Riesgo.objects.get(id_procedimientos=procedimiento)
+                        
+                        # Actualizar los campos existentes
+                        nuevo_proc_eval.id_tipo_riesgo = tipo_riesgo_instance
+                        nuevo_proc_eval.tipo_estructura = tipo_estructura
+                        nuevo_proc_eval.descripcion = descripcion
+                        nuevo_proc_eval.material_utilizado = material_utilizado
+                        nuevo_proc_eval.status = status
+                        nuevo_proc_eval.save()
+                    except Evaluacion_Riesgo.DoesNotExist:
+                        pass
+                    # Editar persona presente, si aplica
+                    if division == "3" and persona_presente_eval_form.is_valid():
+                        # Obtener los datos del formulario de persona presente
+                        nombre = persona_presente_eval_form.cleaned_data.get("nombre")
+                        apellido = persona_presente_eval_form.cleaned_data.get("apellidos")
+                        nacionalidad = persona_presente_eval_form.cleaned_data.get("nacionalidad")
+                        cedula = persona_presente_eval_form.cleaned_data.get("cedula")
+                        telefono = persona_presente_eval_form.cleaned_data.get("telefono")
 
-            #     tipo_procedimiento_art_instance = Tipos_Artificios.objects.get(id=tipo_procedimiento_art)
+                        try:
+                            # Intentar obtener la persona presente existente
+                            nuevo_per_presente = Persona_Presente_Eval.objects.get(id_persona=nuevo_proc_eval)
+                            
+                            # Actualizar los campos existentes
+                            nuevo_per_presente.nombre = nombre
+                            nuevo_per_presente.apellidos = apellido
+                            nuevo_per_presente.cedula = f"{nacionalidad}-{cedula}"
+                            nuevo_per_presente.telefono = telefono
+                            nuevo_per_presente.save()
+                        except Persona_Presente_Eval.DoesNotExist:
+                           pass
 
-            #     nuevo_proc_artificio_pir = Artificios_Pirotecnicos(
-            #         id_procedimiento = nuevo_procedimiento,
-            #         nombre_comercio = nombre_comercio,
-            #         rif_comerciante = rif_comercio,
-            #         tipo_procedimiento = tipo_procedimiento_art_instance
-            #     )
+            # Terminado
+            if tipo_procedimiento == "15" and puesto_avanzada_form.is_valid():
+                # Obtener los datos del formulario
+                tipo_avanzada = puesto_avanzada_form.cleaned_data["tipo_avanzada"]
+                descripcion = puesto_avanzada_form.cleaned_data["descripcion"]
+                material_utilizado = puesto_avanzada_form.cleaned_data["material_utilizado"]
+                status = puesto_avanzada_form.cleaned_data["status"]
 
-            #     nuevo_proc_artificio_pir.save()
+                try:
+                    # Buscar la instancia de `Motivo_Avanzada` correspondiente
+                    tipo_avanzada_instance = Motivo_Avanzada.objects.get(id=tipo_avanzada)
+                except Motivo_Avanzada.DoesNotExist:
+                    tipo_avanzada_instance = None
 
-            #     if tipo_procedimiento_art == "1" and incendio_art.is_valid():
-            #         id_tipo_incendio = incendio_art.cleaned_data["tipo_incendio"]
-            #         descripcion = incendio_art.cleaned_data["descripcion"]
-            #         material_utilizado = incendio_art.cleaned_data["material_utilizado"]
-            #         status = incendio_art.cleaned_data["status"]
+                if tipo_avanzada_instance:
+                    try:
+                        # Intentar obtener la instancia existente de `Puesto_Avanzada`
+                        nuevo_proc_avan = Puesto_Avanzada.objects.get(id_procedimientos=procedimiento)
 
-            #         tipo_incendio_instance = Tipo_Incendio.objects.get(id=id_tipo_incendio)
+                        # Actualizar los campos de la instancia
+                        nuevo_proc_avan.id_tipo_servicio = tipo_avanzada_instance
+                        nuevo_proc_avan.descripcion = descripcion
+                        nuevo_proc_avan.material_utilizado = material_utilizado
+                        nuevo_proc_avan.status = status
+                        nuevo_proc_avan.save()
+                    except Puesto_Avanzada.DoesNotExist:
+                        pass
 
-            #         nuevo_proc_incendio_art = Incendios_Art(
-            #             id_procedimientos = nuevo_proc_artificio_pir,
-            #             id_tipo_incendio = tipo_incendio_instance,
-            #             descripcion=descripcion,
-            #             material_utilizado=material_utilizado,
-            #             status=status
-            #         )
-            #         nuevo_proc_incendio_art.save()
+            # Terminado
+            if tipo_procedimiento == "16" and traslados_prehospitalaria_form.is_valid():
+                # Obtener los datos del formulario
+                tipo_traslado = traslados_prehospitalaria_form.cleaned_data["tipo_traslado"]
+                nombre = traslados_prehospitalaria_form.cleaned_data["nombre"]
+                apellido = traslados_prehospitalaria_form.cleaned_data["apellido"]
+                nacionalidad = traslados_prehospitalaria_form.cleaned_data["nacionalidad"]
+                cedula = traslados_prehospitalaria_form.cleaned_data["cedula"]
+                edad = traslados_prehospitalaria_form.cleaned_data["edad"]
+                sexo = traslados_prehospitalaria_form.cleaned_data["sexo"]
+                idx = traslados_prehospitalaria_form.cleaned_data["idx"]
+                hospital_trasladado = traslados_prehospitalaria_form.cleaned_data["hospital_trasladado"]
+                medico_receptor = traslados_prehospitalaria_form.cleaned_data["medico_receptor"]
+                mpps_cmt = traslados_prehospitalaria_form.cleaned_data["mpps_cmt"]
+                descripcion = traslados_prehospitalaria_form.cleaned_data["descripcion"]
+                material_utilizado = traslados_prehospitalaria_form.cleaned_data["material_utilizado"]
+                status = traslados_prehospitalaria_form.cleaned_data["status"]
 
-            #         check_agregar_persona = incendio_art.cleaned_data["check_agregar_persona"]
+                try:
+                    # Obtener la instancia del tipo de traslado
+                    tipo_traslado_instance = Tipos_Traslado.objects.get(id=tipo_traslado)
+                except Tipos_Traslado.DoesNotExist:
+                    tipo_traslado_instance = None
 
-            #         if check_agregar_persona == True and persona_presente_art.is_valid():
-            #             nombre = persona_presente_art.cleaned_data["nombre"]
-            #             apellido = persona_presente_art.cleaned_data["apellido"]
-            #             nacionalidad = persona_presente_art.cleaned_data["nacionalidad"]
-            #             cedula = persona_presente_art.cleaned_data["cedula"]
-            #             edad = persona_presente_art.cleaned_data["edad"]
+                if tipo_traslado_instance:
+                    try:
+                        # Intentar obtener el registro existente de `Traslado_Prehospitalaria` para este procedimiento
+                        traslado_proc = Traslado_Prehospitalaria.objects.get(id_procedimiento=procedimiento)
 
-            #             new_persona_presente = Persona_Presente_Art(
-            #                 id_incendio = nuevo_proc_incendio_art,
-            #                 nombre = nombre,
-            #                 apellidos = apellido,
-            #                 cedula = f"{nacionalidad}-{cedula}",
-            #                 edad = edad,
-            #             )
-            #             new_persona_presente.save()
+                        # Actualizar los datos del registro existente
+                        traslado_proc.id_tipo_traslado = tipo_traslado_instance
+                        traslado_proc.nombre = nombre
+                        traslado_proc.apellido = apellido
+                        traslado_proc.cedula = f"{nacionalidad}-{cedula}"
+                        traslado_proc.edad = edad
+                        traslado_proc.sexo = sexo
+                        traslado_proc.idx = idx
+                        traslado_proc.hospital_trasladado = hospital_trasladado
+                        traslado_proc.medico_receptor = medico_receptor
+                        traslado_proc.mpps_cmt = mpps_cmt
+                        traslado_proc.descripcion = descripcion
+                        traslado_proc.material_utilizado = material_utilizado
+                        traslado_proc.status = status
+                        traslado_proc.save()
 
-            #         if id_tipo_incendio == "2" and detalles_vehiculo_art.is_valid():
-            #             modelo = detalles_vehiculo_art.cleaned_data["modelo"]
-            #             marca = detalles_vehiculo_art.cleaned_data["marca"]
-            #             color = detalles_vehiculo_art.cleaned_data["color"]
-            #             año = detalles_vehiculo_art.cleaned_data["año"]
-            #             placas = detalles_vehiculo_art.cleaned_data["placas"]
+                    except Traslado_Prehospitalaria.DoesNotExist:
+                        pass
 
-            #             new_agregar_vehiculo = Detalles_Vehiculos_Art(
-            #                 id_vehiculo = nuevo_proc_incendio_art,
-            #                 modelo = modelo,
-            #                 marca = marca,
-            #                 color = color,
-            #                 año = año,
-            #                 placas = placas,
-            #             )
-            #             new_agregar_vehiculo.save()
+            # Terminado
+            if tipo_procedimiento == "17" and asesoramiento_form.is_valid():
+                # Obtener los datos del formulario
+                nombre_comercio = asesoramiento_form.cleaned_data["nombre_comercio"]
+                rif_comercio = asesoramiento_form.cleaned_data["rif_comercio"]
+                nombre = asesoramiento_form.cleaned_data["nombres"]
+                apellido = asesoramiento_form.cleaned_data["apellidos"]
+                nacionalidad = asesoramiento_form.cleaned_data["nacionalidad"]
+                cedula = asesoramiento_form.cleaned_data["cedula"]
+                sexo = asesoramiento_form.cleaned_data["sexo"]
+                telefono = asesoramiento_form.cleaned_data["telefono"]
+                descripcion = asesoramiento_form.cleaned_data["descripcion"]
+                material_utilizado = asesoramiento_form.cleaned_data["material_utilizado"]
+                status = asesoramiento_form.cleaned_data["status"]
 
-            #     if tipo_procedimiento_art == "2" and lesionados.is_valid():
-            #         nombre = lesionados.cleaned_data["nombre"]
-            #         apellido = lesionados.cleaned_data["apellido"]
-            #         nacionalidad = lesionados.cleaned_data["nacionalidad"]
-            #         cedula = lesionados.cleaned_data["cedula"]
-            #         edad = lesionados.cleaned_data["edad"]
-            #         sexo = lesionados.cleaned_data["sexo"]
-            #         idx = lesionados.cleaned_data["idx"]
-            #         descripcion = lesionados.cleaned_data["descripcion"]
-            #         status = lesionados.cleaned_data["status"]
+                try:
+                    # Intentar obtener el registro existente de `Asesoramiento` para este procedimiento
+                    asesoramiento_proc = Asesoramiento.objects.get(id_procedimiento=procedimiento)
 
+                    # Actualizar los datos del registro existente
+                    asesoramiento_proc.nombre_comercio = nombre_comercio
+                    asesoramiento_proc.rif_comercio = rif_comercio
+                    asesoramiento_proc.nombres = nombre
+                    asesoramiento_proc.apellidos = apellido
+                    asesoramiento_proc.cedula = f"{nacionalidad}-{cedula}"
+                    asesoramiento_proc.sexo = sexo
+                    asesoramiento_proc.telefono = telefono
+                    asesoramiento_proc.descripcion = descripcion
+                    asesoramiento_proc.material_utilizado = material_utilizado
+                    asesoramiento_proc.status = status
+                    asesoramiento_proc.save()
 
-            #         nuevo_lesionado_art = Lesionados_Art(
-            #             id_accidente = nuevo_proc_artificio_pir,
-            #             nombres = nombre,
-            #             apellidos = apellido,
-            #             cedula = f"{nacionalidad}-{cedula}",
-            #             edad = edad,
-            #             sexo = sexo,
-            #             idx = idx,
-            #             descripcion = descripcion,
-            #             status = status
-            #         )
+                except Asesoramiento.DoesNotExist:
+                    pass
 
-            #         nuevo_lesionado_art.save()
+            # Terminado
+            if tipo_procedimiento == "18" and form_inspecciones.is_valid():
+                tipo_inspeccion = form_inspecciones.cleaned_data["tipo_inspeccion"]
 
-            #     if tipo_procedimiento_art == "3" and fallecidos_art.is_valid():
-            #         motivo_fallecimiento = fallecidos_art.cleaned_data["motivo_fallecimiento"]
-            #         nom_fallecido = fallecidos_art.cleaned_data["nom_fallecido"]
-            #         apellido_fallecido = fallecidos_art.cleaned_data["apellido_fallecido"]
-            #         nacionalidad = fallecidos_art.cleaned_data["nacionalidad"]
-            #         cedula_fallecido = fallecidos_art.cleaned_data["cedula_fallecido"]
-            #         edad = fallecidos_art.cleaned_data["edad"]
-            #         sexo = fallecidos_art.cleaned_data["sexo"]
-            #         descripcion = fallecidos_art.cleaned_data["descripcion"]
-            #         material_utilizado = fallecidos_art.cleaned_data["material_utilizado"]
-            #         status = fallecidos_art.cleaned_data["status"]
+                # Prevención
+                if tipo_inspeccion == "Prevención" and form_inspecciones_prevencion.is_valid():
+                    nombre_comercio = form_inspecciones_prevencion.cleaned_data["nombre_comercio"]
+                    propietario = form_inspecciones_prevencion.cleaned_data["propietario"]
+                    nacionalidad = form_inspecciones_prevencion.cleaned_data["nacionalidad"]
+                    cedula_propietario = form_inspecciones_prevencion.cleaned_data["cedula_propietario"]
+                    descripcion = form_inspecciones_prevencion.cleaned_data["descripcion"]
+                    persona_sitio_nombre = form_inspecciones_prevencion.cleaned_data["persona_sitio_nombre"]
+                    persona_sitio_apellido = form_inspecciones_prevencion.cleaned_data["persona_sitio_apellido"]
+                    nacionalidad2 = form_inspecciones_prevencion.cleaned_data["nacionalidad2"]
+                    persona_sitio_cedula = form_inspecciones_prevencion.cleaned_data["persona_sitio_cedula"]
+                    persona_sitio_telefono = form_inspecciones_prevencion.cleaned_data["persona_sitio_telefono"]
+                    material_utilizado = form_inspecciones_prevencion.cleaned_data["material_utilizado"]
+                    status = form_inspecciones_prevencion.cleaned_data["status"]
 
-            #         nuevo_proc_fallecido_art = Fallecidos_Art(
-            #             id_procedimiento = nuevo_proc_artificio_pir,
-            #             motivo_fallecimiento = motivo_fallecimiento,
-            #             nombres = nom_fallecido,
-            #             apellidos = apellido_fallecido,
-            #             cedula = f"{nacionalidad}-{cedula_fallecido}",
-            #             edad = edad,
-            #             sexo = sexo,
-            #             descripcion=descripcion,
-            #             material_utilizado=material_utilizado,
-            #             status=status
-            #         )
-            #         nuevo_proc_fallecido_art.save()
+                    inspeccion = Inspeccion_Prevencion_Asesorias_Tecnicas.objects.get(id_procedimientos=procedimiento)
+                    inspeccion.tipo_inspeccion = tipo_inspeccion
+                    inspeccion.nombre_comercio = nombre_comercio
+                    inspeccion.propietario = propietario
+                    inspeccion.cedula_propietario = f"{nacionalidad}-{cedula_propietario}"
+                    inspeccion.descripcion = descripcion
+                    inspeccion.persona_sitio_nombre = persona_sitio_nombre
+                    inspeccion.persona_sitio_apellido = persona_sitio_apellido
+                    inspeccion.persona_sitio_cedula = f"{nacionalidad2}-{persona_sitio_cedula}"
+                    inspeccion.persona_sitio_telefono = persona_sitio_telefono
+                    inspeccion.material_utilizado = material_utilizado
+                    inspeccion.status = status
+                    inspeccion.save()
 
-            # if tipo_procedimiento == "23" and inspeccion_artificios_pir.is_valid():
-            #     nombre_comercio = inspeccion_artificios_pir.cleaned_data["nombre_comercio"]
-            #     rif_comercio = inspeccion_artificios_pir.cleaned_data["rif_comercio"]
-            #     nombre_encargado = inspeccion_artificios_pir.cleaned_data["nombre_encargado"]
-            #     apellido_encargado = inspeccion_artificios_pir.cleaned_data["apellido_encargado"]
-            #     nacionalidad = inspeccion_artificios_pir.cleaned_data["nacionalidad"]
-            #     cedula_encargado = inspeccion_artificios_pir.cleaned_data["cedula_encargado"]
-            #     sexo = inspeccion_artificios_pir.cleaned_data["sexo"]
-            #     descripcion = inspeccion_artificios_pir.cleaned_data["descripcion"]
-            #     material_utilizado = inspeccion_artificios_pir.cleaned_data["material_utilizado"]
-            #     status = inspeccion_artificios_pir.cleaned_data["status"]
+                # Árbol
+                if tipo_inspeccion == "Árbol" and form_inspecciones_arbol.is_valid():
+                    especie = form_inspecciones_arbol.cleaned_data["especie"]
+                    altura_aprox = form_inspecciones_arbol.cleaned_data["altura_aprox"]
+                    ubicacion_arbol = form_inspecciones_arbol.cleaned_data["ubicacion_arbol"]
+                    persona_sitio_nombre = form_inspecciones_arbol.cleaned_data["persona_sitio_nombre"]
+                    persona_sitio_apellido = form_inspecciones_arbol.cleaned_data["persona_sitio_apellido"]
+                    nacionalidad = form_inspecciones_arbol.cleaned_data["nacionalidad"]
+                    persona_sitio_cedula = form_inspecciones_arbol.cleaned_data["persona_sitio_cedula"]
+                    persona_sitio_telefono = form_inspecciones_arbol.cleaned_data["persona_sitio_telefono"]
+                    descripcion = form_inspecciones_arbol.cleaned_data["descripcion"]
+                    material_utilizado = form_inspecciones_arbol.cleaned_data["material_utilizado"]
+                    status = form_inspecciones_arbol.cleaned_data["status"]
 
-            #     nueva_inspeccion_art = Inspeccion_Establecimiento_Art(
-            #         id_proc_artificio = nuevo_procedimiento,
-            #         nombre_comercio = nombre_comercio,
-            #         rif_comercio = rif_comercio,
-            #         encargado_nombre = nombre_encargado,
-            #         encargado_apellidos = apellido_encargado,
-            #         encargado_cedula = f"{nacionalidad}-{cedula_encargado}",
-            #         encargado_sexo = sexo,
-            #         descripcion = descripcion,
-            #         material_utilizado = material_utilizado,
-            #         status = status
-            #     )
+                    inspeccion = Inspeccion_Arbol.objects.get(id_procedimientos=procedimiento)
+                    inspeccion.tipo_inspeccion = tipo_inspeccion
+                    inspeccion.especie = especie
+                    inspeccion.altura_aprox = altura_aprox
+                    inspeccion.ubicacion_arbol = ubicacion_arbol
+                    inspeccion.persona_sitio_nombre = persona_sitio_nombre
+                    inspeccion.persona_sitio_apellido = persona_sitio_apellido
+                    inspeccion.persona_sitio_cedula = f"{nacionalidad}-{persona_sitio_cedula}"
+                    inspeccion.persona_sitio_telefono = persona_sitio_telefono
+                    inspeccion.descripcion = descripcion
+                    inspeccion.material_utilizado = material_utilizado
+                    inspeccion.status = status
+                    inspeccion.save()
 
-            #     nueva_inspeccion_art.save()
+                # Asesorías Técnicas
+                if tipo_inspeccion == "Asesorias Tecnicas" and form_inspecciones_prevencion.is_valid():
+                    nombre_comercio = form_inspecciones_prevencion.cleaned_data["nombre_comercio"]
+                    propietario = form_inspecciones_prevencion.cleaned_data["propietario"]
+                    nacionalidad = form_inspecciones_prevencion.cleaned_data["nacionalidad"]
+                    cedula_propietario = form_inspecciones_prevencion.cleaned_data["cedula_propietario"]
+                    descripcion = form_inspecciones_prevencion.cleaned_data["descripcion"]
+                    persona_sitio_nombre = form_inspecciones_prevencion.cleaned_data["persona_sitio_nombre"]
+                    persona_sitio_apellido = form_inspecciones_prevencion.cleaned_data["persona_sitio_apellido"]
+                    nacionalidad2 = form_inspecciones_prevencion.cleaned_data["nacionalidad2"]
+                    persona_sitio_cedula = form_inspecciones_prevencion.cleaned_data["persona_sitio_cedula"]
+                    persona_sitio_telefono = form_inspecciones_prevencion.cleaned_data["persona_sitio_telefono"]
+                    material_utilizado = form_inspecciones_prevencion.cleaned_data["material_utilizado"]
+                    status = form_inspecciones_prevencion.cleaned_data["status"]
 
-            # if tipo_procedimiento == "24" and form_valoracion_medica.is_valid():
-            #     nombre = form_valoracion_medica.cleaned_data["nombre"]
-            #     apellido = form_valoracion_medica.cleaned_data["apellido"]
-            #     nacionalidad = form_valoracion_medica.cleaned_data["nacionalidad"]
-            #     cedula = form_valoracion_medica.cleaned_data["cedula"]
-            #     edad = form_valoracion_medica.cleaned_data["edad"]
-            #     sexo = form_valoracion_medica.cleaned_data["sexo"]
-            #     telefono = form_valoracion_medica.cleaned_data["telefono"]
-            #     descripcion = form_valoracion_medica.cleaned_data["descripcion"]
-            #     material_utilizado = form_valoracion_medica.cleaned_data["material_utilizado"]
-            #     status = form_valoracion_medica.cleaned_data["status"]
+                    inspeccion = Inspeccion_Prevencion_Asesorias_Tecnicas.objects.get(id_procedimientos=procedimiento)
+                    inspeccion.tipo_inspeccion = tipo_inspeccion
+                    inspeccion.nombre_comercio = nombre_comercio
+                    inspeccion.propietario = propietario
+                    inspeccion.cedula_propietario = f"{nacionalidad}-{cedula_propietario}"
+                    inspeccion.descripcion = descripcion
+                    inspeccion.persona_sitio_nombre = persona_sitio_nombre
+                    inspeccion.persona_sitio_apellido = persona_sitio_apellido
+                    inspeccion.persona_sitio_cedula = f"{nacionalidad2}-{persona_sitio_cedula}"
+                    inspeccion.persona_sitio_telefono = persona_sitio_telefono
+                    inspeccion.material_utilizado = material_utilizado
+                    inspeccion.status = status
+                    inspeccion.save()
 
-            #     new_valoracion_medica = Valoracion_Medica(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         nombre = nombre,
-            #         apellido = apellido,
-            #         cedula = f"{nacionalidad}-{cedula}",
-            #         edad = edad,
-            #         sexo = sexo,
-            #         telefono = telefono,
-            #         descripcion = descripcion,
-            #         material_utilizado = material_utilizado,
-            #         status = status
-            #     )
-            #     new_valoracion_medica.save()
+                # Habitabilidad
+                if tipo_inspeccion == "Habitabilidad" and form_inspecciones_habitabilidad.is_valid():
+                    descripcion = form_inspecciones_habitabilidad.cleaned_data["descripcion"]
+                    persona_sitio_nombre = form_inspecciones_habitabilidad.cleaned_data["persona_sitio_nombre"]
+                    persona_sitio_apellido = form_inspecciones_habitabilidad.cleaned_data["persona_sitio_apellido"]
+                    nacionalidad = form_inspecciones_habitabilidad.cleaned_data["nacionalidad"]
+                    persona_sitio_cedula = form_inspecciones_habitabilidad.cleaned_data["persona_sitio_cedula"]
+                    persona_sitio_telefono = form_inspecciones_habitabilidad.cleaned_data["persona_sitio_telefono"]
+                    material_utilizado = form_inspecciones_habitabilidad.cleaned_data["material_utilizado"]
+                    status = form_inspecciones_habitabilidad.cleaned_data["status"]
 
-            # if tipo_procedimiento == "25" and form_jornada_medica.is_valid():
-            #     nombre_jornada = form_jornada_medica.cleaned_data["nombre_jornada"]
-            #     cantidad_personas_atendidas = form_jornada_medica.cleaned_data["cant_personas_aten"]
-            #     descripcion = form_jornada_medica.cleaned_data["descripcion"]
-            #     material_utilizado = form_jornada_medica.cleaned_data["material_utilizado"]
-            #     status = form_jornada_medica.cleaned_data["status"]
+                    inspeccion = Inspeccion_Habitabilidad.objects.get(id_procedimientos=procedimiento)
+                    inspeccion.tipo_inspeccion = tipo_inspeccion
+                    inspeccion.descripcion = descripcion
+                    inspeccion.persona_sitio_nombre = persona_sitio_nombre
+                    inspeccion.persona_sitio_apellido = persona_sitio_apellido
+                    inspeccion.persona_sitio_cedula = f"{nacionalidad}-{persona_sitio_cedula}"
+                    inspeccion.persona_sitio_telefono = persona_sitio_telefono
+                    inspeccion.material_utilizado = material_utilizado
+                    inspeccion.status = status
+                    inspeccion.save()
 
-            #     new_jornada_medica = Jornada_Medica(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         nombre_jornada = nombre_jornada,
-            #         cant_personas_aten = cantidad_personas_atendidas,
-            #         descripcion = descripcion,
-            #         material_utilizado = material_utilizado,
-            #         status = status
-            #     )
-            #     new_jornada_medica.save()
+                # Otros
+                if tipo_inspeccion == "Otros" and form_inspecciones_otros.is_valid():
+                    especifique = form_inspecciones_otros.cleaned_data["especifique"]
+                    descripcion = form_inspecciones_otros.cleaned_data["descripcion"]
+                    persona_sitio_nombre = form_inspecciones_otros.cleaned_data["persona_sitio_nombre"]
+                    persona_sitio_apellido = form_inspecciones_otros.cleaned_data["persona_sitio_apellido"]
+                    nacionalidad = form_inspecciones_otros.cleaned_data["nacionalidad"]
+                    persona_sitio_cedula = form_inspecciones_otros.cleaned_data["persona_sitio_cedula"]
+                    persona_sitio_telefono = form_inspecciones_otros.cleaned_data["persona_sitio_telefono"]
+                    material_utilizado = form_inspecciones_otros.cleaned_data["material_utilizado"]
+                    status = form_inspecciones_otros.cleaned_data["status"]
 
-            # if (tipo_procedimiento == "26" or tipo_procedimiento == "27" or tipo_procedimiento == "28" or tipo_procedimiento == "29" or tipo_procedimiento == "30" or tipo_procedimiento == "31" or tipo_procedimiento == "32" or tipo_procedimiento == "33" or tipo_procedimiento == "34") and form_detalles_enfermeria.is_valid():
-            #     nombre = form_detalles_enfermeria.cleaned_data["nombre"]
-            #     apellido = form_detalles_enfermeria.cleaned_data["apellido"]
-            #     nacionalidad = form_detalles_enfermeria.cleaned_data["nacionalidad"]
-            #     cedula = form_detalles_enfermeria.cleaned_data["cedula"]
-            #     edad = form_detalles_enfermeria.cleaned_data["edad"]
-            #     sexo = form_detalles_enfermeria.cleaned_data["sexo"]
-            #     telefono = form_detalles_enfermeria.cleaned_data["telefono"]
-            #     descripcion = form_detalles_enfermeria.cleaned_data["descripcion"]
-            #     material_utilizado = form_detalles_enfermeria.cleaned_data["material_utilizado"]
-            #     status = form_detalles_enfermeria.cleaned_data["status"]
+                    inspeccion = Inspeccion_Otros.objects.get(id_procedimientos=procedimiento)
+                    inspeccion.tipo_inspeccion = tipo_inspeccion
+                    inspeccion.especifique = especifique
+                    inspeccion.descripcion = descripcion
+                    inspeccion.persona_sitio_nombre = persona_sitio_nombre
+                    inspeccion.persona_sitio_apellido = persona_sitio_apellido
+                    inspeccion.persona_sitio_cedula = f"{nacionalidad}-{persona_sitio_cedula}"
+                    inspeccion.persona_sitio_telefono = persona_sitio_telefono
+                    inspeccion.material_utilizado = material_utilizado
+                    inspeccion.status = status
+                    inspeccion.save()
 
-            #     new_detalles_enfermeria = Detalles_Enfermeria(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         nombre = nombre,
-            #         apellido = apellido,
-            #         cedula = f"{nacionalidad}-{cedula}",
-            #         edad = edad,
-            #         sexo = sexo,
-            #         telefono = telefono,
-            #         descripcion = descripcion,
-            #         material_utilizado = material_utilizado,
-            #         status = status
-            #     )
-            #     new_detalles_enfermeria.save()
+            # Terminado
+            if tipo_procedimiento == "19" and form_investigacion.is_valid():
+                tipo_investigacion = form_investigacion.cleaned_data["tipo_investigacion"]
+                tipo_siniestro = form_investigacion.cleaned_data["tipo_siniestro"]
 
-            # if (tipo_procedimiento == "35" or tipo_procedimiento == "36" or tipo_procedimiento == "37" or tipo_procedimiento == "38" or tipo_procedimiento == "39" or tipo_procedimiento == "40" or tipo_procedimiento == "41") and form_detalles_psicologia.is_valid():
-            #     nombre = form_detalles_psicologia.cleaned_data["nombre"]
-            #     apellido = form_detalles_psicologia.cleaned_data["apellido"]
-            #     nacionalidad = form_detalles_psicologia.cleaned_data["nacionalidad"]
-            #     cedula = form_detalles_psicologia.cleaned_data["cedula"]
-            #     edad = form_detalles_psicologia.cleaned_data["edad"]
-            #     sexo = form_detalles_psicologia.cleaned_data["sexo"]
-            #     descripcion = form_detalles_psicologia.cleaned_data["descripcion"]
-            #     material_utilizado = form_detalles_psicologia.cleaned_data["material_utilizado"]
-            #     status = form_detalles_psicologia.cleaned_data["status"]
+                tipo_investigacion_instance = Tipos_Investigacion.objects.get(id=tipo_investigacion)
+                investigacion = Investigacion.objects.get(id_procedimientos=procedimiento)
 
-            #     new_detalles_psicologia = Procedimientos_Psicologia(
-            #         id_procedimientos = nuevo_procedimiento,
-            #         nombre = nombre,
-            #         apellido = apellido,
-            #         cedula = f"{nacionalidad}-{cedula}",
-            #         edad = edad,
-            #         sexo = sexo,
-            #         descripcion = descripcion,
-            #         material_utilizado = material_utilizado,
-            #         status = status
-            #     )
-            #     new_detalles_psicologia.save()
+                investigacion.id_tipo_investigacion = tipo_investigacion_instance
+                investigacion.tipo_siniestro = tipo_siniestro
+                investigacion.save()
+
+                if tipo_siniestro == "Comercio" and form_inv_comercio.is_valid():
+                    nombre_comercio = form_inv_comercio.cleaned_data["nombre_comercio"]
+                    rif_comercio = form_inv_comercio.cleaned_data["rif_comercio"]
+                    nombre_propietario = form_inv_comercio.cleaned_data["nombre_propietario"]
+                    apellido_propietario = form_inv_comercio.cleaned_data["apellido_propietario"]
+                    nacionalidad = form_inv_comercio.cleaned_data["nacionalidad"]
+                    cedula_propietario = form_inv_comercio.cleaned_data["cedula_propietario"]
+                    descripcion = form_inv_comercio.cleaned_data["descripcion"]
+                    material_utilizado = form_inv_comercio.cleaned_data["material_utilizado"]
+                    status = form_inv_comercio.cleaned_data["status"]
+
+                    inv_comercio = Investigacion_Comercio.objects.get(id_investigacion=investigacion)
+                    inv_comercio.nombre_comercio = nombre_comercio
+                    inv_comercio.rif_comercio = rif_comercio
+                    inv_comercio.nombre_propietario = nombre_propietario
+                    inv_comercio.apellido_propietario = apellido_propietario
+                    inv_comercio.cedula_propietario = f"{nacionalidad}-{cedula_propietario}"
+                    inv_comercio.descripcion = descripcion
+                    inv_comercio.material_utilizado = material_utilizado
+                    inv_comercio.status = status
+                    inv_comercio.save()
+
+                if (tipo_siniestro == "Estructura" or tipo_siniestro == "Vivienda") and form_inv_estructura.is_valid():
+                    tipo_estructura = form_inv_estructura.cleaned_data["tipo_estructura"]
+                    nombre = form_inv_estructura.cleaned_data["nombre"]
+                    apellido = form_inv_estructura.cleaned_data["apellido"]
+                    nacionalidad = form_inv_estructura.cleaned_data["nacionalidad"]
+                    cedula = form_inv_estructura.cleaned_data["cedula"]
+                    descripcion = form_inv_estructura.cleaned_data["descripcion"]
+                    material_utilizado = form_inv_estructura.cleaned_data["material_utilizado"]
+                    status = form_inv_estructura.cleaned_data["status"]
+
+                    inv_estructura = Investigacion_Estructura_Vivienda.objects.get(id_investigacion=investigacion)
+                    inv_estructura.tipo_estructura = tipo_estructura
+                    inv_estructura.nombre = nombre
+                    inv_estructura.apellido = apellido
+                    inv_estructura.cedula = f"{nacionalidad}-{cedula}"
+                    inv_estructura.descripcion = descripcion
+                    inv_estructura.material_utilizado = material_utilizado
+                    inv_estructura.status = status
+                    inv_estructura.save()
+
+                if tipo_siniestro == "Vehiculo" and form_inv_vehiculo.is_valid():
+                    marca = form_inv_vehiculo.cleaned_data["marca"]
+                    modelo = form_inv_vehiculo.cleaned_data["modelo"]
+                    color = form_inv_vehiculo.cleaned_data["color"]
+                    placas = form_inv_vehiculo.cleaned_data["placas"]
+                    año = form_inv_vehiculo.cleaned_data["año"]
+                    nombre_propietario = form_inv_vehiculo.cleaned_data["nombre_propietario"]
+                    apellido_propietario = form_inv_vehiculo.cleaned_data["apellido_propietario"]
+                    nacionalidad = form_inv_vehiculo.cleaned_data["nacionalidad"]
+                    cedula_propietario = form_inv_vehiculo.cleaned_data["cedula_propietario"]
+                    descripcion = form_inv_vehiculo.cleaned_data["descripcion"]
+                    material_utilizado = form_inv_vehiculo.cleaned_data["material_utilizado"]
+                    status = form_inv_vehiculo.cleaned_data["status"]
+
+                    inv_vehiculo = Investigacion_Vehiculo.objects.get(id_investigacion=investigacion)
+                    inv_vehiculo.marca = marca
+                    inv_vehiculo.modelo = modelo
+                    inv_vehiculo.color = color
+                    inv_vehiculo.placas = placas
+                    inv_vehiculo.año = año
+                    inv_vehiculo.nombre_propietario = nombre_propietario
+                    inv_vehiculo.apellido_propietario = apellido_propietario
+                    inv_vehiculo.cedula_propietario = f"{nacionalidad}-{cedula_propietario}"
+                    inv_vehiculo.descripcion = descripcion
+                    inv_vehiculo.material_utilizado = material_utilizado
+                    inv_vehiculo.status = status
+                    inv_vehiculo.save()
+
+            # Terminado
+            if tipo_procedimiento == "20" and reinspeccion_prevencion.is_valid():
+                nombre_comercio = reinspeccion_prevencion.cleaned_data["nombre_comercio"]
+                rif_comercio = reinspeccion_prevencion.cleaned_data["rif_comercio"]
+                nombre = reinspeccion_prevencion.cleaned_data["nombre"]
+                apellido = reinspeccion_prevencion.cleaned_data["apellidos"]
+                sexo = reinspeccion_prevencion.cleaned_data["sexo"]
+                nacionalidad = reinspeccion_prevencion.cleaned_data["nacionalidad"]
+                cedula = reinspeccion_prevencion.cleaned_data["cedula"]
+                telefono = reinspeccion_prevencion.cleaned_data["telefono"]
+                descripcion = reinspeccion_prevencion.cleaned_data["descripcion"]
+                material_utilizado = reinspeccion_prevencion.cleaned_data["material_utilizado"]
+                status = reinspeccion_prevencion.cleaned_data["status"]
+
+                try:
+                    # Intentar obtener el registro existente
+                    proc_reins = Reinspeccion_Prevencion.objects.get(id_procedimiento=procedimiento)
+
+                    # Actualizar los campos existentes
+                    proc_reins.nombre_comercio = nombre_comercio
+                    proc_reins.rif_comercio = rif_comercio
+                    proc_reins.nombre = nombre
+                    proc_reins.apellidos = apellido
+                    proc_reins.cedula = f"{nacionalidad}-{cedula}"
+                    proc_reins.sexo = sexo
+                    proc_reins.telefono = telefono
+                    proc_reins.descripcion = descripcion
+                    proc_reins.material_utilizado = material_utilizado
+                    proc_reins.status = status
+                    proc_reins.save()
+
+                except Reinspeccion_Prevencion.DoesNotExist:
+                    pass
+
+            # Terminado
+            if tipo_procedimiento == "21" and retencion_preventiva.is_valid():
+                tipo_cilindro = retencion_preventiva.cleaned_data["tipo_cilindro"]
+                capacidad = retencion_preventiva.cleaned_data["capacidad"]
+                serial = retencion_preventiva.cleaned_data["serial"]
+                nro_constancia_retencion = retencion_preventiva.cleaned_data["nro_constancia_retencion"]
+                nombre = retencion_preventiva.cleaned_data["nombre"]
+                apellido = retencion_preventiva.cleaned_data["apellidos"]
+                nacionalidad = retencion_preventiva.cleaned_data["nacionalidad"]
+                cedula = retencion_preventiva.cleaned_data["cedula"]
+                descripcion = retencion_preventiva.cleaned_data["descripcion"]
+                material_utilizado = retencion_preventiva.cleaned_data["material_utilizado"]
+                status = retencion_preventiva.cleaned_data["status"]
+
+                tipo_cilindro_instance = Tipo_Cilindro.objects.get(id=tipo_cilindro)
+
+                try:
+                    # Intentar obtener el registro existente
+                    proc_reten = Retencion_Preventiva.objects.get(id_procedimiento=procedimiento)
+
+                    # Actualizar los campos existentes
+                    proc_reten.tipo_cilindro = tipo_cilindro_instance
+                    proc_reten.capacidad = capacidad
+                    proc_reten.serial = serial
+                    proc_reten.nro_constancia_retencion = nro_constancia_retencion
+                    proc_reten.nombre = nombre
+                    proc_reten.apellidos = apellido
+                    proc_reten.cedula = f"{nacionalidad}-{cedula}"
+                    proc_reten.descripcion = descripcion
+                    proc_reten.material_utilizado = material_utilizado
+                    proc_reten.status = status
+                    proc_reten.save()
+
+                except Retencion_Preventiva.DoesNotExist:
+                    pass
+
+            # Terminado
+            if tipo_procedimiento == "22" and artificios_pirotecnico.is_valid():
+                nombre_comercio = artificios_pirotecnico.cleaned_data["nombre_comercio"]
+                rif_comercio = artificios_pirotecnico.cleaned_data["rif_comercio"]
+                tipo_procedimiento_art = artificios_pirotecnico.cleaned_data["tipo_procedimiento"]
+
+                tipo_procedimiento_art_instance = Tipos_Artificios.objects.get(id=tipo_procedimiento_art)
+
+                try:
+                    # Intentar obtener el registro existente
+                    proc_artificio_pir = Artificios_Pirotecnicos.objects.get(id_procedimiento=procedimiento)
+
+                    # Actualizar los campos existentes
+                    proc_artificio_pir.nombre_comercio = nombre_comercio
+                    proc_artificio_pir.rif_comerciante = rif_comercio
+                    proc_artificio_pir.tipo_procedimiento = tipo_procedimiento_art_instance
+                    proc_artificio_pir.save()
+
+                except Artificios_Pirotecnicos.DoesNotExist:
+                    pass
+
+                if tipo_procedimiento_art == "1" and incendio_art.is_valid():
+                    id_tipo_incendio = incendio_art.cleaned_data["tipo_incendio"]
+                    descripcion = incendio_art.cleaned_data["descripcion"]
+                    material_utilizado = incendio_art.cleaned_data["material_utilizado"]
+                    status = incendio_art.cleaned_data["status"]
+
+                    tipo_incendio_instance = Tipo_Incendio.objects.get(id=id_tipo_incendio)
+
+                    try:
+                        # Intentar obtener el registro de incendio
+                        proc_incendio_art = Incendios_Art.objects.get(id_procedimientos=proc_artificio_pir)
+
+                        # Actualizar los campos del incendio
+                        proc_incendio_art.id_tipo_incendio = tipo_incendio_instance
+                        proc_incendio_art.descripcion = descripcion
+                        proc_incendio_art.material_utilizado = material_utilizado
+                        proc_incendio_art.status = status
+                        proc_incendio_art.save()
+
+                    except Incendios_Art.DoesNotExist:
+                        pass
+
+                    check_agregar_persona = incendio_art.cleaned_data["check_agregar_persona"]
+
+                    if check_agregar_persona == True and persona_presente_art.is_valid():
+                        nombre = persona_presente_art.cleaned_data["nombre"]
+                        apellido = persona_presente_art.cleaned_data["apellido"]
+                        nacionalidad = persona_presente_art.cleaned_data["nacionalidad"]
+                        cedula = persona_presente_art.cleaned_data["cedula"]
+                        edad = persona_presente_art.cleaned_data["edad"]
+
+                        try:
+                            # Intentar obtener la persona presente
+                            persona_presente = Persona_Presente_Art.objects.get(id_incendio=proc_incendio_art)
+
+                            # Actualizar los campos de la persona presente
+                            persona_presente.nombre = nombre
+                            persona_presente.apellidos = apellido
+                            persona_presente.cedula = f"{nacionalidad}-{cedula}"
+                            persona_presente.edad = edad
+                            persona_presente.save()
+
+                        except Persona_Presente_Art.DoesNotExist:
+                            # Si no existe, crear uno nuevo
+                            new_persona_presente = Persona_Presente_Art(
+                                id_incendio=proc_incendio_art,
+                                nombre=nombre,
+                                apellidos=apellido,
+                                cedula=f"{nacionalidad}-{cedula}",
+                                edad=edad,
+                            )
+                            new_persona_presente.save()
+
+                    if id_tipo_incendio == "2" and detalles_vehiculo_art.is_valid():
+                        modelo = detalles_vehiculo_art.cleaned_data["modelo"]
+                        marca = detalles_vehiculo_art.cleaned_data["marca"]
+                        color = detalles_vehiculo_art.cleaned_data["color"]
+                        año = detalles_vehiculo_art.cleaned_data["año"]
+                        placas = detalles_vehiculo_art.cleaned_data["placas"]
+
+                        try:
+                            # Intentar obtener el vehículo relacionado
+                            detalles_vehiculo = Detalles_Vehiculos_Art.objects.get(id_vehiculo=proc_incendio_art)
+
+                            # Actualizar los campos del vehículo
+                            detalles_vehiculo.modelo = modelo
+                            detalles_vehiculo.marca = marca
+                            detalles_vehiculo.color = color
+                            detalles_vehiculo.año = año
+                            detalles_vehiculo.placas = placas
+                            detalles_vehiculo.save()
+
+                        except Detalles_Vehiculos_Art.DoesNotExist:
+                            # Si no existe, crear uno nuevo
+                            new_agregar_vehiculo = Detalles_Vehiculos_Art(
+                                id_vehiculo=proc_incendio_art,
+                                modelo=modelo,
+                                marca=marca,
+                                color=color,
+                                año=año,
+                                placas=placas,
+                            )
+                            new_agregar_vehiculo.save()
+
+                if tipo_procedimiento_art == "2" and lesionados.is_valid():
+                    nombre = lesionados.cleaned_data["nombre"]
+                    apellido = lesionados.cleaned_data["apellido"]
+                    nacionalidad = lesionados.cleaned_data["nacionalidad"]
+                    cedula = lesionados.cleaned_data["cedula"]
+                    edad = lesionados.cleaned_data["edad"]
+                    sexo = lesionados.cleaned_data["sexo"]
+                    idx = lesionados.cleaned_data["idx"]
+                    descripcion = lesionados.cleaned_data["descripcion"]
+                    status = lesionados.cleaned_data["status"]
+
+                    try:
+                        # Intentar obtener el lesionado
+                        lesionado_art = Lesionados_Art.objects.get(id_accidente=proc_artificio_pir)
+
+                        # Actualizar los campos del lesionado
+                        lesionado_art.nombres = nombre
+                        lesionado_art.apellidos = apellido
+                        lesionado_art.cedula = f"{nacionalidad}-{cedula}"
+                        lesionado_art.edad = edad
+                        lesionado_art.sexo = sexo
+                        lesionado_art.idx = idx
+                        lesionado_art.descripcion = descripcion
+                        lesionado_art.status = status
+                        lesionado_art.save()
+
+                    except Lesionados_Art.DoesNotExist:
+                        pass
+
+                if tipo_procedimiento_art == "3" and fallecidos_art.is_valid():
+                    motivo_fallecimiento = fallecidos_art.cleaned_data["motivo_fallecimiento"]
+                    nom_fallecido = fallecidos_art.cleaned_data["nom_fallecido"]
+                    apellido_fallecido = fallecidos_art.cleaned_data["apellido_fallecido"]
+                    nacionalidad = fallecidos_art.cleaned_data["nacionalidad"]
+                    cedula_fallecido = fallecidos_art.cleaned_data["cedula_fallecido"]
+                    edad = fallecidos_art.cleaned_data["edad"]
+                    sexo = fallecidos_art.cleaned_data["sexo"]
+                    descripcion = fallecidos_art.cleaned_data["descripcion"]
+                    material_utilizado = fallecidos_art.cleaned_data["material_utilizado"]
+                    status = fallecidos_art.cleaned_data["status"]
+
+                    try:
+                        # Intentar obtener el fallecido
+                        fallecido_art = Fallecidos_Art.objects.get(id_procedimiento=proc_artificio_pir)
+
+                        # Actualizar los campos del fallecido
+                        fallecido_art.motivo_fallecimiento = motivo_fallecimiento
+                        fallecido_art.nombres = nom_fallecido
+                        fallecido_art.apellidos = apellido_fallecido
+                        fallecido_art.cedula = f"{nacionalidad}-{cedula_fallecido}"
+                        fallecido_art.edad = edad
+                        fallecido_art.sexo = sexo
+                        fallecido_art.descripcion = descripcion
+                        fallecido_art.material_utilizado = material_utilizado
+                        fallecido_art.status = status
+                        fallecido_art.save()
+
+                    except Fallecidos_Art.DoesNotExist:
+                        pass
+
+            # Terminado
+            if tipo_procedimiento == "23" and inspeccion_artificios_pir.is_valid():
+                nombre_comercio = inspeccion_artificios_pir.cleaned_data["nombre_comercio"]
+                rif_comercio = inspeccion_artificios_pir.cleaned_data["rif_comercio"]
+                nombre_encargado = inspeccion_artificios_pir.cleaned_data["nombre_encargado"]
+                apellido_encargado = inspeccion_artificios_pir.cleaned_data["apellido_encargado"]
+                nacionalidad = inspeccion_artificios_pir.cleaned_data["nacionalidad"]
+                cedula_encargado = inspeccion_artificios_pir.cleaned_data["cedula_encargado"]
+                sexo = inspeccion_artificios_pir.cleaned_data["sexo"]
+                descripcion = inspeccion_artificios_pir.cleaned_data["descripcion"]
+                material_utilizado = inspeccion_artificios_pir.cleaned_data["material_utilizado"]
+                status = inspeccion_artificios_pir.cleaned_data["status"]
+
+                try:
+                    # Intentar obtener el registro existente
+                    inspeccion_art = Inspeccion_Establecimiento_Art.objects.get(id_proc_artificio=procedimiento)
+
+                    # Actualizar los campos existentes
+                    inspeccion_art.nombre_comercio = nombre_comercio
+                    inspeccion_art.rif_comercio = rif_comercio
+                    inspeccion_art.encargado_nombre = nombre_encargado
+                    inspeccion_art.encargado_apellidos = apellido_encargado
+                    inspeccion_art.encargado_cedula = f"{nacionalidad}-{cedula_encargado}"
+                    inspeccion_art.encargado_sexo = sexo
+                    inspeccion_art.descripcion = descripcion
+                    inspeccion_art.material_utilizado = material_utilizado
+                    inspeccion_art.status = status
+                    inspeccion_art.save()
+
+                except Inspeccion_Establecimiento_Art.DoesNotExist:
+                    pass
+
+            # Terminado
+            if tipo_procedimiento == "24" and form_valoracion_medica.is_valid():
+                nombre = form_valoracion_medica.cleaned_data["nombre"]
+                apellido = form_valoracion_medica.cleaned_data["apellido"]
+                nacionalidad = form_valoracion_medica.cleaned_data["nacionalidad"]
+                cedula = form_valoracion_medica.cleaned_data["cedula"]
+                edad = form_valoracion_medica.cleaned_data["edad"]
+                sexo = form_valoracion_medica.cleaned_data["sexo"]
+                telefono = form_valoracion_medica.cleaned_data["telefono"]
+                descripcion = form_valoracion_medica.cleaned_data["descripcion"]
+                material_utilizado = form_valoracion_medica.cleaned_data["material_utilizado"]
+                status = form_valoracion_medica.cleaned_data["status"]
+
+                try:
+                    # Intentar obtener el registro existente de Valoración Médica
+                    valoracion_medica = Valoracion_Medica.objects.get(id_procedimientos=procedimiento)
+
+                    # Actualizar los campos con los nuevos valores
+                    valoracion_medica.nombre = nombre
+                    valoracion_medica.apellido = apellido
+                    valoracion_medica.cedula = f"{nacionalidad}-{cedula}"
+                    valoracion_medica.edad = edad
+                    valoracion_medica.sexo = sexo
+                    valoracion_medica.telefono = telefono
+                    valoracion_medica.descripcion = descripcion
+                    valoracion_medica.material_utilizado = material_utilizado
+                    valoracion_medica.status = status
+
+                    # Guardar los cambios
+                    valoracion_medica.save()
+
+                except Valoracion_Medica.DoesNotExist:
+                    pass
+
+            # Terminado
+            if tipo_procedimiento == "25" and form_jornada_medica.is_valid():
+                nombre_jornada = form_jornada_medica.cleaned_data["nombre_jornada"]
+                cantidad_personas_atendidas = form_jornada_medica.cleaned_data["cant_personas_aten"]
+                descripcion = form_jornada_medica.cleaned_data["descripcion"]
+                material_utilizado = form_jornada_medica.cleaned_data["material_utilizado"]
+                status = form_jornada_medica.cleaned_data["status"]
+
+                try:
+                    # Intentar obtener el registro existente de Jornada Médica
+                    jornada_medica = Jornada_Medica.objects.get(id_procedimientos=procedimiento)
+
+                    # Actualizar los campos con los nuevos valores
+                    jornada_medica.nombre_jornada = nombre_jornada
+                    jornada_medica.cant_personas_aten = cantidad_personas_atendidas
+                    jornada_medica.descripcion = descripcion
+                    jornada_medica.material_utilizado = material_utilizado
+                    jornada_medica.status = status
+
+                    # Guardar los cambios
+                    jornada_medica.save()
+
+                except Jornada_Medica.DoesNotExist:
+                     pass
+
+            # Terminado
+            if (tipo_procedimiento == "26" or tipo_procedimiento == "27" or tipo_procedimiento == "28" or tipo_procedimiento == "29" or tipo_procedimiento == "30" or tipo_procedimiento == "31" or tipo_procedimiento == "32" or tipo_procedimiento == "33" or tipo_procedimiento == "34") and form_detalles_enfermeria.is_valid():
+                nombre = form_detalles_enfermeria.cleaned_data["nombre"]
+                apellido = form_detalles_enfermeria.cleaned_data["apellido"]
+                nacionalidad = form_detalles_enfermeria.cleaned_data["nacionalidad"]
+                cedula = form_detalles_enfermeria.cleaned_data["cedula"]
+                edad = form_detalles_enfermeria.cleaned_data["edad"]
+                sexo = form_detalles_enfermeria.cleaned_data["sexo"]
+                telefono = form_detalles_enfermeria.cleaned_data["telefono"]
+                descripcion = form_detalles_enfermeria.cleaned_data["descripcion"]
+                material_utilizado = form_detalles_enfermeria.cleaned_data["material_utilizado"]
+                status = form_detalles_enfermeria.cleaned_data["status"]
+
+                try:
+                    # Intentar obtener el registro existente de Detalles Enfermería
+                    detalles_enfermeria = Detalles_Enfermeria.objects.get(id_procedimientos=procedimiento)
+
+                    # Actualizar los campos con los nuevos valores
+                    detalles_enfermeria.nombre = nombre
+                    detalles_enfermeria.apellido = apellido
+                    detalles_enfermeria.cedula = f"{nacionalidad}-{cedula}"
+                    detalles_enfermeria.edad = edad
+                    detalles_enfermeria.sexo = sexo
+                    detalles_enfermeria.telefono = telefono
+                    detalles_enfermeria.descripcion = descripcion
+                    detalles_enfermeria.material_utilizado = material_utilizado
+                    detalles_enfermeria.status = status
+
+                    # Guardar los cambios
+                    detalles_enfermeria.save()
+
+                except Detalles_Enfermeria.DoesNotExist:
+                    pass
+
+            # Terminado
+            if (tipo_procedimiento == "35" or tipo_procedimiento == "36" or tipo_procedimiento == "37" or tipo_procedimiento == "38" or tipo_procedimiento == "39" or tipo_procedimiento == "40" or tipo_procedimiento == "41") and form_detalles_psicologia.is_valid():
+                nombre = form_detalles_psicologia.cleaned_data["nombre"]
+                apellido = form_detalles_psicologia.cleaned_data["apellido"]
+                nacionalidad = form_detalles_psicologia.cleaned_data["nacionalidad"]
+                cedula = form_detalles_psicologia.cleaned_data["cedula"]
+                edad = form_detalles_psicologia.cleaned_data["edad"]
+                sexo = form_detalles_psicologia.cleaned_data["sexo"]
+                descripcion = form_detalles_psicologia.cleaned_data["descripcion"]
+                material_utilizado = form_detalles_psicologia.cleaned_data["material_utilizado"]
+                status = form_detalles_psicologia.cleaned_data["status"]
+
+                try:
+                    # Intentar obtener el registro existente de Procedimientos_Psicologia
+                    detalles_psicologia = Procedimientos_Psicologia.objects.get(id_procedimientos=procedimiento)
+
+                    # Actualizar los campos con los nuevos valores
+                    detalles_psicologia.nombre = nombre
+                    detalles_psicologia.apellido = apellido
+                    detalles_psicologia.cedula = f"{nacionalidad}-{cedula}"
+                    detalles_psicologia.edad = edad
+                    detalles_psicologia.sexo = sexo
+                    detalles_psicologia.descripcion = descripcion
+                    detalles_psicologia.material_utilizado = material_utilizado
+                    detalles_psicologia.status = status
+
+                    # Guardar los cambios
+                    detalles_psicologia.save()
+
+                except Procedimientos_Psicologia.DoesNotExist:
+                    pass
+
 
             # Redirige a /dashboard/ después de guardar los datos
             return redirect('/dashboard/?registro_exitoso=true')
