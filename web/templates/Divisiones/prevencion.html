@@ -239,7 +239,7 @@
   <div class="contain-dates">
     <section class="buttons-items">
       <button id="" class="btn btn-danger">Cargar Procedimientos</button>
-      <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_prevencion' %}" >Descargar Excel</a></button>
+      <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
     </section>  
   </div>
   <!-- div general-dashboard fin -->
@@ -314,5 +314,7 @@
 <script src="../../static/js/prevencion.js"></script>
 <script src="../../static/js/info_modal.js"></script>
 <script src="../../static/js/filters.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="../../static/js/excel_prevencion.js"></script>
 
 {% endblock %}

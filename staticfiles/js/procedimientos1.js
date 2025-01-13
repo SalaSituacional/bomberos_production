@@ -456,7 +456,6 @@ document
             document.getElementById("button_submit").style.display = "block";
             
           } else if (this.value === "Brigada Juvenil") {
-            console.log("holaa")
             mostrarElementBlock("detalles_brigada")
             ocultElement("detalles_capacitacion")
             ocultElement("detalles_frente_preventivo")
@@ -528,7 +527,7 @@ const opcionesPorCategoria = {
     { value: "14", text: "Evaluación de Riesgos" },
     { value: "15", text: "Puesto de Avanzada" },
     { value: "22", text: "Artificios Piroctenicos" },
-    { value: "21", text: "Retencion Preventiva" },
+    // { value: "21", text: "Retencion Preventiva" },
   ],
   2: [
     { value: "1", text: "Abastecimiento de agua" },
@@ -545,7 +544,7 @@ const opcionesPorCategoria = {
     { value: "13", text: "Mitigación de Riesgos" },
     { value: "14", text: "Evaluación de Riesgos" },
     { value: "22", text: "Artificios Piroctenicos" },
-    { value: "21", text: "Retencion Preventiva" },
+    // { value: "21", text: "Retencion Preventiva" },
   ],
   3: [
     { value: "14", text: "Evaluacion de Riesgos" },
@@ -625,15 +624,20 @@ function actualizarOpciones() {
   // Limpia las opciones actuales del segundo select
   selectTipoProcedimiento.innerHTML = "";
 
+  // Si ya existe un valor seleccionado en "tipo_procedimiento" no lo sobrescribimos
+  const currentTipoProcedimiento = selectTipoProcedimiento.value;
+
   // Si hay opciones para la categoría seleccionada, agrégalas
   if (opcionesPorCategoria[selectedValue]) {
-    // Agrega una opción predeterminada
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.textContent = "Seleccione una Opción";
-    defaultOption.disabled = true;
-    defaultOption.selected = true;
-    selectTipoProcedimiento.appendChild(defaultOption);
+    // Agrega una opción predeterminada si no hay un valor actual
+    if (!currentTipoProcedimiento) {
+      const defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.textContent = "Seleccione una Opción";
+      defaultOption.disabled = true;
+      defaultOption.selected = true;
+      selectTipoProcedimiento.appendChild(defaultOption);
+    }
 
     // Agrega las opciones correspondientes
     opcionesPorCategoria[selectedValue].forEach((optionData) => {
@@ -643,11 +647,18 @@ function actualizarOpciones() {
       selectTipoProcedimiento.appendChild(optionElement);
     });
   }
+
+  // Si se estaba editando un valor antes de actualizar, mantenlo
+  if (currentTipoProcedimiento) {
+    selectTipoProcedimiento.value = currentTipoProcedimiento;
+  }
 }
 
-actualizarOpciones();
-// Evento cuando cambia el primer select
 selectOpciones.addEventListener("change", actualizarOpciones);
+
+// Llamada inicial para cargar las opciones basadas en el valor actual del select
+actualizarOpciones();
+
 
 function hideAllForms() {
   const forms = document.querySelectorAll(".disp-none");
@@ -672,6 +683,7 @@ function requiredExceptions(elements) {
   });
 }
 
+
 // <!--Script para el manejo de formularios-- >
 document
   .getElementById("id_form4-tipo_procedimiento")
@@ -689,6 +701,7 @@ document
       "rescate_animal",
       "rescate_persona",
       "incendio_form",
+      "retencion_preventiva_incendio",
       "persona_presente",
       "detalles_vehiculo",
       "atenciones_paramedicas",
@@ -763,7 +776,7 @@ document
           .getElementById("abast_agua")
           .querySelectorAll("select, input");
         setRequired(campos, true); // Agregar required a la nueva sección
-        document.getElementById("button_submit").style.display = "flex";
+        document.getElementById("button_submit").style.display = "block";
         break;
       case "2":
         requiredFalse();
@@ -1321,9 +1334,15 @@ document
         );
         requiredExceptions(
           document
+            .getElementById("retencion_preventiva_incendio")
+            .querySelectorAll("select, input")
+        );
+        requiredExceptions(
+          document
             .getElementById("incendio_form")
             .querySelectorAll("input[type='checkbox']")
         );
+        document.getElementById("id_incendio_form-check_retencion").parentElement.style.display = "none"
 
         document
           .getElementById("id_incendio_form-check_agregar_persona")
@@ -1344,6 +1363,38 @@ document
                 "none";
             }
           });
+
+        document.getElementById("id_incendio_form-tipo_incendio").addEventListener("change", function (){
+          if (this.value == "7") {
+            document.getElementById("id_incendio_form-check_retencion").parentElement.style.display = "flex"
+          } else {
+            document.getElementById("id_incendio_form-check_retencion").parentElement.style.display = "none"
+          }
+        })
+
+
+        document
+          .getElementById("id_incendio_form-check_retencion")
+          .addEventListener("change", function () {
+            if (this.checked) {
+              let campo2 = document
+                .getElementById("retencion_preventiva_incendio")
+                .querySelectorAll("select, input");
+              setRequired(campo2, true);
+              document.getElementById("retencion_preventiva_incendio").style.display =
+                "flex";
+            } else {
+              let campo2 = document
+                .getElementById("retencion_preventiva_incendio")
+                .querySelectorAll("select, input");
+              requiredExceptions(campo2);
+              document.getElementById("retencion_preventiva_incendio").style.display =
+                "none";
+            }
+          });
+
+
+
         document
           .getElementById("id_incendio_form-tipo_incendio")
           .addEventListener("change", function () {
@@ -1387,7 +1438,6 @@ document
         let select_vivienda = document
           .getElementById("evaluacion_riesgo")
           .querySelector(".form-style > div:nth-of-type(2)");
-        console.log(select_vivienda);
         select_vivienda.style.display = "none";
         requiredFalse();
         showElements(["evaluacion_riesgo"]);
@@ -1691,7 +1741,6 @@ document
                     .getElementById("incendio_art")
                     .querySelectorAll("select, input")
                 );
-                console.log("Holaaa");
                 document.getElementById("button_submit").style.display =
                   "block";
                 break;
