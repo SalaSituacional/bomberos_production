@@ -128,23 +128,33 @@ def View_Prevencion(request):
         "hoy": hoy
     })
 
+
 def View_grumae(request):
     user = request.session.get('user')
     if not user:
-            return redirect('/')
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+        return redirect('/')
 
-    datos = Procedimientos.objects.filter(id_division = 4)
+    # Obtener la fecha enviada desde el frontend
+    fecha_carga = request.GET.get('fecha', None)
+    if fecha_carga:
+        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
+        fecha_fin = fecha_inicio + timedelta(days=1)
+    else:
+        # Si no se pasa la fecha, por defecto cargar los procedimientos del día anterior
+        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+        fecha_fin = fecha_inicio + timedelta(days=1)
 
-    total = datos.count()
+    # Filtrar procedimientos según la fecha
+    datos_combined = Procedimientos.objects.filter(
+        id_division=4,
+        fecha__gte=fecha_inicio,
+        fecha__lt=fecha_fin
+    ).order_by('-fecha')
 
-    # Obtener la fecha de hoy
-    hoy = datetime.now().date()
-
-    # Filtrar procedimientos con la fecha de hoy
-    fechas = datos.values_list("fecha", flat=True)
-    procedimientos_hoy = [fecha for fecha in fechas if fecha == hoy]
-
-    hoy = len(procedimientos_hoy)
+    # Conteo total
+    total = datos_combined.count()
 
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -155,8 +165,44 @@ def View_grumae(request):
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
-        
-    datos = list(datos)[::-1]
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
+        # Serializa los datos en un formato compatible con JSON
+        procedimientos = list(datos_combined.values(
+            'id', 
+            'id_division__division',  # Nombre de la division relacionada
+            'tipo_servicio', 
+            'id_solicitante__nombres',  # Nombre del solicitante relacionado
+            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
+            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
+            'solicitante_externo', 
+            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
+            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
+            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
+            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
+            'dependencia', 
+            'efectivos_enviados', 
+            'id_municipio__municipio',  # Nombre del municipio relacionado
+            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
+            'fecha', 
+            'hora', 
+            'direccion', 
+            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
+        ))
+
+        # Responder con los datos en formato JSON y la fecha para la siguiente carga
+        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
+
+    # Obtener la fecha de hoy
+    hoy = datetime.now().date()
+
+    # Filtrar procedimientos con la fecha de hoy
+    fechas = datos_combined.values_list("fecha", flat=True)
+    procedimientos_hoy = [fecha for fecha in fechas if fecha == hoy]
+
+    hoy_count = len(procedimientos_hoy)
+
+    datos = list(datos_combined)[::-1]
 
     return render(request, "Divisiones/grumae.html", {
         "user": user,
@@ -165,8 +211,9 @@ def View_grumae(request):
         "apellidos": user["apellidos"],
         "datos": datos,
         "total": total,
-        "hoy": hoy
+        "hoy": hoy_count
     })
+
 
 def View_prehospitalaria(request):
     user = request.session.get('user')

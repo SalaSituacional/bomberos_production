@@ -119,6 +119,9 @@
         </tr>
       </thead>
       <tbody class="table-group-divider">
+        <div class="procedimientos-container">
+
+
         <!-- prettier-ignore -->
         {% for row in datos %}
         <tr>
@@ -241,12 +244,14 @@
         </tr>
         <!-- prettier-ignore -->
         {% endfor %}
+      </div>
       </tbody>
+      <input type="hidden" id="fecha_actual" value="{{ fecha_actual }}">
     </table>
   </div>
   <div class="contain-dates">
     <section class="buttons-items">
-      <button id="" class="btn btn-danger">Cargar Procedimientos</button>
+      <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
       <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_grumae' %}" >Descargar Excel</a></button>
     </section>  
   </div>
@@ -323,5 +328,6 @@
 <script src="../../static/js/info_modal.js"></script>
 <script src="../../static/js/filters.js"></script>
 <script src="../static/js/editar_proc.js"></script>
+<script src="../../static/js/cargar_mas_grumae.js"></script>
 
 {% endblock %}
