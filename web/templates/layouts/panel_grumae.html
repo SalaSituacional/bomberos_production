@@ -257,9 +257,7 @@
       btnedit.forEach((button) => {
         button.style.display = "none";
       });
-
-
-      // Mantener solo la sección de "Servicios médicos" y ocultar el resto
+      // Mantener solo la sección de "grumae" y ocultar el resto
       const analyticsSections = document.querySelectorAll(
         ".div-analytics .progress-bar"
       );
@@ -270,8 +268,19 @@
           });
         }
       });
+
     });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var button = document.getElementById("cargar_mas_btn");
+      if (button) {
+        button.remove();
+      }
+    });
+
   </script>
   {% block content %} {% endblock %}
 </body>
+
 </html>
