@@ -361,6 +361,21 @@ class Incendios(models.Model):
   def __str__(self):
     return self.id_procedimientos.id_tipo_procedimiento.tipo_procedimiento + " -- " + self.id_tipo_incendio.tipo_incendio + " -- " + self.descripcion + " -- " + self.material_utilizado + " -- " + self.status
   
+# Tabla de Retencion Preventiva (GLP)
+class Retencion_Preventiva_Incendios(models.Model):
+  id_procedimiento = models.ForeignKey(Incendios, on_delete=models.CASCADE)
+  tipo_cilindro = models.CharField(max_length=60)
+  capacidad = models.CharField(max_length=60)
+  serial = models.CharField(max_length=60)
+  nro_constancia_retencion = models.CharField(max_length=60)
+  nombre = models.CharField(max_length=60)
+  apellidos = models.CharField(max_length=60)
+  cedula = models.CharField(max_length=20)
+  
+  def __str__(self):
+    return self.id_procedimiento.id_tipo_incendio.tipo_incendio + " -- " + self.tipo_cilindro + " -- " + self.capacidad + " -- " + self.serial + " -- " + self.nro_constancia_retencion
+
+
 class Persona_Presente(models.Model):
   id_incendio = models.ForeignKey(Incendios, on_delete=models.CASCADE)
   nombre = models.CharField(max_length=80)

@@ -60,10 +60,11 @@
     </section>
   </div>
   <section class="procedures_record">
-    <h2 class="title_procedures_record">Registrar de Procedimientos</h2>
+    <h2 class="title_procedures_record">Editar Procedimientos</h2>
   </section>
   <section class="data_form">
     <form action="" method="post">
+        <input type="hidden" id="id_procedimiento_editar" name="id_editar" value="">
       {% csrf_token %}
       <div class="form-style">{{ form.as_div }}</div>
       <h4>Datos de la Operacion</h4>
@@ -478,6 +479,9 @@
       <button type="submit" id="button_submit" class="disp-none">
         Aceptar
       </button>
+      <button type="button" class="">
+        <a href="/dashboard/">Cancelar</a>
+      </button>
     </form>
   </section>
 </div>
@@ -542,6 +546,7 @@
   </section>
 </footer>
 <script src="../static/js/procedimientos1.js"></script>
+<script src="../static/js/datos_local_storage.js"></script>
 {% if errors %}
 <script>
   // Si Django envía la variable 'error', mostramos la ventana modal de error
