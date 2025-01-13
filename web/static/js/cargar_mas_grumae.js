@@ -7,7 +7,6 @@ let rowCount = document.querySelectorAll('#data-table tbody tr').length + 1;
 const fechaInicial = new Date();
 fechaInicial.setDate(fechaInicial.getDate() - 1);  // Restar un día
 const fechaInicialString = fechaInicial.toISOString().split('T')[0];  // Formato YYYY-MM-DD
-
 // Establecer la fecha inicial en el campo oculto
 fechaActualInput.value = fechaInicialString;
 
@@ -15,7 +14,7 @@ fechaActualInput.value = fechaInicialString;
 // cargarProcedimientos(fechaInicialString);
 
 async function cargarProcedimientos(fecha) {
-    const url = `/grumae/?fecha=${fecha}`; // URL con la fecha como parámetro
+    const url = `/grumae?fecha=${fecha}`; // URL con la fecha como parámetro
   
     try {
       const data = await fetchWithLoader(url, {

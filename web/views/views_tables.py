@@ -136,15 +136,19 @@ def View_grumae(request):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
+    conteo_total = Procedimientos.objects.filter(id_division=4)
+    conteo_total = conteo_total.count()
+
     # Obtener la fecha enviada desde el frontend
     fecha_carga = request.GET.get('fecha', None)
     if fecha_carga:
         fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
         fecha_fin = fecha_inicio + timedelta(days=1)
     else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día anterior
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
+        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         fecha_fin = fecha_inicio + timedelta(days=1)
+
 
     # Filtrar procedimientos según la fecha
     datos_combined = Procedimientos.objects.filter(
@@ -156,15 +160,16 @@ def View_grumae(request):
     # Conteo total
     total = datos_combined.count()
 
+    # Manejo de eliminación por solicitud POST
     if request.method == 'POST':
-        data = json.loads(request.body)
-        id = data.get('id')
-        procedimiento = get_object_or_404(Procedimientos, id=id)
         try:
+            data = json.loads(request.body)
+            id = data.get('id')
+            procedimiento = get_object_or_404(Procedimientos, id=id)
             procedimiento.delete()
             return JsonResponse({'success': True})
         except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
         # Serializa los datos en un formato compatible con JSON
@@ -192,26 +197,17 @@ def View_grumae(request):
 
         # Responder con los datos en formato JSON y la fecha para la siguiente carga
         return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
-
-    # Obtener la fecha de hoy
-    hoy = datetime.now().date()
-
-    # Filtrar procedimientos con la fecha de hoy
-    fechas = datos_combined.values_list("fecha", flat=True)
-    procedimientos_hoy = [fecha for fecha in fechas if fecha == hoy]
-
-    hoy_count = len(procedimientos_hoy)
-
-    datos = list(datos_combined)[::-1]
-
+    
+    # Renderizar la página normal
     return render(request, "Divisiones/grumae.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "datos": datos,
+        "datos": datos_combined,
         "total": total,
-        "hoy": hoy_count
+        "contador_total": conteo_total,
+        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
     })
 
 
