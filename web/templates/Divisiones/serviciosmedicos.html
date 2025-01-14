@@ -1,27 +1,27 @@
 {% if user.user == "SeRvEr" %}
-    {% include "layouts/panel_admin.html" %}
+{% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
-    {% include "layouts/panel_sala_situacional.html" %}
+{% include "layouts/panel_sala_situacional.html" %}
 {% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
-    {% include "layouts/panel_comandancia.html" %}
+{% include "layouts/panel_comandancia.html" %}
 {% elif user.user == "Operaciones01" %}
-    {% include "layouts/panel_operaciones.html" %}
+{% include "layouts/panel_operaciones.html" %}
 {% elif user.user == "Grumae02" %}
-    {% include "layouts/panel_grumae.html" %}
+{% include "layouts/panel_grumae.html" %}
 {% elif user.user == "Rescate03" %}
-    {% include "layouts/panel_rescate.html" %}
+{% include "layouts/panel_rescate.html" %}
 {% elif user.user == "Prehospitalaria04" %}
-    {% include "layouts/panel_prehospitalaria.html" %}
+{% include "layouts/panel_prehospitalaria.html" %}
 {% elif user.user == "Prevencion05" %}
-    {% include "layouts/panel_prevencion.html" %}
+{% include "layouts/panel_prevencion.html" %}
 {% elif user.user == "Serviciosmedicos06" %}
-    {% include "layouts/panel_serviciosmedicos.html" %}
+{% include "layouts/panel_serviciosmedicos.html" %}
 {% elif user.user == "Capacitacion07" %}
-    {% include "layouts/panel_capacitacion.html" %}
+{% include "layouts/panel_capacitacion.html" %}
 {% elif user.user == "Enfermeria08" %}
-    {% include "layouts/panel_enfermeria.html" %}
+{% include "layouts/panel_enfermeria.html" %}
 {% elif user.user == "Psicologia09" %}
-    {% include "layouts/panel_psicologia.html" %}
+{% include "layouts/panel_psicologia.html" %}
 {% endif %}
 {% block content %}
 <div class="general-dashboard">
@@ -29,32 +29,16 @@
     <h3 class="division-title">Servicios Medicos</h3>
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / {{ user.user }}</p>
-      <svg
-        width="30px"
-        height="30px"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-        <g
-          id="SVGRepo_tracerCarrier"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        ></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
         <g id="SVGRepo_iconCarrier">
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+          <path fill-rule="evenodd" clip-rule="evenodd"
             d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
-            fill="#000000"
-          ></path>
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fill="#000000"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd"
             d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
-            fill="#000000"
-          ></path>
+            fill="#000000"></path>
         </g>
       </svg>
     </section>
@@ -62,28 +46,18 @@
   <!-- section filter -->
   <div class="section-filter">
     <section class="totals-procediments">
-      <b>Procedimientos Totales: </b><span>{{ total }}</span>
+      <b>Procedimientos Totales: </b><span>{{ contador_total }}</span>
     </section>
     <section class="totals-procediments">
-      <b>Registros de Hoy: </b><span>{{ hoy }}</span>
+      <b>Registros de Hoy: </b><span>{{ total }}</span>
     </section>
     <section class="filter-search">
       <span class="input-group-text" id="basic-addon1"><b> Parroquia: </b> </span>
-      <input
-        type="search"
-        name="Buscar"
-        id="search-input-two"
-        placeholder="Ubicacion"
-      />
+      <input type="search" name="Buscar" id="search-input-two" placeholder="Ubicacion" />
     </section>
     <section class="filter-search">
       <span class="input-group-text" id="basic-addon1"><b> Procedimientos: </b> </span>
-      <input
-        type="search"
-        name="Buscar"
-        id="search-input-three"
-        placeholder="Tipo"
-      />
+      <input type="search" name="Buscar" id="search-input-three" placeholder="Tipo" />
     </section>
     <section class="filter-search">
       <!-- Input para seleccionar el trimestre -->
@@ -115,147 +89,115 @@
         </tr>
       </thead>
       <tbody class="table-group-divider">
-        <!-- prettier-ignore -->
-        {% for row in datos %}
-        <tr>
+        <div class="procedimientos-container">
           <!-- prettier-ignore -->
-          <th scope="row">{{ forloop.counter }}</th>
-          <!-- prettier-ignore -->
-          <td>{{ row.tipo_servicio }}</td>
-          {% if row.solicitante_externo == "" %}
-          <!-- prettier-ignore -->
-          <td>{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{ row.id_solicitante.apellidos.split|first }}</td>
-          {% else %}
-          <!-- prettier-ignore -->
-          <td>{{ row.solicitante_externo }}</td>
-          {% endif %} {% if row.id_parroquia.parroquia != "Sin Registro" %}
-          <td>{{ row.id_parroquia.parroquia }}</td>
-          {% else %}
-          <td>Otros Municipios</td>
-          {% endif %}
-          <!-- prettier-ignore -->
-          <td>{{ row.id_municipio.municipio }}</td>
-          <td class="fixed-width">{{ row.direccion }}</td>
-          <td>{{ row.fecha|date:"d-m-Y" }}</td>
-          <td>{{ row.hora }}</td>
-          <td>{{ row.id_tipo_procedimiento.tipo_procedimiento }}</td>
-          <td class="icons-accion">
-            <!-- NO TOCAR BOTON ELIMINAR-->
-            <button
-              type="button"
-              class="button_delete"
-              data-id="{{ row.id }}"
-              data-id_mostrar="{{ forloop.counter }}"
-              data-solicitante="{{ row.solicitante_externo }}"
-              data-fecha="{{ row.fecha|date:'d-m-Y'}}"
-              data-tipoProcedimiento="{{ row.id_tipo_procedimiento.tipo_procedimiento }}"
-              data-bs-toggle="modal"
-              data-bs-target="#staticBackdrop"
-            >
-              <svg
-                width="35px"
-                height="35px"
-                viewBox="0 0 1024 1024"
-                class="icon"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="#000000"
-                style="pointer-events: none;"
-              >
-                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                <g
-                  id="SVGRepo_tracerCarrier"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></g>
-                <g id="SVGRepo_iconCarrier">
-                  <path
-                    d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z"
-                    fill="#3688FF"
-                  ></path>
-                  <path
-                    d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z"
-                    fill="#5F6379"
-                  ></path>
-                </g>
-              </svg>
-            </button>
+          {% for row in datos %}
+          <tr>
+            <!-- prettier-ignore -->
+            <th scope="row">{{ forloop.counter }}</th>
+            <!-- prettier-ignore -->
+            <td>{{ row.tipo_servicio }}</td>
+            {% if row.solicitante_externo == "" %}
+            <!-- prettier-ignore -->
+            <td>{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{ row.id_solicitante.apellidos.split|first }}</td>
+            {% else %}
+            <!-- prettier-ignore -->
+            <td>{{ row.solicitante_externo }}</td>
+            {% endif %} {% if row.id_parroquia.parroquia != "Sin Registro" %}
+            <td>{{ row.id_parroquia.parroquia }}</td>
+            {% else %}
+            <td>Otros Municipios</td>
+            {% endif %}
+            <!-- prettier-ignore -->
+            <td>{{ row.id_municipio.municipio }}</td>
+            <td class="fixed-width">{{ row.direccion }}</td>
+            <td>{{ row.fecha|date:"d-m-Y" }}</td>
+            <td>{{ row.hora }}</td>
+            <td>{{ row.id_tipo_procedimiento.tipo_procedimiento }}</td>
+            <td class="icons-accion">
+              <!-- NO TOCAR BOTON ELIMINAR-->
+              <button type="button" class="button_delete" data-id="{{ row.id }}" data-id_mostrar="{{ forloop.counter }}"
+                data-solicitante="{{ row.solicitante_externo }}" data-fecha="{{ row.fecha|date:'d-m-Y'}}"
+                data-tipoProcedimiento="{{ row.id_tipo_procedimiento.tipo_procedimiento }}" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop">
+                <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1"
+                  xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z"
+                      fill="#3688FF"></path>
+                    <path
+                      d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z"
+                      fill="#5F6379"></path>
+                  </g>
+                </svg>
+              </button>
 
-            <!-- NO TOCAR Boton informacion-->
-            <button
-              type="button"
-              class="button-info"
-              data-id="{{ row.id }}"
-              data-id_procedimiento="{{ row.id_tipo_procedimiento }}"
-              id="view-info"
-              data-bs-toggle="modal"
-              data-bs-target="#modal-info"
-            >
-              <svg
-                width="35px"
-                height="35px"
-                viewBox="0 0 1024 1024"
-                class="icon"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="#000000"
-                style="pointer-events: none;"
-              >
-                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                <g
-                  id="SVGRepo_tracerCarrier"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></g>
-                <g id="SVGRepo_iconCarrier">
-                  <path
-                    d="M892.1 938.7H131.9c-17.8 0-35.1-3.5-51.4-10.4-15.6-6.6-29.7-16.1-41.9-28.2C26.5 888 17 873.9 10.3 858.2 3.5 841.8 0 824.5 0 806.8V217.2c0-17.8 3.5-35 10.4-51.3 6.6-15.7 16.1-29.8 28.2-41.9 12.2-12.2 26.3-21.7 42-28.3 16.2-6.9 33.5-10.4 51.3-10.4h83.4c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7h-83.4c-6.3 0-12.4 1.2-18.1 3.6-5.6 2.4-10.6 5.7-14.9 10-4.3 4.3-7.6 9.2-10 14.8-2.4 5.7-3.6 11.8-3.6 18.1v589.6c0 6.3 1.2 12.4 3.7 18.1 2.3 5.5 5.7 10.5 10 14.8 4.3 4.2 9.2 7.6 14.8 9.9 5.8 2.4 11.9 3.7 18.1 3.7h760.2c6.3 0 12.4-1.2 18.1-3.6 5.6-2.4 10.6-5.7 14.9-10 4.3-4.3 7.6-9.2 10-14.8 2.4-5.7 3.6-11.8 3.6-18.1V217.2c0-6.3-1.2-12.4-3.7-18.1-2.3-5.5-5.7-10.5-10-14.8-4.3-4.2-9.2-7.6-14.8-9.9-5.8-2.4-11.9-3.7-18.1-3.7h-83.4c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h83.4c17.8 0 35.1 3.5 51.4 10.4 15.6 6.6 29.7 16.1 41.9 28.2 12.1 12.1 21.6 26.2 28.3 41.9 6.9 16.3 10.4 33.6 10.4 51.4v589.6c0 17.8-3.5 35-10.4 51.3-6.6 15.7-16.1 29.8-28.2 41.9-12.2 12.2-26.3 21.7-42 28.3-16.3 6.9-33.6 10.4-51.4 10.4z"
-                    fill="#3688FF"
-                  ></path>
-                  <path
-                    d="M229.8 714.8c-6.1 0-12.3-1.3-18.1-4.1-21.3-10-30.5-35.5-20.4-56.8L467.5 67.1c10-21.3 35.5-30.5 56.8-20.4 21.3 10 30.5 35.5 20.4 56.8L268.5 690.3c-7.3 15.4-22.7 24.5-38.7 24.5zM810.7 448H640c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h170.7c23.6 0 42.7 19.1 42.7 42.7S834.2 448 810.7 448zM810.7 704h-384c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h384c23.6 0 42.7 19.1 42.7 42.7S834.2 704 810.7 704z"
-                    fill="#5F6379"
-                  ></path>
-                </g>
-              </svg>
-            </button>
-          </td>
-        </tr>
-        <!-- prettier-ignore -->
-        {% endfor %}
+              <!-- NO TOCAR Boton informacion-->
+              <button type="button" class="button-info" data-id="{{ row.id }}"
+                data-id_procedimiento="{{ row.id_tipo_procedimiento }}" id="view-info" data-bs-toggle="modal"
+                data-bs-target="#modal-info">
+                <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1"
+                  xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M892.1 938.7H131.9c-17.8 0-35.1-3.5-51.4-10.4-15.6-6.6-29.7-16.1-41.9-28.2C26.5 888 17 873.9 10.3 858.2 3.5 841.8 0 824.5 0 806.8V217.2c0-17.8 3.5-35 10.4-51.3 6.6-15.7 16.1-29.8 28.2-41.9 12.2-12.2 26.3-21.7 42-28.3 16.2-6.9 33.5-10.4 51.3-10.4h83.4c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7h-83.4c-6.3 0-12.4 1.2-18.1 3.6-5.6 2.4-10.6 5.7-14.9 10-4.3 4.3-7.6 9.2-10 14.8-2.4 5.7-3.6 11.8-3.6 18.1v589.6c0 6.3 1.2 12.4 3.7 18.1 2.3 5.5 5.7 10.5 10 14.8 4.3 4.2 9.2 7.6 14.8 9.9 5.8 2.4 11.9 3.7 18.1 3.7h760.2c6.3 0 12.4-1.2 18.1-3.6 5.6-2.4 10.6-5.7 14.9-10 4.3-4.3 7.6-9.2 10-14.8 2.4-5.7 3.6-11.8 3.6-18.1V217.2c0-6.3-1.2-12.4-3.7-18.1-2.3-5.5-5.7-10.5-10-14.8-4.3-4.2-9.2-7.6-14.8-9.9-5.8-2.4-11.9-3.7-18.1-3.7h-83.4c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h83.4c17.8 0 35.1 3.5 51.4 10.4 15.6 6.6 29.7 16.1 41.9 28.2 12.1 12.1 21.6 26.2 28.3 41.9 6.9 16.3 10.4 33.6 10.4 51.4v589.6c0 17.8-3.5 35-10.4 51.3-6.6 15.7-16.1 29.8-28.2 41.9-12.2 12.2-26.3 21.7-42 28.3-16.3 6.9-33.6 10.4-51.4 10.4z"
+                      fill="#3688FF"></path>
+                    <path
+                      d="M229.8 714.8c-6.1 0-12.3-1.3-18.1-4.1-21.3-10-30.5-35.5-20.4-56.8L467.5 67.1c10-21.3 35.5-30.5 56.8-20.4 21.3 10 30.5 35.5 20.4 56.8L268.5 690.3c-7.3 15.4-22.7 24.5-38.7 24.5zM810.7 448H640c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h170.7c23.6 0 42.7 19.1 42.7 42.7S834.2 448 810.7 448zM810.7 704h-384c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h384c23.6 0 42.7 19.1 42.7 42.7S834.2 704 810.7 704z"
+                      fill="#5F6379"></path>
+                  </g>
+                </svg>
+              </button>
+
+              <!-- Boton de Editar -->
+              <button class=" btn-editar" data-id="{{ row.id }}" data-bs-toggle="modal" data-bs-target="#editarModal">
+                <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1"
+                  xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M823.3 938.8H229.4c-71.6 0-129.8-58.2-129.8-129.8V215.1c0-71.6 58.2-129.8 129.8-129.8h297c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7h-297c-24.5 0-44.4 19.9-44.4 44.4V809c0 24.5 19.9 44.4 44.4 44.4h593.9c24.5 0 44.4-19.9 44.4-44.4V512c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v297c0 71.6-58.2 129.8-129.8 129.8z"
+                      fill="#3688FF"></path>
+                    <path
+                      d="M483 756.5c-1.8 0-3.5-0.1-5.3-0.3l-134.5-16.8c-19.4-2.4-34.6-17.7-37-37l-16.8-134.5c-1.6-13.1 2.9-26.2 12.2-35.5l374.6-374.6c51.1-51.1 134.2-51.1 185.3 0l26.3 26.3c24.8 24.7 38.4 57.6 38.4 92.7 0 35-13.6 67.9-38.4 92.7L513.2 744c-8.1 8.1-19 12.5-30.2 12.5z m-96.3-97.7l80.8 10.1 359.8-359.8c8.6-8.6 13.4-20.1 13.4-32.3 0-12.2-4.8-23.7-13.4-32.3L801 218.2c-17.9-17.8-46.8-17.8-64.6 0L376.6 578l10.1 80.8z"
+                      fill="#5F6379"></path>
+                  </g>
+                </svg>
+              </button>
+            </td>
+          </tr>
+          <!-- prettier-ignore -->
+          {% endfor %}
+        </div>
       </tbody>
+      <input type="hidden" id="fecha_actual" value="{{ fecha_actual }}">
     </table>
   </div>
   <div class="contain-dates">
     <section class="buttons-items">
-      <button id="" class="btn btn-danger">Cargar Procedimientos</button>
-      <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_serviciosmedicos' %}" >Descargar Excel</a></button>
-    </section>  
+      <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
+      <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_serviciosmedicos' %}">Descargar
+          Excel</a></button>
+    </section>
   </div>
   <!-- div general-dashboard fin -->
 </div>
 <!----------------------- Modal delete ---------------------------------->
-<div
-  class="modal fade"
-  id="staticBackdrop"
-  data-bs-backdrop="static"
-  data-bs-keyboard="false"
-  tabindex="-1"
-  aria-labelledby="staticBackdropLabel"
-  aria-hidden="true"
->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header config-modal-delete">
         <h2 class="modal-title fs-5" id="staticBackdropLabel">
           Eliminar Procedimiento
         </h2>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body modal-body-two">
         <div id="infoProcedimiento" class="infoProcedimientos style-delete"></div>
@@ -277,10 +219,7 @@
     <div class="modal-content modal-content-two">
       <div class="modal-header header-dashboard-two">
         <section class="title-icon">
-          <img
-            src="../static/assets/logo bomberos 2.svg"
-            alt="Logo de bomberos"
-          />
+          <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
           <h2>Cuerpo de Bomberos</h2>
         </section>
       </div>
@@ -304,5 +243,8 @@
 <script src="../../static/js/filter-servicios_medicos.js"></script>
 <script src="../../static/js/serviciosmedicos.js"></script>
 <script src="../../static/js/info_modal.js"></script>
+<script src="../static/js/editar_proc.js"></script>
+<script src="../../static/js/cargar_mas_serviciosmedicos.js"></script>
+
 
 {% endblock %}
