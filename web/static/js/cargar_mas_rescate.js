@@ -14,7 +14,7 @@ fechaActualInput.value = fechaInicialString;
 // cargarProcedimientos(fechaInicialString);
 
 async function cargarProcedimientos(fecha) {
-    const url = `/grumae?fecha=${fecha}`; // URL con la fecha como parámetro
+    const url = `/rescate?fecha=${fecha}`; // URL con la fecha como parámetro
   
     try {
       const data = await fetchWithLoader(url, {
@@ -47,6 +47,7 @@ async function cargarProcedimientos(fecha) {
             } else {
                 solicitante = `${proc.id_solicitante__jerarquia} ${primerNombre_solicitante} ${primerApellido_solicitante}`
             }
+            
             // Para cada procedimiento, mapear los campos que quieres mostrar
             const fields = [
                 // { content: `<th scope="row">${rowCount++}</th>` },

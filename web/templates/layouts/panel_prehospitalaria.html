@@ -274,6 +274,15 @@
       });
     });
   </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var button = document.getElementById("cargar_mas_btn");
+        if (button) {
+          button.remove();
+        }
+      });
+  
+    </script>
 
   {% block content %} {% endblock %}
 </body>

@@ -63,10 +63,10 @@
   <!-- section filter -->
   <div class="section-filter">
     <section class="totals-procediments">
-      <b>Procedimientos Totales: </b><span>{{ total }}</span>
+      <b>Procedimientos Totales: </b><span>{{ contador_total }}</span>
     </section>
     <section class="totals-procediments">
-      <b>Registros de Hoy: </b><span>{{ hoy }}</span>
+      <b>Registros de Hoy: </b><span>{{ total }}</span>
     </section>
     <section class="filter-search">
       <span class="input-group-text" id="basic-addon1"><b> Parroquia: </b> </span>
@@ -120,6 +120,8 @@
         </tr>
       </thead>
       <tbody class="table-group-divider">
+        <div class="procedimientos-container">
+
         <!-- prettier-ignore -->
         {% for row in datos %}
         <tr>
@@ -242,12 +244,14 @@
         </tr>
         <!-- prettier-ignore -->
         {% endfor %}
+      </div>
       </tbody>
+      <input type="hidden" id="fecha_actual" value="{{ fecha_actual }}">
     </table>
   </div>
   <div class="contain-dates">
     <section class="buttons-items">
-      <button id="" class="btn btn-danger">Cargar Procedimientos</button>
+      <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
       <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_prehospitalaria' %}" >Descargar Excel</a></button>
     </section>  
   </div>
@@ -324,5 +328,6 @@
 <script src="../../static/js/info_modal.js"></script>
 <script src="../../static/js/filters.js"></script>
 <script src="../static/js/editar_proc.js"></script>
+<script src="../../static/js/cargar_mas_prehospitalaria.js"></script>
 
 {% endblock %}
