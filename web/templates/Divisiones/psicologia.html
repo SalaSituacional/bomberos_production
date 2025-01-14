@@ -97,8 +97,7 @@
             <th scope="row">{{ forloop.counter }}</th>
             {% if row.solicitante_externo == "" %}
             <!-- prettier-ignore -->
-            <td>{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{
-              row.id_solicitante.apellidos.split|first }}</td>
+            <td>{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{row.id_solicitante.apellidos.split|first }}</td>
             {% else %}
             <!-- prettier-ignore -->
             <td>{{ row.solicitante_externo }}</td>

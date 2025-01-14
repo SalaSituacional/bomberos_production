@@ -14,7 +14,7 @@ fechaActualInput.value = fechaInicialString;
 // cargarProcedimientos(fechaInicialString);
 
 async function cargarProcedimientos(fecha) {
-    const url = `/grumae?fecha=${fecha}`; // URL con la fecha como parámetro
+    const url = `/psicologia?fecha=${fecha}`; // URL con la fecha como parámetro
   
     try {
       const data = await fetchWithLoader(url, {
@@ -32,28 +32,11 @@ async function cargarProcedimientos(fecha) {
 
         
 
-        procedimientos.forEach(proc => {
-            // Obtener la primera palabra de cada variable
-            let primerNombre_solicitante= proc.id_solicitante__nombres.split(" ")[0]; // Tomará la primera palabra antes del primer espacio
-            let primerApellido_solicitante = proc.id_solicitante__apellidos.split(" ")[0]; // Lo mismo para apellidos
-            
-            // Obtener la primera palabra de cada variable
-            let primerNombre_jefec= proc.id_jefe_comision__nombres.split(" ")[0]; // Tomará la primera palabra antes del primer espacio
-            let primerApellido_jefec = proc.id_jefe_comision__apellidos.split(" ")[0]; // Lo mismo para apellidos
-
-            let solicitante = ""
-            if (proc.id_solicitante__apellidos === "Externo") {
-                solicitante = proc.solicitante_externo
-            } else {
-                solicitante = `${proc.id_solicitante__jerarquia} ${primerNombre_solicitante} ${primerApellido_solicitante}`
-            }
+        procedimientos.forEach(proc => {            
             // Para cada procedimiento, mapear los campos que quieres mostrar
             const fields = [
                 // { content: `<th scope="row">${rowCount++}</th>` },
-                { content: solicitante },
-                { content: proc.id_jefe_comision__jerarquia + " " + primerNombre_jefec + " " + primerApellido_jefec },  // Jefe de comisión
-                { content: proc.unidad__nombre_unidad },  // Unidad
-                { content: proc.efectivos_enviados },  // Efectivos enviados
+                { content: proc.solicitante_externo},
                 { content: proc.id_parroquia__parroquia !== "Sin Registro" ? proc.id_parroquia__parroquia : "Otros Municipios" },  // Parroquia
                 { content: proc.id_municipio__municipio },  // Municipio
                 { content: proc.direccion, className: 'fixed-width' },  // Dirección

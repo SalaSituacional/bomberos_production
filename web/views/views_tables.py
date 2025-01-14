@@ -575,8 +575,7 @@ def View_serviciosmedicos(request):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
-    conteo_total = Procedimientos.objects.filter(id_division=7)
-    conteo_total = conteo_total.count()
+    conteo_total = Procedimientos.objects.filter(id_division=7).count()
 
     # Obtener la fecha enviada desde el frontend
     fecha_carga = request.GET.get('fecha', None)

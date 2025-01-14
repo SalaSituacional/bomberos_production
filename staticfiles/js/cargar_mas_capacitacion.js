@@ -14,7 +14,7 @@ fechaActualInput.value = fechaInicialString;
 // cargarProcedimientos(fechaInicialString);
 
 async function cargarProcedimientos(fecha) {
-    const url = `/grumae?fecha=${fecha}`; // URL con la fecha como parámetro
+    const url = `/capacitacion?fecha=${fecha}`; // URL con la fecha como parámetro
   
     try {
       const data = await fetchWithLoader(url, {
@@ -47,19 +47,18 @@ async function cargarProcedimientos(fecha) {
             } else {
                 solicitante = `${proc.id_solicitante__jerarquia} ${primerNombre_solicitante} ${primerApellido_solicitante}`
             }
+            
             // Para cada procedimiento, mapear los campos que quieres mostrar
             const fields = [
                 // { content: `<th scope="row">${rowCount++}</th>` },
                 { content: solicitante },
                 { content: proc.id_jefe_comision__jerarquia + " " + primerNombre_jefec + " " + primerApellido_jefec },  // Jefe de comisión
-                { content: proc.unidad__nombre_unidad },  // Unidad
-                { content: proc.efectivos_enviados },  // Efectivos enviados
                 { content: proc.id_parroquia__parroquia !== "Sin Registro" ? proc.id_parroquia__parroquia : "Otros Municipios" },  // Parroquia
                 { content: proc.id_municipio__municipio },  // Municipio
                 { content: proc.direccion, className: 'fixed-width' },  // Dirección
                 { content: formatDate(proc.fecha) },  // Fecha (formateada)
                 { content: formatTime(proc.hora) },  // Hora (formateada)
-                { content: proc.id_tipo_procedimiento__tipo_procedimiento },  // Tipo de procedimiento
+                { content: proc.dependencia},
                 { content: `<td>
               <!-- NO TOCAR BOTON ELIMINAR-->
               <button
