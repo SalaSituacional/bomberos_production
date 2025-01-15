@@ -913,48 +913,103 @@ def generar_excel_psicologia(request):
     workbook.save(response)
     return response
 
-# operaciones 
-def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
-    """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
-    personas = []
-    detalles = []
-    
-    for item in set_relacionado:
-        # Verificar si el objeto tiene los atributos 'nombres', 'apellidos' y 'cedula'
-        if hasattr(item, 'nombres') and hasattr(item, 'apellidos') and hasattr(item, 'cedula'):
-            # Persona con 'nombres', 'apellidos' y 'cedula'
-            personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
-        elif hasattr(item, 'nombre') and hasattr(item, 'apellido') and hasattr(item, 'cedula_propietario'):
-            # Persona con 'nombre', 'apellido' y 'cedula_propietario' (para objetos como 'Retencion_Preventiva')
-            personas.append(f"{item.nombre} {item.apellido} {item.cedula_propietario}")
-        else:
-            # Si no tiene esos atributos, agregar algo por defecto o vacío
-            personas.append("Persona desconocida")
-
-        # Detalle
-        detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
-
-    return personas, detalles
-
-def generar_excel_operaciones(request):
-    # Crear un libro de trabajo y una hoja
-    workbook = openpyxl.Workbook()
-    hoja = workbook.active
-    hoja.title = "Operaciones"
-
-    # Agregar encabezados a la primera fila
-    encabezados = [
-        "División", "Solicitante", "Jefe Comisión", "Municipio", 
-        "Parroquia", "Fecha", "Hora", "Dirección", 
-        "Tipo de Procedimiento", "Detalles", "Persona Presente", "Descripcion"
-    ]
-    hoja.append(encabezados)
-
-    division = 2
-    # Obtener datos de los procedimientos
+def generar_excel_prevencion(request):
+    division = 3
     procedimientos = Procedimientos.objects.filter(id_division=division)
 
-    # Agregar datos a la hoja
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        for item in set_relacionado:
+            # Persona
+            if hasattr(item, 'nombre') and hasattr(item, 'apellidos') and hasattr(item, 'cedula'):
+                personas.append(f"{item.nombre} {item.apellidos} {item.cedula}")
+            elif hasattr(item, 'persona_sitio_nombre') and hasattr(item, 'persona_sitio_apellido') and hasattr(item, 'persona_sitio_cedula'):
+                personas.append(f"{item.persona_sitio_nombre} {item.persona_sitio_apellido} {item.persona_sitio_cedula}")
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+        return personas, detalles
+
+    datos = []
+    for procedimiento in procedimientos:
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
+                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
+                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+
+        personas_presentes, detalles_procedimientos = [], []
+
+        relaciones = [
+            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
+            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
+            # (añade las demás relaciones aquí, como en el código original)
+        ]
+
+        for relacion, campo_descripcion in relaciones:
+            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
+            personas_presentes.extend(personas_relacionadas)
+            detalles_procedimientos.extend(detalles_relacionados)
+
+        datos.append({
+            "division": procedimiento.id_division.division,
+            "solicitante": solicitante,
+            "jefe_comision": jefe_comision,
+            "municipio": procedimiento.id_municipio.municipio,
+            "parroquia": procedimiento.id_parroquia.parroquia,
+            "fecha": procedimiento.fecha,
+            "hora": procedimiento.hora,
+            "direccion": procedimiento.direccion,
+            "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            "detalles": " -- ".join(detalles_procedimientos),
+            "personas_presentes": " -- ".join(personas_presentes),
+            "descripcion": " -- ".join(detalles_procedimientos),
+        })
+
+    return JsonResponse(datos, safe=False, encoder=DjangoJSONEncoder)
+
+def generar_excel_operaciones(request):
+    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
+        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
+        personas = []
+        detalles = []
+        
+        for item in set_relacionado:
+            # Verificar si el objeto tiene los atributos 'nombres', 'apellidos' y 'cedula'
+            if hasattr(item, 'nombres') and hasattr(item, 'apellidos') and hasattr(item, 'cedula'):
+                # Persona con 'nombres', 'apellidos' y 'cedula'
+                personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
+            elif hasattr(item, 'nombre') and hasattr(item, 'apellido') and hasattr(item, 'cedula_propietario'):
+                # Persona con 'nombre', 'apellido' y 'cedula_propietario' (para objetos como 'Retencion_Preventiva')
+                personas.append(f"{item.nombre} {item.apellido} {item.cedula_propietario}")
+            else:
+                # Si no tiene esos atributos, agregar algo por defecto o vacío
+                personas.append("Persona desconocida")
+
+            # Detalle
+            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
+
+        return personas, detalles
+
+    division = 2
+    # Obtener datos de los procedimientos con select_related y prefetch_related
+    procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
+        'id_solicitante', 'id_jefe_comision', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
+    ).prefetch_related(
+        'abastecimiento_agua_set', 'apoyo_unidades_set', 'guardia_prevencion_set', 'atendido_no_efectuado_set',
+        'despliegue_seguridad_set', 'fallecidos_set', 'falsa_alarma_set', 'servicios_especiales_set', 'rescate_set',
+        'incendios_set', 'atenciones_paramedicas_set', 'traslado_prehospitalaria_set', 'evaluacion_riesgo_set',
+        'mitigacion_riesgos_set', 'puesto_avanzada_set', 'asesoramiento_set', 'reinspeccion_prevencion_set',
+        'retencion_preventiva_set', 'artificios_pirotecnicos_set', 'inspeccion_establecimiento_art_set',
+        'valoracion_medica_set', 'detalles_enfermeria_set', 'procedimientos_psicologia_set',
+        'procedimientos_capacitacion_set', 'procedimientos_brigada_set', 'procedimientos_frente_preventivo_set',
+        'jornada_medica_set', 'inspeccion_prevencion_asesorias_tecnicas_set', 'inspeccion_habitabilidad_set',
+        'inspeccion_otros_set', 'inspeccion_arbol_set', 'investigacion_set'
+    )
+
+    datos = []
+
+    # Agregar datos a la lista
     for procedimiento in procedimientos:
         # Obtener solicitante y jefe de comisión
         solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
@@ -1011,71 +1066,7 @@ def generar_excel_operaciones(request):
         detalles_str = " -- ".join(detalles_procedimientos)
         descripcion_str = " -- ".join(detalles_procedimientos)
 
-        # Agregar la fila de datos
-        hoja.append([
-            procedimiento.id_division.division,
-            solicitante,
-            jefe_comision,
-            procedimiento.id_municipio.municipio,
-            procedimiento.id_parroquia.parroquia,
-            procedimiento.fecha,
-            procedimiento.hora,
-            procedimiento.direccion,
-            procedimiento.id_tipo_procedimiento.tipo_procedimiento,
-            detalles_str,
-            personas_presentes_str,
-            descripcion_str,
-        ])
-
-    # Ajustar el ancho de las columnas
-    for column in hoja.columns:
-        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
-        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
-
-    # Configurar la respuesta HTTP para descargar el archivo
-    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    response["Content-Disposition"] = "attachment; filename=Operaciones.xlsx"
-    workbook.save(response)
-    return response
-
-def generar_excel_prevencion(request):
-    division = 3
-    procedimientos = Procedimientos.objects.filter(id_division=division)
-
-    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
-        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
-        personas = []
-        detalles = []
-        for item in set_relacionado:
-            # Persona
-            if hasattr(item, 'nombre') and hasattr(item, 'apellidos') and hasattr(item, 'cedula'):
-                personas.append(f"{item.nombre} {item.apellidos} {item.cedula}")
-            elif hasattr(item, 'persona_sitio_nombre') and hasattr(item, 'persona_sitio_apellido') and hasattr(item, 'persona_sitio_cedula'):
-                personas.append(f"{item.persona_sitio_nombre} {item.persona_sitio_apellido} {item.persona_sitio_cedula}")
-            # Detalle
-            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
-        return personas, detalles
-
-    datos = []
-    for procedimiento in procedimientos:
-        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
-                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
-        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
-                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
-
-        personas_presentes, detalles_procedimientos = [], []
-
-        relaciones = [
-            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
-            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
-            # (añade las demás relaciones aquí, como en el código original)
-        ]
-
-        for relacion, campo_descripcion in relaciones:
-            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
-            personas_presentes.extend(personas_relacionadas)
-            detalles_procedimientos.extend(detalles_relacionados)
-
+        # Agregar los datos al diccionario
         datos.append({
             "division": procedimiento.id_division.division,
             "solicitante": solicitante,
@@ -1086,9 +1077,9 @@ def generar_excel_prevencion(request):
             "hora": procedimiento.hora,
             "direccion": procedimiento.direccion,
             "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento,
-            "detalles": " -- ".join(detalles_procedimientos),
-            "personas_presentes": " -- ".join(personas_presentes),
-            "descripcion": " -- ".join(detalles_procedimientos),
+            "detalles": detalles_str,
+            "personas_presentes": personas_presentes_str,
+            "descripcion": descripcion_str,
         })
 
-    return JsonResponse(datos, safe=False, encoder=DjangoJSONEncoder)
+    return JsonResponse(datos, safe=False)
