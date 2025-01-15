@@ -51,7 +51,7 @@ async function cargarProcedimientos(fecha) {
                 class="button_delete"
                 data-id="${proc.id}"
                 data-id_mostrar="${rowCount}"
-                data-solicitante="${proc.id_solicitante__jerarquia} ${proc.id_solicitante__nombres} ${proc.id_solicitante__apellidos}"
+                data-solicitante="${proc.solicitante_externo}"
                 data-jefeComision="${proc.id_jefe_comision__jerarquia + " " + proc.id_jefe_comision__nombres + " " + proc.id_jefe_comision__apellidos}"
                 data-fecha="${formatDate(proc.fecha)}"
                 data-tipoProcedimiento="${ proc.id_tipo_procedimiento__tipo_procedimiento}"
