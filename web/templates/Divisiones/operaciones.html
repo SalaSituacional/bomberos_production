@@ -190,8 +190,7 @@
   <div class="contain-dates">
     <section class="buttons-items">
       <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
-      <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_operaciones' %}">Descargar
-          Excel</a></button>
+      <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
     </section>
   </div>
   <!-- div general-dashboard fin -->
@@ -253,5 +252,6 @@
 <script src="../../static/js/filters.js"></script>
 <script src="../static/js/editar_proc.js"></script>
 <script src="../../static/js/cargar_mas_operaciones.js"></script>
+<script src="../../static/js/excel_operaciones.js"></script>
 
 {% endblock %}
