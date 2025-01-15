@@ -2,24 +2,34 @@
 const infoProcedimiento = document.getElementById("infoProcedimiento");
 const confirmarEliminar = document.getElementById("confirmarEliminar");
 
+
+document.addEventListener("DOMContentLoaded", function () {
 // Abrir modal y mostrar información
-document.querySelectorAll(".button_delete").forEach((button) => {
-  button.onclick = function () {
-    const id = this.getAttribute("data-id");
-    const id_mostrar = this.getAttribute("data-id_mostrar");
-    const solicitante = this.getAttribute("data-solicitante");
-    const jefe_comision = this.getAttribute("data-jefeComision");
-    const fecha = this.getAttribute("data-fecha");
-    const tipo_procedimiento = this.getAttribute("data-tipoProcedimiento");
+
+// Delegar eventos a los botones dentro del contenedor de procedimientos
+document.querySelector('tbody').addEventListener('click', function(event) {
+  // Acción de eliminar
+  if (event.target && event.target.matches('.button_delete')) { 
+    const id = event.target.getAttribute("data-id");
+    const id_mostrar = event.target.getAttribute("data-id_mostrar");
+    const solicitante = event.target.getAttribute("data-solicitante");
+    const jefe_comision = event.target.getAttribute("data-jefeComision");
+    const fecha = event.target.getAttribute("data-fecha");
+    const tipo_procedimiento = event.target.getAttribute("data-tipoProcedimiento");
+
+    // Mostrar la información del procedimiento en el modal
     infoProcedimiento.innerHTML = `
       <p><b>ID: </b>${id_mostrar} </p>
       <p><b>Solicitante:</b> ${solicitante}</p>
       <p><b>Jefe de Comision:</b> ${jefe_comision}</p>
       <p><b>Fecha:</b> ${fecha}</p>
       <p><b>Tipo De Procedimiento:</b> ${tipo_procedimiento}</p>`;
+
+    // Establecer el ID en el botón de confirmación
     confirmarEliminar.setAttribute("data-id", id);
-  };
+  }
 });
+
 
 // Confirmar eliminación
 confirmarEliminar.onclick = function () {
@@ -30,7 +40,7 @@ confirmarEliminar.onclick = function () {
 // Función para eliminar procedimiento
 async function eliminarProcedimiento(id) {
   try {
-    const response = await fetchWithLoader("/operaciones/", {
+    const response = await fetchWithLoader("/rescate/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,3 +77,4 @@ function getCookie(name) {
   }
   return cookieValue;
 }
+});
