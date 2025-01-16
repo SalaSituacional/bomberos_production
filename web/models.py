@@ -528,6 +528,14 @@ class Mitigacion_Riesgos(models.Model):
   def __str__(self):
     return self.id_procedimientos.id_tipo_procedimiento.tipo_procedimiento + " -- " + self.id_tipo_servicio.tipo_servicio + " -- " + self.descripcion + " -- " + self.material_utilizado + " -- " + self.status
   
+class Detalles_Vehiculo_Derrame(models.Model):
+    id_vehiculo = models.ForeignKey(Mitigacion_Riesgos, on_delete=models.CASCADE)
+    modelo = models.CharField()
+    marca = models.CharField()
+    color = models.CharField(max_length=40)
+    año = models.CharField(max_length=40)
+    placas = models.CharField(max_length=40)
+
 # Tabla Puesto de Avanzada
 class Puesto_Avanzada(models.Model):
   id_procedimientos = models.ForeignKey(Procedimientos, on_delete=models.CASCADE)

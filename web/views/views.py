@@ -248,6 +248,10 @@ def View_Procedimiento(request):
 
         evaluacion_riesgo_form = Forulario_Evaluacion_Riesgo(request.POST, prefix='evaluacion_riesgo_form')
         mitigacion_riesgo_form = Formulario_Mitigacion_Riesgos(request.POST, prefix='mitigacion_riesgo_form')
+        vehiculo_derrame_form = Detalles_Vehiculo_Derrame_Form(request.POST, prefix='vehiculo_derrame_form')
+        vehiculo_derrame_form2 = Detalles_Vehiculo_Derrame_Form2(request.POST, prefix='vehiculo_derrame_form2')
+        vehiculo_derrame_form3 = Detalles_Vehiculo_Derrame_Form3(request.POST, prefix='vehiculo_derrame_form3')
+
         puesto_avanzada_form = Formulario_Puesto_Avanzada(request.POST, prefix='puesto_avanzada_form')
         traslados_prehospitalaria_form = Formulario_Traslados_Prehospitalaria(request.POST, prefix='traslados_prehospitalaria_form')
         asesoramiento_form = Formulario_Asesoramiento(request.POST, prefix='asesoramiento_form')
@@ -322,6 +326,7 @@ def View_Procedimiento(request):
                 hora = form3.cleaned_data["hora"]
                 tipo_procedimiento = form4.cleaned_data["tipo_procedimiento"]
                 parroquia = form3.cleaned_data["parroquia"]
+                print(parroquia)
 
                 division_instance = Divisiones.objects.get(id=division)
                 jefe_comision_instance = Personal.objects.get(id=jefe_comision)
@@ -1143,6 +1148,60 @@ def View_Procedimiento(request):
                 )
                 nuevo_proc_mit.save()
 
+                agg_vehiculo = mitigacion_riesgo_form.cleaned_data["agregar_vehiculo"]
+                if (agg_vehiculo and vehiculo_derrame_form.is_valid()):
+                    modelo = vehiculo_derrame_form.cleaned_data["modelo"]
+                    marca = vehiculo_derrame_form.cleaned_data["marca"]
+                    color = vehiculo_derrame_form.cleaned_data["color"]
+                    año = vehiculo_derrame_form.cleaned_data["año"]
+                    placas = vehiculo_derrame_form.cleaned_data["placas"]
+
+                    nuevo_vehiculo = Detalles_Vehiculo_Derrame(
+                        id_vehiculo = nuevo_proc_mit,
+                        modelo = modelo,
+                        marca = marca,
+                        color = color,
+                        año = año,
+                        placas = placas,
+                    )
+                    nuevo_vehiculo.save()
+
+                    agg_vehiculo2 = vehiculo_derrame_form.cleaned_data["agregar_segundo_vehiculo"]
+                    if (agg_vehiculo2 and vehiculo_derrame_form2.is_valid()):
+                        modelo = vehiculo_derrame_form2.cleaned_data["modelo"]
+                        marca = vehiculo_derrame_form2.cleaned_data["marca"]
+                        color = vehiculo_derrame_form2.cleaned_data["color"]
+                        año = vehiculo_derrame_form2.cleaned_data["año"]
+                        placas = vehiculo_derrame_form2.cleaned_data["placas"]
+
+                        nuevo_vehiculo = Detalles_Vehiculo_Derrame(
+                            id_vehiculo = nuevo_proc_mit,
+                            modelo = modelo,
+                            marca = marca,
+                            color = color,
+                            año = año,
+                            placas = placas,
+                        )
+                        nuevo_vehiculo.save()
+                        agg_vehiculo3 = vehiculo_derrame_form2.cleaned_data["agregar_tercer_vehiculo"]
+
+                        if (agg_vehiculo3 and vehiculo_derrame_form3.is_valid()):
+                            modelo = vehiculo_derrame_form3.cleaned_data["modelo"]
+                            marca = vehiculo_derrame_form3.cleaned_data["marca"]
+                            color = vehiculo_derrame_form3.cleaned_data["color"]
+                            año = vehiculo_derrame_form3.cleaned_data["año"]
+                            placas = vehiculo_derrame_form3.cleaned_data["placas"]
+
+                            nuevo_vehiculo = Detalles_Vehiculo_Derrame(
+                                id_vehiculo = nuevo_proc_mit,
+                                modelo = modelo,
+                                marca = marca,
+                                color = color,
+                                año = año,
+                                placas = placas,
+                            )
+                            nuevo_vehiculo.save()
+
             if tipo_procedimiento == "14" and evaluacion_riesgo_form.is_valid():
                 tipo_riesgo = evaluacion_riesgo_form.cleaned_data["tipo_riesgo"]
                 tipo_estructura = evaluacion_riesgo_form.cleaned_data["tipo_etructura"]
@@ -1835,6 +1894,9 @@ def View_Procedimiento(request):
 
         evaluacion_riesgo_form = Forulario_Evaluacion_Riesgo(prefix='evaluacion_riesgo_form')
         mitigacion_riesgo_form = Formulario_Mitigacion_Riesgos(prefix='mitigacion_riesgo_form')
+        vehiculo_derrame_form = Detalles_Vehiculo_Derrame_Form(prefix='vehiculo_derrame_form')
+        vehiculo_derrame_form2 = Detalles_Vehiculo_Derrame_Form2(prefix='vehiculo_derrame_form2')
+        vehiculo_derrame_form3 = Detalles_Vehiculo_Derrame_Form3(prefix='vehiculo_derrame_form3')
 
         puesto_avanzada_form = Formulario_Puesto_Avanzada(prefix='puesto_avanzada_form')
         traslados_prehospitalaria_form = Formulario_Traslados_Prehospitalaria(prefix='traslados_prehospitalaria_form')
@@ -1920,6 +1982,9 @@ def View_Procedimiento(request):
         "traslados_accidentes3": traslados_accidentes3,
         "evaluacion_riesgo_form": evaluacion_riesgo_form,
         "mitigacion_riesgo_form": mitigacion_riesgo_form,
+        "vehiculo_derrame_form": vehiculo_derrame_form,
+        "vehiculo_derrame_form2": vehiculo_derrame_form2,
+        "vehiculo_derrame_form3": vehiculo_derrame_form3,
         "puesto_avanzada_form": puesto_avanzada_form,
         "traslados_prehospitalaria_form": traslados_prehospitalaria_form,
         "asesoramiento_form": asesoramiento_form,
@@ -2418,6 +2483,10 @@ def View_Procedimiento_Editar(request):
 
         evaluacion_riesgo_form = Forulario_Evaluacion_Riesgo(request.POST, prefix='evaluacion_riesgo_form')
         mitigacion_riesgo_form = Formulario_Mitigacion_Riesgos(request.POST, prefix='mitigacion_riesgo_form')
+        vehiculo_derrame_form = Detalles_Vehiculo_Derrame_Form(request.POST, prefix='vehiculo_derrame_form')
+        vehiculo_derrame_form2 = Detalles_Vehiculo_Derrame_Form2(request.POST, prefix='vehiculo_derrame_form2')
+        vehiculo_derrame_form3 = Detalles_Vehiculo_Derrame_Form3(request.POST, prefix='vehiculo_derrame_form3')
+
         puesto_avanzada_form = Formulario_Puesto_Avanzada(request.POST, prefix='puesto_avanzada_form')
         traslados_prehospitalaria_form = Formulario_Traslados_Prehospitalaria(request.POST, prefix='traslados_prehospitalaria_form')
         asesoramiento_form = Formulario_Asesoramiento(request.POST, prefix='asesoramiento_form')
@@ -2526,7 +2595,8 @@ def View_Procedimiento_Editar(request):
                     parroquia_instance = Parroquias.objects.get(id=parroquia)
                     procedimiento.id_parroquia = parroquia_instance
                 else:
-                    procedimiento.id_parroquia = None
+                    procedimiento_instance = Parroquias.objects.get(id=0)
+                    procedimiento.id_parroquia = procedimiento_instance
 
                 # Manejar el campo "unidad" si aplica
                 if division != "3":
@@ -2609,6 +2679,9 @@ def View_Procedimiento_Editar(request):
                 if parroquia:
                     parroquia_instance = Parroquias.objects.get(id=parroquia)
                     procedimiento.id_parroquia = parroquia_instance
+                else:
+                    procedimiento_instance = Parroquias.objects.get(id=0)
+                    procedimiento.id_parroquia = procedimiento_instance
 
                 procedimiento.save()
             
@@ -2634,6 +2707,9 @@ def View_Procedimiento_Editar(request):
                 if parroquia:
                     parroquia_instance = Parroquias.objects.get(id=parroquia)
                     procedimiento.id_parroquia = parroquia_instance
+                else:
+                    procedimiento_instance = Parroquias.objects.get(id=0)
+                    procedimiento.id_parroquia = procedimiento_instance
 
                 procedimiento.save()
 
@@ -2658,6 +2734,9 @@ def View_Procedimiento_Editar(request):
                 if parroquia:
                     parroquia_instance = Parroquias.objects.get(id=parroquia)
                     procedimiento.id_parroquia = parroquia_instance
+                else:
+                    procedimiento_instance = Parroquias.objects.get(id=0)
+                    procedimiento.id_parroquia = procedimiento_instance
 
                 procedimiento.save()
 
@@ -2697,6 +2776,9 @@ def View_Procedimiento_Editar(request):
                 if parroquia:
                     parroquia_instance = Parroquias.objects.get(id=parroquia)
                     procedimiento.id_parroquia = parroquia_instance
+                else:
+                    procedimiento_instance = Parroquias.objects.get(id=0)
+                    procedimiento.id_parroquia = procedimiento_instance
 
                 procedimiento.save()
 
@@ -2970,8 +3052,8 @@ def View_Procedimiento_Editar(request):
                         # Buscar o crear el lesionado
                         lesionado, created = Lesionados.objects.get_or_create(
                             id_accidente=detalles_accidente,
-                            cedula=cedula1,
                             defaults={
+                                "cedula": cedula1,
                                 "nombres": detalles_lesionados_accidentes.cleaned_data["nombre"],
                                 "apellidos": detalles_lesionados_accidentes.cleaned_data["apellido"],
                                 "edad": detalles_lesionados_accidentes.cleaned_data["edad"],
@@ -2983,6 +3065,7 @@ def View_Procedimiento_Editar(request):
                         if not created:
                             lesionado.nombres = detalles_lesionados_accidentes.cleaned_data["nombre"]
                             lesionado.apellidos = detalles_lesionados_accidentes.cleaned_data["apellido"]
+                            lesionado.cedula = f"{detalles_lesionados_accidentes.cleaned_data['nacionalidad']}-{detalles_lesionados_accidentes.cleaned_data['cedula']}"
                             lesionado.edad = detalles_lesionados_accidentes.cleaned_data["edad"]
                             lesionado.sexo = detalles_lesionados_accidentes.cleaned_data["sexo"]
                             lesionado.idx = detalles_lesionados_accidentes.cleaned_data["idx"]
@@ -3012,8 +3095,9 @@ def View_Procedimiento_Editar(request):
 
                             lesionado2, created = Lesionados.objects.get_or_create(
                                 id_accidente=detalles_accidente,
-                                cedula=cedula2,
+                                
                                 defaults={
+                                    "cedula":cedula2,
                                     "nombres": detalles_lesionados_accidentes2.cleaned_data["nombre"],
                                     "apellidos": detalles_lesionados_accidentes2.cleaned_data["apellido"],
                                     "edad": detalles_lesionados_accidentes2.cleaned_data["edad"],
@@ -3023,6 +3107,7 @@ def View_Procedimiento_Editar(request):
                                 }
                             )
                             if not created:
+                                lesionado2.cedula = f"{detalles_lesionados_accidentes2.cleaned_data['nacionalidad']}-{detalles_lesionados_accidentes2.cleaned_data['cedula']}"
                                 lesionado2.nombres = detalles_lesionados_accidentes2.cleaned_data["nombre"]
                                 lesionado2.apellidos = detalles_lesionados_accidentes2.cleaned_data["apellido"]
                                 lesionado2.edad = detalles_lesionados_accidentes2.cleaned_data["edad"]
@@ -3051,8 +3136,9 @@ def View_Procedimiento_Editar(request):
 
                             lesionado3, created = Lesionados.objects.get_or_create(
                                 id_accidente=detalles_accidente,
-                                cedula=cedula3,
+                               
                                 defaults={
+                                    "cedula":cedula3,
                                     "nombres": detalles_lesionados_accidentes3.cleaned_data["nombre"],
                                     "apellidos": detalles_lesionados_accidentes3.cleaned_data["apellido"],
                                     "edad": detalles_lesionados_accidentes3.cleaned_data["edad"],
@@ -3064,6 +3150,7 @@ def View_Procedimiento_Editar(request):
                             if not created:
                                 lesionado3.nombres = detalles_lesionados_accidentes3.cleaned_data["nombre"]
                                 lesionado3.apellidos = detalles_lesionados_accidentes3.cleaned_data["apellido"]
+                                lesionado3.cedula = f"{detalles_lesionados_accidentes3.cleaned_data['nacionalidad']}-{detalles_lesionados_accidentes3.cleaned_data['cedula']}"
                                 lesionado3.edad = detalles_lesionados_accidentes3.cleaned_data["edad"]
                                 lesionado3.sexo = detalles_lesionados_accidentes3.cleaned_data["sexo"]
                                 lesionado3.idx = detalles_lesionados_accidentes3.cleaned_data["idx"]
@@ -3261,6 +3348,73 @@ def View_Procedimiento_Editar(request):
                 detalles_procedimiento.status = mitigacion_riesgo_form.cleaned_data["status"]
 
                 detalles_procedimiento.save()
+
+                agg_vehiculo = mitigacion_riesgo_form.cleaned_data["agregar_vehiculo"]
+
+                # Editar vehículos existentes
+                if agg_vehiculo == True and vehiculo_derrame_form.is_valid():
+                    placas1 = vehiculo_derrame_form.cleaned_data["placas"]
+                    agg_vehiculo2 = vehiculo_derrame_form.cleaned_data["agregar_segundo_vehiculo"]
+
+                    # Buscar o crear el vehículo con la placa
+                    vehiculo, created = Detalles_Vehiculo_Derrame.objects.get_or_create(
+                        id_vehiculo=detalles_procedimiento,
+                        placas=placas1,
+                        defaults={
+                            "modelo": vehiculo_derrame_form.cleaned_data["modelo"],
+                            "marca": vehiculo_derrame_form.cleaned_data["marca"],
+                            "color": vehiculo_derrame_form.cleaned_data["color"],
+                            "año": vehiculo_derrame_form.cleaned_data["año"],
+                        }
+                    )
+                    if not created:  # Si ya existe, actualizar los datos
+                        vehiculo.modelo = vehiculo_derrame_form.cleaned_data["modelo"]
+                        vehiculo.marca = vehiculo_derrame_form.cleaned_data["marca"]
+                        vehiculo.color = vehiculo_derrame_form.cleaned_data["color"]
+                        vehiculo.año = vehiculo_derrame_form.cleaned_data["año"]
+                        vehiculo.save()
+
+                    # Verificar y manejar vehículos adicionales
+                    if vehiculo_derrame_form2.is_valid() and agg_vehiculo2:
+                        placas2 = vehiculo_derrame_form2.cleaned_data["placas"]
+                        agg_vehiculo3 = vehiculo_derrame_form2.cleaned_data["agregar_tercer_vehiculo"]
+
+                        vehiculo2, created = Detalles_Vehiculo_Derrame.objects.get_or_create(
+                            id_vehiculo=detalles_procedimiento,
+                            placas=placas2,
+                            defaults={
+                                "modelo": vehiculo_derrame_form2.cleaned_data["modelo"],
+                                "marca": vehiculo_derrame_form2.cleaned_data["marca"],
+                                "color": vehiculo_derrame_form2.cleaned_data["color"],
+                                "año": vehiculo_derrame_form2.cleaned_data["año"],
+                            }
+                        )
+                        if not created:
+                            vehiculo2.modelo = vehiculo_derrame_form2.cleaned_data["modelo"]
+                            vehiculo2.marca = vehiculo_derrame_form2.cleaned_data["marca"]
+                            vehiculo2.color = vehiculo_derrame_form2.cleaned_data["color"]
+                            vehiculo2.año = vehiculo_derrame_form2.cleaned_data["año"]
+                            vehiculo2.save()
+
+                        if vehiculo_derrame_form3.is_valid() and agg_vehiculo3:
+                            placas3 = vehiculo_derrame_form3.cleaned_data["placas"]
+
+                            vehiculo3, created = Detalles_Vehiculo_Derrame.objects.get_or_create(
+                                id_vehiculo=detalles_procedimiento,
+                                placas=placas3,
+                                defaults={
+                                    "modelo": vehiculo_derrame_form3.cleaned_data["modelo"],
+                                    "marca": vehiculo_derrame_form3.cleaned_data["marca"],
+                                    "color": vehiculo_derrame_form3.cleaned_data["color"],
+                                    "año": vehiculo_derrame_form3.cleaned_data["año"],
+                                }
+                            )
+                            if not created:
+                                vehiculo3.modelo = vehiculo_derrame_form3.cleaned_data["modelo"]
+                                vehiculo3.marca = vehiculo_derrame_form3.cleaned_data["marca"]
+                                vehiculo3.color = vehiculo_derrame_form3.cleaned_data["color"]
+                                vehiculo3.año = vehiculo_derrame_form3.cleaned_data["año"]
+                                vehiculo3.save()
 
             # Terminado
             if tipo_procedimiento == "14" and evaluacion_riesgo_form.is_valid():
@@ -4076,6 +4230,9 @@ def View_Procedimiento_Editar(request):
 
         evaluacion_riesgo_form = Forulario_Evaluacion_Riesgo(prefix='evaluacion_riesgo_form')
         mitigacion_riesgo_form = Formulario_Mitigacion_Riesgos(prefix='mitigacion_riesgo_form')
+        vehiculo_derrame_form = Detalles_Vehiculo_Derrame_Form(request.POST, prefix='vehiculo_derrame_form')
+        vehiculo_derrame_form2 = Detalles_Vehiculo_Derrame_Form2(request.POST, prefix='vehiculo_derrame_form2')
+        vehiculo_derrame_form3 = Detalles_Vehiculo_Derrame_Form3(request.POST, prefix='vehiculo_derrame_form3')
 
         puesto_avanzada_form = Formulario_Puesto_Avanzada(prefix='puesto_avanzada_form')
         traslados_prehospitalaria_form = Formulario_Traslados_Prehospitalaria(prefix='traslados_prehospitalaria_form')
@@ -4161,6 +4318,9 @@ def View_Procedimiento_Editar(request):
         "traslados_accidentes3": traslados_accidentes3,
         "evaluacion_riesgo_form": evaluacion_riesgo_form,
         "mitigacion_riesgo_form": mitigacion_riesgo_form,
+        "vehiculo_derrame_form": vehiculo_derrame_form,
+        "vehiculo_derrame_form2": vehiculo_derrame_form2,
+        "vehiculo_derrame_form3": vehiculo_derrame_form3,
         "puesto_avanzada_form": puesto_avanzada_form,
         "traslados_prehospitalaria_form": traslados_prehospitalaria_form,
         "asesoramiento_form": asesoramiento_form,

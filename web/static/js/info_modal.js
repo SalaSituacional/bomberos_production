@@ -426,6 +426,23 @@ document.addEventListener("DOMContentLoaded", function () {
                     <section class="detalles_procedimiento">
                     ${generateCommonDetails(data, "tipo_servicio")}
                     </section>`;
+              // Verificamos si hay vehículos
+              if (data.vehiculos && data.vehiculos.length > 0) {
+                data.vehiculos.forEach((vehiculo, index) => {
+                  // Creamos una sección para cada vehículo
+                  detalles += `
+                  <h4>Vehículo ${index + 1}</h4>
+                  <section class="detalles_procedimiento">
+                    <p><b>Marca:</b> ${vehiculo.marca}</p>
+                    <p><b>Modelo:</b> ${vehiculo.modelo}</p>
+                    <p><b>Color:</b> ${vehiculo.color}</p>
+                    <p><b>Año:</b> ${vehiculo.año}</p>
+                    <p><b>Placa:</b> ${vehiculo.placas}</p>
+                  </section>`;
+                });
+              } else {
+              }
+
               break;
             case "Puesto de Avanzada":
               detalles = `

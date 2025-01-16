@@ -60,6 +60,10 @@ if (storedData) {
     document.getElementById("id_datos_comision_dos-agregar").dispatchEvent(event)
     document.getElementById("id_artificios_pirotecnico-tipo_procedimiento").dispatchEvent(event)
     document.getElementById("id_incendio_art-tipo_incendio").dispatchEvent(event)
+    document.getElementById("id_mitigacion_riesgo_form-tipo_riesgo").dispatchEvent(event)
+    document.getElementById("id_mitigacion_riesgo_form-agregar_vehiculo").dispatchEvent(event)
+    document.getElementById("id_vehiculo_derrame_form-agregar_segundo_vehiculo").dispatchEvent(event)
+    document.getElementById("id_vehiculo_derrame_form2-agregar_tercer_vehiculo").dispatchEvent(event)
     
     
 } else {
@@ -72,6 +76,11 @@ function RellenarValores(datos) {
     inputsValor("id_procedimiento_editar",datos.id)
     const tipo_procedimiento = datos.tipo_procedimiento
 
+    let parroquia = ""
+    if (datos.parroquia !== 0) {
+        let parroquia = datos.parroquia
+    }
+
     if (division === 1 || division === 2 || division === 4 || division === 5) {
         inputsValor("id_form2-solicitante", datos.solicitante)
         inputsValor("id_form2-solicitante_externo", datos.solicitante_externo)
@@ -79,7 +88,7 @@ function RellenarValores(datos) {
         inputsValor("id_form2-efectivos_enviados", datos.efectivos)
         inputsValor("id_form2-jefe_comision", datos.jefe_comision)   
         inputsValor("id_form3-municipio", datos.municipio)   
-        inputsValor("id_form3-parroquia", datos.parroquia)   
+        inputsValor("id_form3-parroquia", parroquia)   
         inputsValor("id_form3-direccion", datos.direccion)   
         inputsValor("id_form3-hora", datos.hora)   
         inputsValor("id_form3-fecha", datos.fecha)   
@@ -95,7 +104,7 @@ function RellenarValores(datos) {
         inputsValor("id_form2-efectivos_enviados", datos.efectivos)
         inputsValor("id_form2-jefe_comision", datos.jefe_comision)   
         inputsValor("id_form3-municipio", datos.municipio)
-        inputsValor("id_form3-parroquia", datos.parroquia)   
+        inputsValor("id_form3-parroquia", parroquia)   
         inputsValor("id_form3-direccion", datos.direccion)   
         inputsValor("id_form3-hora", datos.hora)   
         inputsValor("id_form3-fecha", datos.fecha)   
@@ -121,7 +130,7 @@ function RellenarValores(datos) {
         }
         
         inputsValor("id_form3-municipio", datos.municipio)
-        inputsValor("id_form3-parroquia", datos.parroquia)   
+        inputsValor("id_form3-parroquia", parroquia)   
         inputsValor("id_form3-direccion", datos.direccion)   
         inputsValor("id_form3-hora", datos.hora)   
         inputsValor("id_form3-fecha", datos.fecha)   
@@ -130,7 +139,7 @@ function RellenarValores(datos) {
         inputsValor("id_form_servicios_medicos-tipo_servicio", datos.tipo_servicio)
         inputsValor("id_form_servicios_medicos-jefe_area", datos.solicitante_externo)
         inputsValor("id_form3-municipio", datos.municipio)
-        inputsValor("id_form3-parroquia", datos.parroquia)   
+        inputsValor("id_form3-parroquia", parroquia)   
         inputsValor("id_form3-direccion", datos.direccion)   
         inputsValor("id_form3-hora", datos.hora)   
         inputsValor("id_form3-fecha", datos.fecha)   
@@ -138,7 +147,7 @@ function RellenarValores(datos) {
     } else if (division === 8) {
         inputsValor("id_form_psicologia-jefe_area", datos.solicitante_externo)
         inputsValor("id_form3-municipio", datos.municipio)
-        inputsValor("id_form3-parroquia", datos.parroquia)   
+        inputsValor("id_form3-parroquia", parroquia)   
         inputsValor("id_form3-direccion", datos.direccion)   
         inputsValor("id_form3-hora", datos.hora)   
         inputsValor("id_form3-fecha", datos.fecha)   
@@ -149,7 +158,7 @@ function RellenarValores(datos) {
         inputsValor("id_form_capacitacion-instructor", datos.jefe_comision)
         inputsValor("id_form_capacitacion-solicitante", datos.solicitante)
         inputsValor("id_form3-municipio", datos.municipio)
-        inputsValor("id_form3-parroquia", datos.parroquia)   
+        inputsValor("id_form3-parroquia", parroquia)   
         inputsValor("id_form3-direccion", datos.direccion)   
         inputsValor("id_form3-hora", datos.hora)   
         inputsValor("id_form3-fecha", datos.fecha)   
@@ -290,6 +299,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                     inputsValor("id_detalles_vehiculos_accidentes-color", inf.vehiculos[0].color)
                     inputsValor("id_detalles_vehiculos_accidentes-año", inf.vehiculos[0].año)
                     inputsValor("id_detalles_vehiculos_accidentes-placas", inf.vehiculos[0].placas)
+                    atributeDisable("id_detalles_vehiculos_accidentes-placas")
                     
                     if (inf.vehiculos[1]) {
                         document.getElementById("id_detalles_vehiculos_accidentes-agg_vehiculo").checked = true
@@ -299,6 +309,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                         inputsValor("id_detalles_vehiculos_accidentes2-color", inf.vehiculos[1].color)
                         inputsValor("id_detalles_vehiculos_accidentes2-año", inf.vehiculos[1].año)
                         inputsValor("id_detalles_vehiculos_accidentes2-placas", inf.vehiculos[1].placas)
+                        atributeDisable("id_detalles_vehiculos_accidentes2-placas")
                         
                         if (inf.vehiculos[2]) {
                             document.getElementById("id_detalles_vehiculos_accidentes2-agg_vehiculo").checked = true
@@ -308,6 +319,7 @@ function RellenarDetalles(datos, tipo_procedimiento) {
                             inputsValor("id_detalles_vehiculos_accidentes3-color", inf.vehiculos[2].color)
                             inputsValor("id_detalles_vehiculos_accidentes3-año", inf.vehiculos[2].año)
                             inputsValor("id_detalles_vehiculos_accidentes3-placas", inf.vehiculos[2].placas)
+                            atributeDisable("id_detalles_vehiculos_accidentes3-placas")
                         }
                     }
                 }
@@ -483,6 +495,9 @@ function RellenarDetalles(datos, tipo_procedimiento) {
             inputsValor("id_form_fallecido-descripcion", inf.descripcion)
             inputsValor("id_form_fallecido-material_utilizado", inf.material_utilizado)
             inputsValor("id_form_fallecido-status", inf.status)
+
+            
+
             break;
 
         case 13:
@@ -490,6 +505,40 @@ function RellenarDetalles(datos, tipo_procedimiento) {
             inputsValor("id_mitigacion_riesgo_form-descripcion", inf.descripcion)
             inputsValor("id_mitigacion_riesgo_form-material_utilizado", inf.material_utilizado)
             inputsValor("id_mitigacion_riesgo_form-status", inf.status)
+
+            if (inf.vehiculos[0]) {
+                document.getElementById("id_mitigacion_riesgo_form-agregar_vehiculo").checked = true
+                atributeDisable("id_mitigacion_riesgo_form-agregar_vehiculo")
+                inputsValor("id_vehiculo_derrame_form-modelo", inf.vehiculos[0].modelo)
+                inputsValor("id_vehiculo_derrame_form-marca", inf.vehiculos[0].marca)
+                inputsValor("id_vehiculo_derrame_form-color", inf.vehiculos[0].color)
+                inputsValor("id_vehiculo_derrame_form-año", inf.vehiculos[0].año)
+                inputsValor("id_vehiculo_derrame_form-placas", inf.vehiculos[0].placas)
+                atributeDisable("id_vehiculo_derrame_form-placas")
+                
+                if (inf.vehiculos[1]) {
+                    document.getElementById("id_vehiculo_derrame_form-agregar_segundo_vehiculo").checked = true
+                    atributeDisable("id_vehiculo_derrame_form-agregar_segundo_vehiculo")
+                    inputsValor("id_vehiculo_derrame_form2-modelo", inf.vehiculos[1].modelo)
+                    inputsValor("id_vehiculo_derrame_form2-marca", inf.vehiculos[1].marca)
+                    inputsValor("id_vehiculo_derrame_form2-color", inf.vehiculos[1].color)
+                    inputsValor("id_vehiculo_derrame_form2-año", inf.vehiculos[1].año)
+                    inputsValor("id_vehiculo_derrame_form2-placas", inf.vehiculos[1].placas)
+                    atributeDisable("id_vehiculo_derrame_form2-placas")
+                    
+                    if (inf.vehiculos[2]) {
+                        document.getElementById("id_vehiculo_derrame_form2-agregar_tercer_vehiculo").checked = true
+                        atributeDisable("id_vehiculo_derrame_form2-agregar_tercer_vehiculo")
+                        inputsValor("id_vehiculo_derrame_form3-modelo", inf.vehiculos[2].modelo)
+                        inputsValor("id_vehiculo_derrame_form3-marca", inf.vehiculos[2].marca)
+                        inputsValor("id_vehiculo_derrame_form3-color", inf.vehiculos[2].color)
+                        inputsValor("id_vehiculo_derrame_form3-año", inf.vehiculos[2].año)
+                        inputsValor("id_vehiculo_derrame_form3-placas", inf.vehiculos[2].placas)
+                        atributeDisable("id_vehiculo_derrame_form3-placas")
+                    }
+                }
+            }
+
             break;
 
         case 14:
