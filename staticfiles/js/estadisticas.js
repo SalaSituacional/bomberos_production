@@ -115,7 +115,7 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
           {
             label: "Procedimientos",
             data: data,
-            borderWidth: 1,
+            borderWidth: 2,
             backgroundColor: colors,
           },
         ],
@@ -124,10 +124,9 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
         scales: {
           r: {
             min: 0,
-            max: Math.max(5),
             ticks: {
               beginAtZero: true,
-              stepSize: 1,
+              stepSize: 2,
               callback: function (data) {
                 return Math.round(data);
               },
@@ -146,7 +145,7 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
           {
             label: "Procedimientos",
             data: data,
-            borderWidth: 1,
+            borderWidth: 2,
             backgroundColor: colors,
           },
         ],
@@ -157,7 +156,7 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
             display: true,
             labels: {
               font: {
-                size: 14,
+                size: 20,
               },
             },
           },
