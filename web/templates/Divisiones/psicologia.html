@@ -180,8 +180,7 @@
     <div class="contain-dates">
       <section class="buttons-items">
         <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
-        <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_psicologia' %}">Descargar
-            Excel</a></button>
+        <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
       </section>
     </div>
     <!-- general-dashboard fin  -->
@@ -242,8 +241,9 @@
   <script src="../../static/js/psicologia.js"></script>
   <script src="../../static/js/filter-psicologia.js"></script>
   <script src="../../static/js/info_modal.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="../static/js/editar_proc.js"></script>
   <script src="../../static/js/cargar_mas_psicologia.js"></script>
-
+  <script src="../../static/js/export_excel/excel_psicologia.js"></script>
   {% endblock %}
 </div>
