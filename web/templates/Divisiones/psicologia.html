@@ -177,13 +177,17 @@
       </tbody>
       <input type="hidden" id="fecha_actual" value="{{ fecha_actual }}">
     </table>
-    <div class="contain-dates">
-      <section class="buttons-items">
-        <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
-        <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_psicologia' %}">Descargar
-            Excel</a></button>
-      </section>
-    </div>
+  </div>
+  <div class="contain-dates">
+    <section class="buttons-items">
+      <div>
+        <button id="carga_manual" class="btn btn-danger" disabled>Obtener Fecha</button>
+        <input type="date" name="fecha_manual" id="fecha_manual">
+      </div>
+      <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
+      <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_psicologia' %}">Descargar
+          Excel</a></button>
+    </section>
     <!-- general-dashboard fin  -->
   </div>
   <!----------------------- Modal delete ---------------------------------->

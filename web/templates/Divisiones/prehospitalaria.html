@@ -251,6 +251,10 @@
   </div>
   <div class="contain-dates">
     <section class="buttons-items">
+      <div>
+        <button id="carga_manual" class="btn btn-danger" disabled>Obtener Fecha</button>
+        <input type="date" name="fecha_manual" id="fecha_manual">
+      </div>
       <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
       <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_prehospitalaria' %}" >Descargar Excel</a></button>
     </section>  
