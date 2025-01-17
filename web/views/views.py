@@ -10,6 +10,10 @@ from django.views.decorators.cache import never_cache
 from django.db.models import Case, When
 import instaloader
 from datetime import timezone as dt_timezone
+from django.http import JsonResponse
+from datetime import datetime
+from datetime import timedelta
+from django.utils.timezone import make_aware
 
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
@@ -2043,8 +2047,50 @@ def ver_registros(request):
     if not user:
         return redirect('/')
 
-    registros = RegistroPeticiones.objects.all().order_by('-fecha_hora')
-    return render(request, 'ver_registros.html', {'registros': registros,
+        # Obtener la fecha enviada desde el frontend
+    fecha_carga = request.GET.get('fecha', None)
+        # Convierte la fecha cargada a un objeto datetime "aware"
+    if fecha_carga:
+        fecha_inicio = make_aware(datetime.strptime(fecha_carga, "%Y-%m-%d"))
+        fecha_fin = fecha_inicio + timedelta(days=1)
+    else:
+        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
+        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        fecha_fin = fecha_inicio + timedelta(days=1)
+
+
+    # Filtrar procedimientos según la fecha
+    registros = RegistroPeticiones.objects.filter(
+        fecha_hora__gte=fecha_inicio,
+        fecha_hora__lt=fecha_fin
+    ).order_by('-fecha_hora')
+
+    # Convertir el QuerySet en una lista de diccionarios
+    procedimientos = list(
+        registros.values(
+            "usuario__user",  # Nombre del usuario relacionado
+            "url",
+            "fecha_hora"
+        )
+    )
+
+    # Formatear las fechas en el backend
+    for procedimiento in procedimientos:
+        procedimiento['fecha_hora'] = procedimiento['fecha_hora'].strftime("%d/%m/%Y, %H:%M")
+
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
+        # Serializa los datos en un formato compatible con JSON
+        procedimientos = list(registros.values(
+            "usuario__user",
+            "url",
+            "fecha_hora",
+        ))
+
+        # Responder con los datos en formato JSON y la fecha para la siguiente carga
+        return JsonResponse({'procedimientos': procedimientos, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
+
+    return render(request, 'ver_registros.html', {'registros': procedimientos,
                                                   "user": user,
                                                   "jerarquia": user["jerarquia"],
                                                   "nombres": user["nombres"],

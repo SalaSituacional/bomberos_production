@@ -59,14 +59,22 @@
         <tr>
           <!-- prettier-ignore -->
             <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ registro.usuario.user }}</td>
+            <td>{{ registro.usuario__user }}</td>
             <td>{{ registro.url }}</td>
             <td>{{ registro.fecha_hora }}</td>
         </tr>
         <!-- prettier-ignore -->
         {% endfor %}
       </tbody>
+      <input type="hidden" id="fecha_actual" value="{{ fecha_actual }}">
     </table>
+  </div>
+
+  <div class="contain-dates">
+    <section class="buttons-items">
+      <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
+    </section>
+  
   </div>
 
 <footer class="footer">
@@ -75,8 +83,8 @@
     </section>
   </footer>
   <!-- Script final  -->
-  <script src="../static/js/operaciones.js"></script>
   <!-- <script src="../static/js/info_modal.js"></script> -->
   <script src="../../static/js/info_modal.js"></script>
-  <script src="../../static/js/table-general-filter2.js"></script>
+  <!-- <script src="../../static/js/table-general-filter2.js"></script> -->
+  <script src="../static/js/cargar_mas_registros.js"></script>
 {% endblock %}
