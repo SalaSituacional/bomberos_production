@@ -249,16 +249,17 @@
       <input type="hidden" id="fecha_actual" value="{{ fecha_actual }}">
     </table>
   </div>
+
   <div class="contain-dates">
-    <section class="buttons-items">
-      <div>
-        <button id="carga_manual" class="btn btn-danger" disabled>Obtener Fecha</button>
-        <input type="date" name="fecha_manual" id="fecha_manual">
-      </div>
+    <section class="buttons-items input-group mb-3 filter-search">
+      <span class="input-group-text"><b> Seleccionar Fecha:</b></span>
+      <input type="date" class="form-control fecha_manual" name="fecha_manual" id="fecha_manual">
+      <button id="carga_manual" class="btn btn-danger" disabled>Obtener Fecha</button>
       <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
       <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
-    </section>  
-  </div>
+      </section>
+    </div>
+
   <!-- div general-dashboard fin -->
 </div>
 <!----------------------- Modal delete ---------------------------------->

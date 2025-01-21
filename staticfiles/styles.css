@@ -2676,6 +2676,9 @@ summary > * {
   width: 100%;
 }
 
+.fecha_manual{
+  width: 50%;
+}
 
 @media (min-width: 1400px ){
   .inicial-carrousel-one{
@@ -3730,7 +3733,7 @@ padding: 0 1rem;
   button{
     margin-bottom: 1rem;
   }
-} 
+}
 }
 
 @media (max-width: 375px) {
