@@ -230,42 +230,75 @@ def generar_excel_prehospitalaria(request):
     return response
 
 def generar_excel_operaciones(request):
-    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
-        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
-        personas = []
-        detalles = []
-        
-        for item in set_relacionado:
-            # Verificar si el objeto tiene los atributos 'nombres', 'apellidos' y 'cedula'
-            if hasattr(item, 'nombres') and hasattr(item, 'apellidos') and hasattr(item, 'cedula'):
-                # Persona con 'nombres', 'apellidos' y 'cedula'
-                personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
-            elif hasattr(item, 'nombre') and hasattr(item, 'apellido') and hasattr(item, 'cedula_propietario'):
-                # Persona con 'nombre', 'apellido' y 'cedula_propietario' (para objetos como 'Retencion_Preventiva')
-                personas.append(f"{item.nombre} {item.apellido} {item.cedula_propietario}")
-            else:
-                # Si no tiene esos atributos, agregar algo por defecto o vacío
-                personas.append("Persona desconocida")
-
-            # Detalle
-            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
-
-        return personas, detalles
-
     division = 2
     # Obtener datos de los procedimientos con select_related y prefetch_related
     procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
         'id_solicitante', 'id_jefe_comision', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
     ).prefetch_related(
-        'abastecimiento_agua_set', 'apoyo_unidades_set', 'guardia_prevencion_set', 'atendido_no_efectuado_set',
-        'despliegue_seguridad_set', 'fallecidos_set', 'falsa_alarma_set', 'servicios_especiales_set', 'rescate_set',
-        'incendios_set', 'atenciones_paramedicas_set', 'traslado_prehospitalaria_set', 'evaluacion_riesgo_set',
-        'mitigacion_riesgos_set', 'puesto_avanzada_set', 'asesoramiento_set', 'reinspeccion_prevencion_set',
-        'retencion_preventiva_set', 'artificios_pirotecnicos_set', 'inspeccion_establecimiento_art_set',
-        'valoracion_medica_set', 'detalles_enfermeria_set', 'procedimientos_psicologia_set',
-        'procedimientos_capacitacion_set', 'procedimientos_brigada_set', 'procedimientos_frente_preventivo_set',
-        'jornada_medica_set', 'inspeccion_prevencion_asesorias_tecnicas_set', 'inspeccion_habitabilidad_set',
-        'inspeccion_otros_set', 'inspeccion_arbol_set', 'investigacion_set'
+        Prefetch("rescate_set", 
+             queryset=Rescate.objects.prefetch_related(
+                 Prefetch("rescate_persona_set", to_attr="personas_data"),
+                 Prefetch("rescate_animal_set", to_attr="animales_data")
+             ), 
+             to_attr="rescate_data"),
+        Prefetch("abastecimiento_agua_set", to_attr="agua_data"), # Ya
+        Prefetch("apoyo_unidades_set", to_attr="apoyo_data"), # Ya
+        Prefetch("guardia_prevencion_set", to_attr="guard_data"), # Ys
+        Prefetch("falsa_alarma_set", to_attr="falsa_data"), # YA
+        Prefetch("atenciones_paramedicas_set", 
+             queryset=Atenciones_Paramedicas.objects.prefetch_related(
+                 Prefetch("emergencias_medicas_set", 
+                          queryset=Emergencias_Medicas.objects.prefetch_related(
+                              Prefetch("traslado_set", to_attr="traslados_data")
+                          ), 
+                          to_attr="emergencias_data"),
+                 Prefetch("accidentes_transito_set", 
+                          queryset=Accidentes_Transito.objects.prefetch_related(
+                              Prefetch("detalles_vehiculos_accidente_set", to_attr="vehiculos_data"),
+                              Prefetch("lesionados_set", 
+                                       queryset=Lesionados.objects.prefetch_related(
+                                           Prefetch("traslado_accidente_set", to_attr="traslados_accidente_data")
+                                       ), 
+                                       to_attr="lesionados_data")
+                          ), 
+                          to_attr="accidentes_data")
+             ), 
+             to_attr="atenciones_data"), # Ya
+        Prefetch("servicios_especiales_set", to_attr="especial_data"), # Ya
+        Prefetch("incendios_set", 
+             queryset=Incendios.objects.prefetch_related(
+                 Prefetch("retencion_preventiva_incendios_set", to_attr="retencion_data"),
+                 Prefetch("persona_presente_set", to_attr="personas_incendio_data"),
+                 Prefetch("detalles_vehiculos_set", to_attr="vehiculos_incendio_data")
+             ), 
+             to_attr="incendios_data"), # Ya
+        Prefetch("mitigacion_riesgos_set", to_attr="mitigacion_data"), # Ya
+        Prefetch("evaluacion_riesgo_set", 
+             queryset=Evaluacion_Riesgo.objects.prefetch_related(
+                 Prefetch("persona_presente_eval_set", to_attr="personas_eval_data")
+             ), 
+             to_attr="evaluacion_data"),# Ya
+        Prefetch("puesto_avanzada_set", to_attr="puesto_data"), # Ya
+        Prefetch("artificios_pirotecnicos_set",
+        queryset=Artificios_Pirotecnicos.objects.prefetch_related(
+            Prefetch(
+                "incendios_art_set",
+                queryset=Incendios_Art.objects.prefetch_related(
+                    Prefetch("persona_presente_art_set", to_attr="personas_presentes_data"),
+                    Prefetch("detalles_vehiculos_art_set", to_attr="vehiculos_data")
+                ),
+                to_attr="incendios_data"
+            ),
+            Prefetch("lesionados_art_set", to_attr="lesionados_data"),
+            Prefetch("fallecidos_art_set", to_attr="fallecidos_data"),
+        ),
+        to_attr="artificios_data"), # Ya
+        Prefetch("comisiones_set", 
+             queryset=Comisiones.objects.select_related("comision"), 
+             to_attr="comisiones_data"), # Ya
+        Prefetch("atendido_no_efectuado_set", to_attr="atendido_data"), # Ya
+        Prefetch("despliegue_seguridad_set", to_attr="despliegue_data"), # Ya
+        Prefetch("fallecidos_set", to_attr="fallecido_data"), # Ya
     )
 
     datos = []
@@ -273,74 +306,241 @@ def generar_excel_operaciones(request):
     # Agregar datos a la lista
     for procedimiento in procedimientos:
         # Obtener solicitante y jefe de comisión
-        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
-                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
-        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
-                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
 
-        personas_presentes, detalles_procedimientos = [], []
+        if procedimiento.id_solicitante.apellidos == "Externo":
+            solicitante = procedimiento.solicitante_externo
+        else:
+            solicitante = f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} {procedimiento.id_solicitante.apellidos}"
 
-        # Agregar detalles de las distintas relaciones
-        relaciones = [
-            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
-            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
-            (procedimiento.guardia_prevencion_set.all(), 'id_motivo_prevencion.motivo'),
-            (procedimiento.atendido_no_efectuado_set.all(), None),
-            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
-            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
-            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
-            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
-            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
-            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
-            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
-            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
-            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
-            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
-            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
-            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
-            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
-            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
-            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
-            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
-            (procedimiento.valoracion_medica_set.all(), None),
-            (procedimiento.detalles_enfermeria_set.all(), None),
-            (procedimiento.procedimientos_psicologia_set.all(), None),
-            (procedimiento.procedimientos_capacitacion_set.all(), None),
-            (procedimiento.procedimientos_brigada_set.all(), None),
-            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
-            (procedimiento.jornada_medica_set.all(), None),
-            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
-            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
-            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
-            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
-            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
-        ]
+
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} {procedimiento.id_jefe_comision.apellidos}")
+
+        # Detalles y personas
+        personas_presentes = []
+        detalles = []
+        descripcion = []
+        material_utilizado = []
+        status = []
+        traslados = []
+        vehiculos = []
+        comisiones_presentes = []
+        retencion_preventiva = []
+
+        # Agregar datos de comisiones presentes
+        for comision in procedimiento.comisiones_data:
+            comisiones_presentes.append(f"({comision.comision.tipo_comision} - {comision.nombre_oficial} {comision.apellido_oficial} ({comision.cedula_oficial}) - Unidad {comision.nro_unidad} - Cuadrante {comision.nro_cuadrante})")
+
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for agua in procedimiento.agua_data:
+            detalles.append(f"{agua.id_tipo_servicio.nombre_institucion} {agua.ltrs_agua} litros - {agua.personas_atendidas} Personas Atendidas")
+            personas_presentes.append(f"{agua.nombres} {agua.apellidos} ({agua.cedula})")
+            descripcion.append(agua.descripcion)
+            material_utilizado.append(agua.material_utilizado)
+            status.append(agua.status)
         
-        # Procesar cada conjunto de datos
-        for relacion, campo_descripcion in relaciones:
-            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
-            personas_presentes.extend(personas_relacionadas)
-            detalles_procedimientos.extend(detalles_relacionados)
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for apoyo in procedimiento.apoyo_data:
+            detalles.append(f"{apoyo.id_tipo_apoyo.tipo_apoyo}: {apoyo.unidad_apoyada}")
+            descripcion.append(apoyo.descripcion)
+            material_utilizado.append(apoyo.material_utilizado)
+            status.append(apoyo.status)
+        
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for guardia in procedimiento.guard_data:
+            detalles.append(guardia.id_motivo_prevencion.motivo)
+            descripcion.append(guardia.descripcion)
+            material_utilizado.append(guardia.material_utilizado)
+            status.append(guardia.status)
+        
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for atendido in procedimiento.atendido_data:
+            descripcion.append(atendido.descripcion)
+            material_utilizado.append(atendido.material_utilizado)
+            status.append(atendido.status)
 
-        # Convertir listas a cadenas separadas por ' -- '
-        personas_presentes_str = " -- ".join(personas_presentes)
-        detalles_str = " -- ".join(detalles_procedimientos)
-        descripcion_str = " -- ".join(detalles_procedimientos)
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for despliegue in procedimiento.despliegue_data:
+            detalles.append(despliegue.motivo_despliegue.motivo)
+            descripcion.append(despliegue.descripcion)
+            material_utilizado.append(despliegue.material_utilizado)
+            status.append(despliegue.status)
 
-        # Agregar los datos al diccionario
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for alarma in procedimiento.falsa_data:
+            detalles.append(alarma.motivo_alarma.motivo)
+            descripcion.append(alarma.descripcion)
+            material_utilizado.append(alarma.material_utilizado)
+            status.append(alarma.status)
+        
+        for atencion in procedimiento.atenciones_data:
+            # Agregar detalles del tipo de atención paramédica
+
+            # Agregar emergencias médicas si existen
+            for emergencia in atencion.emergencias_data:
+                detalles.append(atencion.tipo_atencion)
+                personas_presentes.append(f" {emergencia.nombres} {emergencia.apellidos} ({emergencia.cedula}) {emergencia.edad} años - {emergencia.sexo} [{emergencia.idx}]")
+                descripcion.append(emergencia.descripcion)
+                material_utilizado.append(emergencia.material_utilizado)
+                status.append(emergencia.status)
+
+                # Agregar traslados si existen
+                for traslado in emergencia.traslados_data:
+                    traslados.append(f"Traslado: {traslado.hospital_trasladado} - {traslado.medico_receptor} - {traslado.mpps_cmt}")
+
+              # Agregar datos de accidentes de tránsito
+            for accidente in atencion.accidentes_data:
+                detalles.append(f"{atencion.tipo_atencion}: {accidente.tipo_de_accidente.tipo_accidente} - {accidente.cantidad_lesionados} Lesionados")
+                material_utilizado.append(accidente.material_utilizado)
+                status.append(accidente.status)
+
+                # Agregar detalles de vehículos involucrados
+                for vehiculo in accidente.vehiculos_data:
+                    vehiculos.append(f"({vehiculo.modelo} {vehiculo.marca} {vehiculo.color} {vehiculo.año} - {vehiculo.placas})")
+
+                # Agregar datos de lesionados
+                for lesionado in accidente.lesionados_data:
+                    personas_presentes.append(f"({lesionado.nombres} {lesionado.apellidos} {lesionado.cedula} - {lesionado.edad} años{lesionado.sexo} [{lesionado.idx}])")
+                    descripcion.append(f"({lesionado.descripcion})")
+
+                    # Agregar traslados asociados a lesionados
+                    for traslado_acc in lesionado.traslados_accidente_data:
+                        traslados.append(f"Traslado: {traslado_acc.hospital_trasladado} - {traslado_acc.medico_receptor} - {traslado_acc.mpps_cmt}")
+ 
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for especial in procedimiento.especial_data:
+            detalles.append(especial.tipo_servicio.serv_especiales)
+            descripcion.append(especial.descripcion)
+            material_utilizado.append(especial.material_utilizado)
+            status.append(especial.status)
+
+        for rescate in procedimiento.rescate_data:
+            material_utilizado.append(rescate.material_utilizado)
+            status.append(rescate.status)
+
+            # Agregar personas presentes si existen
+            for persona in rescate.personas_data:
+                # Agregar detalles del tipo de rescate
+                detalles.append(rescate.tipo_rescate.tipo_rescate)
+                material_utilizado.append(rescate.material_utilizado)
+                status.append(rescate.status)
+                personas_presentes.append(f"{persona.nombre} {persona.apellidos} ({persona.cedula} - {persona.edad} años - {persona.sexo})")
+                descripcion.append(persona.descripcion)
+
+            # Agregar animales rescatados si existen
+            for animal in rescate.animales_data:
+                detalles.append(f"{rescate.tipo_rescate.tipo_rescate}: {animal.especie}")
+                descripcion.append(animal.descripcion)
+     
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for incendio in procedimiento.incendios_data:
+            # Detalles del incendio
+            detalles.append(incendio.id_tipo_incendio.tipo_incendio)
+            descripcion.append(incendio.descripcion)
+            material_utilizado.append(incendio.material_utilizado)
+            status.append(incendio.status)
+
+            # Agregar Retenciones Preventivas (GLP)
+            for retencion in incendio.retencion_data:
+
+                retencion_preventiva.append(f"{retencion.tipo_cilindro} - {retencion.capacidad} - {retencion.serial} - {retencion.nro_constancia_retencion} - Propietario: {retencion.nombre} {retencion.apellidos} ({retencion.cedula})")
+
+            # Agregar Personas Presentes en el Incendio
+            for persona in incendio.personas_incendio_data:
+                personas_presentes.append(f"{persona.nombre} {persona.apellidos} ({persona.cedula} - {persona.edad} años)")
+
+            # Agregar Detalles de Vehículos Relacionados
+            for vehiculo in incendio.vehiculos_incendio_data:
+                vehiculos.append(f"{vehiculo.modelo} {vehiculo.marca} {vehiculo.color} {vehiculo.año} - {vehiculo.placas}")
+
+        # Agregar Fallecidos
+        for fallecido in procedimiento.fallecido_data:
+            detalles.append(fallecido.motivo_fallecimiento)
+            personas_presentes.append(f"{fallecido.nombres} {fallecido.apellidos} ({fallecido.cedula}) - {fallecido.edad} años - {fallecido.sexo}") 
+            descripcion.append(fallecido.descripcion)
+            material_utilizado.append(fallecido.material_utilizado)
+            status.append(fallecido.status)
+
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for mitigacion in procedimiento.mitigacion_data:
+            detalles.append(mitigacion.id_tipo_servicio.tipo_servicio)
+            descripcion.append(mitigacion.descripcion)
+            material_utilizado.append(mitigacion.material_utilizado)
+            status.append(mitigacion.status)
+
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for evaluacion in procedimiento.evaluacion_data:
+            detalles.append(f"{evaluacion.id_tipo_riesgo.tipo_riesgo}: {evaluacion.tipo_estructura}")
+            descripcion.append(evaluacion.descripcion)
+            material_utilizado.append(evaluacion.material_utilizado)
+            status.append(evaluacion.status)
+
+            # Personas presentes en la evaluación
+            for persona in evaluacion.personas_eval_data:
+                personas_presentes.append(f"{persona.nombre} {persona.apellidos} ({persona.cedula}) - {persona.telefono}")
+
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for artificio in procedimiento.artificios_data:
+            # Información básica del artificio
+            detalles.append(f"{artificio.tipo_procedimiento.tipo} - {artificio.nombre_comercio} - {artificio.rif_comerciante}")
+
+            for incendio in artificio.incendios_data:
+                detalles.append(f"{artificio.nombre_comercio} - {artificio.rif_comerciante} - {artificio.tipo_procedimiento.tipo}: {incendio.id_tipo_incendio.tipo_incendio}")
+                descripcion.append(incendio.descripcion)
+                material_utilizado.append(incendio.material_utilizado)
+                status.append(incendio.status)
+
+                for persona in incendio.personas_presentes_data:
+                    personas_presentes.append(f"{persona.nombres} {persona.apellidos} ({persona.cedula}) - {persona.edad} años")
+                    
+                for vehiculo in incendio.vehiculos_data:
+                    vehiculos.append(f"{vehiculo.modelo} {vehiculo.marca} {vehiculo.color} {vehiculo.año} - {vehiculo.placas}")
+
+
+            for lesionado in artificio.lesionados_data:
+                detalles.append(f"{artificio.nombre_comercio} - {artificio.rif_comerciante} - {artificio.tipo_procedimiento.tipo}")
+                personas_presentes.append(f"{lesionado.nombres} {lesionado.apellidos} ({lesionado.cedula}) - {lesionado.edad} años - {lesionado.sexo}")
+                descripcion.append(lesionado.descripcion)
+                status.append(lesionado.status)
+
+            for fallecido in artificio.fallecidos_data:
+                detalles.append(f"{artificio.nombre_comercio} - {artificio.rif_comerciante} - {artificio.tipo_procedimiento.tipo}: {fallecido.motivo_fallecimiento}")
+                personas_presentes.append(f"{fallecido.nombres} {fallecido.apellidos} ({fallecido.cedula}) - {fallecido.edad} años - {fallecido.sexo}")
+                descripcion.append(fallecido.descripcion)
+                status.append(fallecido.status)
+                material_utilizado.append(fallecido.material_utilizado)
+
+
+        # Combinar datos
+        detalles_str = " -- ".join(detalles) or " "
+        personas_str = " -- ".join(personas_presentes) or " "
+        descripcion_str = " -- ".join(descripcion) or " "
+        material_utilizado_str = " -- ".join(material_utilizado) or " "
+        status_str = " -- ".join(status) or " "
+        traslados_str = " -- ".join(traslados) or " "
+        vehiculos_str = " -- ".join(vehiculos) or " "
+        comisiones_presentes_str = " -- ".join(comisiones_presentes) or " "
+        retencion_preventiva_str = " -- ".join(retencion_preventiva) or " "
+
+        # Agregar datos al JSON
         datos.append({
-            "division": procedimiento.id_division.division,
+            "division": procedimiento.id_division.division or " ",
             "solicitante": solicitante,
             "jefe_comision": jefe_comision,
-            "municipio": procedimiento.id_municipio.municipio,
-            "parroquia": procedimiento.id_parroquia.parroquia,
-            "fecha": procedimiento.fecha,
-            "hora": procedimiento.hora,
-            "direccion": procedimiento.direccion,
-            "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            "municipio": procedimiento.id_municipio.municipio or " ",
+            "parroquia": procedimiento.id_parroquia.parroquia or " ",
+            "fecha": procedimiento.fecha or " ",
+            "hora": procedimiento.hora or " ",
+            "direccion": procedimiento.direccion or " ",
+            "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento or " ",
             "detalles": detalles_str,
-            "personas_presentes": personas_presentes_str,
+            "personas_presentes": personas_str,
             "descripcion": descripcion_str,
+            "material_utilizado": material_utilizado_str,
+            "status": status_str,
+            "traslados": traslados_str,
+            "vehiculos": vehiculos_str,
+            "comisiones": comisiones_presentes_str,
+            "retencion_preventiva": retencion_preventiva_str,
         })
 
     return JsonResponse(datos, safe=False)
@@ -485,7 +685,7 @@ def generar_excel_rescate(request):
              ), 
              to_attr="atenciones_data"), # Ya
         Prefetch("servicios_especiales_set", to_attr="especial_data"), # Ya
-         Prefetch("incendios_set", 
+        Prefetch("incendios_set", 
              queryset=Incendios.objects.prefetch_related(
                  Prefetch("retencion_preventiva_incendios_set", to_attr="retencion_data"),
                  Prefetch("persona_presente_set", to_attr="personas_incendio_data"),
@@ -515,8 +715,7 @@ def generar_excel_rescate(request):
         to_attr="artificios_data"), # Ya
         Prefetch("comisiones_set", 
              queryset=Comisiones.objects.select_related("comision"), 
-             to_attr="comisiones_data")
-        # Agrega más relaciones aquí según sea necesario
+             to_attr="comisiones_data"), # Ya
     )
 
     # Crear una lista para los datos
@@ -525,14 +724,13 @@ def generar_excel_rescate(request):
     # Procesar los procedimientos
     for procedimiento in procedimientos:
         # Solicitante y jefe de comisión
-        solicitante = (
-            f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} {procedimiento.id_solicitante.apellidos}"
-            if procedimiento.id_solicitante else procedimiento.solicitante_externo or " "
-        )
-        jefe_comision = (
-            f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} {procedimiento.id_jefe_comision.apellidos}"
-            if procedimiento.id_jefe_comision else " "
-        )
+        if procedimiento.id_solicitante.apellidos == "Externo":
+            solicitante = procedimiento.solicitante_externo
+        else:
+            solicitante = f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} {procedimiento.id_solicitante.apellidos}"
+
+
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} {procedimiento.id_jefe_comision.apellidos}")
 
         # Detalles y personas
         personas_presentes = []
