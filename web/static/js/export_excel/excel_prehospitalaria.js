@@ -26,8 +26,14 @@ async function generarExcelPrehospitalaria() {
           "Dirección",
           "Tipo de Procedimiento",
           "Detalles",
-          "Personas Presentes",
-          "Descripción"
+          "Descripcion",
+          "Material Utilizado",
+          "Status",
+          "Persona Presente",
+          "Traslados",
+          "Vehiculos",
+          "Comisiones",
+          "Retención Preventiva"
         ]
       ];
   
@@ -43,9 +49,14 @@ async function generarExcelPrehospitalaria() {
           item.hora || "N/A",
           item.direccion || "N/A",
           item.tipo_procedimiento || "N/A",
-          item.detalles || "N/A",
-          item.personas_presentes || "N/A",
-          item.descripcion || "N/A"
+          item.descripcion || "[SIN DATOS]",
+          item.material_utilizado || "[SIN DATOS]",
+          item.status || "[SIN DATOS]",
+          item.personas_presentes || "[SIN DATOS]",
+          item.traslados || "[SIN DATOS]",
+          item.vehiculos || "[SIN DATOS]",
+          item.comisiones || "[SIN DATOS]",
+          item.retencion_preventiva || "[SIN DATOS]",
         ]);
       });
   
