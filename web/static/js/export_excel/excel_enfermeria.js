@@ -17,8 +17,8 @@ async function generarExcelEnfermeria() {
       const worksheetData = [
         [
           "División",
-          "Solicitante",
-          "Jefe Comisión",
+          "Dependencia",
+          "Encargado del Area",
           "Municipio",
           "Parroquia",
           "Fecha",
@@ -26,8 +26,11 @@ async function generarExcelEnfermeria() {
           "Dirección",
           "Tipo de Procedimiento",
           "Detalles",
-          "Persona Presente",
-          "Descripcion"
+          "Descripcion",
+          "Material Utilizado",
+          "Status",
+          "Personas Presentes",
+          "Traslados"
         ]
       ];
 
@@ -35,8 +38,8 @@ async function generarExcelEnfermeria() {
       data.forEach((item) => {
         worksheetData.push([
           item.division || "N/A",
-          item.solicitante || "N/A",
-          item.jefe_comision || "N/A",
+          item.dependencia || "N/A",
+          item.encargado || "N/A",
           item.municipio || "N/A",
           item.parroquia || "N/A",
           item.fecha || "N/A",
@@ -44,8 +47,11 @@ async function generarExcelEnfermeria() {
           item.direccion || "N/A",
           item.tipo_procedimiento || "N/A",
           item.detalles || "N/A",
+          item.descripcion || "N/A",
+          item.material_utilizado || "N/A",
+          item.status || "N/A",
           item.personas_presentes || "N/A",
-          item.descripcion || "N/A"
+          item.traslados || "N/A"
         ]);
       });
 

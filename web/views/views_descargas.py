@@ -553,97 +553,61 @@ def generar_excel_enfermeria(request):
         Procedimientos.objects.filter(id_division=division)
         .select_related(
             "id_division",
-            "id_solicitante",
-            "id_jefe_comision",
             "id_municipio",
             "id_parroquia",
             "id_tipo_procedimiento",
         )
         .prefetch_related(
-            "abastecimiento_agua_set__id_tipo_servicio",
-            "apoyo_unidades_set__id_tipo_apoyo",
-            "guardia_prevencion_set__id_motivo_prevencion",
-            "despliegue_seguridad_set__motivo_despliegue",
-            "fallecidos_set",
-            "falsa_alarma_set__motivo_alarma",
-            "servicios_especiales_set__tipo_servicio",
-            "rescate_set__tipo_rescate",
-            "incendios_set__id_tipo_incendio",
-            "atenciones_paramedicas_set",
-            "traslado_prehospitalaria_set__id_tipo_traslado",
-            "evaluacion_riesgo_set__id_tipo_riesgo",
-            "mitigacion_riesgos_set__id_tipo_servicio",
-            "puesto_avanzada_set__id_tipo_servicio",
-            "asesoramiento_set",
-            "reinspeccion_prevencion_set",
-            "retencion_preventiva_set",
-            "artificios_pirotecnicos_set__tipo_procedimiento",
-            "inspeccion_establecimiento_art_set",
-            "detalles_enfermeria_set",
-            "investigacion_set__id_tipo_investigacion",
+            Prefetch(
+                "detalles_enfermeria_set",
+                to_attr="enfermeria_data"
+            )
         )
     )
-
-    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
-        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
-        personas = []
-        detalles = []
-        for item in set_relacionado:
-            if hasattr(item, "cedula"):
-                if hasattr(item, "nombre") and hasattr(item, "apellido") and hasattr(item, "cedula"):
-                    personas.append(f"{item.nombre} {item.apellido} {item.cedula}")
-            detalles.append(getattr(item, campo_descripcion, "") if campo_descripcion else str(item))
-        return personas, detalles
 
     datos = []
 
     for procedimiento in procedimientos:
-        solicitante = (
-            f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} {procedimiento.id_solicitante.apellidos}"
-            if procedimiento.id_solicitante
-            else procedimiento.solicitante_externo
-        )
-        jefe_comision = (
-            f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} {procedimiento.id_jefe_comision.apellidos}"
-            if procedimiento.id_jefe_comision
-            else ""
-        )
+        # Inicializar listas para recolectar información
+        personas_presentes = []
+        descripcion = []
+        material_utilizado = []
+        status = []
+        traslados = []
 
-        personas_presentes, detalles_procedimientos = [], []
+        # Procesar los detalles de enfermería
+        for enfer in procedimiento.enfermeria_data:
+            personas_presentes.append(f"{enfer.nombre} {enfer.apellido} ({enfer.cedula}) {enfer.edad} años {enfer.sexo} - [{enfer.telefono}]")
+            descripcion.append(enfer.descripcion)
+            material_utilizado.append(enfer.material_utilizado)
+            status.append(enfer.status)
 
-        relaciones = [
-            (procedimiento.abastecimiento_agua_set.all(), "id_tipo_servicio.nombre_institucion"),
-            (procedimiento.apoyo_unidades_set.all(), "id_tipo_apoyo.tipo_apoyo"),
-            (procedimiento.guardia_prevencion_set.all(), "id_motivo_prevencion.motivo"),
-            (procedimiento.despliegue_seguridad_set.all(), "motivo_despliegue.motivo"),
-            (procedimiento.falsa_alarma_set.all(), "motivo_alarma.motivo"),
-            (procedimiento.rescate_set.all(), "tipo_rescate.tipo_rescate"),
-            (procedimiento.incendios_set.all(), "id_tipo_incendio.tipo_incendio"),
-            (procedimiento.traslado_prehospitalaria_set.all(), "id_tipo_traslado.tipo_traslado"),
-            (procedimiento.evaluacion_riesgo_set.all(), "id_tipo_riesgo.tipo_riesgo"),
-            (procedimiento.artificios_pirotecnicos_set.all(), "tipo_procedimiento.tipo"),
-            (procedimiento.inspeccion_establecimiento_art_set.all(), "nombre_comercio"),
-            (procedimiento.detalles_enfermeria_set.all(), None),
-        ]
+        # Combinar datos en cadenas
+        detalles_str = " -- ".join(descripcion) or "N/A"
+        personas_str = " -- ".join(personas_presentes) or "N/A"
+        descripcion_str = " -- ".join(descripcion) or "N/A"
+        material_utilizado_str = " -- ".join(material_utilizado) or "N/A"
+        status_str = " -- ".join(status) or "N/A"
+        traslados_str = " -- ".join(traslados) or "N/A"  # No se llenan traslados, conservar como "N/A"
 
-        for relacion, campo_descripcion in relaciones:
-            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
-            personas_presentes.extend(personas_relacionadas)
-            detalles_procedimientos.extend(detalles_relacionados)
-
+        # Agregar datos procesados al resultado final
         datos.append(
             {
                 "division": procedimiento.id_division.division,
-                "solicitante": solicitante,
-                "jefe_comision": jefe_comision,
+                "dependencia": procedimiento.dependencia,
+                "encargado": procedimiento.solicitante_externo,
                 "municipio": procedimiento.id_municipio.municipio,
                 "parroquia": procedimiento.id_parroquia.parroquia,
                 "fecha": procedimiento.fecha,
                 "hora": procedimiento.hora,
                 "direccion": procedimiento.direccion,
                 "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento,
-                "detalles": " -- ".join(detalles_procedimientos),
-                "personas_presentes": " -- ".join(personas_presentes),
+                "detalles": detalles_str,
+                "personas_presentes": personas_str,
+                "descripcion": descripcion_str,
+                "material_utilizado": material_utilizado_str,
+                "status": status_str,
+                "traslados": traslados_str
             }
         )
 
