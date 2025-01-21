@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from ..forms import *
 from ..models import *
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
@@ -1310,7 +1309,29 @@ def obtener_procedimiento(request, id):
                     material_utilizado = detalle_procedimiento.material_utilizado,
                     status = detalle_procedimiento.status,
                     )
+        
+        # Filtrar todos los vehículos relacionados con el accidente
+        vehiculos = Detalles_Vehiculo_Derrame.objects.filter(id_vehiculo=detalle_procedimiento.id)
 
+        # Si hay vehículos, recopilarlos en una lista
+        if vehiculos:
+            data = dict(data,
+                vehiculo = True
+            )
+            vehiculos_list = []
+            for vehiculo in vehiculos:
+                vehiculos_list.append({
+                    'marca': vehiculo.marca,
+                    'modelo': vehiculo.modelo,
+                    'color': vehiculo.color,
+                    'año': vehiculo.año,
+                    'placas': vehiculo.placas,
+                    # Añade aquí otros campos que necesites
+                })
+            data['vehiculos'] = vehiculos_list  # Agrega la lista de vehículos a 'data'
+        else:
+            data['vehiculos'] = []  # O puedes omitir esta línea si prefieres no agregar la clave
+        
     if str(procedimiento.id_tipo_procedimiento.id) == "14":
         detalle_procedimiento = get_object_or_404(Evaluacion_Riesgo, id_procedimientos=id)
         data = dict(data,
@@ -2080,6 +2101,27 @@ def obtener_informacion_editar(request, id):
                     material_utilizado = detalle_procedimiento.material_utilizado,
                     status = detalle_procedimiento.status,
                     )
+         # Filtrar todos los vehículos relacionados con el accidente
+        vehiculos = Detalles_Vehiculo_Derrame.objects.filter(id_vehiculo=detalle_procedimiento.id)
+
+        # Si hay vehículos, recopilarlos en una lista
+        if vehiculos:
+            data = dict(data,
+                vehiculo = True
+            )
+            vehiculos_list = []
+            for vehiculo in vehiculos:
+                vehiculos_list.append({
+                    'marca': vehiculo.marca,
+                    'modelo': vehiculo.modelo,
+                    'color': vehiculo.color,
+                    'año': vehiculo.año,
+                    'placas': vehiculo.placas,
+                    # Añade aquí otros campos que necesites
+                })
+            data['vehiculos'] = vehiculos_list  # Agrega la lista de vehículos a 'data'
+        else:
+            data['vehiculos'] = []  # O puedes omitir esta línea si prefieres no agregar la clave
 
     if str(procedimiento.id_tipo_procedimiento.id) == "14":
         detalle_procedimiento = get_object_or_404(Evaluacion_Riesgo, id_procedimientos=id)

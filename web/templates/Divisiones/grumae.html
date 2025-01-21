@@ -248,11 +248,14 @@
     </table>
   </div>
   <div class="contain-dates">
-    <section class="buttons-items">
+    <section class="buttons-items input-group mb-3 filter-search">
+      <span class="input-group-text"><b> Seleccionar Fecha:</b></span>
+      <input type="date" class="form-control fecha_manual" name="fecha_manual" id="fecha_manual">
+      <button id="carga_manual" class="btn btn-danger" disabled>Obtener Fecha</button>
       <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
-      <button class="btn btn-danger download-link"><a href="{% url 'descargar_excel_grumae' %}" >Descargar Excel</a></button>
-    </section>  
-  </div>
+      <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
+      </section>
+    </div>
   <!-- div general-dashboard fin -->
 </div>
 <!----------------------- Modal delete ---------------------------------->
@@ -325,7 +328,9 @@
 <script src="../../static/js/grumae.js"></script>
 <script src="../../static/js/info_modal.js"></script>
 <script src="../../static/js/filters.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <script src="../static/js/editar_proc.js"></script>
 <script src="../../static/js/cargar_mas_grumae.js"></script>
+<script src="../../static/js/export_excel/excel_grumae.js"></script>
 
 {% endblock %}

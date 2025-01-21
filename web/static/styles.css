@@ -1537,6 +1537,7 @@ summary > * {
     justify-content: center;
     border: none;
     padding: 0.5rem;
+    margin: 1rem;
     border-radius: 5px;
     width: 12rem;
     height: auto;
@@ -1547,6 +1548,10 @@ summary > * {
   }
   button:hover {
     background-color: rgb(151, 0, 0);
+  }  
+  input {
+    margin: .5rem;
+    width: 60% !important; 
   }
 }
 /*--------------------------- estilos de estadisticas -------------------------------------*/
@@ -2676,6 +2681,9 @@ summary > * {
   width: 100%;
 }
 
+.fecha_manual{
+  width: 50%;
+}
 
 @media (min-width: 1400px ){
   .inicial-carrousel-one{
@@ -3730,7 +3738,7 @@ padding: 0 1rem;
   button{
     margin-bottom: 1rem;
   }
-} 
+}
 }
 
 @media (max-width: 375px) {

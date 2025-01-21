@@ -3,6 +3,9 @@ const fechaActualInput = document.getElementById('fecha_actual');  // El campo d
 const procedimientosContainer = document.getElementById('procedimientos-container');
 let rowCount = document.querySelectorAll('#data-table tbody tr').length + 1;
 
+const cargaManualBtn = document.getElementById('carga_manual');
+const fechaManualInput = document.getElementById("fecha_manual")
+
 // Establecer la fecha de la primera carga como el día anterior
 const fechaInicial = new Date();
 fechaInicial.setDate(fechaInicial.getDate() - 1);  // Restar un día
@@ -234,10 +237,53 @@ async function cargarProcedimientos(fecha) {
     }
 }
 
-// Al hacer clic en "Cargar más", se cargan los procedimientos del día anterior
-cargarMasBtn.addEventListener('click', () => {
-    let fechaActual = fechaActualInput.value;  // Obtener la fecha actual desde el campo oculto
-    
-    cargarProcedimientos(fechaActual);  // Llamamos a la función para cargar procedimientos
-    
+let fechaActual; // Variable para almacenar la fecha actual
+let fechasSolicitadas = []; // Inicializar lista vacía de fechas
+
+// Función para verificar si una fecha ya fue solicitada
+function esFechaNueva(fecha) {
+  return !fechasSolicitadas.includes(fecha);
+}
+
+// Función para guardar una nueva fecha
+function guardarFecha(fecha) {
+  fechasSolicitadas.push(fecha); // Agregar fecha a la lista
+}
+
+// Habilitar o deshabilitar el botón "Obtener Fecha"
+fechaManualInput.addEventListener("change", function () {
+  if (fechaManualInput.value) {
+    cargaManualBtn.removeAttribute("disabled");
+  } else {
+    cargaManualBtn.setAttribute("disabled", true);
+  }
 });
+
+// Evento para el botón "Obtener Fecha"
+cargaManualBtn.addEventListener("click", function () {
+  const fechaSeleccionada = fechaManualInput.value;
+  if (fechaSeleccionada && esFechaNueva(fechaSeleccionada)) {
+    fechaActual = fechaSeleccionada; // Actualizar la fecha actual
+    guardarFecha(fechaActual); // Guardar la fecha en la lista
+    // console.log("Cargando procedimientos para la fecha:", fechaActual);
+    fechaManualInput.value = ""; // Limpiar el campo de fecha
+    cargaManualBtn.setAttribute("disabled", true); // Deshabilitar el botón nuevamente
+    cargarProcedimientos(fechaActual); // Llamar a la función para cargar procedimientos
+  } else if (!esFechaNueva(fechaSeleccionada)) {
+    alert("Esta fecha ya ha sido cargada anteriormente.");
+  }
+});
+
+// Evento para el botón "Cargar más"
+cargarMasBtn.addEventListener("click", function () {
+  fechaActual = fechaActualInput.value
+
+  if (esFechaNueva(fechaActual)) {
+    guardarFecha(fechaActual); // Guardar la fecha en la lista
+    // console.log("Cargando procedimientos para la fecha:", fechaActual);
+    cargarProcedimientos(fechaActual); // Llamar a la función para cargar procedimientos
+  } else {
+    // console.log("La fecha ya fue cargada anteriormente:", fechaActual);
+  }
+});
+

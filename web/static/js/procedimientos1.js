@@ -1428,11 +1428,86 @@ document
       case "13":
         requiredFalse();
         showElements(["mitigacion_riesgo"]);
+        
         campos = document
-          .getElementById("mitigacion_riesgo")
-          .querySelectorAll("select, input");
+        .getElementById("mitigacion_riesgo")
+        .querySelectorAll("select, input");
         setRequired(campos, true);
+        
+        requiredExceptions(
+          document
+            .getElementById("mitigacion_riesgo")
+            .querySelectorAll("input[type='checkbox']")
+        );
+        document.getElementById("id_mitigacion_riesgo_form-agregar_vehiculo").parentElement.style.display = "none"
+        
         document.getElementById("button_submit").style.display = "block";
+        
+        
+        document.getElementById("id_mitigacion_riesgo_form-tipo_riesgo").addEventListener("change", function () {
+          if (this.value === "1") {
+            document.getElementById("id_mitigacion_riesgo_form-agregar_vehiculo").parentElement.style.display = "flex"
+          } else {
+            document.getElementById("id_mitigacion_riesgo_form-agregar_vehiculo").parentElement.style.display = "none"            
+          }
+        })
+
+        document.getElementById("id_mitigacion_riesgo_form-agregar_vehiculo").addEventListener("change", function () {
+          if (this.checked) {
+            let campo2 = document
+                .getElementById("vehiculo_derrame_form")
+                .querySelectorAll("select, input");
+              setRequired(campo2, true);
+              document.getElementById("vehiculo_derrame_form").style.display =
+                "block";
+          } else {
+            let campo2 = document
+                .getElementById("vehiculo_derrame_form")
+                .querySelectorAll("select, input");
+              requiredExceptions(campo2);
+              document.getElementById("vehiculo_derrame_form").style.display =
+                "none";
+          }
+        })
+
+        document.getElementById("id_vehiculo_derrame_form-agregar_segundo_vehiculo").addEventListener("change", function () {
+          if (this.checked) {
+            let campo2 = document
+                .getElementById("vehiculo_derrame_form2")
+                .querySelectorAll("select, input");
+              setRequired(campo2, true);
+              document.getElementById("vehiculo_derrame_form2").style.display =
+                "block";
+          } else {
+            let campo2 = document
+                .getElementById("vehiculo_derrame_form2")
+                .querySelectorAll("select, input");
+              requiredExceptions(campo2);
+              document.getElementById("vehiculo_derrame_form2").style.display =
+                "none";
+          }
+        })
+
+        document.getElementById("id_vehiculo_derrame_form2-agregar_tercer_vehiculo").addEventListener("change", function () {
+          if (this.checked) {
+            let campo2 = document
+                .getElementById("vehiculo_derrame_form3")
+                .querySelectorAll("select, input");
+              setRequired(campo2, true);
+              document.getElementById("vehiculo_derrame_form3").style.display =
+                "block";
+          } else {
+            let campo2 = document
+                .getElementById("vehiculo_derrame_form3")
+                .querySelectorAll("select, input");
+              requiredExceptions(campo2);
+              document.getElementById("vehiculo_derrame_form3").style.display =
+                "none";
+          }
+        })
+
+
+
         break;
       case "14":
         let select_vivienda = document

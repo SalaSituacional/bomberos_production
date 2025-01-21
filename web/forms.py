@@ -571,6 +571,31 @@ class Formulario_Mitigacion_Riesgos(forms.Form):
     descripcion = forms.CharField(required=False)
     material_utilizado = forms.CharField(required=False)
     status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Culminado", "Culminado"), ("En Proceso", "En Proceso")], widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
+    agregar_vehiculo = forms.BooleanField(required=False)
+
+class Detalles_Vehiculo_Derrame_Form(forms.Form):
+    modelo = forms.CharField(required=False)
+    marca = forms.CharField(required=False)
+    color = forms.CharField(max_length=40, required=False)
+    año = forms.CharField(max_length=40, required=False)
+    placas = forms.CharField(max_length=40, required=False)
+    agregar_segundo_vehiculo = forms.BooleanField(required=False)
+
+class Detalles_Vehiculo_Derrame_Form2(forms.Form):
+    modelo = forms.CharField(required=False)
+    marca = forms.CharField(required=False)
+    color = forms.CharField(max_length=40, required=False)
+    año = forms.CharField(max_length=40, required=False)
+    placas = forms.CharField(max_length=40, required=False)
+    agregar_tercer_vehiculo = forms.BooleanField(required=False)
+
+class Detalles_Vehiculo_Derrame_Form3(forms.Form):
+    modelo = forms.CharField(required=False)
+    marca = forms.CharField(required=False)
+    color = forms.CharField(max_length=40, required=False)
+    año = forms.CharField(max_length=40, required=False)
+    placas = forms.CharField(max_length=40, required=False)
+
 
 class Formulario_Puesto_Avanzada(forms.Form):
     tipo_avanzada = forms.ChoiceField(choices=Asignar_opc_avanzada, widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
