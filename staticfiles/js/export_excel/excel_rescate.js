@@ -25,26 +25,38 @@ async function generarExcelRescate() {
           "Dirección",
           "Tipo de Procedimiento",
           "Detalles",
+          "Descripcion",
+          "Material Utilizado",
+          "Status",
           "Persona Presente",
-          "Descripcion"
+          "Traslados",
+          "Vehiculos",
+          "Comisiones",
+          "Retención Preventiva"
         ]
       ];
   
       // Agregar los datos al Excel
       data.forEach((item) => {
         worksheetData.push([
-          item.division || "N/A",
-          item.solicitante || "N/A",
-          item.jefe_comision || "N/A",
-          item.municipio || "N/A",
-          item.parroquia || "N/A",
-          item.fecha || "N/A",
-          item.hora || "N/A",
-          item.direccion || "N/A",
-          item.tipo_procedimiento || "N/A",
-          item.detalles || "N/A",
-          item.personas_presentes || "N/A",
-          item.descripcion || "N/A"
+          item.division || "[SIN DATOS]",
+          item.solicitante || "[SIN DATOS]",
+          item.jefe_comision || "[SIN DATOS]",
+          item.municipio || "[SIN DATOS]",
+          item.parroquia || "[SIN DATOS]",
+          item.fecha || "[SIN DATOS]",
+          item.hora || "[SIN DATOS]",
+          item.direccion || "[SIN DATOS]",
+          item.tipo_procedimiento || "[SIN DATOS]",
+          item.detalles || "[SIN DATOS]",
+          item.descripcion || "[SIN DATOS]",
+          item.material_utilizado || "[SIN DATOS]",
+          item.status || "[SIN DATOS]",
+          item.personas_presentes || "[SIN DATOS]",
+          item.traslados || "[SIN DATOS]",
+          item.vehiculos || "[SIN DATOS]",
+          item.comisiones || "[SIN DATOS]",
+          item.retencion_preventiva || "[SIN DATOS]",
         ]);
       });
   

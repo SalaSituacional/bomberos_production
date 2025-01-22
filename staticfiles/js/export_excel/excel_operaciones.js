@@ -26,8 +26,14 @@ async function generarExcel() {
         "Dirección",
         "Tipo de Procedimiento",
         "Detalles",
+        "Descripcion",
+        "Material Utilizado",
+        "Status",
         "Persona Presente",
-        "Descripcion"
+        "Traslados",
+        "Vehiculos",
+        "Comisiones",
+        "Retención Preventiva"
       ]
     ];
 
@@ -44,8 +50,14 @@ async function generarExcel() {
         item.direccion || "N/A",
         item.tipo_procedimiento || "N/A",
         item.detalles || "N/A",
-        item.personas_presentes || "N/A",
-        item.descripcion || "N/A"
+        item.descripcion || "[SIN DATOS]",
+        item.material_utilizado || "[SIN DATOS]",
+        item.status || "[SIN DATOS]",
+        item.personas_presentes || "[SIN DATOS]",
+        item.traslados || "[SIN DATOS]",
+        item.vehiculos || "[SIN DATOS]",
+        item.comisiones || "[SIN DATOS]",
+        item.retencion_preventiva || "[SIN DATOS]",
       ]);
     });
 
