@@ -1089,125 +1089,47 @@ def generar_excel_psicologia(request):
 
     # Utilizar select_related para relaciones de uno a uno y prefetch_related para relaciones de muchos a muchos
     procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
-        'id_division', 'id_solicitante', 'id_jefe_comision', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
+        'id_division', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
     ).prefetch_related(
-        Prefetch('abastecimiento_agua_set'),
-        Prefetch('apoyo_unidades_set'),
-        # Eliminar 'guardi_prevencion_set' que da problemas
-        Prefetch('atendido_no_efectuado_set'),
-        Prefetch('despliegue_seguridad_set'),
-        Prefetch('fallecidos_set'),
-        Prefetch('falsa_alarma_set'),
-        Prefetch('servicios_especiales_set'),
-        Prefetch('rescate_set'),
-        Prefetch('incendios_set'),
-        Prefetch('atenciones_paramedicas_set'),
-        Prefetch('traslado_prehospitalaria_set'),
-        Prefetch('evaluacion_riesgo_set'),
-        Prefetch('mitigacion_riesgos_set'),
-        Prefetch('puesto_avanzada_set'),
-        Prefetch('asesoramiento_set'),
-        Prefetch('reinspeccion_prevencion_set'),
-        Prefetch('retencion_preventiva_set'),
-        Prefetch('artificios_pirotecnicos_set'),
-        Prefetch('inspeccion_establecimiento_art_set'),
-        Prefetch('valoracion_medica_set'),
-        Prefetch('detalles_enfermeria_set'),
-        Prefetch('procedimientos_psicologia_set'),
-        Prefetch('procedimientos_capacitacion_set'),
-        Prefetch('procedimientos_brigada_set'),
-        Prefetch('procedimientos_frente_preventivo_set'),
-        Prefetch('jornada_medica_set'),
-        Prefetch('inspeccion_prevencion_asesorias_tecnicas_set'),
-        Prefetch('inspeccion_habitabilidad_set'),
-        Prefetch('inspeccion_otros_set'),
-        Prefetch('inspeccion_arbol_set'),
-        Prefetch('investigacion_set')
+        Prefetch("procedimientos_psicologia_set", to_attr="psicologia_data"),
     )
-
-    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
-        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
-        personas = []
-        detalles = []
-        for item in set_relacionado:
-            if hasattr(item, 'cedula'):
-                personas.append(f"{item.nombre} {item.apellido} {item.cedula}")
-            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
-        return personas, detalles
 
     # Preparar lista de datos a enviar
     datos = []
 
     for procedimiento in procedimientos:
-        # Obtener solicitante y jefe de comisión
-        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
-                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
-        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
-                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+        
+        personas_presentes = []
+        descripcion = []
+        material_utilizado = []
+        status = []
 
-        personas_presentes, detalles_procedimientos = [], []
-
-        # Procesar cada conjunto de datos
-        relaciones = [
-            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
-            (procedimiento.apoyo_unidades_set.all(), 'id_tipo_apoyo.tipo_apoyo'),
-            # Eliminar 'guardi_prevencion_set' de las relaciones
-            (procedimiento.atendido_no_efectuado_set.all(), None),
-            (procedimiento.despliegue_seguridad_set.all(), 'motivo_despliegue.motivo'),
-            (procedimiento.fallecidos_set.all(), 'motivo_fallecimiento'),
-            (procedimiento.falsa_alarma_set.all(), 'motivo_alarma.motivo'),
-            (procedimiento.servicios_especiales_set.all(), 'tipo_servicio.serv_especiales'),
-            (procedimiento.rescate_set.all(), 'tipo_rescate.tipo_rescate'),
-            (procedimiento.incendios_set.all(), 'id_tipo_incendio.tipo_incendio'),
-            (procedimiento.atenciones_paramedicas_set.all(), 'tipo_atencion'),
-            (procedimiento.traslado_prehospitalaria_set.all(), 'id_tipo_traslado.tipo_traslado'),
-            (procedimiento.evaluacion_riesgo_set.all(), 'id_tipo_riesgo.tipo_riesgo'),
-            (procedimiento.mitigacion_riesgos_set.all(), 'id_tipo_servicio.tipo_servicio'),
-            (procedimiento.puesto_avanzada_set.all(), 'id_tipo_servicio.tipo_servicio'),
-            (procedimiento.asesoramiento_set.all(), 'nombre_comercio'),
-            (procedimiento.reinspeccion_prevencion_set.all(), 'nombre_comercio'),
-            (procedimiento.retencion_preventiva_set.all(), 'tipo_cilindro'),
-            (procedimiento.artificios_pirotecnicos_set.all(), 'tipo_procedimiento.tipo'),
-            (procedimiento.inspeccion_establecimiento_art_set.all(), 'nombre_comercio'),
-            (procedimiento.valoracion_medica_set.all(), None),
-            (procedimiento.detalles_enfermeria_set.all(), None),
-            (procedimiento.procedimientos_psicologia_set.all(), None),
-            (procedimiento.procedimientos_capacitacion_set.all(), None),
-            (procedimiento.procedimientos_brigada_set.all(), None),
-            (procedimiento.procedimientos_frente_preventivo_set.all(), None),
-            (procedimiento.jornada_medica_set.all(), None),
-            (procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all(), 'tipo_inspeccion'),
-            (procedimiento.inspeccion_habitabilidad_set.all(), 'tipo_inspeccion'),
-            (procedimiento.inspeccion_otros_set.all(), 'tipo_inspeccion'),
-            (procedimiento.inspeccion_arbol_set.all(), 'tipo_inspeccion'),
-            (procedimiento.investigacion_set.all(), 'id_tipo_investigacion.tipo_investigacion')
-        ]
-
-        # Procesar cada relación
-        for relacion, campo_descripcion in relaciones:
-            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
-            personas_presentes.extend(personas_relacionadas)
-            detalles_procedimientos.extend(detalles_relacionados)
+        for psicologia in procedimiento.psicologia_data:
+            personas_presentes.append(f"{psicologia.nombre} {psicologia.apellido} ({psicologia.cedula}), {psicologia.edad} años [{psicologia.sexo}]")
+            descripcion.append(psicologia.descripcion)
+            material_utilizado.append(psicologia.material_utilizado)
+            status.append(psicologia.status)
 
         # Convertir listas a cadenas separadas por ' -- '
         personas_presentes_str = " -- ".join(personas_presentes)
-        detalles_str = " -- ".join(detalles_procedimientos)
-        descripcion_str = " -- ".join(detalles_procedimientos)
-
+        descripcion_str = " -- ".join(descripcion)
+        material_utilizado_str = " -- ".join(material_utilizado)
+        status_str = " -- ".join(status)
+        
         # Agregar datos al arreglo
         datos.append({
             'division': procedimiento.id_division.division,
-            'solicitante': solicitante,
-            'jefe_comision': jefe_comision,
+            'jefe_area': procedimiento.solicitante_externo,
             'municipio': procedimiento.id_municipio.municipio,
             'parroquia': procedimiento.id_parroquia.parroquia,
             'fecha': procedimiento.fecha,
             'hora': procedimiento.hora,
             'direccion': procedimiento.direccion,
             'tipo_procedimiento': procedimiento.id_tipo_procedimiento.tipo_procedimiento,
-            'detalles': detalles_str,
+            'descripcion': descripcion_str,
+            'material_utilizado': material_utilizado_str,
+            "status": status_str,
             'personas_presentes': personas_presentes_str,
-            'descripcion': descripcion_str
         })
 
     return JsonResponse({'data': datos})
