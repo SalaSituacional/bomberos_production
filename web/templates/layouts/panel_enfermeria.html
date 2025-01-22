@@ -238,13 +238,13 @@
 
     });
   </script>
- <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        var contain = document.getElementsByClassName("contain-dates");
-        if (contain) {
-          contain.remove();
-        }
-      });
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var contains = document.getElementsByClassName("contain-dates");
+    while (contains.length > 0) {
+      contains[0].remove();
+    }
+  });
 </script>
   {% block content %} {% endblock %}
 </body>
