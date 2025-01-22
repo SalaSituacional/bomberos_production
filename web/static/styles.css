@@ -1225,7 +1225,7 @@ summary > * {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: space-between;
   padding-bottom: 2rem;
   padding-top: 0.1rem;
 }
@@ -1404,12 +1404,12 @@ summary > * {
     width: 100%;
   }
   span {
+    border-radius: inherit;
     font-weight: bold;
-    border-radius: 100%;
     color: #fff;
     font-size: 2rem;
-    width: 30%;
     height: auto;
+    width: 64%;
   }
 }
 .color-pink {
@@ -1513,8 +1513,9 @@ summary > * {
   width: 95%;
   height: auto;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-evenly;
+  align-content: center;
   align-items: center;
   background-color: #ffffff;
   border: thin solid #ffffff;
@@ -2994,7 +2995,8 @@ summary > * {
     height: 9rem;
     width: 15rem;
     span{
-      width: 25%;
+      border-radius: inherit;
+      width: 40%;
     }
   }
   .progress-bar{
