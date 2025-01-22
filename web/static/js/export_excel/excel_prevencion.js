@@ -26,8 +26,13 @@ async function generarExcelPrevencion() {
         "Dirección",
         "Tipo de Procedimiento",
         "Detalles",
-        "Personas Presentes",
-        "Descripción"
+        "Descripcion",
+        "Material Utilizado",
+        "Status",
+        "Persona Presente",
+        "Vehiculos",
+        "Comisiones",
+        "Retención Preventiva"
       ]
     ];
 
@@ -43,9 +48,14 @@ async function generarExcelPrevencion() {
         item.hora || "N/A",
         item.direccion || "N/A",
         item.tipo_procedimiento || "N/A",
-        item.detalles || "N/A",
-        item.personas_presentes || "N/A",
-        item.descripcion || "N/A"  // Descripción obtenida del backend
+        item.detalles || "[SIN DATOS]",
+        item.descripcion || "[SIN DATOS]",
+        item.material_utilizado || "[SIN DATOS]",
+        item.status || "[SIN DATOS]",
+        item.personas_presentes || "[SIN DATOS]",
+        item.vehiculos || "[SIN DATOS]",
+        item.comisiones || "[SIN DATOS]",
+        item.retencion_preventiva || "[SIN DATOS]",
       ]);
     });
 

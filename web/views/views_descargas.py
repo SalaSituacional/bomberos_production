@@ -797,26 +797,157 @@ def generar_excel_prevencion(request):
     # Obtén los procedimientos filtrados por división, utilizando select_related para optimizar las relaciones de uno a uno y prefetch_related para las relaciones de uno a muchos
     procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
         "id_solicitante", "id_jefe_comision", "id_municipio", "id_parroquia", "id_tipo_procedimiento"
-    ).prefetch_related("retencion_preventiva_set")
+    ).prefetch_related(
+        Prefetch("evaluacion_riesgo_set", to_attr="evaluacion_data"), # Ya
+        Prefetch("asesoramiento_set", to_attr="asesoramiento_data"),
+        Prefetch("inspeccion_prevencion_asesorias_tecnicas_set"),
+        Prefetch("inspeccion_habitabilidad_set"),
+        Prefetch("inspeccion_otros_set"),
+        Prefetch("inspeccion_arbol_set"),
+        Prefetch("investigacion_set__investigacion_vehiculo_set"),
+        Prefetch("investigacion_set__investigacion_comercio_set"),
+        Prefetch("investigacion_set__investigacion_estructura_vivienda_set"),
+        Prefetch("reinspeccion_prevencion_set"),
+        Prefetch("retencion_preventiva_set"),
+        Prefetch("inspeccion_establecimiento_art_set"),
+    )
 
     datos = []
     for procedimiento in procedimientos:
-        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
-                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
-        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
-                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+        
+        # Obtener solicitante y jefe de comisión
 
-        detalles = []
+        if procedimiento.id_solicitante.apellidos == "Externo":
+            solicitante = procedimiento.solicitante_externo
+        else:
+            solicitante = f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} {procedimiento.id_solicitante.apellidos}"
+
+
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} {procedimiento.id_jefe_comision.apellidos}")
+
+        # Detalles y personas
         personas_presentes = []
-        for retencion in procedimiento.retencion_preventiva_set.all():  # Iterar sobre todas las retenciones preventivas
-            detalles.append(retencion.tipo_cilindro)
-            personas_presentes.append(f"{retencion.nombre} {retencion.apellidos} ({retencion.cedula})")
+        detalles = []
+        descripcion = []
+        material_utilizado = []
+        status = []
+        vehiculos = []
+        comisiones_presentes = []
+        retencion_preventiva = []
 
-        # Accede a la descripción de la retención preventiva (si existe, si no, asigna "N/A")
-        retenciones = list(procedimiento.retencion_preventiva_set.all())
-        descripcion = "N/A"
-        if retenciones:
-            descripcion = retenciones[0].descripcion
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for evaluacion in procedimiento.evaluacion_data:
+            detalles.append(f"{evaluacion.id_tipo_riesgo.tipo_riesgo}: {evaluacion.tipo_estructura}")
+            descripcion.append(evaluacion.descripcion)
+            material_utilizado.append(evaluacion.material_utilizado)
+            status.append(evaluacion.status)
+
+            # Personas presentes en la evaluación
+            for persona in evaluacion.personas_eval_data:
+                personas_presentes.append(f"{persona.nombre} {persona.apellidos} ({persona.cedula}) - {persona.telefono}")
+
+
+         # Procesar los detalles de asesoramiento
+        for asesoria in procedimiento.asesoramiento_data:
+            detalles.append(f"{asesoria.nombre_comercio} {asesoria.rif_comercio}")
+            personas_presentes.append(f"{asesoria.nombres} {asesoria.apellidos} ({asesoria.cedula}) - {asesoria.sexo} [{asesoria.telefono}]")
+            descripcion.append(asesoria.descripcion)
+            material_utilizado.append(asesoria.material_utilizado)
+            status.append(asesoria.status)
+
+        # Procesar Inspección Prevención Asesorías Técnicas
+        for asesoria in procedimiento.inspeccion_prevencion_asesorias_tecnicas_set.all():
+            detalles.append(f"{asesoria.tipo_inspeccion} - {asesoria.nombre_comercio} ({asesoria.propietario}, {asesoria.cedula_propietario})")
+            personas_presentes.append(f"{asesoria.persona_sitio_nombre} {asesoria.persona_sitio_apellido} ({asesoria.persona_sitio_cedula}) [{asesoria.persona_sitio_telefono}]")
+            descripcion.append(asesoria.descripcion)
+            material_utilizado.append(asesoria.material_utilizado)
+            status.append(asesoria.status)
+
+        # Procesar Inspección Habitabilidad
+        for habitabilidad in procedimiento.inspeccion_habitabilidad_set.all():
+            detalles.append(habitabilidad.tipo_inspeccion)
+            personas_presentes.append(f"{habitabilidad.persona_sitio_nombre} {habitabilidad.persona_sitio_apellido} ({habitabilidad.persona_sitio_cedula}) [{habitabilidad.persona_sitio_telefono}]")
+            descripcion.append(habitabilidad.descripcion)
+            material_utilizado.append(habitabilidad.material_utilizado)
+            status.append(habitabilidad.status)
+
+        # Procesar Inspección Otros
+        for otros in procedimiento.inspeccion_otros_set.all():
+            detalles.append(f"{otros.tipo_inspeccion} - {otros.especifique}")
+            personas_presentes.append(f"{otros.persona_sitio_nombre} {otros.persona_sitio_apellido} ({otros.persona_sitio_cedula}) [{otros.persona_sitio_telefono}]")
+            descripcion.append(otros.descripcion)
+            material_utilizado.append(otros.material_utilizado)
+            status.append(otros.status)
+
+        # Procesar Inspección Árbol
+        for arbol in procedimiento.inspeccion_arbol_set.all():
+            detalles.append(f"{arbol.tipo_inspeccion} - Especie: {arbol.especie}, Altura: {arbol.altura_aprox}, Ubicación: {arbol.ubicacion_arbol}")
+            personas_presentes.append(f"{arbol.persona_sitio_nombre} {arbol.persona_sitio_apellido} ({arbol.persona_sitio_cedula}) [{arbol.persona_sitio_telefono}]")
+            descripcion.append(arbol.descripcion)
+            material_utilizado.append(arbol.material_utilizado)
+            status.append(arbol.status)
+
+         # Procesar investigaciones
+        
+        for investigacion in procedimiento.investigacion_set.all():
+            # Procesar investigación vehículo
+            for vehiculo in investigacion.investigacion_vehiculo_set.all():
+                detalles.append(f"{investigacion.tipo_siniestro} - {investigacion.id_tipo_investigacion.tipo_investigacion}")
+                vehiculos.append(f"Vehículo: {vehiculo.marca} {vehiculo.modelo}, {vehiculo.color}, Año {vehiculo.año}, Placas {vehiculo.placas}")
+                personas_presentes.append(f"Propietario: {vehiculo.nombre_propietario} {vehiculo.apellido_propietario} ({vehiculo.cedula_propietario})")
+                descripcion.append(vehiculo.descripcion)
+                material_utilizado.append(vehiculo.material_utilizado)
+                status.append(vehiculo.status)
+
+            # Procesar investigación comercio
+            for comercio in investigacion.investigacion_comercio_set.all():
+                detalles.append(f"{investigacion.tipo_siniestro} - {investigacion.id_tipo_investigacion.tipo_investigacion}, Comercio: {comercio.nombre_comercio} ({comercio.rif_comercio})")
+                personas_presentes.append(f"{comercio.nombre_propietario} {comercio.apellido_propietario} ({comercio.cedula_propietario})")
+                descripcion.append(comercio.descripcion)
+                material_utilizado.append(comercio.material_utilizado)
+                status.append(comercio.status)
+
+            # Procesar investigación estructura/vivienda
+            for estructura in investigacion.investigacion_estructura_vivienda_set.all():
+                detalles.append(f"{investigacion.tipo_siniestro} - {investigacion.id_tipo_investigacion.tipo_investigacion}, Estructura: {estructura.tipo_estructura}")
+                personas_presentes.append(f"{estructura.nombre} {estructura.apellido} ({estructura.cedula})")
+                descripcion.append(estructura.descripcion)
+                material_utilizado.append(estructura.material_utilizado)
+                status.append(estructura.status)
+
+        # Procesar Reinspección de Prevención
+        for reinspeccion in procedimiento.reinspeccion_prevencion_set.all():
+            detalles.append(f"Comercio: {reinspeccion.nombre_comercio} ({reinspeccion.rif_comercio})")
+            personas_presentes.append(f"{reinspeccion.nombre} {reinspeccion.apellidos} ({reinspeccion.cedula}) - {reinspeccion.sexo} [{reinspeccion.telefono}]")
+            descripcion.append(reinspeccion.descripcion)
+            material_utilizado.append(reinspeccion.material_utilizado)
+            status.append(reinspeccion.status)
+
+        # Procesar Retención Preventiva (GLP)
+        for retencion in procedimiento.retencion_preventiva_set.all():
+            detalles.append(f"Cilindro: {retencion.tipo_cilindro}, Capacidad: {retencion.capacidad}, Serial: {retencion.serial}, Constancia: {retencion.nro_constancia_retencion}")
+            personas_presentes.append(f"{retencion.nombre} {retencion.apellidos} ({retencion.cedula})")
+            descripcion.append(retencion.descripcion)
+            material_utilizado.append(retencion.material_utilizado)
+            status.append(retencion.status)
+
+        # Procesar Inspección de Establecimiento de Artificios
+        for inspeccion in procedimiento.inspeccion_establecimiento_art_set.all():
+            detalles.append(f"Comercio: {inspeccion.nombre_comercio} (RIF: {inspeccion.rif_comercio})")
+            personas_presentes.append(f"{inspeccion.encargado_nombre} {inspeccion.encargado_apellidos} ({inspeccion.encargado_cedula}) - {inspeccion.encargado_sexo}")
+            descripcion.append(inspeccion.descripcion)
+            material_utilizado.append(inspeccion.material_utilizado)
+            status.append(inspeccion.status)
+
+        # Combinar datos
+        detalles_str = " -- ".join(detalles) or " "
+        personas_str = " -- ".join(personas_presentes) or " "
+        descripcion_str = " -- ".join(descripcion) or " "
+        material_utilizado_str = " -- ".join(material_utilizado) or " "
+        status_str = " -- ".join(status) or " "
+        vehiculos_str = " -- ".join(vehiculos) or " "
+        comisiones_presentes_str = " -- ".join(comisiones_presentes) or " "
+        retencion_preventiva_str = " -- ".join(retencion_preventiva) or " "
 
         datos.append({
             "division": procedimiento.id_division.division,
@@ -828,9 +959,14 @@ def generar_excel_prevencion(request):
             "hora": procedimiento.hora,
             "direccion": procedimiento.direccion,
             "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento,
-            "detalles": " -- ".join(detalles),
-            "personas_presentes": " -- ".join(personas_presentes),
-            "descripcion": descripcion,
+            "detalles": detalles_str,
+            "personas_presentes": personas_str,
+            "descripcion": descripcion_str,
+            "material_utilizado": material_utilizado_str,
+            "status": status_str,
+            "vehiculos": vehiculos_str,
+            "comisiones": comisiones_presentes_str,
+            "retencion_preventiva": retencion_preventiva_str,
         })
 
     return JsonResponse(datos, safe=False, encoder=DjangoJSONEncoder)
@@ -1473,74 +1609,57 @@ def generar_excel_grumae(request):
 def generar_excel_capacitacion(request):
     division = 9
     # Obtener los procedimientos de la división especificada con prefetching
-    procedimientos = Procedimientos.objects.filter(id_division=division).prefetch_related(
-        'abastecimiento_agua_set',
-        'apoyo_unidades_set',
-        'guardia_prevencion_set',
-        'atendido_no_efectuado_set',
-        'despliegue_seguridad_set',
-        'fallecidos_set',
-        'falsa_alarma_set',
-        'servicios_especiales_set',
-        'rescate_set',
-        'incendios_set',
-        'atenciones_paramedicas_set',
-        'traslado_prehospitalaria_set',
-        'evaluacion_riesgo_set',
-        'mitigacion_riesgos_set',
-        'puesto_avanzada_set',
-        'asesoramiento_set',
-        'reinspeccion_prevencion_set',
-        'retencion_preventiva_set',
-        'artificios_pirotecnicos_set',
-        'inspeccion_establecimiento_art_set',
-        'valoracion_medica_set',
-        'detalles_enfermeria_set',
-        'procedimientos_psicologia_set',
-        'procedimientos_capacitacion_set',
-        'procedimientos_brigada_set',
-        'procedimientos_frente_preventivo_set',
-        'jornada_medica_set',
-        'inspeccion_prevencion_asesorias_tecnicas_set',
-        'inspeccion_habitabilidad_set',
-        'inspeccion_otros_set',
-        'inspeccion_arbol_set',
-        'investigacion_set'
+    # Obtener datos de los procedimientos con select_related y prefetch_related
+    procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
+        'id_solicitante', 'id_jefe_comision', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
+    ).prefetch_related(
+        Prefetch("procedimientos_capacitacion_set", to_attr="capacitacion_data"),
+        Prefetch("procedimientos_brigada_set", to_attr="brigada_data"),
+        Prefetch("procedimientos_frente_preventivo_set", to_attr="frente_data"),
     )
-
-    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
-        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
-        personas = []
-        detalles = []
-        for item in set_relacionado:
-            if hasattr(item, 'cedula'):
-                personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
-            if hasattr(item, 'nombre_propietario'):
-                personas.append(f"{item.nombre_propietario} {item.apellido_propietario} {item.cedula_propietario}")
-            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
-        return personas, detalles
 
     datos = []
     for procedimiento in procedimientos:
-        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} "
-                       f"{procedimiento.id_solicitante.apellidos}") if procedimiento.id_solicitante else procedimiento.solicitante_externo
-        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} "
-                         f"{procedimiento.id_jefe_comision.apellidos}") if procedimiento.id_jefe_comision else ""
+        
+        # Solicitante y jefe de comisión
+        if procedimiento.id_solicitante.apellidos == "Externo":
+            solicitante = procedimiento.solicitante_externo
+        else:
+            solicitante = f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} {procedimiento.id_solicitante.apellidos}"
 
-        personas_presentes, detalles_procedimientos = [], []
-        relaciones = [
-            (procedimiento.abastecimiento_agua_set.all(), 'id_tipo_servicio.nombre_institucion'),
-            # Agrega las demás relaciones...
-        ]
 
-        for relacion, campo_descripcion in relaciones:
-            personas_relacionadas, detalles_relacionados = obtener_personas_y_detalles(relacion, campo_descripcion)
-            personas_presentes.extend(personas_relacionadas)
-            detalles_procedimientos.extend(detalles_relacionados)
+        jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} {procedimiento.id_jefe_comision.apellidos}")
 
-        personas_presentes_str = " -- ".join(personas_presentes)
-        detalles_str = " -- ".join(detalles_procedimientos)
-        descripcion_str = " -- ".join(detalles_procedimientos)
+        personas_presentes = []
+        descripcion = []
+        material_utilizado = []
+        status = []
+        detalles = []
+
+        for capacitacion in procedimiento.capacitacion_data:
+            detalles.append(f"{capacitacion.tipo_capacitacion} - Clasificacion: {capacitacion.tipo_clasificacion}, {capacitacion.personas_beneficiadas} Personas Benedificiadas")
+            descripcion.append(capacitacion.descripcion)
+            material_utilizado.append(capacitacion.material_utilizado)
+            status.append(capacitacion.status)
+        
+        for brigada in procedimiento.brigada_data:
+            detalles.append(f"{brigada.tipo_capacitacion} - Clasificacion: {brigada.tipo_clasificacion}, {brigada.personas_beneficiadas} Personas Benedificiadas")
+            descripcion.append(brigada.descripcion)
+            material_utilizado.append(brigada.material_utilizado)
+            status.append(brigada.status)
+
+        for frente in procedimiento.frente_data:
+            detalles.append(f"Actividad: {frente.nombre_actividad} - Estrategia: {frente.estrategia}, {frente.personas_beneficiadas} Personas Beneficiadas")
+            descripcion.append(frente.descripcion)
+            material_utilizado.append(frente.material_utilizado)
+            status.append(frente.status)
+
+        # Combinar datos
+        detalles_str = " -- ".join(detalles) or " "
+        personas_str = " -- ".join(personas_presentes) or " "
+        descripcion_str = " -- ".join(descripcion) or " "
+        material_utilizado_str = " -- ".join(material_utilizado) or " "
+        status_str = " -- ".join(status) or " "
 
         datos.append({
             "division": procedimiento.id_division.division,
@@ -1552,9 +1671,12 @@ def generar_excel_capacitacion(request):
             "hora": procedimiento.hora,
             "direccion": procedimiento.direccion,
             "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento,
+            "dependencia": procedimiento.dependencia,
             "detalles": detalles_str,
-            "personas_presentes": personas_presentes_str,
+            "personas_presentes": personas_str,
             "descripcion": descripcion_str,
+            "material_utilizado": material_utilizado_str,
+            "status": status_str,
         })
 
     return JsonResponse(datos, safe=False)

@@ -15,9 +15,12 @@ function descargarExcelCapacitacion() {
         "Hora",
         "Dirección",
         "Tipo de Procedimiento",
+        "Dependencia",
         "Detalles",
+        "Descripción",
+        "Material Utilizado",
+        "Status",
         "Personas Presentes",
-        "Descripción"
       ];
 
       // Agregar encabezados al arreglo de datos de la hoja
@@ -35,9 +38,12 @@ function descargarExcelCapacitacion() {
           procedimiento.hora,
           procedimiento.direccion,
           procedimiento.tipo_procedimiento,
+          procedimiento.dependencia,
           procedimiento.detalles,
+          procedimiento.descripcion,
+          procedimiento.material_utilizado,
+          procedimiento.status,
           procedimiento.personas_presentes,
-          procedimiento.descripcion
         ]);
       });
 
