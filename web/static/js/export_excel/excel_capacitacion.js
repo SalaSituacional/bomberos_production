@@ -51,7 +51,7 @@ function descargarExcelCapacitacion() {
       // Calcular el ancho máximo de cada columna
       const colWidths = sheetData[0].map((col, index) => {
         let maxLength = col ? col.toString().length : 0;
-        data.forEach((row) => {
+        sheetData.forEach((row) => {
           maxLength = Math.max(
             maxLength,
             row[index] ? row[index].toString().length : 0
