@@ -1198,8 +1198,13 @@ def generar_excel_serviciosmedicos(request):
 
     division_id = 7  # División correspondiente a "Servicios Médicos"
 
+    mes_excel = request.GET.get('mes') 
+
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
+
     # Optimización de consultas usando `select_related` y `prefetch_related`
-    procedimientos = Procedimientos.objects.filter(id_division=division_id).select_related(
+    procedimientos = Procedimientos.objects.filter(id_division=division_id, fecha__year=año, fecha__month=mes_num).select_related(
         "id_division",  "id_municipio", 
         "id_parroquia", "id_tipo_procedimiento"
     ).prefetch_related(
