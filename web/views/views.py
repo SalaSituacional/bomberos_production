@@ -3098,8 +3098,8 @@ def View_Procedimiento_Editar(request):
                         # Buscar o crear el lesionado
                         lesionado, created = Lesionados.objects.get_or_create(
                             id_accidente=detalles_accidente,
+                            cedula=cedula1,
                             defaults={
-                                "cedula": cedula1,
                                 "nombres": detalles_lesionados_accidentes.cleaned_data["nombre"],
                                 "apellidos": detalles_lesionados_accidentes.cleaned_data["apellido"],
                                 "edad": detalles_lesionados_accidentes.cleaned_data["edad"],
@@ -3141,9 +3141,8 @@ def View_Procedimiento_Editar(request):
 
                             lesionado2, created = Lesionados.objects.get_or_create(
                                 id_accidente=detalles_accidente,
-                                
+                                cedula=cedula2,
                                 defaults={
-                                    "cedula":cedula2,
                                     "nombres": detalles_lesionados_accidentes2.cleaned_data["nombre"],
                                     "apellidos": detalles_lesionados_accidentes2.cleaned_data["apellido"],
                                     "edad": detalles_lesionados_accidentes2.cleaned_data["edad"],
@@ -3182,9 +3181,8 @@ def View_Procedimiento_Editar(request):
 
                             lesionado3, created = Lesionados.objects.get_or_create(
                                 id_accidente=detalles_accidente,
-                               
+                               cedula=cedula3,
                                 defaults={
-                                    "cedula":cedula3,
                                     "nombres": detalles_lesionados_accidentes3.cleaned_data["nombre"],
                                     "apellidos": detalles_lesionados_accidentes3.cleaned_data["apellido"],
                                     "edad": detalles_lesionados_accidentes3.cleaned_data["edad"],

@@ -17,17 +17,18 @@ async function generarExcel() {
       const worksheetData = [
         [
           "División",
-          "Solicitante",
-          "Jefe Comisión",
+          "Tipo de Servicio",
+          "Jefe del Area",
           "Municipio",
           "Parroquia",
           "Fecha",
           "Hora",
           "Dirección",
           "Tipo de Procedimiento",
-          "Detalles",
+          "Descripción",
+          "Material Utilizado",
+          "Status",
           "Persona Presente",
-          "Descripción"
         ]
       ];
   
@@ -35,17 +36,18 @@ async function generarExcel() {
       data.forEach((item) => {
         worksheetData.push([
           item.division || "N/A", // División
-          item.solicitante || "N/A", // Solicitante
-          item.jefe_comision || "N/A", // Jefe de comisión
+          item.tipo_servicio || "N/A", // Solicitante
+          item.jefe_area || "N/A", // Jefe de comisión
           item.municipio || "N/A", // Municipio
           item.parroquia || "N/A", // Parroquia
           item.fecha || "N/A", // Fecha
           item.hora || "N/A", // Hora
           item.direccion || "N/A", // Dirección
           item.tipo_procedimiento || "N/A", // Tipo de Procedimiento
-          item.detalles || "N/A", // Detalles
+          item.descripcion || "N/A", // Descripción
+          item.material_utilizado || "N/A", // Detalles
+          item.status || "N/A", // Detalles
           item.personas_presentes || "N/A", // Personas presentes
-          item.descripcion || "N/A" // Descripción
         ]);
       });
   

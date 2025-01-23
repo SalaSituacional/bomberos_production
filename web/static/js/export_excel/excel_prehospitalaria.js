@@ -49,6 +49,7 @@ async function generarExcelPrehospitalaria() {
           item.hora || "N/A",
           item.direccion || "N/A",
           item.tipo_procedimiento || "N/A",
+          item.detalles || "N/A",
           item.descripcion || "[SIN DATOS]",
           item.material_utilizado || "[SIN DATOS]",
           item.status || "[SIN DATOS]",

@@ -26,26 +26,38 @@ async function generarExcel() {
           "Dirección",
           "Tipo de Procedimiento",
           "Detalles",
+          "Descripcion",
+          "Material Utilizado",
+          "Status",
           "Persona Presente",
-          "Descripción"
+          "Traslados",
+          "Vehiculos",
+          "Comisiones",
+          "Retención Preventiva"
         ]
       ];
   
-      // Agregar los datos con validación
+      // Agregar los datos al Excel
       data.data.forEach((item) => {
         worksheetData.push([
-          item.division || "N/A", // División
-          item.solicitante || "N/A", // Solicitante
-          item.jefe_comision || "N/A", // Jefe de comisión
-          item.municipio || "N/A", // Municipio
-          item.parroquia || "N/A", // Parroquia
-          item.fecha || "N/A", // Fecha
-          item.hora || "N/A", // Hora
-          item.direccion || "N/A", // Dirección
-          item.tipo_procedimiento || "N/A", // Tipo de Procedimiento
-          item.detalles || "N/A", // Detalles
-          item.personas_presentes || "N/A", // Personas presentes
-          item.descripcion || "N/A" // Descripción
+          item.division || "[SIN DATOS]",
+          item.solicitante || "[SIN DATOS]",
+          item.jefe_comision || "[SIN DATOS]",
+          item.municipio || "[SIN DATOS]",
+          item.parroquia || "[SIN DATOS]",
+          item.fecha || "[SIN DATOS]",
+          item.hora || "[SIN DATOS]",
+          item.direccion || "[SIN DATOS]",
+          item.tipo_procedimiento || "[SIN DATOS]",
+          item.detalles || "[SIN DATOS]",
+          item.descripcion || "[SIN DATOS]",
+          item.material_utilizado || "[SIN DATOS]",
+          item.status || "[SIN DATOS]",
+          item.personas_presentes || "[SIN DATOS]",
+          item.traslados || "[SIN DATOS]",
+          item.vehiculos || "[SIN DATOS]",
+          item.comisiones || "[SIN DATOS]",
+          item.retencion_preventiva || "[SIN DATOS]",
         ]);
       });
   

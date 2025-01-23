@@ -15,9 +15,11 @@ function descargarExcelCapacitacion() {
         "Hora",
         "Dirección",
         "Tipo de Procedimiento",
+        "Dependencia",
         "Detalles",
-        "Personas Presentes",
-        "Descripción"
+        "Descripción",
+        "Material Utilizado",
+        "Status",
       ];
 
       // Agregar encabezados al arreglo de datos de la hoja
@@ -35,9 +37,11 @@ function descargarExcelCapacitacion() {
           procedimiento.hora,
           procedimiento.direccion,
           procedimiento.tipo_procedimiento,
+          procedimiento.dependencia,
           procedimiento.detalles,
-          procedimiento.personas_presentes,
-          procedimiento.descripcion
+          procedimiento.descripcion,
+          procedimiento.material_utilizado,
+          procedimiento.status,
         ]);
       });
 
@@ -47,7 +51,7 @@ function descargarExcelCapacitacion() {
       // Calcular el ancho máximo de cada columna
       const colWidths = sheetData[0].map((col, index) => {
         let maxLength = col ? col.toString().length : 0;
-        data.forEach((row) => {
+        sheetData.forEach((row) => {
           maxLength = Math.max(
             maxLength,
             row[index] ? row[index].toString().length : 0
