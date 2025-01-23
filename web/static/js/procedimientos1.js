@@ -35,6 +35,11 @@ const opcionesPorCategoriaUnidad = {
     { value: "14", text: "Logistica 31" },
     { value: "15", text: "Logistica 36" },
   ],
+  // Prevencion
+  3: [
+    {value: "29", text: "Unidad 0047" },
+    {value: "30", text: "Particular" },
+  ],
   // Grumae
   4: [
     { value: "26", text: "Estacion" },
@@ -243,8 +248,8 @@ document
         ocultElement("psicologia")
         mostrarElement("tipos_procedimientos_title")
         mostrarElement("tipos_procedimientos")
-        document.getElementById("id_form2-unidad").parentElement.style.display = "none"
-        document.getElementById("id_form2-unidad").removeAttribute("required")
+        // document.getElementById("id_form2-unidad").parentElement.style.display = "none"
+        // document.getElementById("id_form2-unidad").removeAttribute("required")
         requiredFalse()
 
         
@@ -2059,12 +2064,12 @@ document
   .addEventListener("change", function () {
     var select2 = document.getElementById("id_form3-parroquia");
 
-    if (this.value !== 1) {
+    if (this.value === "1") {
+      select2.disabled = false;
+      select2.setAttribute("required", "true"); // Elimina el atributo `required`
+    } else {
       select2.disabled = true;
       select2.removeAttribute("required"); // Agrega el atributo `required`
-    } else {
-      select2.disabled = false;
-      select2.removeAttribute("required", "true"); // Elimina el atributo `required`
     }
   });
 

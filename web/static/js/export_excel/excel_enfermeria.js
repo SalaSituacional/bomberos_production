@@ -1,4 +1,6 @@
-async function generarExcelEnfermeria() {
+let mesExcel = ""
+
+async function generarExcelEnfermeria(mes) {
     try {
       // Deshabilitar el botón mientras se genera el archivo
       const boton = document.getElementById("exportarExcel");
@@ -6,7 +8,7 @@ async function generarExcelEnfermeria() {
       boton.textContent = "Generando...";
 
       // Obtener los datos del servidor
-      const response = await fetch("/descargar-excel-enfermeria/");
+      const response = await fetch(`/descargar-excel-enfermeria?mes=${mes}`);
       if (!response.ok) {
         throw new Error("Error al obtener los datos del servidor.");
       }
@@ -80,7 +82,21 @@ async function generarExcelEnfermeria() {
     }
   }
 
-  // Vincular la función al botón
-  document
-    .getElementById("exportarExcel")
-    .addEventListener("click", generarExcelEnfermeria);
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("mes_excel").addEventListener("change", function () {
+    mesExcel = document.getElementById("mes_excel").value;
+
+    if (this.value) {
+      const boton = document.getElementById("exportarExcel");
+      boton.removeAttribute("disabled");
+      
+      boton.addEventListener("click", function () {
+        generarExcelEnfermeria(mesExcel);
+      });
+    } else {
+      document.getElementById("exportarExcel").setAttribute("disabled", true);
+    }
+  });
+});
+  
