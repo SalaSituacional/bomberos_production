@@ -1,16 +1,18 @@
-async function generarExcelRescate() {
-    try {
-      const boton = document.getElementById("exportarExcel");
-      boton.disabled = true;
-      boton.textContent = "Generando...";
-  
-      // Obtener los datos del servidor
-      const response = await fetch("/descargar-excel-rescate/");
-      if (!response.ok) {
-        throw new Error("Error al obtener los datos del servidor.");
-      }
-      const data = await response.json();
-  
+let mesExcel = ""
+
+async function generarExcelRescate(mes) {
+  try {
+    const boton = document.getElementById("exportarExcel");
+    boton.disabled = true;
+    boton.textContent = "Generando...";
+    
+    // Obtener los datos del servidor
+    const response = await fetch(`/descargar-excel-rescate?mes=${mes}`);
+    if (!response.ok) {
+      throw new Error("Error al obtener los datos del servidor.");
+    }
+    const data = await response.json();
+    
       // Crear el libro de trabajo y la hoja
       const workbook = XLSX.utils.book_new();
       const worksheetData = [
@@ -85,8 +87,22 @@ async function generarExcelRescate() {
       boton.textContent = "Exportar Excel";
     }
   }
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("mes_excel").addEventListener("change", function () {
+    mesExcel = document.getElementById("mes_excel").value;
+
+    if (this.value) {
+      const boton = document.getElementById("exportarExcel");
+      boton.removeAttribute("disabled");
+      
+      boton.addEventListener("click", function () {
+        generarExcelRescate(mesExcel);
+      });
+    } else {
+      document.getElementById("exportarExcel").setAttribute("disabled", true);
+    }
+  });
+});
   
-  document
-    .getElementById("exportarExcel")
-    .addEventListener("click", generarExcelRescate);
   

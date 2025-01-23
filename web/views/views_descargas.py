@@ -1252,8 +1252,12 @@ def generar_excel_serviciosmedicos(request):
 def generar_excel_psicologia(request):
     division = 8
 
+    mes_excel = request.GET.get('mes') 
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
+    
     # Utilizar select_related para relaciones de uno a uno y prefetch_related para relaciones de muchos a muchos
-    procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
+    procedimientos = Procedimientos.objects.filter(id_division=division, fecha__year=año, fecha__month=mes_num).select_related(
         'id_division', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
     ).prefetch_related(
         Prefetch("procedimientos_psicologia_set", to_attr="psicologia_data"),

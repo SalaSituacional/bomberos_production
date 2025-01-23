@@ -1,4 +1,6 @@
-async function generarExcel() {
+let mesExcel = ""
+
+async function generarExcel(mes) {
   try {
     // Deshabilitar el botón y mostrar un mensaje de carga
     const boton = document.getElementById("exportarExcel");
@@ -6,7 +8,7 @@ async function generarExcel() {
     boton.textContent = "Generando...";
 
     // Obtener los datos del servidor
-    const response = await fetch("/descargar-excel-operaciones/");
+    const response = await fetch(`/descargar-excel-operaciones?mes=${mes}`);
     if (!response.ok) {
       throw new Error("Error al obtener los datos del servidor.");
     }
@@ -88,6 +90,19 @@ async function generarExcel() {
   }
 }
 
-document
-  .getElementById("exportarExcel")
-  .addEventListener("click", generarExcel);
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("mes_excel").addEventListener("change", function () {
+    mesExcel = document.getElementById("mes_excel").value;
+
+    if (this.value) {
+      const boton = document.getElementById("exportarExcel");
+      boton.removeAttribute("disabled");
+      
+      boton.addEventListener("click", function () {
+        generarExcel(mesExcel);
+      });
+    } else {
+      document.getElementById("exportarExcel").setAttribute("disabled", true);
+    }
+  });
+});
