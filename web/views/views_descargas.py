@@ -494,8 +494,15 @@ def generar_excel_enfermeria(request):
     return JsonResponse(datos, safe=False)
 
 def generar_excel_rescate(request):
+
+    mes_excel = request.GET.get('mes') 
+
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
+
+
     # Optimizar consultas con select_related y prefetch_related
-    procedimientos = Procedimientos.objects.filter(id_division=1).select_related(
+    procedimientos = Procedimientos.objects.filter(id_division=1, fecha__year=año, fecha__month=mes_num).select_related(
         "id_division", "id_solicitante", "id_jefe_comision", "id_municipio", 
         "id_parroquia", "id_tipo_procedimiento"
     ).prefetch_related(
