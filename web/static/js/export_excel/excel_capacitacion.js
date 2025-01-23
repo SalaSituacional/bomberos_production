@@ -10,7 +10,7 @@ function descargarExcelCapacitacion(mes) {
       const encabezados = [
         "División",
         "Solicitante",
-        "Jefe Comisión",
+        "Instructor",
         "Municipio",
         "Parroquia",
         "Fecha",
