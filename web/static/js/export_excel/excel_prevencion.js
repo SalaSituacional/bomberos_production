@@ -1,12 +1,14 @@
-async function generarExcelPrevencion() {
+let mesExcel = ""
+
+async function generarExcelPrevencion(mes) {
   try {
     // Deshabilitar el botón y mostrar un mensaje de carga
-    const boton = document.getElementById("exportarBtn");
+    const boton = document.getElementById("exportarExcel");
     boton.disabled = true;
     boton.textContent = "Generando...";
 
     // Obtener los datos del servidor
-    const response = await fetch("/descargar-excel-prevencion/");
+    const response = await fetch(`/descargar-excel-prevencion?mes=${mes}`);
     if (!response.ok) {
       throw new Error("Error al obtener los datos del servidor.");
     }
@@ -80,7 +82,7 @@ async function generarExcelPrevencion() {
     alert("No se pudo generar el archivo Excel. Por favor, inténtalo de nuevo.");
   } finally {
     // Habilitar el botón y restaurar su texto
-    const boton = document.getElementById("exportarBtn");
+    const boton = document.getElementById("exportarExcel");
     boton.disabled = false;
     boton.textContent = "Exportar .xls";
   }
@@ -88,5 +90,24 @@ async function generarExcelPrevencion() {
 
 // Asignar el evento al botón
 document
-  .getElementById("exportarBtn")
+  .getElementById("exportarExcel")
   .addEventListener("click", generarExcelPrevencion);
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("mes_excel").addEventListener("change", function () {
+    mesExcel = document.getElementById("mes_excel").value;
+
+    if (this.value) {
+      const boton = document.getElementById("exportarExcel");
+      boton.removeAttribute("disabled");
+
+      boton.addEventListener("click", function () {
+        generarExcelPrevencion(mesExcel);
+      });
+    } else {
+      document.getElementById("exportarExcel").setAttribute("disabled", true);
+    }
+  });
+});
+

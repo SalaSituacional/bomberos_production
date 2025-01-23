@@ -812,8 +812,14 @@ def generar_excel_rescate(request):
 
 def generar_excel_prevencion(request):
     division = 3
+    
+    mes_excel = request.GET.get('mes') 
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
+    
+
     # Obtén los procedimientos filtrados por división, utilizando select_related para optimizar las relaciones de uno a uno y prefetch_related para las relaciones de uno a muchos
-    procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
+    procedimientos = Procedimientos.objects.filter(id_division=division, fecha__year=año, fecha__month=mes_num).select_related(
         "id_solicitante", "id_jefe_comision", "id_municipio", "id_parroquia", "id_tipo_procedimiento"
     ).prefetch_related(
         Prefetch("evaluacion_riesgo_set", to_attr="evaluacion_data"), # Ya
@@ -1294,24 +1300,14 @@ def generar_excel_psicologia(request):
     return JsonResponse({'data': datos})
 
 def generar_excel_grumae(request):
-    def obtener_personas_y_detalles(set_relacionado, campo_descripcion=None):
-        """Función auxiliar para obtener personas presentes y detalles de procedimientos"""
-        personas = []
-        detalles = []
-        for item in set_relacionado:
-            # Persona
-            if hasattr(item, 'cedula'):
-                personas.append(f"{item.nombres} {item.apellidos} {item.cedula}")
-            if hasattr(item, 'nombre_propietario'):
-                personas.append(f"{item.nombre_propietario} {item.apellido_propietario} {item.cedula_propietario}")
-            # Detalle
-            detalles.append(getattr(item, campo_descripcion, '') if campo_descripcion else str(item))
-        return personas, detalles
-
     division = 4
+                                                                 
+    mes_excel = request.GET.get('mes') 
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
     
     # Optimizar la consulta usando select_related y prefetch_related
-    procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
+    procedimientos = Procedimientos.objects.filter(id_division=division, fecha__year=año, fecha__month=mes_num).select_related(
         'id_division', 'id_solicitante', 'id_jefe_comision', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
     ).prefetch_related(
         Prefetch("abastecimiento_agua_set", to_attr="agua_data"), # Ya
@@ -1631,9 +1627,14 @@ def generar_excel_grumae(request):
 
 def generar_excel_capacitacion(request):
     division = 9
+                                                                                                                              
+    mes_excel = request.GET.get('mes') 
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
+
     # Obtener los procedimientos de la división especificada con prefetching
     # Obtener datos de los procedimientos con select_related y prefetch_related
-    procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
+    procedimientos = Procedimientos.objects.filter(id_division=division, fecha__year=año, fecha__month=mes_num).select_related(
         'id_solicitante', 'id_jefe_comision', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
     ).prefetch_related(
         Prefetch("procedimientos_capacitacion_set", to_attr="capacitacion_data"),

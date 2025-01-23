@@ -1,6 +1,8 @@
+let mesExcel = ""
+
 // Función para descargar el archivo Excel con los datos de capacitación
-function descargarExcelCapacitacion() {
-  fetch("/descargar-excel-capacitacion/") // Cambié la ruta para coincidir con el backend
+function descargarExcelCapacitacion(mes) {
+  fetch(`/descargar-excel-capacitacion?mes=${mes}`) // Cambié la ruta para coincidir con el backend
     .then((response) => response.json())
     .then((data) => {
       const wb = XLSX.utils.book_new();
@@ -71,6 +73,25 @@ function descargarExcelCapacitacion() {
     })
     .catch((error) => {
       console.error("Error al obtener los datos:", error);
-      alert("Hubo un error al generar el archivo Excel. Inténtalo de nuevo.");
     });
 }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("mes_excel").addEventListener("change", function () {
+    mesExcel = document.getElementById("mes_excel").value;
+
+    if (this.value) {
+      const boton = document.getElementById("exportarExcel");
+      boton.removeAttribute("disabled");
+      
+      boton.addEventListener("click", function () {
+        descargarExcelCapacitacion(mesExcel);
+      });
+    } else {
+      document.getElementById("exportarExcel").setAttribute("disabled", true);
+    }
+  });
+});
+  
+  
