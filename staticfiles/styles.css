@@ -2655,6 +2655,7 @@ summary > * {
   align-items: center;
   flex-wrap: wrap;
   width: 85%;
+  flex-direction: column;
 }
 #form_comisionoes{
   width: 100%;

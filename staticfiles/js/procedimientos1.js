@@ -2054,26 +2054,19 @@ document
     }
   });
 
-{
-  /* <!--select input validation-- > */
-}
 document
   .getElementById("id_form3-municipio")
   .addEventListener("change", function () {
     var select2 = document.getElementById("id_form3-parroquia");
 
-    if (this.value !== "1") {
+    if (this.value !== 1) {
       select2.disabled = true;
       select2.removeAttribute("required"); // Agrega el atributo `required`
     } else {
       select2.disabled = false;
-      select2.setAttribute("required", "true"); // Elimina el atributo `required`
+      select2.removeAttribute("required", "true"); // Elimina el atributo `required`
     }
   });
-
-{
-  /* <!--desactivar primera casilla de select-- > */
-}
 
 document.addEventListener("DOMContentLoaded", function () {
   const selects = document.querySelectorAll(".disable-first-option");
