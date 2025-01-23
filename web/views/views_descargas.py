@@ -1630,7 +1630,6 @@ def generar_excel_capacitacion(request):
 
         jefe_comision = (f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} {procedimiento.id_jefe_comision.apellidos}")
 
-        personas_presentes = []
         descripcion = []
         material_utilizado = []
         status = []
@@ -1656,7 +1655,6 @@ def generar_excel_capacitacion(request):
 
         # Combinar datos
         detalles_str = " -- ".join(detalles) or " "
-        personas_str = " -- ".join(personas_presentes) or " "
         descripcion_str = " -- ".join(descripcion) or " "
         material_utilizado_str = " -- ".join(material_utilizado) or " "
         status_str = " -- ".join(status) or " "
@@ -1673,7 +1671,6 @@ def generar_excel_capacitacion(request):
             "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento,
             "dependencia": procedimiento.dependencia,
             "detalles": detalles_str,
-            "personas_presentes": personas_str,
             "descripcion": descripcion_str,
             "material_utilizado": material_utilizado_str,
             "status": status_str,
