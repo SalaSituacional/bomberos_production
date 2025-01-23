@@ -20,7 +20,6 @@ function descargarExcelCapacitacion() {
         "Descripción",
         "Material Utilizado",
         "Status",
-        "Personas Presentes",
       ];
 
       // Agregar encabezados al arreglo de datos de la hoja
@@ -43,7 +42,6 @@ function descargarExcelCapacitacion() {
           procedimiento.descripcion,
           procedimiento.material_utilizado,
           procedimiento.status,
-          procedimiento.personas_presentes,
         ]);
       });
 
