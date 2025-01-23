@@ -1,4 +1,6 @@
-async function generarExcelPrehospitalaria() {
+let mesExcel = ""
+
+async function generarExcelPrehospitalaria(mes) {
     try {
       // Deshabilitar el botón y mostrar un mensaje de carga
       const boton = document.getElementById("exportarExcel");
@@ -6,7 +8,7 @@ async function generarExcelPrehospitalaria() {
       boton.textContent = "Generando...";
   
       // Obtener los datos del servidor
-      const response = await fetch("/descargar-excel-prehospitalaria/");
+      const response = await fetch(`/descargar-excel-prehospitalaria?mes=${mes}`);
       if (!response.ok) {
         throw new Error("Error al obtener los datos del servidor.");
       }
@@ -88,8 +90,20 @@ async function generarExcelPrehospitalaria() {
     }
   }
   
-  // Agregar el evento al botón
-  document
-    .getElementById("exportarExcel")
-    .addEventListener("click", generarExcelPrehospitalaria);
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("mes_excel").addEventListener("change", function () {
+    mesExcel = document.getElementById("mes_excel").value;
+
+    if (this.value) {
+      const boton = document.getElementById("exportarExcel");
+      boton.removeAttribute("disabled");
+      
+      boton.addEventListener("click", function () {
+        generarExcelPrehospitalaria(mesExcel);
+      });
+    } else {
+      document.getElementById("exportarExcel").setAttribute("disabled", true);
+    }
+  });
+});
   

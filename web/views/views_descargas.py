@@ -112,8 +112,14 @@ def generar_excel_personal(request):
 
 def generar_excel_operaciones(request):
     division = 2
+
+    mes_excel = request.GET.get('mes') 
+
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
+
     # Obtener datos de los procedimientos con select_related y prefetch_related
-    procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
+    procedimientos = Procedimientos.objects.filter(id_division=division, fecha__year=año, fecha__month=mes_num).select_related(
         'id_solicitante', 'id_jefe_comision', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
     ).prefetch_related(
         Prefetch("rescate_set", 
@@ -429,9 +435,14 @@ def generar_excel_operaciones(request):
 def generar_excel_enfermeria(request):
     division = 6
 
+    mes_excel = request.GET.get('mes') 
+
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
+
     # Optimización de consultas con select_related y prefetch_related
     procedimientos = (
-        Procedimientos.objects.filter(id_division=division)
+        Procedimientos.objects.filter(id_division=division, fecha__year=año, fecha__month=mes_num)
         .select_related(
             "id_division",
             "id_municipio",
@@ -984,8 +995,13 @@ def generar_excel_prehospitalaria(request):
 
     division = 5
 
+    mes_excel = request.GET.get('mes') 
+
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
+
     # Consulta optimizada usando select_related y prefetch_related
-    procedimientos = Procedimientos.objects.filter(id_division=division).select_related(
+    procedimientos = Procedimientos.objects.filter(id_division=division, fecha__year=año, fecha__month=mes_num).select_related(
         'id_division', 'id_solicitante', 'id_jefe_comision', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
     ).prefetch_related(
         Prefetch("apoyo_unidades_set", to_attr="apoyo_data"), # Ya
