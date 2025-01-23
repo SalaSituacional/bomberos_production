@@ -322,6 +322,7 @@ def View_Procedimiento(request):
             if (division == "1" or division == "2" or division == "3" or division == "4" or division == "5") and (form2.is_valid() and form3.is_valid() and form4.is_valid() and form_comision.is_valid() and datos_comision_uno.is_valid() and datos_comision_dos.is_valid() and datos_comision_tres.is_valid()):
                 solicitante = form2.cleaned_data["solicitante"]
                 solicitante_externo = form2.cleaned_data["solicitante_externo"]
+                unidad = form2.cleaned_data["unidad"]
                 efectivos_enviados = form2.cleaned_data["efectivos_enviados"]
                 jefe_comision = form2.cleaned_data["jefe_comision"]
                 municipio = form3.cleaned_data["municipio"]
@@ -330,12 +331,12 @@ def View_Procedimiento(request):
                 hora = form3.cleaned_data["hora"]
                 tipo_procedimiento = form4.cleaned_data["tipo_procedimiento"]
                 parroquia = form3.cleaned_data["parroquia"]
-                print(parroquia)
 
                 division_instance = Divisiones.objects.get(id=division)
                 jefe_comision_instance = Personal.objects.get(id=jefe_comision)
                 municipio_instance = Municipios.objects.get(id=municipio)
                 tipo_procedimiento_instance = Tipos_Procedimientos.objects.get(id=tipo_procedimiento)
+                unidad_instance = Unidades.objects.get(id=unidad)
 
                 if solicitante:
                     solicitante_instance = Personal.objects.get(id=solicitante)
@@ -349,6 +350,7 @@ def View_Procedimiento(request):
                     id_division=division_instance,
                     id_solicitante=solicitante_instance,
                     solicitante_externo=solicitante_externo,
+                    unidad=unidad_instance,
                     efectivos_enviados=efectivos_enviados,
                     id_jefe_comision=jefe_comision_instance,
                     id_municipio=municipio_instance,
@@ -362,11 +364,6 @@ def View_Procedimiento(request):
                 if parroquia:
                     parroquia_instance = Parroquias.objects.get(id=parroquia)
                     nuevo_procedimiento.id_parroquia = parroquia_instance
-
-                if division != "3":
-                    unidad = form2.cleaned_data["unidad"]
-                    unidad_instance = Unidades.objects.get(id=unidad)
-                    nuevo_procedimiento.unidad=unidad_instance
 
                 nuevo_procedimiento.save()
 
