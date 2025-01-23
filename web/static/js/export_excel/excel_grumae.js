@@ -90,10 +90,6 @@ async function generarExcel(mes) {
   }
 }
 
-document
-  .getElementById("exportarExcel")
-  .addEventListener("click", generarExcel);
-
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("mes_excel").addEventListener("change", function () {
     mesExcel = document.getElementById("mes_excel").value;

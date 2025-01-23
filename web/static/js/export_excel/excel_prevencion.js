@@ -88,11 +88,6 @@ async function generarExcelPrevencion(mes) {
   }
 }
 
-// Asignar el evento al botón
-document
-  .getElementById("exportarExcel")
-  .addEventListener("click", generarExcelPrevencion);
-
 
 document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("mes_excel").addEventListener("change", function () {
