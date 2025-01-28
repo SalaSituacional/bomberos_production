@@ -15,6 +15,7 @@ from datetime import datetime
 from datetime import timedelta
 from django.utils.timezone import make_aware
 from django.db.models import Prefetch
+from datetime import date
 
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
