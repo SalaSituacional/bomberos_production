@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from datetime import datetime
 from datetime import timedelta
 from django.utils.timezone import make_aware
+from django.db.models import Prefetch
 
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
@@ -100,15 +101,53 @@ def Home(request):
             messages.error(request, 'Usuario o contraseña incorrectos')
             return render(request, 'index.html', {'error': True})
 
-@login_required 
+@login_required
 def View_personal(request):
+    # Obtener el usuario de la sesión
     user = request.session.get('user')
 
+    # Verificar si el usuario está en la sesión
     if not user:
         return redirect('/')
-    
-    personal = Personal.objects.exclude(id__in=[0, 4])
-    personal = personal.order_by("id")
+
+    # Recuperar los datos de Personal y Detalles_Personal en una sola consulta
+    personal_queryset = Personal.objects.exclude(id__in=[0, 4]).prefetch_related(
+        Prefetch('detalles_personal_set', queryset=Detalles_Personal.objects.all(), to_attr='detalles')
+    )
+
+    conteo = personal_queryset.count()
+
+    # Crear la lista para los datos del personal
+    personal_data = []
+
+    def calcular_edad(fecha_nacimiento):
+        if fecha_nacimiento:
+            hoy = date.today()
+            return hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+        return None
+
+    # Iterar sobre las instancias de Personal para formar el diccionario de datos
+    for persona in personal_queryset:
+        detalles = persona.detalles[0] if persona.detalles else None  # Acceso eficiente a los detalles relacionados
+
+        personal_data.append({
+            'nombres': persona.nombres,
+            'apellidos': persona.apellidos,
+            'jerarquia': persona.jerarquia,
+            'cargo': persona.cargo,
+            'cedula': persona.cedula,
+            'sexo': persona.sexo,
+            'rol': persona.rol,
+            'status': persona.status,
+            'fecha_nacimiento': detalles.fecha_nacimiento if detalles else None,
+            'talla_camisa': detalles.talla_camisa if detalles else None,
+            'talla_pantalon': detalles.talla_pantalon if detalles else None,
+            'talla_zapato': detalles.talla_zapato if detalles else None,
+            'grupo_sanguineo': detalles.grupo_sanguineo if detalles else None,
+            'fecha_ingreso': detalles.fecha_ingreso if detalles else None,
+            'edad': calcular_edad(detalles.fecha_nacimiento) if detalles else None,  # Calcular la edad
+        })
+
     # Lista de jerarquías en el orden deseado
     jerarquias = [
         "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", 
@@ -116,35 +155,47 @@ def View_personal(request):
         "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero"
     ]
 
-    # Filtro y ordenación de acuerdo a las jerarquías
-    personal_ordenado =personal.order_by(
-        Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)])
-    )
-    personal_count = personal_ordenado.count()
+    # Crear un mapa de jerarquía a índice para facilitar la ordenación
+    jerarquia_orden = {nombre: index for index, nombre in enumerate(jerarquias)}
 
+    # Ordenar la lista personal_data por jerarquía utilizando la clave personalizada
+    personal_ordenado = sorted(
+        personal_data, 
+        key=lambda x: jerarquia_orden.get(x["jerarquia"], float("inf"))  # Si no está, se asigna un valor alto
+    )
+
+    # Manejo del formulario para agregar nuevo personal
     if request.method == 'POST':
         formulario = FormularioRegistroPersonal(request.POST, prefix='formulario')
 
         if formulario.is_valid():
-            
-            new_personal = Personal(
-                nombres = formulario.cleaned_data["nombres"],
-                apellidos = formulario.cleaned_data["apellidos"],
-                jerarquia = formulario.cleaned_data["jerarquia"],
-                cargo = formulario.cleaned_data["cargo"],
-                cedula = f"{formulario.cleaned_data['nacionalidad']}- {formulario.cleaned_data['cedula']}",
-                sexo = formulario.cleaned_data["sexo"],
-                rol = formulario.cleaned_data["rol"],
-                status = formulario.cleaned_data["status"],
+            # Guardar los datos de Personal
+            new_personal = Personal.objects.create(
+                nombres=formulario.cleaned_data["nombres"],
+                apellidos=formulario.cleaned_data["apellidos"],
+                jerarquia=formulario.cleaned_data["jerarquia"],
+                cargo=formulario.cleaned_data["cargo"],
+                cedula=f"{formulario.cleaned_data['nacionalidad']}- {formulario.cleaned_data['cedula']}",
+                sexo=formulario.cleaned_data["sexo"],
+                rol=formulario.cleaned_data["rol"],
+                status=formulario.cleaned_data["status"],
             )
 
-            new_personal.save()
+            # Guardar los detalles del personal
+            Detalles_Personal.objects.create(
+                personal=new_personal,
+                fecha_nacimiento=formulario.cleaned_data["fecha_nacimiento"],
+                talla_camisa=formulario.cleaned_data["talla_camisa"],
+                talla_pantalon=formulario.cleaned_data["talla_pantalon"],
+                talla_zapato=formulario.cleaned_data["talla_zapato"],
+                grupo_sanguineo=formulario.cleaned_data["grupo_sanguineo"],
+                fecha_ingreso=formulario.cleaned_data["fecha_ingreso"],
+            )
 
+            # Redirigir después de guardar
             return redirect("/personal/")
-
     else:
         formulario = FormularioRegistroPersonal(prefix='formulario')
-    
 
     # Renderizar la página con los datos
     return render(request, "personal.html", {
@@ -154,7 +205,7 @@ def View_personal(request):
         "apellidos": user["apellidos"],
         "form_personal": formulario,
         "personal": personal_ordenado,
-        "total": personal_count
+        "conteo": conteo
     })
 
 @login_required

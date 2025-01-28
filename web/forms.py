@@ -211,9 +211,23 @@ class FormularioRegistroPersonal(forms.Form):
     cedula = forms.IntegerField()
     jerarquia = forms.ChoiceField(choices=opc, widget=forms.Select(attrs={"class": "disable-first-option"}))
     cargo = forms.CharField()
+    fecha_nacimiento = forms.DateField(
+        label="Fecha de Nacimiento",
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    fecha_ingreso = forms.DateField(
+        label="Fecha de Ingreso",
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
     sexo = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Masculino", "Masculino"), ("Femenino", "Femenino")], widget=forms.Select(attrs={"class": "disable-first-option"}))
     rol = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Administrativo", "Administrativo"), ("Bombero", "Bombero"), ("Civil", "Civil")], widget=forms.Select(attrs={"class": "disable-first-option"}))
     status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Activo", "Activo"), ("Jubilado", "Jubilado"), ("Incapacitado", "Incapacitado"), ("Fallecido", "Fallecido"), ("Cese", "Cese"), ("Comision de Servicios", "Comision de Servicios")], widget=forms.Select(attrs={"class": "disable-first-option"}))
+    talla_camisa = forms.CharField()
+    talla_pantalon = forms.CharField()
+    talla_zapato = forms.CharField()
+    grupo_sanguineo = forms.CharField()
+
+
 
 # Form1
 class SelectorDivision(forms.Form):
