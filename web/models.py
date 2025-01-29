@@ -40,7 +40,19 @@ class Personal(models.Model):
 
   def __str__(self):
     return self.nombres + " -- " + self.apellidos + " -- " + self.jerarquia + " -- " + self.cargo + " -- " + self.cedula + " -- " + self.sexo + " -- " + self.rol + " -- " + self.status
-      
+  
+class Detalles_Personal(models.Model):
+  personal = models.ForeignKey(Personal, on_delete=models.CASCADE)
+  fecha_nacimiento = models.DateField()
+  talla_camisa = models.TextField()
+  talla_pantalon = models.TextField()
+  talla_zapato = models.TextField()
+  grupo_sanguineo = models.TextField()
+  fecha_ingreso = models.DateField()
+
+  def __str__(self):
+    return self.personal.nombres + " -- " + str(self.fecha_nacimiento) + " -- " + self.talla_camisa + " -- " + self.talla_pantalon + " -- " + self.talla_zapato + " -- " + self.grupo_sanguineo + " -- " + str(self.fecha_ingreso)
+  
 # Tabla de usuarios que pueden entrar a la pagina
 class Usuarios(models.Model):
     user = models.CharField(max_length=20)

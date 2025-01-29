@@ -266,6 +266,17 @@
         <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
       </section>
     </div>
+
+    <div class="contain-dates">
+      <h4 class="title-procediments">Exportaciones</h4>
+      <br>
+      <section class="buttons-items input-group mb-3 filter-search">
+        <span class="input-group-text"><b> Seleccionar Mes:</b></span>
+        <input type="month" class="form-control fecha_manual" name="" id="mes_excel">
+        <button id="exportarExcel" class="btn btn-danger download-link" disabled>Exportar .xls</button>
+        </section>
+      </div>
+  
   
 </div>     <!-- div general-dashboard fin -->
 <!----------------------- Modal delete ---------------------------------->
@@ -341,5 +352,8 @@
 <script src="../static/js/info_modal.js"></script>
 <script src="../static/js/editar_proc.js"></script>
 <script src="../../static/js/table-general-filter2.js"></script>
+<script src="../static/js/export_excel/excel_operacional.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
 {% endblock %}
 

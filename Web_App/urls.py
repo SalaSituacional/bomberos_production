@@ -82,8 +82,9 @@ urlpatterns = [
     path('api/procedimientos_division/', api_procedimientos_division, name='procedimientos_division'),
     path('api/procedimientos_division_parroquia/', api_procedimientos_division_parroquias, name='procedimientos_division_parroquia'),
     path('api/procedimientos_tipo/', api_procedimientos_tipo, name='procedimientos_tipo'),
+    path('api/procedimientos_tipo_horizontal/', api_procedimientos_bar_horizontales, name='procedimientos_tipo_horizontal'),
     path('api/procedimientos_tipo_parroquias/', api_procedimientos_tipo_parroquias, name='procedimientos_tipo_parroquias'),
-    path('get_persona/<int:persona_id>/', get_persona, name='get_persona'),
+    path('get_persona/<int:id>/', get_persona, name='get_persona'),
     path('editar_personal/', edit_personal, name='edit_personal'),
     path('api/procedimientos_tipo_detalles/', api_procedimientos_tipo_detalles, name='procedimientos_tipo_detalles'),
     path('instagram/', instagram_feed, name='instagram_feed'),
@@ -103,4 +104,5 @@ urlpatterns = [
     path('descargar-excel-rescate/', generar_excel_rescate, name='descargar_excel_rescate'),
     path('descargar-excel-prevencion/', generar_excel_prevencion, name='descargar_excel_prevencion'),
     path('descargar-excel-enfermeria/', generar_excel_enfermeria, name='descargar_excel_enfermeria'),
+    path('descargar-excel-operacional/', generar_excel_operacional, name='descargar_excel_operacional'),
 ]

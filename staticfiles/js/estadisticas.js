@@ -106,7 +106,7 @@ const colors = [
 function createOrUpdateChart(ctx, chart, type, labels, data) {
   if (chart) chart.destroy(); // Destruir gráfico previo si existe
 
-  if (type === "polarArea"){
+  if (type === "polarArea") {
     return new Chart(ctx, {
       type: type,
       data: {
@@ -115,7 +115,7 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
           {
             label: "Procedimientos",
             data: data,
-            borderWidth: 2,
+            borderWidth: 1,
             backgroundColor: colors,
           },
         ],
@@ -133,10 +133,19 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
             },
           },
         },
+        plugins: {
+          datalabels: {
+            color: 'white',
+            font: {
+              size: 21.5, // Tamaño de fuente más grande
+            },
+          },
+        },
       },
+      plugins: [ChartDataLabels], // Habilitar el plugin
     });
-  } 
-  else{
+  }
+  else {
     return new Chart(ctx, {
       type: type,
       data: {
@@ -145,7 +154,7 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
           {
             label: "Procedimientos",
             data: data,
-            borderWidth: 2,
+            borderWidth: 1,
             backgroundColor: colors,
           },
         ],
@@ -160,8 +169,15 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
               },
             },
           },
+          datalabels: {
+            color: 'white',
+            font: {
+              size: 21.5, // Tamaño de fuente más grande
+            },
+          },
         },
       },
+      plugins: [ChartDataLabels], // Habilitar el plugin
     });
   }
 }
@@ -378,12 +394,30 @@ document.addEventListener("DOMContentLoaded", function () {
         responsive: true,
         plugins: {
           legend: { display: false },
+          datalabels: {
+            color: 'white',
+            font: {
+              size: 26, // Tamaño de fuente a px
+            },
+          },
         },
         scales: {
           x: { ticks: { font: { size: fontSize } } },
           y: { ticks: { font: { size: fontSize + 3 } } }, // Incremento para el eje Y
         },
       },
+      formatter: (value, context) => {
+        // Personalización de los números
+        const dataset = context.chart.data.datasets[0];
+        const total = dataset.data.reduce((sum, num) => sum + num, 0);
+
+        // Personalización: Formato como porcentaje
+        const percentage = ((value / total) * 100).toFixed(2);
+
+        // Personalización: Texto adicional
+        return `$${value} \n(${percentage}%)`; // Retorna el valor en dólares y porcentaje
+      },
+      plugins: [ChartDataLabels], // Habilitar el plugin
     });
   }
 
@@ -408,3 +442,126 @@ document.addEventListener("DOMContentLoaded", function () {
   init();
 });
 
+
+// Grafica de Barras Horizontal=======================================================================================================================================================
+document.addEventListener("DOMContentLoaded", function () {
+  let chart; // Mantener la referencia del gráfico para actualizarlo
+  const ctx7 = document.getElementById("bar-horizontal").getContext("2d");
+
+  // Definir colores para las barras
+  const colors = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"];
+
+  // Función para obtener datos de la API
+  async function fetchDivisionesHorizontal(mes = "") {
+    try {
+      const response = await fetchWithLoader(`/api/procedimientos_tipo_horizontal/?mes=${mes}`);
+      if (!response || !Array.isArray(response)) {
+        console.error("Datos no válidos recibidos de la API");
+        return [];
+      }
+      return response;
+    } catch (error) {
+      console.error("Error obteniendo datos de la API:", error);
+      return [];
+    }
+  }
+
+  // Función para extraer divisiones y totales de la API
+  function obtenerDivisiones(data) {
+    return data.map(item => ({
+      tipo_procedimiento: item.id_tipo_procedimiento__tipo_procedimiento,
+      count: item.count || 0,
+    }));
+  }
+
+  // Función para actualizar las tarjetas de totales
+  function updateCards(data) {
+    data.forEach(({ tipo_procedimiento, count }) => {
+      const card = document.querySelector(`li[data-division="${tipo_procedimiento}"] .count`);
+      if (card) {
+        card.textContent = count;
+      }
+    });
+  }
+
+  // Función para actualizar o crear la gráfica
+  function actualizarGrafica(data) {
+    const procedimientos = obtenerDivisiones(data);
+    const labels = procedimientos.map(item => item.tipo_procedimiento);
+    const values = procedimientos.map(item => item.count);
+
+    const fontSize = window.innerWidth < 376 ? 10 : 15; // Tamaño de fuente dinámico
+
+    // Destruir el gráfico si ya existe
+    if (chart) {
+      chart.destroy();
+    }
+
+    // Crear la gráfica
+    // Crear la gráfica
+    // Crear la gráfica
+    // Crear la gráfica
+    chart = new Chart(ctx7, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Procedimientos",
+            data: values,
+            borderWidth: 1,
+            backgroundColor: colors,
+            borderColor: colors,
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false, // Permite que el canvas se ajuste sin forzar tamaño
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            color: 'white',
+            font: { size: 14 }, // Tamaño más grande para mejorar visibilidad
+            formatter: (value) => `${value}`,
+          },
+        },
+        layout: {
+          padding: { top: 20, bottom: 20 }, // Espaciado para mejorar la distribución
+        },
+        scales: {
+          x: { display: false },
+          y: {
+            ticks: { font: { size: 16 } },
+          },
+        },
+      },
+      plugins: [ChartDataLabels], // Habilitar el plugin
+    });
+
+  }
+  // Función para inicializar los datos y la gráfica
+  async function init() {
+    const data = await fetchDivisionesHorizontal(); // Obtener datos iniciales
+    updateCards(data); // Actualizar tarjetas
+    actualizarGrafica(data); // Crear gráfica
+  }
+
+  // Manejar el cambio del input de mes
+  document.getElementById("month-picker-9").addEventListener("change", async (event) => {
+    const mesSeleccionado = event.target.value;
+    const data = await fetchDivisionesHorizontal(mesSeleccionado);
+    updateCards(data);
+    actualizarGrafica(data);
+  });
+
+  // Manejar el redimensionamiento de la ventana
+  window.addEventListener("resize", async () => {
+    const data = await fetchDivisionesHorizontal();
+    actualizarGrafica(data);
+  });
+
+  // Inicializar al cargar la página
+  init();
+});

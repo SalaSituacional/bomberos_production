@@ -82,7 +82,7 @@
       </div>
     </section>
     <section class="accion-personal">
-        Personas Totales: {{ total }}
+        Personas Totales: {{ conteo }}
         <button type="button" class="btn" data-bs-toggle="modal"
         data-bs-target="#modal-info">
 <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>plus-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000"> <path d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z" id="plus-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
@@ -91,52 +91,59 @@
   </div>
  <!-- tabla -->
   <div class="table-responsive-sm">
-    <table class="table table-hover" id="data-table">
+    <table class="table table-hover table-personal" id="data-table">
       <thead>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Nombres</th>
-          <th scope="col">Apellidos</th>
-          <th scope="col">Jerarquia</th>
-          <th scope="col">Cargo</th>
-          <th scope="col">Cédula</th>
-          <th scope="col">Sexo</th>
-          <th scope="col">Contrato</th>
-          <th scope="col">Estado</th>
-          <th scope="col">Acción</th>
+            <th>#</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Jerarquía</th>
+            <th>Cargo</th>
+            <th>Cédula</th>
+            <th>Edad</th>
+            <th>Fecha de Ingreso</th>
+            <th>Grupo Sanguíneo</th>
+            <th>Sexo</th>
+            <th>Talla Camisa</th>
+            <th>Talla Pantalón</th>
+            <th>Talla Zapato</th>
+            <th>Rol</th>
+            <th>Status</th>
+            <th>Acciones</th>
         </tr>
-      </thead>
-      <tbody class="table-group-divider">
+    </thead>
+    <tbody>
         {% for personal in personal %}
-        <tr>
-          <!-- prettier-ignore -->
-          <th scope="row">{{ forloop.counter }}</th>
-          <!-- prettier-ignore -->
-          <td>{{ personal.nombres }}</td>
-          <!-- prettier-ignore -->
-          <td>{{ personal.apellidos }}</td>
-          <!-- prettier-ignore -->
-          <td>{{ personal.jerarquia }}</td>
-          <td>{{ personal.cargo }}</td>
-          <td>{{ personal.cedula }}</td>
-          <td>{{ personal.sexo }}</td>
-          <td>{{ personal.rol }}</td>
-          <td>{{ personal.status }}</td>
-          <td>
-            <button class="btn btn-danger edit-button" data-id="{{ personal.id }}" data-nombres="{{ personal.nombres }}" data-apellidos="{{ personal.apellidos }}" data-jerarquia="{{ personal.jerarquia }}" data-cargo="{{ personal.cargo }}" data-cedula="{{ personal.cedula }}" data-sexo="{{ personal.sexo }}" data-rol="{{ personal.rol }}" data-status="{{ personal.status }}" data-bs-toggle="modal" data-bs-target="#modal-mod">
-              Editar
-            </button>
-          </td>
-
-          <!-- prettier-ignore -->
+             <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ personal.nombres }}</td>
+                <td>{{ personal.apellidos }}</td>
+                <td>{{ personal.jerarquia }}</td>
+                <td>{{ personal.cargo }}</td>
+                <td>{{ personal.cedula }}</td>
+                <td>{{ personal.edad|default:"" }}</td>
+                <td>{{ personal.fecha_ingreso|default:"" }}</td>
+                <td>{{ personal.grupo_sanguineo|default:"" }}</td>
+                <td>{{ personal.sexo }}</td>
+                <td>{{ personal.talla_camisa|default:"" }}</td>
+                <td>{{ personal.talla_pantalon|default:"" }}</td>
+                <td>{{ personal.talla_zapato|default:"" }}</td>
+                <td>{{ personal.rol }}</td>
+                <td>{{ personal.status }}</td>
+                <td>
+                  <button class="btn btn-danger edit-button" data-id="{{ personal.id }}" data-bs-toggle="modal" data-bs-target="#modal-mod">
+                    Editar
+                  </button>
+                </td>
+            </tr>
         {% endfor %}
-        </tr>
-      </tbody>
+    </tbody>
+
     </table>
   </div>     
   <div class="contain-dates">
     <section class="buttons-items">
-      <a href="{% url 'descargar_excel_personal' %}" class="btn btn-danger download-link">Descargar Excel</a>
+      <button id="exportarExcel" class="btn btn-danger">Exportar .xls</button>
     </section>
   
   </div>
@@ -250,6 +257,18 @@
                 <input type="text" name="formulario-cargo" maxlength="50" required="" id="id_cargo">
               </div>
 
+              <!-- Campo de Fecha de Nacimiento -->
+              <div bis_skin_checked="1">
+                <label for="id_fecha_nacimiento">Fecha de Nacimiento:</label>
+                <input type="date" name="formulario-fecha_nacimiento" required="" id="id_fecha_nacimiento">
+              </div>
+
+              <!-- Campo de Fecha de Ingreso -->
+              <div bis_skin_checked="1">
+                <label for="id_fecha_ingreso">Fecha de Ingreso:</label>
+                <input type="date" name="formulario-fecha_ingreso" required="" id="id_fecha_ingreso">
+              </div>
+
               <!-- Campo de Sexo -->
               <div bis_skin_checked="1">
                 <label for="id_sexo">Sexo:</label>
@@ -284,7 +303,34 @@
                   <option value="Comision de servicios">Comision de Servicios</option>
                 </select>      
               </div>
+
+              <!-- Campo de Talla de Camisa -->
+              <div bis_skin_checked="1">
+                <label for="id_talla_camisa">Talla de Camisa:</label>
+                <input type="text" name="formulario-talla_camisa" maxlength="50" required="" id="id_talla_camisa">
+              </div>
+  
+              <!-- Campo de Talla de Pantalon -->
+              <div bis_skin_checked="1">
+                <label for="id_talla_pantalon">Talla de Pantalon:</label>
+                <input type="text" name="formulario-talla_pantalon" maxlength="50" required="" id="id_talla_pantalon">
+              </div>
+  
+              <!-- Campo de Talla de Zapato -->
+              <div bis_skin_checked="1">
+                <label for="id_talla_zapatos">Talla de Zapatos:</label>
+                <input type="text" name="formulario-talla_zapatos" maxlength="50" required="" id="id_talla_zapatos">
+              </div>
+  
+              <!-- Campo de Grupo Sanguineo -->
+              <div bis_skin_checked="1">
+                <label for="id_grupo_sanguineo">Grupo Sanguineo:</label>
+                <input type="text" name="formulario-grupo_sanguineo" maxlength="50" required="" id="id_grupo_sanguineo">
+              </div>
             </div>
+
+
+
               <!-- Boton Enviar -->
               <div class="modal-footer modal-footer-personal" bis_skin_checked="1">
                 <button type="submit" id="button_submit" class="btn btn-danger btn-center">
@@ -310,5 +356,7 @@
 </div>
 
 <script src="../static/js/modificar_personal.js"></script>
+<script src="../static/js/export_excel/excel_personal.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 {% endblock %}
 

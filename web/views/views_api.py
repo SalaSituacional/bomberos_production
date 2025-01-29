@@ -489,6 +489,7 @@ def api_procedimientos_tipo(request):
 
     return JsonResponse(list(conteo_procedimientos), safe=False)
 
+
 # Api para generar valores para la grafica de procedimientos por tipo
 def api_procedimientos_tipo_parroquias(request):
     tipo_procedimiento_id = request.GET.get('param_id')
@@ -900,9 +901,32 @@ def edit_personal(request):
             personal.sexo = request.POST.get('formulario-sexo')
             personal.rol = request.POST.get('formulario-rol')
             personal.status = request.POST.get('formulario-status')
-            
             # Guardar los cambios
             personal.save()
+            
+            try:
+                detalles = Detalles_Personal.objects.get(personal=persona_id)
+            
+                detalles.fecha_nacimiento = request.POST.get("formulario-fecha_nacimiento")
+                detalles.fecha_ingreso = request.POST.get("formulario-fecha_ingreso")
+                detalles.talla_camisa = request.POST.get("formulario-talla_camisa")
+                detalles.talla_pantalon = request.POST.get("formulario-talla_pantalon")
+                detalles.talla_zapato = request.POST.get("formulario-talla_zapatos")
+                detalles.grupo_sanguineo = request.POST.get("formulario-grupo_sanguineo")
+
+                detalles.save() 
+            
+            except:
+                new_detalles = Detalles_Personal(
+                    personal=personal,
+                    fecha_nacimiento=request.POST.get("formulario-fecha_nacimiento"),
+                    fecha_ingreso = request.POST.get("formulario-fecha_ingreso"),
+                    talla_camisa = request.POST.get("formulario-talla_camisa"),
+                    talla_pantalon = request.POST.get("formulario-talla_pantalon"),
+                    talla_zapato = request.POST.get("formulario-talla_zapatos"),
+                    grupo_sanguineo = request.POST.get("formulario-grupo_sanguineo"),
+                )
+                new_detalles.save()
             
             # Redirigir o mostrar un mensaje de éxito
             return redirect('/personal/')  # Reemplaza con tu vista deseada
@@ -913,11 +937,14 @@ def edit_personal(request):
     # Si es GET, mostrar el formulario vacío o con los datos del objeto
     return render(request, 'editar_personal.html')
 
-# Api para obtener el valor de el personal seleccionado
-def get_persona(request, persona_id):
+# # Api para obtener el valor de el personal seleccionado
+def get_persona(request, id):
     try:
-        persona = Personal.objects.get(id=persona_id)
+        persona = Personal.objects.get(id=id)
+        detalles = False
+
         data = {
+            'id': persona.id,
             'nombre': persona.nombres,
             'apellido': persona.apellidos,
             'cedula': persona.cedula,
@@ -927,6 +954,23 @@ def get_persona(request, persona_id):
             'sexo': persona.sexo,
             'status': persona.status,
         }
+        
+        try:
+            detalles_persona = Detalles_Personal.objects.get(personal=id)
+            detalles = True
+            data.update({
+                'detalles': detalles,
+                'fecha_nacimiento': detalles_persona.fecha_nacimiento,
+                'fecha_ingreso': detalles_persona.fecha_ingreso,
+                'talla_camisa': detalles_persona.talla_camisa,
+                'talla_pantalon': detalles_persona.talla_pantalon,
+                'talla_zapato': detalles_persona.talla_zapato,
+                'grupo_sanguineo': detalles_persona.grupo_sanguineo,
+            })
+        except:
+            pass
+
+        print(data)
         return JsonResponse(data)
     except Personal.DoesNotExist:
         return JsonResponse({'error': 'Persona no encontrada'}, status=404)
@@ -2505,3 +2549,29 @@ def obtener_informacion_editar(request, id):
                     )
     
     return JsonResponse(data)
+
+# Api para generar valores para la grafica de procedimientos por tipo
+def api_procedimientos_bar_horizontales(request):
+    tipo_procedimiento_id = request.GET.get('param_id')
+    mes = request.GET.get('mes')
+    
+    # Filtrar procedimientos
+    procedimientos = Procedimientos.objects.all()
+    if tipo_procedimiento_id:
+        procedimientos = procedimientos.filter(id_tipo_procedimiento=tipo_procedimiento_id)
+    
+    # Filtrar por mes si se proporciona
+    if mes:
+        try:
+            fecha_inicio = datetime.strptime(mes, '%Y-%m').date()
+            fecha_fin = fecha_inicio + relativedelta(months=1)
+            procedimientos = procedimientos.filter(fecha__gte=fecha_inicio, fecha__lt=fecha_fin)
+        except ValueError:
+            return JsonResponse({"error": "Formato de mes inválido, use YYYY-MM"}, status=400)
+    
+    # Contar procedimientos por tipo
+    conteo_procedimientos = procedimientos.values(
+        'id_tipo_procedimiento__tipo_procedimiento'  # Agrupar por tipo de procedimiento
+    ).annotate(count=Count('id')).order_by('-count')  # Orden descendente por cantidad
+    
+    return JsonResponse(list(conteo_procedimientos), safe=False)

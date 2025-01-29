@@ -53,6 +53,12 @@ document.addEventListener("DOMContentLoaded", function () {
         ? "Jubilado"
         : status === "3"
         ? "Incapacitado"
+        : status === "4"
+        ? "Fallecido"
+        : status === "6"
+        ? "Comision de servicios"
+        : status === "5"
+        ? "Cese"
         : "";
 
     filas.forEach((fila) => {
