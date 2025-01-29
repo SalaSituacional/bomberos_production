@@ -132,6 +132,7 @@ def View_personal(request):
         detalles = persona.detalles[0] if persona.detalles else None  # Acceso eficiente a los detalles relacionados
 
         personal_data.append({
+            "id": persona.id,
             'nombres': persona.nombres,
             'apellidos': persona.apellidos,
             'jerarquia': persona.jerarquia,
