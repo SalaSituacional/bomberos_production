@@ -146,7 +146,7 @@ def View_personal(request):
             'talla_zapato': detalles.talla_zapato if detalles else None,
             'grupo_sanguineo': detalles.grupo_sanguineo if detalles else None,
             'fecha_ingreso': detalles.fecha_ingreso if detalles else None,
-            'edad': calcular_edad(detalles.fecha_nacimiento) if detalles else None,  # Calcular la edad
+            'edad': f"{calcular_edad(detalles.fecha_nacimiento)} años" if detalles else None,  # Calcular la edad
         })
 
     # Lista de jerarquías en el orden deseado

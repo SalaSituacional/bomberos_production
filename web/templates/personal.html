@@ -91,7 +91,7 @@
   </div>
  <!-- tabla -->
   <div class="table-responsive-sm">
-    <table class="table table-hover" id="data-table">
+    <table class="table table-hover table-personal" id="data-table">
       <thead>
         <tr>
             <th>#</th>
@@ -100,15 +100,15 @@
             <th>Jerarquía</th>
             <th>Cargo</th>
             <th>Cédula</th>
-            <th>Sexo</th>
-            <th>Rol</th>
-            <th>Status</th>
             <th>Edad</th>
+            <th>Fecha de Ingreso</th>
+            <th>Grupo Sanguíneo</th>
+            <th>Sexo</th>
             <th>Talla Camisa</th>
             <th>Talla Pantalón</th>
             <th>Talla Zapato</th>
-            <th>Grupo Sanguíneo</th>
-            <th>Fecha de Ingreso</th>
+            <th>Rol</th>
+            <th>Status</th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -121,15 +121,15 @@
                 <td>{{ personal.jerarquia }}</td>
                 <td>{{ personal.cargo }}</td>
                 <td>{{ personal.cedula }}</td>
-                <td>{{ personal.sexo }}</td>
-                <td>{{ personal.rol }}</td>
-                <td>{{ personal.status }}</td>
                 <td>{{ persona.edad|default:"" }}</td>
+                <td>{{ persona.fecha_ingreso|default:"" }}</td>
+                <td>{{ persona.grupo_sanguineo|default:"" }}</td>
+                <td>{{ personal.sexo }}</td>
                 <td>{{ persona.talla_camisa|default:"" }}</td>
                 <td>{{ persona.talla_pantalon|default:"" }}</td>
                 <td>{{ persona.talla_zapato|default:"" }}</td>
-                <td>{{ persona.grupo_sanguineo|default:"" }}</td>
-                <td>{{ persona.fecha_ingreso|default:"" }}</td>
+                <td>{{ personal.rol }}</td>
+                <td>{{ personal.status }}</td>
                 <td>
                   <button class="btn btn-danger edit-button" data-id="{{ personal.id }}" data-bs-toggle="modal" data-bs-target="#modal-mod">
                     Editar
