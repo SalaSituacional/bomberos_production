@@ -2550,24 +2550,28 @@ def obtener_informacion_editar(request, id):
     
     return JsonResponse(data)
 
-def api_procedimientos_tipo_horizontal(request):
+# Api para generar valores para la grafica de procedimientos por tipo
+def api_procedimientos_bar_horizontales(request):
     tipo_procedimiento_id = request.GET.get('param_id')
     mes = request.GET.get('mes')
-
-    # Filtrar por tipo de procedimiento
+    
+    # Filtrar procedimientos
     procedimientos = Procedimientos.objects.all()
     if tipo_procedimiento_id:
         procedimientos = procedimientos.filter(id_tipo_procedimiento=tipo_procedimiento_id)
-
+    
     # Filtrar por mes si se proporciona
     if mes:
-        fecha_inicio = datetime.strptime(mes, '%Y-%m').date()
-        fecha_fin = fecha_inicio.replace(day=1) + relativedelta(months=1)
-        procedimientos = procedimientos.filter(fecha__gte=fecha_inicio, fecha__lt=fecha_fin)
-
-    # Agrupar por división y contar procedimientos
+        try:
+            fecha_inicio = datetime.strptime(mes, '%Y-%m').date()
+            fecha_fin = fecha_inicio + relativedelta(months=1)
+            procedimientos = procedimientos.filter(fecha__gte=fecha_inicio, fecha__lt=fecha_fin)
+        except ValueError:
+            return JsonResponse({"error": "Formato de mes inválido, use YYYY-MM"}, status=400)
+    
+    # Contar procedimientos por tipo
     conteo_procedimientos = procedimientos.values(
-        'id_division__division'  # Agrupar por nombre de la división
-    ).annotate(count=Count('id')).order_by('id_division__division')
-
+        'id_tipo_procedimiento__tipo_procedimiento'  # Agrupar por tipo de procedimiento
+    ).annotate(count=Count('id')).order_by('-count')  # Orden descendente por cantidad
+    
     return JsonResponse(list(conteo_procedimientos), safe=False)
