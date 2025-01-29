@@ -489,6 +489,7 @@ def api_procedimientos_tipo(request):
 
     return JsonResponse(list(conteo_procedimientos), safe=False)
 
+
 # Api para generar valores para la grafica de procedimientos por tipo
 def api_procedimientos_tipo_parroquias(request):
     tipo_procedimiento_id = request.GET.get('param_id')
@@ -2548,3 +2549,25 @@ def obtener_informacion_editar(request, id):
                     )
     
     return JsonResponse(data)
+
+def api_procedimientos_tipo_horizontal(request):
+    tipo_procedimiento_id = request.GET.get('param_id')
+    mes = request.GET.get('mes')
+
+    # Filtrar por tipo de procedimiento
+    procedimientos = Procedimientos.objects.all()
+    if tipo_procedimiento_id:
+        procedimientos = procedimientos.filter(id_tipo_procedimiento=tipo_procedimiento_id)
+
+    # Filtrar por mes si se proporciona
+    if mes:
+        fecha_inicio = datetime.strptime(mes, '%Y-%m').date()
+        fecha_fin = fecha_inicio.replace(day=1) + relativedelta(months=1)
+        procedimientos = procedimientos.filter(fecha__gte=fecha_inicio, fecha__lt=fecha_fin)
+
+    # Agrupar por división y contar procedimientos
+    conteo_procedimientos = procedimientos.values(
+        'id_division__division'  # Agrupar por nombre de la división
+    ).annotate(count=Count('id')).order_by('id_division__division')
+
+    return JsonResponse(list(conteo_procedimientos), safe=False)
