@@ -1786,6 +1786,9 @@ def generar_excel_operacional(request):
         Prefetch("atendido_no_efectuado_set", to_attr="atendido_data"), 
         Prefetch("despliegue_seguridad_set", to_attr="despliegue_data"), 
         Prefetch("fallecidos_set", to_attr="fallecido_data"), 
+
+        Prefetch("traslado_prehospitalaria_set", to_attr="trasladado_data"),
+        Prefetch("puesto_avanzada_set", to_attr="puesto_data"), # Ya
     )
 
     datos = []
@@ -1850,6 +1853,158 @@ def generar_excel_operacional(request):
             descripcion.append(alarma.descripcion)
             material_utilizado.append(alarma.material_utilizado)
             status.append(alarma.status)
+
+        for atencion in procedimiento.atenciones_data:
+            # Agregar detalles del tipo de atención paramédica
+
+            # Agregar emergencias médicas si existen
+            for emergencia in atencion.emergencias_data:
+                detalles.append(atencion.tipo_atencion)
+                personas_presentes.append(f" {emergencia.nombres} {emergencia.apellidos} ({emergencia.cedula}) {emergencia.edad} años - {emergencia.sexo} [{emergencia.idx}]")
+                descripcion.append(emergencia.descripcion)
+                material_utilizado.append(emergencia.material_utilizado)
+                status.append(emergencia.status)
+
+                # Agregar traslados si existen
+                for traslado in emergencia.traslados_data:
+                    traslados.append(f"Traslado: {traslado.hospital_trasladado} - {traslado.medico_receptor} - {traslado.mpps_cmt}")
+
+              # Agregar datos de accidentes de tránsito
+            for accidente in atencion.accidentes_data:
+                detalles.append(f"{atencion.tipo_atencion}: {accidente.tipo_de_accidente.tipo_accidente} - {accidente.cantidad_lesionados} Lesionados")
+                material_utilizado.append(accidente.material_utilizado)
+                status.append(accidente.status)
+
+                # Agregar detalles de vehículos involucrados
+                for vehiculo in accidente.vehiculos_data:
+                    vehiculos.append(f"({vehiculo.modelo} {vehiculo.marca} {vehiculo.color} {vehiculo.año} - {vehiculo.placas})")
+
+                # Agregar datos de lesionados
+                for lesionado in accidente.lesionados_data:
+                    personas_presentes.append(f"({lesionado.nombres} {lesionado.apellidos} {lesionado.cedula} - {lesionado.edad} años{lesionado.sexo} [{lesionado.idx}])")
+                    descripcion.append(f"({lesionado.descripcion})")
+
+                    # Agregar traslados asociados a lesionados
+                    for traslado_acc in lesionado.traslados_accidente_data:
+                        traslados.append(f"Traslado: {traslado_acc.hospital_trasladado} - {traslado_acc.medico_receptor} - {traslado_acc.mpps_cmt}")
+ 
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for especial in procedimiento.especial_data:
+            detalles.append(especial.tipo_servicio.serv_especiales)
+            descripcion.append(especial.descripcion)
+            material_utilizado.append(especial.material_utilizado)
+            status.append(especial.status)
+
+        for rescate in procedimiento.rescate_data:
+            material_utilizado.append(rescate.material_utilizado)
+            status.append(rescate.status)
+
+            # Agregar personas presentes si existen
+            for persona in rescate.personas_data:
+                # Agregar detalles del tipo de rescate
+                detalles.append(rescate.tipo_rescate.tipo_rescate)
+                material_utilizado.append(rescate.material_utilizado)
+                status.append(rescate.status)
+                personas_presentes.append(f"{persona.nombre} {persona.apellidos} ({persona.cedula} - {persona.edad} años - {persona.sexo})")
+                descripcion.append(persona.descripcion)
+
+            # Agregar animales rescatados si existen
+            for animal in rescate.animales_data:
+                detalles.append(f"{rescate.tipo_rescate.tipo_rescate}: {animal.especie}")
+                descripcion.append(animal.descripcion)
+     
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for incendio in procedimiento.incendios_data:
+            # Detalles del incendio
+            detalles.append(incendio.id_tipo_incendio.tipo_incendio)
+            descripcion.append(incendio.descripcion)
+            material_utilizado.append(incendio.material_utilizado)
+            status.append(incendio.status)
+
+            # Agregar Retenciones Preventivas (GLP)
+            for retencion in incendio.retencion_data:
+
+                retencion_preventiva.append(f"{retencion.tipo_cilindro} - {retencion.capacidad} - {retencion.serial} - {retencion.nro_constancia_retencion} - Propietario: {retencion.nombre} {retencion.apellidos} ({retencion.cedula})")
+
+            # Agregar Personas Presentes en el Incendio
+            for persona in incendio.personas_incendio_data:
+                personas_presentes.append(f"{persona.nombre} {persona.apellidos} ({persona.cedula} - {persona.edad} años)")
+
+            # Agregar Detalles de Vehículos Relacionados
+            for vehiculo in incendio.vehiculos_incendio_data:
+                vehiculos.append(f"{vehiculo.modelo} {vehiculo.marca} {vehiculo.color} {vehiculo.año} - {vehiculo.placas}")
+
+        # Agregar Fallecidos
+        for fallecido in procedimiento.fallecido_data:
+            detalles.append(fallecido.motivo_fallecimiento)
+            personas_presentes.append(f"{fallecido.nombres} {fallecido.apellidos} ({fallecido.cedula}) - {fallecido.edad} años - {fallecido.sexo}") 
+            descripcion.append(fallecido.descripcion)
+            material_utilizado.append(fallecido.material_utilizado)
+            status.append(fallecido.status)
+
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for mitigacion in procedimiento.mitigacion_data:
+            detalles.append(mitigacion.id_tipo_servicio.tipo_servicio)
+            descripcion.append(mitigacion.descripcion)
+            material_utilizado.append(mitigacion.material_utilizado)
+            status.append(mitigacion.status)
+
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for evaluacion in procedimiento.evaluacion_data:
+            detalles.append(f"{evaluacion.id_tipo_riesgo.tipo_riesgo}: {evaluacion.tipo_estructura}")
+            descripcion.append(evaluacion.descripcion)
+            material_utilizado.append(evaluacion.material_utilizado)
+            status.append(evaluacion.status)
+
+            # Personas presentes en la evaluación
+            for persona in evaluacion.personas_eval_data:
+                personas_presentes.append(f"{persona.nombre} {persona.apellidos} ({persona.cedula}) - {persona.telefono}")
+
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for artificio in procedimiento.artificios_data:
+            # Información básica del artificio
+            detalles.append(f"{artificio.tipo_procedimiento.tipo} - {artificio.nombre_comercio} - {artificio.rif_comerciante}")
+
+            for incendio in artificio.incendios_data:
+                detalles.append(f"{artificio.nombre_comercio} - {artificio.rif_comerciante} - {artificio.tipo_procedimiento.tipo}: {incendio.id_tipo_incendio.tipo_incendio}")
+                descripcion.append(incendio.descripcion)
+                material_utilizado.append(incendio.material_utilizado)
+                status.append(incendio.status)
+
+                for persona in incendio.personas_presentes_data:
+                    personas_presentes.append(f"{persona.nombres} {persona.apellidos} ({persona.cedula}) - {persona.edad} años")
+                    
+                for vehiculo in incendio.vehiculos_data:
+                    vehiculos.append(f"{vehiculo.modelo} {vehiculo.marca} {vehiculo.color} {vehiculo.año} - {vehiculo.placas}")
+
+
+            for lesionado in artificio.lesionados_data:
+                detalles.append(f"{artificio.nombre_comercio} - {artificio.rif_comerciante} - {artificio.tipo_procedimiento.tipo}")
+                personas_presentes.append(f"{lesionado.nombres} {lesionado.apellidos} ({lesionado.cedula}) - {lesionado.edad} años - {lesionado.sexo}")
+                descripcion.append(lesionado.descripcion)
+                status.append(lesionado.status)
+
+            for fallecido in artificio.fallecidos_data:
+                detalles.append(f"{artificio.nombre_comercio} - {artificio.rif_comerciante} - {artificio.tipo_procedimiento.tipo}: {fallecido.motivo_fallecimiento}")
+                personas_presentes.append(f"{fallecido.nombres} {fallecido.apellidos} ({fallecido.cedula}) - {fallecido.edad} años - {fallecido.sexo}")
+                descripcion.append(fallecido.descripcion)
+                status.append(fallecido.status)
+                material_utilizado.append(fallecido.material_utilizado)
+
+        for trasladado in procedimiento.trasladado_data:
+            detalles.append(trasladado.id_tipo_traslado.tipo_traslado)
+            personas_presentes.append(f"{trasladado.nombre} {trasladado.apellido} ({trasladado.cedula}) - {trasladado.edad} años - {trasladado.sexo} [{trasladado.idx}]")
+            traslados.append(f"{trasladado.hospital_trasladado} - {trasladado.medico_receptor} - {trasladado.mpps_cmt}")
+            descripcion.append(trasladado.descripcion)
+            material_utilizado.append(trasladado.material_utilizado)
+            status.append(trasladado.status)
+        
+        # Otros conjuntos relacionados (agregar más si aplica)
+        for puesto in procedimiento.puesto_data:
+            detalles.append(puesto.id_tipo_servicio.tipo_servicio)
+            descripcion.append(puesto.descripcion)
+            material_utilizado.append(puesto.material_utilizado)
+            status.append(puesto.status)
 
         # Continuar agregando datos de atención paramédica, accidentes, incendios, etc.
 
