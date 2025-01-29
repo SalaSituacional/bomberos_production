@@ -1710,3 +1710,181 @@ def generar_excel_capacitacion(request):
         })
 
     return JsonResponse(datos, safe=False)
+
+
+def generar_excel_operacional(request):
+    mes_excel = request.GET.get('mes') 
+
+    # Extraer año y mes
+    año, mes_num = mes_excel.split("-")
+
+    # Obtener datos de los procedimientos con select_related y prefetch_related
+    procedimientos = Procedimientos.objects.filter(id_division__in=[1,2,4,5], fecha__year=año, fecha__month=mes_num).select_related(
+        'id_solicitante', 'id_jefe_comision', 'id_municipio', 'id_parroquia', 'id_tipo_procedimiento'
+    ).prefetch_related(
+        Prefetch("rescate_set",
+             queryset=Rescate.objects.prefetch_related(
+                 Prefetch("rescate_persona_set", to_attr="personas_data"),
+                 Prefetch("rescate_animal_set", to_attr="animales_data")
+             ), 
+             to_attr="rescate_data"),
+        Prefetch("abastecimiento_agua_set", to_attr="agua_data"), 
+        Prefetch("apoyo_unidades_set", to_attr="apoyo_data"), 
+        Prefetch("guardia_prevencion_set", to_attr="guard_data"), 
+        Prefetch("falsa_alarma_set", to_attr="falsa_data"),
+        Prefetch("atenciones_paramedicas_set", 
+             queryset=Atenciones_Paramedicas.objects.prefetch_related(
+                 Prefetch("emergencias_medicas_set", 
+                          queryset=Emergencias_Medicas.objects.prefetch_related(
+                              Prefetch("traslado_set", to_attr="traslados_data")
+                          ), 
+                          to_attr="emergencias_data"),
+                 Prefetch("accidentes_transito_set", 
+                          queryset=Accidentes_Transito.objects.prefetch_related(
+                              Prefetch("detalles_vehiculos_accidente_set", to_attr="vehiculos_data"),
+                              Prefetch("lesionados_set", 
+                                       queryset=Lesionados.objects.prefetch_related(
+                                           Prefetch("traslado_accidente_set", to_attr="traslados_accidente_data")
+                                       ), 
+                                       to_attr="lesionados_data")
+                          ), 
+                          to_attr="accidentes_data")
+             ), 
+             to_attr="atenciones_data"), 
+        Prefetch("servicios_especiales_set", to_attr="especial_data"), 
+        Prefetch("incendios_set", 
+             queryset=Incendios.objects.prefetch_related(
+                 Prefetch("retencion_preventiva_incendios_set", to_attr="retencion_data"),
+                 Prefetch("persona_presente_set", to_attr="personas_incendio_data"),
+                 Prefetch("detalles_vehiculos_set", to_attr="vehiculos_incendio_data")
+             ), 
+             to_attr="incendios_data"), 
+        Prefetch("mitigacion_riesgos_set", to_attr="mitigacion_data"), 
+        Prefetch("evaluacion_riesgo_set", 
+             queryset=Evaluacion_Riesgo.objects.prefetch_related(
+                 Prefetch("persona_presente_eval_set", to_attr="personas_eval_data")
+             ), 
+             to_attr="evaluacion_data"),
+        Prefetch("puesto_avanzada_set", to_attr="puesto_data"), 
+        Prefetch("artificios_pirotecnicos_set",
+        queryset=Artificios_Pirotecnicos.objects.prefetch_related(
+            Prefetch(
+                "incendios_art_set",
+                queryset=Incendios_Art.objects.prefetch_related(
+                    Prefetch("persona_presente_art_set", to_attr="personas_presentes_data"),
+                    Prefetch("detalles_vehiculos_art_set", to_attr="vehiculos_data")
+                ),
+                to_attr="incendios_data"
+            ),
+            Prefetch("lesionados_art_set", to_attr="lesionados_data"),
+            Prefetch("fallecidos_art_set", to_attr="fallecidos_data"),
+        ),
+        to_attr="artificios_data"), 
+        Prefetch("comisiones_set", 
+             queryset=Comisiones.objects.select_related("comision"), 
+             to_attr="comisiones_data"), 
+        Prefetch("atendido_no_efectuado_set", to_attr="atendido_data"), 
+        Prefetch("despliegue_seguridad_set", to_attr="despliegue_data"), 
+        Prefetch("fallecidos_set", to_attr="fallecido_data"), 
+    )
+
+    datos = []
+
+    # Agregar datos a la lista
+    for procedimiento in procedimientos:
+        # Obtener solicitante y jefe de comisión
+        solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} {procedimiento.id_solicitante.apellidos}" 
+                       if procedimiento.id_solicitante.apellidos != "Externo" 
+                       else procedimiento.solicitante_externo)
+
+        jefe_comision = f"{procedimiento.id_jefe_comision.jerarquia} {procedimiento.id_jefe_comision.nombres} {procedimiento.id_jefe_comision.apellidos}"
+
+        # Detalles y personas
+        personas_presentes = []
+        detalles = []
+        descripcion = []
+        material_utilizado = []
+        status = []
+        traslados = []
+        vehiculos = []
+        comisiones_presentes = []
+        retencion_preventiva = []
+
+        # Agregar datos de comisiones presentes
+        for comision in procedimiento.comisiones_data:
+            comisiones_presentes.append(f"({comision.comision.tipo_comision} - {comision.nombre_oficial} {comision.apellido_oficial} ({comision.cedula_oficial}) - Unidad {comision.nro_unidad} - Cuadrante {comision.nro_cuadrante})")
+
+        # Agregar datos de otros conjuntos relacionados
+        for agua in procedimiento.agua_data:
+            detalles.append(f"{agua.id_tipo_servicio.nombre_institucion} {agua.ltrs_agua} litros - {agua.personas_atendidas} Personas Atendidas")
+            personas_presentes.append(f"{agua.nombres} {agua.apellidos} ({agua.cedula})")
+            descripcion.append(agua.descripcion)
+            material_utilizado.append(agua.material_utilizado)
+            status.append(agua.status)
+        
+        for apoyo in procedimiento.apoyo_data:
+            detalles.append(f"{apoyo.id_tipo_apoyo.tipo_apoyo}: {apoyo.unidad_apoyada}")
+            descripcion.append(apoyo.descripcion)
+            material_utilizado.append(apoyo.material_utilizado)
+            status.append(apoyo.status)
+        
+        for guardia in procedimiento.guard_data:
+            detalles.append(guardia.id_motivo_prevencion.motivo)
+            descripcion.append(guardia.descripcion)
+            material_utilizado.append(guardia.material_utilizado)
+            status.append(guardia.status)
+
+        for atendido in procedimiento.atendido_data:
+            descripcion.append(atendido.descripcion)
+            material_utilizado.append(atendido.material_utilizado)
+            status.append(atendido.status)
+
+        for despliegue in procedimiento.despliegue_data:
+            detalles.append(despliegue.motivo_despliegue.motivo)
+            descripcion.append(despliegue.descripcion)
+            material_utilizado.append(despliegue.material_utilizado)
+            status.append(despliegue.status)
+
+        for alarma in procedimiento.falsa_data:
+            detalles.append(alarma.motivo_alarma.motivo)
+            descripcion.append(alarma.descripcion)
+            material_utilizado.append(alarma.material_utilizado)
+            status.append(alarma.status)
+
+        # Continuar agregando datos de atención paramédica, accidentes, incendios, etc.
+
+        # Combinar datos
+        detalles_str = " -- ".join(detalles) or " "
+        personas_str = " -- ".join(personas_presentes) or " "
+        descripcion_str = " -- ".join(descripcion) or " "
+        material_utilizado_str = " -- ".join(material_utilizado) or " "
+        status_str = " -- ".join(status) or " "
+        traslados_str = " -- ".join(traslados) or " "
+        vehiculos_str = " -- ".join(vehiculos) or " "
+        comisiones_presentes_str = " -- ".join(comisiones_presentes) or " "
+        retencion_preventiva_str = " -- ".join(retencion_preventiva) or " "
+
+        # Agregar datos al JSON
+        datos.append({
+            "division": procedimiento.id_division.division or " ",
+            "solicitante": solicitante,
+            "jefe_comision": jefe_comision,
+            "municipio": procedimiento.id_municipio.municipio or " ",
+            "parroquia": procedimiento.id_parroquia.parroquia or " ",
+            "fecha": procedimiento.fecha or " ",
+            "hora": procedimiento.hora or " ",
+            "direccion": procedimiento.direccion or " ",
+            "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento or " ",
+            "detalles": detalles_str,
+            "personas_presentes": personas_str,
+            "descripcion": descripcion_str,
+            "material_utilizado": material_utilizado_str,
+            "status": status_str,
+            "traslados": traslados_str,
+            "vehiculos": vehiculos_str,
+            "comisiones": comisiones_presentes_str,
+            "retencion_preventiva": retencion_preventiva_str,
+        })
+    
+    # Aquí va el código de exportación de datos a Excel o el formato requerido.
+    return JsonResponse(datos, safe=False)

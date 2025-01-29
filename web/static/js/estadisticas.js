@@ -134,6 +134,7 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
           },
         },
       },
+      plugins: [ChartDataLabels], // Habilitar el plugin
     });
   } 
   else{
@@ -156,12 +157,13 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
             display: true,
             labels: {
               font: {
-                size: 20,
+                size: 24,
               },
             },
           },
         },
       },
+      plugins: [ChartDataLabels], // Habilitar el plugin
     });
   }
 }
@@ -384,6 +386,18 @@ document.addEventListener("DOMContentLoaded", function () {
           y: { ticks: { font: { size: fontSize + 3 } } }, // Incremento para el eje Y
         },
       },
+      formatter: (value, context) => {
+        // Personalización de los números
+        const dataset = context.chart.data.datasets[0];
+        const total = dataset.data.reduce((sum, num) => sum + num, 0);
+
+        // Personalización: Formato como porcentaje
+        const percentage = ((value / total) * 100).toFixed(2);
+
+        // Personalización: Texto adicional
+        return `$${value} \n(${percentage}%)`; // Retorna el valor en dólares y porcentaje
+      },
+      plugins: [ChartDataLabels], // Habilitar el plugin
     });
   }
 

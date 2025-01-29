@@ -103,4 +103,5 @@ urlpatterns = [
     path('descargar-excel-rescate/', generar_excel_rescate, name='descargar_excel_rescate'),
     path('descargar-excel-prevencion/', generar_excel_prevencion, name='descargar_excel_prevencion'),
     path('descargar-excel-enfermeria/', generar_excel_enfermeria, name='descargar_excel_enfermeria'),
+    path('descargar-excel-operacional/', generar_excel_operacional, name='descargar_excel_operacional'),
 ]
