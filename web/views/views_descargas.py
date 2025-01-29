@@ -12,6 +12,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.db.models import Prefetch
+from datetime import date
 
 # Vista para descargar la base de datos
 def descargar_base_datos(request):
@@ -67,48 +68,6 @@ def descargar_base_datos(request):
     else:
         # Otros motores de base de datos
         return HttpResponse("Motor de base de datos no compatible", status=400)
-
-# Api para crear el excel de exportacion de la tabla
-def generar_excel_personal(request):
-    # Crear un libro de trabajo y una hoja
-    workbook = openpyxl.Workbook()
-    hoja = workbook.active
-    hoja.title = "Personal"
-
-    # Agregar encabezados a la primera fila
-    encabezados = [
-        "Nombres", "Apellidos", "Jerarquia", "Cargo", 
-        "Cedula", "Sexo", "Contrato", "Estado"
-    ]
-    hoja.append(encabezados)
-
-    # Obtener datos de los procedimientos
-    procedimientos = Personal.objects.exclude(id__in=[0, 4])
-
-    # Agregar datos a la hoja
-    for procedimiento in procedimientos:
-        # Agregar la fila de datos
-        hoja.append([
-            procedimiento.nombres,
-            procedimiento.apellidos,
-            procedimiento.jerarquia,
-            procedimiento.cargo,
-            procedimiento.cedula,
-            procedimiento.sexo,
-            procedimiento.rol,
-            procedimiento.status,
-        ])
-
-    # Ajustar el ancho de las columnas
-    for column in hoja.columns:
-        max_length = max(len(str(cell.value)) for cell in column if cell.value) + 2
-        hoja.column_dimensions[get_column_letter(column[0].column)].width = max_length
-
-    # Configurar la respuesta HTTP para descargar el archivo
-    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    response["Content-Disposition"] = "attachment; filename=personal.xlsx"
-    workbook.save(response)
-    return response
 
 def generar_excel_operaciones(request):
     division = 2
@@ -1711,7 +1670,6 @@ def generar_excel_capacitacion(request):
 
     return JsonResponse(datos, safe=False)
 
-
 def generar_excel_operacional(request):
     mes_excel = request.GET.get('mes') 
 
@@ -2043,3 +2001,62 @@ def generar_excel_operacional(request):
     
     # Aquí va el código de exportación de datos a Excel o el formato requerido.
     return JsonResponse(datos, safe=False)
+
+def generar_excel_personal(request):
+    # Obtener datos de los procedimientos
+    procedimientos = Personal.objects.exclude(id__in=[0, 4]).prefetch_related(
+        Prefetch('detalles_personal_set', queryset=Detalles_Personal.objects.all(), to_attr='detalles')
+    )
+
+    
+    def calcular_edad(fecha_nacimiento):
+        if fecha_nacimiento:
+            hoy = date.today()
+            return hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+        return None
+    
+    # Crear una lista de diccionarios con los datos
+    data = []
+    for persona in procedimientos:
+        detalles = persona.detalles[0] if persona.detalles else None  # Acceso eficiente a los detalles relacionados
+
+        data.append({
+            "id": persona.id,
+            'nombres': persona.nombres,
+            'apellidos': persona.apellidos,
+            'jerarquia': persona.jerarquia,
+            'cargo': persona.cargo,
+            'cedula': persona.cedula,
+            'sexo': persona.sexo,
+            'rol': persona.rol,
+            'status': persona.status,
+            'fecha_nacimiento': detalles.fecha_nacimiento if detalles else None,
+            'talla_camisa': detalles.talla_camisa if detalles else None,
+            'talla_pantalon': detalles.talla_pantalon if detalles else None,
+            'talla_zapato': detalles.talla_zapato if detalles else None,
+            'grupo_sanguineo': detalles.grupo_sanguineo if detalles else None,
+            'fecha_ingreso': detalles.fecha_ingreso if detalles else None,
+            'edad': f"{calcular_edad(detalles.fecha_nacimiento)} años" if detalles else None,  # Calcular la edad
+        })
+
+    # Lista de jerarquías en el orden deseado
+    jerarquias = [
+        "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", 
+        "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", 
+        "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero"
+    ]
+
+    # Crear un mapa de jerarquía a índice para facilitar la ordenación
+    jerarquia_orden = {nombre: index for index, nombre in enumerate(jerarquias)}
+
+    # Ordenar la lista personal_data por jerarquía utilizando la clave personalizada
+    personal_ordenado = sorted(
+        data, 
+        key=lambda x: jerarquia_orden.get(x["jerarquia"], float("inf"))  # Si no está, se asigna un valor alto
+    )
+
+    
+    # Configurar la respuesta HTTP para enviar el archivo JSON
+    response = JsonResponse(personal_ordenado, safe=False)
+    response["Content-Disposition"] = "attachment; filename=personal.json"
+    return response
