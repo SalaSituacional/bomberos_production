@@ -446,124 +446,113 @@ document.addEventListener("DOMContentLoaded", function () {
 // Grafica de Barras Horizontal=======================================================================================================================================================
 
 document.addEventListener("DOMContentLoaded", function () {
-  let chart; // Declarar chart fuera de las funciones para que sea accesible
+  let chart; // Mantener la referencia del gráfico para actualizarlo
   const ctx7 = document.getElementById("bar-horizontal").getContext("2d");
 
-  // Función para obtener datos de la API con la función fetchWithLoader
-  async function fetchDivisiones(mes = "") {
+  // Función para obtener datos de la API
+  async function fetchDivisionesHorizontal(mes = "") {
     try {
-      return await fetchWithLoader(`/api/divisiones_estadisticas/?mes=${mes}`);
+      const response = await fetchWithLoader(`/api/procedimientos_tipo_horizontal/?mes=${mes}`);
+      return await response;
     } catch (error) {
-      console.error("Error fetching divisiones:", error);
-      return {};
+      console.error("Error obteniendo datos de la API:", error);
+      return [];
     }
   }
 
-  // Actualiza las tarjetas con los datos obtenidos
-  function updateCards(data) {
-    for (const [division, detalles] of Object.entries(data)) {
-      const count = detalles.total || 0; // Solo total
-
-      const card = document.querySelector(`li[data-division="${division}"] .count`);
-      if (card) {
-        card.textContent = count;
-      }
-    }
-  }
-
-  // Extrae divisiones y totales para la gráfica
+  // Función para extraer divisiones y totales de la API
   function obtenerDivisiones(data) {
-    return Object.entries(data).map(([division, detalles]) => ({
-      division,
-      count: detalles.total || 0,
+    return data.map(item => ({
+      tipo_procedimiento: item.id_tipo_procedimiento__tipo_procedimiento,
+      count: item.count || 0,
     }));
   }
 
-  // Función para inicializar los datos
-  async function init() {
-    const data = await fetchDivisiones(); // Sin mes seleccionado
-    updateCards(data); // Actualizar las tarjetas con datos totales
-    actualizarGrafica(data); // Crear la gráfica
+  // Función para actualizar las tarjetas de totales
+  function updateCards(data) {
+    data.forEach(({ tipo_procedimiento, count }) => {
+      const card = document.querySelector(`li[data-division="${tipo_procedimiento}"] .count`);
+      if (card) {
+        card.textContent = count;
+      }
+    });
   }
 
-  // Crear o actualizar el gráfico de barras con los datos proporcionados
+  // Función para actualizar o crear la gráfica
   function actualizarGrafica(data) {
-    const divisiones = obtenerDivisiones(data);
-    const labels = divisiones.map((item) => item.division);
-    const values = divisiones.map((item) => item.count);
+    const procedimientos = obtenerDivisiones(data);
+    const labels = procedimientos.map(item => item.tipo_procedimiento);
+    const values = procedimientos.map(item => item.count);
 
-    const fontSize = window.innerWidth < 376 ? 10 : 15; // Tamaño dinámico de fuente
+    const fontSize = window.innerWidth < 376 ? 10 : 15; // Tamaño de fuente dinámico
 
-    // Destruir el gráfico existente si ya está creado
+    // Destruir el gráfico si ya existe
     if (chart) {
       chart.destroy();
     }
 
-    // Crear un nuevo gráfico de barras
+    // Crear la gráfica
     chart = new Chart(ctx7, {
       type: "bar",
       data: {
-      labels: labels,
-      datasets: [
-        {
-        label: "Procedimientos",
-        data: values,
-        borderWidth: 1,
-        backgroundColor: colors, // Colores para las barras
-        borderColor: colors, // Colores de bordes
-        },
-      ],
+        labels: labels,
+        datasets: [
+          {
+            label: "Procedimientos",
+            data: values,
+            borderWidth: 1,
+            backgroundColor: colors,
+            borderColor: colors,
+          },
+        ],
       },
       options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        datalabels: {
-        color: 'white',
-        font: {
-          size: 26, // Tamaño de fuente a px
+        indexAxis: 'y', // Gráfico de barras horizontales
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            color: 'white',
+            font: { size: 14 },
+            formatter: (value, context) => {
+              const total = context.dataset.data.reduce((sum, num) => sum + num, 0);
+              const percentage = ((value / total) * 100).toFixed(2);
+              return `${value}`;
+            },
+          },
         },
+        scales: {
+          x: { ticks: { font: { size: fontSize } } },
+          y: { ticks: { font: { size: fontSize + 3 } } },
         },
       },
-      scales: {
-        x: { ticks: { font: { size: fontSize } } },
-        y: { ticks: { font: { size: fontSize + 3 } } }, // Incremento para el eje Y
-      },
-      },
-      formatter: (value, context) => {
-      // Personalización de los números
-      const dataset = context.chart.data.datasets[0];
-      const total = dataset.data.reduce((sum, num) => sum + num, 0);
-
-      // Personalización: Formato como porcentaje
-      const percentage = ((value / total) * 100).toFixed(2);
-
-      // Personalización: Texto adicional
-      return `$${value} \n(${percentage}%)`; // Retorna el valor en dólares y porcentaje
-      },
-      plugins: [ChartDataLabels], // Habilitar el plugin
+      plugins: [ChartDataLabels], // Habilitar etiquetas en la gráfica
     });
   }
 
-  // Ajusta el tamaño de fuente del gráfico según el tamaño de la ventana
-  async function updateChartOnResize() {
-    const data = await fetchDivisiones(); // Obtener los datos actuales
-    actualizarGrafica(data); // Reconstruir el gráfico con el nuevo tamaño de fuente
+  // Función para inicializar los datos y la gráfica
+  async function init() {
+    const data = await fetchDivisionesHorizontal(); // Obtener datos iniciales
+    updateCards(data); // Actualizar tarjetas
+    actualizarGrafica(data); // Crear gráfica
   }
 
-  // Manejar el evento de cambio del input de mes
+  // Manejar el cambio del input de mes
   document.getElementById("month-picker-9").addEventListener("change", async (event) => {
-    const mesSeleccionado = event.target.value; // Obtener el valor del mes seleccionado
-    const data = await fetchDivisiones(mesSeleccionado); // Llamar a la API con el mes seleccionado
-    updateCards(data); // Actualizar las tarjetas
-    actualizarGrafica(data); // Actualizar la gráfica
+    const mesSeleccionado = event.target.value;
+    const data = await fetchDivisiones(mesSeleccionado);
+    updateCards(data);
+    actualizarGrafica(data);
   });
 
-  // Ajustar el tamaño de fuente al cambiar el tamaño de la ventana
-  window.addEventListener("resize", updateChartOnResize);
+  // Manejar el redimensionamiento de la ventana
+  window.addEventListener("resize", async () => {
+    const data = await fetchDivisiones();
+    actualizarGrafica(data);
+  });
 
   // Inicializar al cargar la página
   init();
 });
+
 
