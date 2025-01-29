@@ -106,76 +106,76 @@ const colors = [
 function createOrUpdateChart(ctx, chart, type, labels, data) {
   if (chart) chart.destroy(); // Destruir gráfico previo si existe
 
-  if (type === "polarArea"){
+  if (type === "polarArea") {
     return new Chart(ctx, {
       type: type,
       data: {
-      labels: labels,
-      datasets: [
-        {
-        label: "Procedimientos",
-        data: data,
-        borderWidth: 1,
-        backgroundColor: colors,
-        },
-      ],
+        labels: labels,
+        datasets: [
+          {
+            label: "Procedimientos",
+            data: data,
+            borderWidth: 1,
+            backgroundColor: colors,
+          },
+        ],
       },
       options: {
-      scales: {
-        r: {
-        min: 0,
-        ticks: {
-          beginAtZero: true,
-          stepSize: 2,
-          callback: function (data) {
-          return Math.round(data);
+        scales: {
+          r: {
+            min: 0,
+            ticks: {
+              beginAtZero: true,
+              stepSize: 2,
+              callback: function (data) {
+                return Math.round(data);
+              },
+            },
           },
         },
+        plugins: {
+          datalabels: {
+            color: 'white',
+            font: {
+              size: 21.5, // Tamaño de fuente más grande
+            },
+          },
         },
-      },
-      plugins: {
-        datalabels: {
-        color: 'white',
-        font: {
-          size: 21.5, // Tamaño de fuente más grande
-        },
-        },
-      },
       },
       plugins: [ChartDataLabels], // Habilitar el plugin
     });
-  } 
-  else{
+  }
+  else {
     return new Chart(ctx, {
       type: type,
       data: {
-      labels: labels,
-      datasets: [
-        {
-        label: "Procedimientos",
-        data: data,
-        borderWidth: 1,
-        backgroundColor: colors,
-        },
-      ],
+        labels: labels,
+        datasets: [
+          {
+            label: "Procedimientos",
+            data: data,
+            borderWidth: 1,
+            backgroundColor: colors,
+          },
+        ],
       },
       options: {
-      plugins: {
-        legend: {
-        display: true,
-        labels: {
-          font: {
-          size: 22,
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              font: {
+                size: 20,
+              },
+            },
+          },
+          datalabels: {
+            color: 'white',
+            font: {
+              size: 21.5, // Tamaño de fuente más grande
+            },
           },
         },
-        },
-        datalabels: {
-        color: 'white',
-        font: {
-          size: 21.5, // Tamaño de fuente más grande
-        },
-        },
-      },
       },
       plugins: [ChartDataLabels], // Habilitar el plugin
     });
@@ -379,43 +379,43 @@ document.addEventListener("DOMContentLoaded", function () {
     chart = new Chart(ctx6, {
       type: "bar",
       data: {
-      labels: labels,
-      datasets: [
-        {
-        label: "Procedimientos",
-        data: values,
-        borderWidth: 1,
-        backgroundColor: colors, // Colores para las barras
-        borderColor: colors, // Colores de bordes
-        },
-      ],
+        labels: labels,
+        datasets: [
+          {
+            label: "Procedimientos",
+            data: values,
+            borderWidth: 1,
+            backgroundColor: colors, // Colores para las barras
+            borderColor: colors, // Colores de bordes
+          },
+        ],
       },
       options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        datalabels: {
-        color: 'white',
-        font: {
-          size: 26, // Tamaño de fuente a px
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            color: 'white',
+            font: {
+              size: 26, // Tamaño de fuente a px
+            },
+          },
         },
+        scales: {
+          x: { ticks: { font: { size: fontSize } } },
+          y: { ticks: { font: { size: fontSize + 3 } } }, // Incremento para el eje Y
         },
-      },
-      scales: {
-        x: { ticks: { font: { size: fontSize } } },
-        y: { ticks: { font: { size: fontSize + 3 } } }, // Incremento para el eje Y
-      },
       },
       formatter: (value, context) => {
-      // Personalización de los números
-      const dataset = context.chart.data.datasets[0];
-      const total = dataset.data.reduce((sum, num) => sum + num, 0);
+        // Personalización de los números
+        const dataset = context.chart.data.datasets[0];
+        const total = dataset.data.reduce((sum, num) => sum + num, 0);
 
-      // Personalización: Formato como porcentaje
-      const percentage = ((value / total) * 100).toFixed(2);
+        // Personalización: Formato como porcentaje
+        const percentage = ((value / total) * 100).toFixed(2);
 
-      // Personalización: Texto adicional
-      return `$${value} \n(${percentage}%)`; // Retorna el valor en dólares y porcentaje
+        // Personalización: Texto adicional
+        return `$${value} \n(${percentage}%)`; // Retorna el valor en dólares y porcentaje
       },
       plugins: [ChartDataLabels], // Habilitar el plugin
     });
@@ -444,16 +444,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // Grafica de Barras Horizontal=======================================================================================================================================================
-
 document.addEventListener("DOMContentLoaded", function () {
   let chart; // Mantener la referencia del gráfico para actualizarlo
   const ctx7 = document.getElementById("bar-horizontal").getContext("2d");
+
+  // Definir colores para las barras
+  const colors = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"];
 
   // Función para obtener datos de la API
   async function fetchDivisionesHorizontal(mes = "") {
     try {
       const response = await fetchWithLoader(`/api/procedimientos_tipo_horizontal/?mes=${mes}`);
-      return await response;
+      if (!response || !Array.isArray(response)) {
+        console.error("Datos no válidos recibidos de la API");
+        return [];
+      }
+      return response;
     } catch (error) {
       console.error("Error obteniendo datos de la API:", error);
       return [];
@@ -492,6 +498,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Crear la gráfica
+    // Crear la gráfica
+    // Crear la gráfica
+    // Crear la gráfica
     chart = new Chart(ctx7, {
       type: "bar",
       data: {
@@ -507,29 +516,31 @@ document.addEventListener("DOMContentLoaded", function () {
         ],
       },
       options: {
-        indexAxis: 'y', // Gráfico de barras horizontales
+        indexAxis: 'y',
         responsive: true,
+        maintainAspectRatio: false, // Permite que el canvas se ajuste sin forzar tamaño
         plugins: {
           legend: { display: false },
           datalabels: {
             color: 'white',
-            font: { size: 14 },
-            formatter: (value, context) => {
-              const total = context.dataset.data.reduce((sum, num) => sum + num, 0);
-              const percentage = ((value / total) * 100).toFixed(2);
-              return `${value}`;
-            },
+            font: { size: 14 }, // Tamaño más grande para mejorar visibilidad
+            formatter: (value) => `${value}`,
           },
         },
+        layout: {
+          padding: { top: 20, bottom: 20 }, // Espaciado para mejorar la distribución
+        },
         scales: {
-          x: { ticks: { font: { size: fontSize } } },
-          y: { ticks: { font: { size: fontSize + 3 } } },
+          x: { display: false },
+          y: {
+            ticks: { font: { size: 16 } },
+          },
         },
       },
-      plugins: [ChartDataLabels], // Habilitar etiquetas en la gráfica
+      plugins: [ChartDataLabels], // Habilitar el plugin
     });
-  }
 
+  }
   // Función para inicializar los datos y la gráfica
   async function init() {
     const data = await fetchDivisionesHorizontal(); // Obtener datos iniciales
@@ -540,19 +551,17 @@ document.addEventListener("DOMContentLoaded", function () {
   // Manejar el cambio del input de mes
   document.getElementById("month-picker-9").addEventListener("change", async (event) => {
     const mesSeleccionado = event.target.value;
-    const data = await fetchDivisiones(mesSeleccionado);
+    const data = await fetchDivisionesHorizontal(mesSeleccionado);
     updateCards(data);
     actualizarGrafica(data);
   });
 
   // Manejar el redimensionamiento de la ventana
   window.addEventListener("resize", async () => {
-    const data = await fetchDivisiones();
+    const data = await fetchDivisionesHorizontal();
     actualizarGrafica(data);
   });
 
   // Inicializar al cargar la página
   init();
 });
-
-
