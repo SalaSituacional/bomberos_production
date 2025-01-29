@@ -5,12 +5,8 @@ async function generarExcel() {
       boton.disabled = true;
       boton.textContent = "Generando...";
   
-      // Obtener los datos del servidor
-      const response = await fetch('/descargar-excel_personal/');
-      if (!response.ok) {
-        throw new Error("Error al obtener los datos del servidor.");
-      }
-      const data = await response.json();
+    // Obtener los datos del servidor
+    const data = await fetchWithLoader('/descargar-excel_personal/');
   
       // Crear el libro de trabajo y la hoja
       const workbook = XLSX.utils.book_new();

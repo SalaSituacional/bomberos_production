@@ -2008,7 +2008,6 @@ def generar_excel_personal(request):
         Prefetch('detalles_personal_set', queryset=Detalles_Personal.objects.all(), to_attr='detalles')
     )
 
-    
     def calcular_edad(fecha_nacimiento):
         if fecha_nacimiento:
             hoy = date.today()
@@ -2055,8 +2054,4 @@ def generar_excel_personal(request):
         key=lambda x: jerarquia_orden.get(x["jerarquia"], float("inf"))  # Si no está, se asigna un valor alto
     )
 
-    
-    # Configurar la respuesta HTTP para enviar el archivo JSON
-    response = JsonResponse(personal_ordenado, safe=False)
-    response["Content-Disposition"] = "attachment; filename=personal.json"
-    return response
+    return JsonResponse(personal_ordenado, safe=False)
