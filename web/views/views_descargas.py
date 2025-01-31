@@ -13,6 +13,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.db.models import Prefetch
 from datetime import date
+from django.core.paginator import Paginator
 
 # Vista para descargar la base de datos
 def descargar_base_datos(request):
@@ -1671,9 +1672,10 @@ def generar_excel_capacitacion(request):
     return JsonResponse(datos, safe=False)
 
 def generar_excel_operacional(request):
-    mes_excel = request.GET.get('mes') 
+    mes_excel = request.GET.get('mes')  
+    page = int(request.GET.get('page', 1))  # Página actual (default 1)
+    page_size = int(request.GET.get('page_size', 120))  # Reducido a 50 por defecto
 
-    # Extraer año y mes
     año, mes_num = mes_excel.split("-")
 
     # Obtener datos de los procedimientos con select_related y prefetch_related
@@ -1749,10 +1751,14 @@ def generar_excel_operacional(request):
         Prefetch("puesto_avanzada_set", to_attr="puesto_data"), # Ya
     )
 
+        # Aplicar paginación manual
+    paginator = Paginator(procedimientos, page_size)
+    procedimientos_pagina = paginator.get_page(page)
+
     datos = []
 
     # Agregar datos a la lista
-    for procedimiento in procedimientos:
+    for procedimiento in procedimientos_pagina:
         # Obtener solicitante y jefe de comisión
         solicitante = (f"{procedimiento.id_solicitante.jerarquia} {procedimiento.id_solicitante.nombres} {procedimiento.id_solicitante.apellidos}" 
                        if procedimiento.id_solicitante.apellidos != "Externo" 
@@ -2000,7 +2006,10 @@ def generar_excel_operacional(request):
         })
     
     # Aquí va el código de exportación de datos a Excel o el formato requerido.
-    return JsonResponse(datos, safe=False)
+    return JsonResponse({"data": datos,
+        "total_pages": paginator.num_pages,
+        "current_page": page
+    })
 
 def generar_excel_personal(request):
     # Obtener datos de los procedimientos
