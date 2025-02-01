@@ -1,20 +1,51 @@
-let mesExcel = ""
+let mesExcel = "";
+
+async function obtenerDatosPaginados(mes) {
+  let page = 1;
+  const pageSize = 120; // Ajusta según sea necesario
+  let todosLosDatos = [];
+
+  try {
+    while (true) {
+      const response = await fetch(`/descargar-excel-operacional/?mes=${mes}&page=${page}&page_size=${pageSize}`);
+
+      if (!response.ok) {
+        throw new Error(`Error en la página ${page}`);
+      }
+
+      const data = await response.json();
+
+      if (!data.data || data.data.length === 0) {
+        break; // No hay más datos, salir del bucle
+      }
+
+      todosLosDatos = todosLosDatos.concat(data.data);
+      if (page >= data.total_pages) {
+        break; // Si ya estamos en la última página, terminamos
+      }
+
+      page++; // Pasamos a la siguiente página
+    }
+  } catch (error) {
+    console.error("Error al obtener los datos paginados:", error);
+    alert("No se pudo obtener los datos para generar el Excel.");
+    return [];
+  }
+
+  return todosLosDatos;
+}
 
 async function generarExcel(mes) {
   try {
-    // Deshabilitar el botón y mostrar un mensaje de carga
     const boton = document.getElementById("exportarExcel");
     boton.disabled = true;
     boton.textContent = "Generando...";
 
-    // Obtener los datos del servidor
-    const response = await fetch(`/descargar-excel-operacional?mes=${mes}`);
-    if (!response.ok) {
-      throw new Error("Error al obtener los datos del servidor.");
+    const data = await obtenerDatosPaginados(mes);
+    if (data.length === 0) {
+      throw new Error("No se encontraron datos.");
     }
-    const data = await response.json();
 
-    // Crear el libro de trabajo y la hoja
     const workbook = XLSX.utils.book_new();
     const worksheetData = [
       [
@@ -39,7 +70,6 @@ async function generarExcel(mes) {
       ]
     ];
 
-    // Agregar los datos con validación
     data.forEach((item) => {
       worksheetData.push([
         item.division || "N/A",
@@ -65,44 +95,37 @@ async function generarExcel(mes) {
 
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
 
-    // Ajustar el ancho de las columnas
     const columnWidths = worksheetData[0].map((header) => ({
-      wch: Math.max(
-        ...worksheetData.map(
-          (row) =>
-            (row[worksheetData[0].indexOf(header)] || "").toString().length
-        )
-      ) + 2
+      wch: Math.max(...worksheetData.map((row) => (row[worksheetData[0].indexOf(header)] || "").toString().length)) + 2
     }));
     worksheet["!cols"] = columnWidths;
 
-    // Agregar hoja al libro de trabajo y exportar
     XLSX.utils.book_append_sheet(workbook, worksheet, "TablaOperacional");
     XLSX.writeFile(workbook, "TablaOperacional.xlsx");
+
   } catch (error) {
     console.error("Hubo un problema al generar el Excel:", error);
-    alert("No se pudo generar el archivo Excel. Por favor, inténtalo de nuevo.");
+    alert("No se pudo generar el archivo Excel. Inténtalo de nuevo.");
   } finally {
-    // Habilitar el botón y restaurar su texto
     const boton = document.getElementById("exportarExcel");
     boton.disabled = false;
     boton.textContent = "Exportar .xls";
   }
 }
 
+// Asegurar que solo haya un evento de click en el botón
 document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("mes_excel").addEventListener("change", function () {
-    mesExcel = document.getElementById("mes_excel").value;
+  const boton = document.getElementById("exportarExcel");
+  const selectMes = document.getElementById("mes_excel");
 
-    if (this.value) {
-      const boton = document.getElementById("exportarExcel");
-      boton.removeAttribute("disabled");
-      
-      boton.addEventListener("click", function () {
-        generarExcel(mesExcel);
-      });
-    } else {
-      document.getElementById("exportarExcel").setAttribute("disabled", true);
+  selectMes.addEventListener("change", function () {
+    mesExcel = this.value;
+    boton.disabled = !mesExcel;
+  });
+
+  boton.addEventListener("click", function () {
+    if (mesExcel) {
+      generarExcel(mesExcel);
     }
   });
 });
