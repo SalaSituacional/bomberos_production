@@ -522,7 +522,10 @@ def api_procedimientos_tipo_detalles(request):
     # Filtrar procedimientos por tipo de procedimiento y mes
     procedimientos = Procedimientos.objects.all()
     if tipo_procedimiento_id:
-        procedimientos = procedimientos.filter(id_tipo_procedimiento=tipo_procedimiento_id)
+        if tipo_procedimiento_id == "100":
+            procedimientos = procedimientos.filter(id_tipo_procedimiento=7)
+        else:
+            procedimientos = procedimientos.filter(id_tipo_procedimiento=tipo_procedimiento_id)
 
     if mes:
         fecha_inicio = datetime.strptime(mes, '%Y-%m').date()
@@ -542,6 +545,7 @@ def api_procedimientos_tipo_detalles(request):
             {"tipo_servicio": item['id_tipo_servicio__nombre_institucion'], "count": item['count']}
             for item in abastecimiento_data
         ]
+    
     # Filtrar y agrupar según el tipo de procedimiento
     if tipo_procedimiento_id == "2":  # Ejemplo: ID para "Abastecimiento de Agua"
         abastecimiento_data = Apoyo_Unidades.objects.filter(id_procedimiento__in=procedimientos).values(
@@ -638,6 +642,21 @@ def api_procedimientos_tipo_detalles(request):
         resultados = [
             {"tipo_servicio": item['tipo_atencion'], "count": item['count']}
             for item in abastecimiento_data
+        ]
+
+    # Filtrar y agrupar según el tipo de procedimiento
+    if tipo_procedimiento_id == "100":  # Ejemplo: ID para "Abastecimiento de Agua"
+         # Agrupar y contar por tipo de accidente
+        accidentes_data = Accidentes_Transito.objects.values(
+            'tipo_de_accidente__tipo_accidente'  # Accedemos al nombre del tipo de accidente
+        ).annotate(
+            count=Count('id')
+        ).order_by('-count')  # Ordenar de mayor a menor
+
+        # Convertir a una estructura de datos adecuada para la gráfica
+        resultados = [
+            {"tipo_servicio": item['tipo_de_accidente__tipo_accidente'], "count": item['count']}
+            for item in accidentes_data
         ]
 
     # Filtrar y agrupar según el tipo de procedimiento
@@ -766,6 +785,8 @@ def api_procedimientos_tipo_detalles(request):
             {"tipo_servicio": item['tipo_siniestro'], "count": item['count']}
             for item in abastecimiento_data
         ]
+
+
 
     # Retornar el JSON con los resultados formateados
     return JsonResponse(resultados, safe=False)
