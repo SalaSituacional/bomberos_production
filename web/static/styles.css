@@ -3082,7 +3082,7 @@ summary>* {
 .request-prevencion-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   width: 100%;
   height: auto;
@@ -3094,16 +3094,40 @@ summary>* {
   align-items: center;
   justify-content: center;
   text-align: center;
-  width: 30%;
+  align-content: center;
+  width: 22rem;
   height: 20rem;
   margin: 1rem;
-  padding: 2rem;
+  padding: .5rem;
   border-radius: 20px;
   background-color: #FFF;
   p{
     width: 60%;
   }
+  svg{
+    padding: .5rem;
+    margin-bottom: 1rem;
+  }
+  a{
+    width: 70%;
+    margin: .5rem;
+  }
 }
+.contain-request{
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 95%;
+  height: auto;
+  background-color: #FFF;
+  margin-top: 5rem;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+} 
+
+
 
 
 @media (min-width: 1400px) {
