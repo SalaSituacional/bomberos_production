@@ -58,6 +58,7 @@ urlpatterns = [
     
     # Certificados Prevencion
     path('certificadosprevencion/', cerfiticados_prevencion),
+    path('formulariocertificados/', formulario_certificado_prevencion),
 
 
     # Tablas
