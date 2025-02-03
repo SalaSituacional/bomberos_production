@@ -911,3 +911,67 @@ class Formulario_Investigacion_Estructura_Vivienda(forms.Form):
   descripcion = forms.CharField(required=False)
   material_utilizado = forms.CharField(required=False)
   status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Culminado", "Culminado"), ("En Proceso", "En Proceso")], widget=forms.Select(attrs={"class": "disable-first-option"}), required=False)
+
+# =====================================================================================
+
+class Comercios(forms.Form):
+    nombre_comercio = forms.CharField(required=False)
+    rif_empresarial = forms.CharField(required=False)
+
+class Formulario_Solicitud(forms.Form):
+    opc = [("", "Seleccione una Opcion"),
+        ("1", "La Concordia"),
+        ("2", "Pedro Maria Morantes"),
+        ("3", "San Juan Bautista"),
+        ("4", "San Sebastian"),
+        ("6", "Francisco Romero Lobo"),
+    ]
+
+    nombre_comercio = forms.CharField(required=False)
+    rif_empresarial = forms.CharField(required=False)
+    fecha_solicitud = forms.DateField(required=False)
+    hora_solicitud = forms.TimeField(required=False)
+
+    tipo_servicio = forms.CharField()
+
+    solicitante_nombre_apellido = forms.CharField()
+
+    solicitante_cedula = forms.CharField()
+
+    tipo_representante = forms.CharField()
+
+    rif_representante_legal = forms.CharField()
+
+    direccion = forms.CharField()
+
+    estado = forms.CharField()
+
+    municipio = forms.ChoiceField(choices=Asignar_op_Municipios, required=False,
+        widget=forms.Select(attrs={'class': 'disable-first-option'}))
+
+    parroquia = forms.ChoiceField(choices=opc, required=False,
+        widget=forms.Select(attrs={'class': 'disable-first-option'}))
+    
+    numero_telefono = forms.NumberInput()
+    correo_electronico = forms.EmailField()
+    pago_tasa = forms.CharField()
+    referencia = forms.CharField()
+
+class Formularia_Requisitos(forms.Form):
+    cedula_identidad = forms.BooleanField(required=False,label="Cedula de Identidad")
+    cedula_vecimiento = forms.DateField(required=False)
+
+    rif_representante = forms.BooleanField(required=False,label="RIF Representante")
+    rif_representante_vencimiento = forms.DateField(required=False)
+
+    rif_comercio = forms.BooleanField(required=False,label="RIF Comercio")
+    rif_comercio_vencimiento = forms.DateField(required=False)
+
+    permiso_anterior = forms.BooleanField(required=False,label="Permiso Anterior (En Caso de Renovacion)")
+    registro_comercio = forms.BooleanField(required=False,label="Registro Comercio")
+    documento_propiedad = forms.BooleanField(required=False,label="Documento de Propiedad o Carta de Arrendamiento")
+    
+    cedula_catastral = forms.BooleanField(required=False,label="Cedula Catastral")
+    cedula_catastral_vencimiento = forms.DateField(required=False)
+
+    carta_autorizacion = forms.BooleanField(required=False,label="Carta Autorizacion")

@@ -4466,6 +4466,7 @@ def cerfiticados_prevencion(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
     })
+
 # Vista de la seccion de Estadisticas
 def formulario_certificado_prevencion(request):
     user = request.session.get('user')
@@ -4477,4 +4478,6 @@ def formulario_certificado_prevencion(request):
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
+        "solicitud": Formulario_Solicitud,
+        "requisitos": Formularia_Requisitos,
     })
