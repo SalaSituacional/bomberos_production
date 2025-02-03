@@ -1,647 +1,447 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Panel de Administrador">
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="shortcut icon"
-      href="../../static/assets/logo bomberos 2.ico"
-      type="image/x-icon"
-    />
-    <link rel="stylesheet" href="../static/styles.css" />
-    <title>Panel Principal</title>
-  </head>
-  <body>
-    <header class="header-dashboard">
-      <section class="title-icon">
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasNavbar"
-          aria-controls="offcanvasNavbar"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon">
-            <svg
-              fill="#ffffff"
-              width="50px"
-              height="50px"
-              viewBox="0 -2 28 28"
-              xmlns="http://www.w3.org/2000/svg"
-              stroke="#ffffff"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <path
-                  d="m2.61 0h22.431c1.441 0 2.61 1.168 2.61 2.61s-1.168 2.61-2.61 2.61h-22.431c-1.441 0-2.61-1.168-2.61-2.61s1.168-2.61 2.61-2.61z"
-                ></path>
-                <path
-                  d="m2.61 9.39h22.431c1.441 0 2.61 1.168 2.61 2.61s-1.168 2.61-2.61 2.61h-22.431c-1.441 0-2.61-1.168-2.61-2.61s1.168-2.61 2.61-2.61z"
-                ></path>
-                <path
-                  d="m2.61 18.781h22.431c1.441 0 2.61 1.168 2.61 2.61s-1.168 2.61-2.61 2.61h-22.431c-1.441 0-2.61-1.168-2.61-2.61s1.168-2.61 2.61-2.61z"
-                ></path>
-              </g>
-            </svg>
-          </span>
-        </button>
-        <img
-          src="../static/assets/logo bomberos 2.svg"
-          alt="Logo de bomberos"
-        />
-        <h1>Cuerpo de Bomberos</h1>
-      </section>
-      <section class="tools-exit-help">
-        <a href="#">
-          <img src="../static/assets/help.svg" alt="help" />
-        </a>
-        <a href="/logout/">
-          <img src="../static/assets/salir.svg" alt="exit" />
-        </a>
-      </section>
-    </header>
-    <nav class="navbar bg-body-tertiary">
-      <div class="container-fluid">
-        <div
-          class="offcanvas offcanvas-start size-nav"
-          tabindex="-1"
-          id="offcanvasNavbar"
-          aria-labelledby="offcanvasNavbarLabel"
-        >
-          <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
-              Panel de Navegacion
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="offcanvas-body">
-            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  aria-current="page"
-                  href="/dashboard/"
-                >
-                  <svg
-                    width="30px"
-                    height="30px"
-                    viewBox="-102.4 -102.4 1228.80 1228.80"
-                    class="icon"
-                    version="1.1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="#000000"
-                    transform="rotate(0)matrix(1, 0, 0, 1, 0, 0)"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke="#CCCCCC"
-                      stroke-width="32.768"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Panel de Administrador">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="shortcut icon" href="../../static/assets/logo bomberos 2.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="../static/styles.css" />
+  <title>Panel Principal</title>
+</head>
+
+<body>
+  <header class="header-dashboard">
+    <section class="title-icon">
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+        aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon">
+          <svg fill="#ffffff" width="50px" height="50px" viewBox="0 -2 28 28" xmlns="http://www.w3.org/2000/svg"
+            stroke="#ffffff">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="m2.61 0h22.431c1.441 0 2.61 1.168 2.61 2.61s-1.168 2.61-2.61 2.61h-22.431c-1.441 0-2.61-1.168-2.61-2.61s1.168-2.61 2.61-2.61z">
+              </path>
+              <path
+                d="m2.61 9.39h22.431c1.441 0 2.61 1.168 2.61 2.61s-1.168 2.61-2.61 2.61h-22.431c-1.441 0-2.61-1.168-2.61-2.61s1.168-2.61 2.61-2.61z">
+              </path>
+              <path
+                d="m2.61 18.781h22.431c1.441 0 2.61 1.168 2.61 2.61s-1.168 2.61-2.61 2.61h-22.431c-1.441 0-2.61-1.168-2.61-2.61s1.168-2.61 2.61-2.61z">
+              </path>
+            </g>
+          </svg>
+        </span>
+      </button>
+      <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
+      <h1>Cuerpo de Bomberos</h1>
+    </section>
+    <section class="tools-exit-help">
+      <a href="#">
+        <img src="../static/assets/help.svg" alt="help" />
+      </a>
+      <a href="/logout/">
+        <img src="../static/assets/salir.svg" alt="exit" />
+      </a>
+    </section>
+  </header>
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid">
+      <div class="offcanvas offcanvas-start size-nav" tabindex="-1" id="offcanvasNavbar"
+        aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
+            Panel de Navegacion
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/dashboard/">
+                <svg width="30px" height="30px" viewBox="-102.4 -102.4 1228.80 1228.80" class="icon" version="1.1"
+                  xmlns="http://www.w3.org/2000/svg" fill="#000000" transform="rotate(0)matrix(1, 0, 0, 1, 0, 0)">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC"
+                    stroke-width="32.768"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M981.4 502.3c-9.1 0-18.3-2.9-26-8.9L539 171.7c-15.3-11.8-36.7-11.8-52 0L70.7 493.4c-18.6 14.4-45.4 10.9-59.7-7.7-14.4-18.6-11-45.4 7.7-59.7L435 104.3c46-35.5 110.2-35.5 156.1 0L1007.5 426c18.6 14.4 22 41.1 7.7 59.7-8.5 10.9-21.1 16.6-33.8 16.6z"
+                      fill="#000000"></path>
+                    <path
+                      d="M810.4 981.3H215.7c-70.8 0-128.4-57.6-128.4-128.4V534.2c0-23.5 19.1-42.6 42.6-42.6s42.6 19.1 42.6 42.6v318.7c0 23.8 19.4 43.2 43.2 43.2h594.8c23.8 0 43.2-19.4 43.2-43.2V534.2c0-23.5 19.1-42.6 42.6-42.6s42.6 19.1 42.6 42.6v318.7c-0.1 70.8-57.7 128.4-128.5 128.4z"
+                      fill="#000000"></path>
+                  </g>
+                </svg>
+                Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/personal/">
+                <svg fill="#000000" width="30px" height="40px" viewBox="0 0 32 32" id="icon"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <defs>
+                      <style>
+                        .cls-1 {
+                          fill: none;
+                        }
+                      </style>
+                    </defs>
+                    <title>user--profile</title>
+                    <path d="M12,4A5,5,0,1,1,7,9a5,5,0,0,1,5-5m0-2a7,7,0,1,0,7,7A7,7,0,0,0,12,2Z"></path>
+                    <path d="M22,30H20V25a5,5,0,0,0-5-5H9a5,5,0,0,0-5,5v5H2V25a7,7,0,0,1,7-7h6a7,7,0,0,1,7,7Z"></path>
+                    <rect x="22" y="4" width="10" height="2"></rect>
+                    <rect x="22" y="9" width="10" height="2"></rect>
+                    <rect x="22" y="14" width="7" height="2"></rect>
+                    <rect id="_Transparent_Rectangle_" data-name="Transparent Rectangle" class="cls-1" width="32"
+                      height="32"></rect>
+                  </g>
+                </svg>
+                Personal</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/certificadosprevencion/">
+                <svg fill="#000000" width="35px" height="35px" viewBox="0 0 32.00 32.00" id="Layer_1"
+                  data-name="Layer 1" xmlns="http://www.w3.org/2000/svg">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M18,23H16V21a3.0033,3.0033,0,0,0-3-3H9a3.0033,3.0033,0,0,0-3,3v2H4V21a5.0059,5.0059,0,0,1,5-5h4a5.0059,5.0059,0,0,1,5,5Z"
+                      transform="translate(0 0)"></path>
+                    <path d="M11,6A3,3,0,1,1,8,9a3,3,0,0,1,3-3m0-2a5,5,0,1,0,5,5A5,5,0,0,0,11,4Z"
+                      transform="translate(0 0)"></path>
+                    <rect x="2" y="26.0001" width="28" height="2"></rect>
+                    <polygon points="30 8 28 8 28 6 26 6 26 4 30 4 30 8"></polygon>
+                    <polygon points="19 4 23 4 23 6 21 6 21 8 19 8 19 4"></polygon>
+                    <rect x="28" y="13.0001" width="2" height="2"></rect>
+                    <rect x="26" y="11.0001" width="2" height="2"></rect>
+                    <polygon points="19 11 21 11 21 13 23 13 23 15 19 15 19 11"></polygon>
+                    <rect id="_Transparent_Rectangle_" data-name="<Transparent Rectangle>" class="cls-1" width="25"
+                      height="30"></rect>
+                  </g>
+                </svg>
+                Solicitudes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/procedimientos/">
+                <svg fill="#000000" height="30px" width="30px" version="1.1" id="Layer_1"
+                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                  viewBox="0 0 511.999 511.999" xml:space="preserve">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <g>
+                      <g>
+                        <g>
+                          <path
+                            d="M278.906,412.315c-5.622,0-10.181,4.558-10.181,10.181v1.696c0,5.623,4.559,10.181,10.181,10.181 c5.622,0,10.181-4.558,10.181-10.181v-1.696C289.086,416.872,284.528,412.315,278.906,412.315z">
+                          </path>
+                          <path
+                            d="M332.98,277.361c13.71-14.241,23.519-32.26,27.686-52.324c21.988-5.312,40.534-12.32,53.913-20.418 c22.013-13.324,26.633-27.464,26.633-36.978c0-20.659-20.131-38.31-58.218-51.048c-1.714-0.573-3.464-1.13-5.233-1.678 c-1.659-48.984-38.585-89.171-86.131-95.921v-8.814C291.632,4.558,287.073,0,281.451,0h-50.903 c-5.623,0-10.181,4.558-10.181,10.181v8.814c-47.546,6.751-84.471,46.937-86.13,95.921c-1.769,0.548-3.518,1.104-5.233,1.678 c-38.087,12.738-58.218,30.39-58.218,51.048c0,24.624,28.545,44.908,80.548,57.405c4.168,20.061,13.976,38.078,27.684,52.315 c-73.532,24.794-126.631,94.403-126.631,176.19v48.267c0,5.623,4.558,10.181,10.181,10.181h386.863 c5.622,0,10.181-4.558,10.181-10.181v-48.267C459.612,371.763,406.513,302.155,332.98,277.361z M240.729,20.361h30.542v30.542 h-30.542V20.361z M220.367,39.63v21.454c0,5.623,4.558,10.181,10.181,10.181h50.903c5.622,0,10.181-4.558,10.181-10.181V39.63 c34.48,6.193,61.352,34.533,65.313,69.726c-29.614-6.783-64.486-10.435-100.945-10.435s-71.329,3.652-100.945,10.435 C159.016,74.163,185.889,45.823,220.367,39.63z M149.102,167.641v35.632c0,0.063,0.002,0.125,0.002,0.187 c-39.895-10.679-57.956-25.292-57.956-35.819c0-8.178,11.641-20.81,44.314-31.738c32.046-10.717,74.853-16.62,120.537-16.62 c45.684,0,88.491,5.903,120.537,16.62c32.674,10.927,44.314,23.56,44.314,31.738c0,10.213-18.265,25.12-57.958,35.81 c0-0.059,0.002-0.118,0.002-0.178v-35.632c0-5.623-4.559-10.181-10.181-10.181H159.283 C153.66,157.46,149.102,162.018,149.102,167.641z M169.464,203.273v-25.452h173.07v25.452c0,47.716-38.82,86.535-86.535,86.535 C208.284,289.808,169.464,250.989,169.464,203.273z M320.273,294.693l-15.299,46.193l-28.391-32.713 c13.576-2.659,26.24-7.893,37.46-15.176C316.135,293.522,318.212,294.088,320.273,294.693z M222.913,491.638H72.749v-38.087 c0-67.94,41.149-126.442,99.828-151.916l20.745,62.637c1.15,3.475,4.077,6.064,7.667,6.782c0.665,0.133,1.335,0.197,1.997,0.197 c2.918,0,5.734-1.255,7.688-3.507l12.238-14.101V491.638z M207.026,340.886l-15.299-46.193c2.061-0.605,4.137-1.171,6.231-1.697 c11.219,7.283,23.883,12.517,37.46,15.176L207.026,340.886z M439.251,491.639h-0.001H289.086v-30.796 c0-5.623-4.559-10.181-10.181-10.181c-5.622,0-10.181,4.558-10.181,10.181v30.796h-25.452V330.185l12.726-14.663l12.726,14.662 v53.625c0,5.623,4.559,10.181,10.181,10.181c5.622,0,10.181-4.558,10.181-10.181v-30.164l12.238,14.101 c1.955,2.252,4.772,3.507,7.689,3.507c0.663,0,1.333-0.064,1.997-0.198c3.589-0.719,6.516-3.308,7.667-6.782l20.745-62.637 c58.679,25.474,99.828,83.976,99.828,151.916V491.639z">
+                          </path>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+                Procedimientos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/tablageneral/">
+                <svg width="28px" height="28px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path fill="#444"
+                      d="M0 1v15h16v-15h-16zM5 15h-4v-2h4v2zM5 12h-4v-2h4v2zM5 9h-4v-2h4v2zM5 6h-4v-2h4v2zM10 15h-4v-2h4v2zM10 12h-4v-2h4v2zM10 9h-4v-2h4v2zM10 6h-4v-2h4v2zM15 15h-4v-2h4v2zM15 12h-4v-2h4v2zM15 9h-4v-2h4v2zM15 6h-4v-2h4v2z">
+                    </path>
+                  </g>
+                </svg>
+                Tabla Operacional</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <svg width="25px" height="30px" viewBox="0 0 1024 1024" class="icon" version="1.1"
+                  xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M786.358857 809.325714a88.356571 88.356571 0 0 1 176.566857 0 88.283429 88.283429 0 0 1-176.566857 0z m-274.797714 89.234286c-48.64 0-88.210286-39.497143-88.210286-88.064a88.210286 88.210286 0 0 1 176.420572 0c0 48.566857-39.570286 88.064-88.210286 88.064zM512.512 59.538286c48.566857 0 88.137143 39.497143 88.137143 87.917714a88.137143 88.137143 0 0 1-176.201143 0c0-48.493714 39.497143-87.917714 88.064-87.917714zM145.334857 896.731429c-48.64 0-88.210286-39.497143-88.210286-88.137143a88.283429 88.283429 0 0 1 176.493715 0c0 48.64-39.643429 88.137143-88.283429 88.137143zM905.069714 425.691429a29.549714 29.549714 0 0 0-8.265143-20.48 30.793143 30.793143 0 0 0-20.48-8.265143H541.257143V291.181714a147.309714 147.309714 0 0 0 117.906286-144.237714 147.163429 147.163429 0 0 0-294.253715 0c0 71.826286 49.883429 131.510857 118.125715 144.237714-0.146286 0.365714-1.974857 105.691429-1.974858 105.691429H147.675429a28.452571 28.452571 0 0 0-20.48 8.265143 30.134857 30.134857 0 0 0-8.923429 20.48l0.658286 241.590857c-59.245714 9.508571-118.345143 70.656-118.345143 143.725714 0 81.042286 65.974857 147.017143 147.090286 147.017143 81.188571 0 147.163429-65.974857 147.163428-147.017143 0-70.656-53.101714-131.437714-112.128-143.725714V464.969143h300.324572v191.488c0 3.730286 0.877714 7.094857 2.048 10.24a147.017143 147.017143 0 0 0-120.173715 144.237714 147.236571 147.236571 0 0 0 294.253715 0c0-71.899429-52.077714-131.657143-120.539429-144.237714a29.110857 29.110857 0 0 0 1.974857-10.24V464.969143h300.617143v202.24c-64.365714 14.116571-112.054857 73.142857-112.054857 143.725714a147.236571 147.236571 0 0 0 294.253714 0c0-72.996571-57.344-134.656-118.345143-144.530286 0.365714-1.097143 0-240.786286 0-240.786285z"
+                      fill="#000000"></path>
+                  </g>
+                </svg>
+                Divisiones
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="/rescate/">• Rescate</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/operaciones/">• Operaciones</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/prevencion/">• Prevencion</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/prehospitalaria/">• PreHospitalaria</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/enfermeria/">• Enfermeria</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/serviciosmedicos/">• Servicios Medicos</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/psicologia/">• Psicologia</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/capacitacion/">• Capacitacion</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/grumae/">• Grumae</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/estadisticas/">
+                <svg fill="#000000" width="25px" height="30px" version="1.1" id="Capa_1"
+                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                  viewBox="0 0 282.772 282.772" xml:space="preserve">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <g>
                       <path
-                        d="M981.4 502.3c-9.1 0-18.3-2.9-26-8.9L539 171.7c-15.3-11.8-36.7-11.8-52 0L70.7 493.4c-18.6 14.4-45.4 10.9-59.7-7.7-14.4-18.6-11-45.4 7.7-59.7L435 104.3c46-35.5 110.2-35.5 156.1 0L1007.5 426c18.6 14.4 22 41.1 7.7 59.7-8.5 10.9-21.1 16.6-33.8 16.6z"
-                        fill="#000000"
-                      ></path>
+                        d="M61.472,143.036H23.881c-4.971,0-9,4.029-9,9v94.185c0,4.971,4.029,9,9,9h37.591c4.971,0,9-4.029,9-9v-94.185 C70.472,147.065,66.443,143.036,61.472,143.036z M52.472,237.22H32.881v-76.185h19.591V237.22z">
+                      </path>
                       <path
-                        d="M810.4 981.3H215.7c-70.8 0-128.4-57.6-128.4-128.4V534.2c0-23.5 19.1-42.6 42.6-42.6s42.6 19.1 42.6 42.6v318.7c0 23.8 19.4 43.2 43.2 43.2h594.8c23.8 0 43.2-19.4 43.2-43.2V534.2c0-23.5 19.1-42.6 42.6-42.6s42.6 19.1 42.6 42.6v318.7c-0.1 70.8-57.7 128.4-128.5 128.4z"
-                        fill="#000000"
-                      ></path>
-                    </g>
-                  </svg>
-                  Inicio</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/personal/">
-                  <svg
-                    fill="#000000"
-                    width="30px"
-                    height="40px"
-                    viewBox="0 0 32 32"
-                    id="icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <defs>
-                        <style>
-                          .cls-1 {
-                            fill: none;
-                          }
-                        </style>
-                      </defs>
-                      <title>user--profile</title>
+                        d="M132.238,93.194H94.648c-4.971,0-9,4.029-9,9V246.22c0,4.971,4.029,9,9,9h37.591c4.971,0,9-4.029,9-9V102.194 C141.238,97.224,137.209,93.194,132.238,93.194z M123.238,237.22h-19.591V111.194h19.591V237.22z">
+                      </path>
                       <path
-                        d="M12,4A5,5,0,1,1,7,9a5,5,0,0,1,5-5m0-2a7,7,0,1,0,7,7A7,7,0,0,0,12,2Z"
-                      ></path>
+                        d="M203.005,150.471h-37.591c-4.971,0-9,4.029-9,9v86.749c0,4.971,4.029,9,9,9h37.591c4.971,0,9-4.029,9-9v-86.749 C212.005,154.5,207.976,150.471,203.005,150.471z M194.005,237.22h-19.591v-68.749h19.591V237.22z">
+                      </path>
                       <path
-                        d="M22,30H20V25a5,5,0,0,0-5-5H9a5,5,0,0,0-5,5v5H2V25a7,7,0,0,1,7-7h6a7,7,0,0,1,7,7Z"
-                      ></path>
-                      <rect x="22" y="4" width="10" height="2"></rect>
-                      <rect x="22" y="9" width="10" height="2"></rect>
-                      <rect x="22" y="14" width="7" height="2"></rect>
-                      <rect
-                        id="_Transparent_Rectangle_"
-                        data-name="Transparent Rectangle"
-                        class="cls-1"
-                        width="32"
-                        height="32"
-                      ></rect>
-                    </g>
-                  </svg>
-                  Personal</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/procedimientos/">
-                  <svg
-                    fill="#000000"
-                    height="30px"
-                    width="30px"
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 511.999 511.999"
-                    xml:space="preserve"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <g>
-                        <g>
-                          <g>
-                            <path
-                              d="M278.906,412.315c-5.622,0-10.181,4.558-10.181,10.181v1.696c0,5.623,4.559,10.181,10.181,10.181 c5.622,0,10.181-4.558,10.181-10.181v-1.696C289.086,416.872,284.528,412.315,278.906,412.315z"
-                            ></path>
-                            <path
-                              d="M332.98,277.361c13.71-14.241,23.519-32.26,27.686-52.324c21.988-5.312,40.534-12.32,53.913-20.418 c22.013-13.324,26.633-27.464,26.633-36.978c0-20.659-20.131-38.31-58.218-51.048c-1.714-0.573-3.464-1.13-5.233-1.678 c-1.659-48.984-38.585-89.171-86.131-95.921v-8.814C291.632,4.558,287.073,0,281.451,0h-50.903 c-5.623,0-10.181,4.558-10.181,10.181v8.814c-47.546,6.751-84.471,46.937-86.13,95.921c-1.769,0.548-3.518,1.104-5.233,1.678 c-38.087,12.738-58.218,30.39-58.218,51.048c0,24.624,28.545,44.908,80.548,57.405c4.168,20.061,13.976,38.078,27.684,52.315 c-73.532,24.794-126.631,94.403-126.631,176.19v48.267c0,5.623,4.558,10.181,10.181,10.181h386.863 c5.622,0,10.181-4.558,10.181-10.181v-48.267C459.612,371.763,406.513,302.155,332.98,277.361z M240.729,20.361h30.542v30.542 h-30.542V20.361z M220.367,39.63v21.454c0,5.623,4.558,10.181,10.181,10.181h50.903c5.622,0,10.181-4.558,10.181-10.181V39.63 c34.48,6.193,61.352,34.533,65.313,69.726c-29.614-6.783-64.486-10.435-100.945-10.435s-71.329,3.652-100.945,10.435 C159.016,74.163,185.889,45.823,220.367,39.63z M149.102,167.641v35.632c0,0.063,0.002,0.125,0.002,0.187 c-39.895-10.679-57.956-25.292-57.956-35.819c0-8.178,11.641-20.81,44.314-31.738c32.046-10.717,74.853-16.62,120.537-16.62 c45.684,0,88.491,5.903,120.537,16.62c32.674,10.927,44.314,23.56,44.314,31.738c0,10.213-18.265,25.12-57.958,35.81 c0-0.059,0.002-0.118,0.002-0.178v-35.632c0-5.623-4.559-10.181-10.181-10.181H159.283 C153.66,157.46,149.102,162.018,149.102,167.641z M169.464,203.273v-25.452h173.07v25.452c0,47.716-38.82,86.535-86.535,86.535 C208.284,289.808,169.464,250.989,169.464,203.273z M320.273,294.693l-15.299,46.193l-28.391-32.713 c13.576-2.659,26.24-7.893,37.46-15.176C316.135,293.522,318.212,294.088,320.273,294.693z M222.913,491.638H72.749v-38.087 c0-67.94,41.149-126.442,99.828-151.916l20.745,62.637c1.15,3.475,4.077,6.064,7.667,6.782c0.665,0.133,1.335,0.197,1.997,0.197 c2.918,0,5.734-1.255,7.688-3.507l12.238-14.101V491.638z M207.026,340.886l-15.299-46.193c2.061-0.605,4.137-1.171,6.231-1.697 c11.219,7.283,23.883,12.517,37.46,15.176L207.026,340.886z M439.251,491.639h-0.001H289.086v-30.796 c0-5.623-4.559-10.181-10.181-10.181c-5.622,0-10.181,4.558-10.181,10.181v30.796h-25.452V330.185l12.726-14.663l12.726,14.662 v53.625c0,5.623,4.559,10.181,10.181,10.181c5.622,0,10.181-4.558,10.181-10.181v-30.164l12.238,14.101 c1.955,2.252,4.772,3.507,7.689,3.507c0.663,0,1.333-0.064,1.997-0.198c3.589-0.719,6.516-3.308,7.667-6.782l20.745-62.637 c58.679,25.474,99.828,83.976,99.828,151.916V491.639z"
-                            ></path>
-                          </g>
-                        </g>
-                      </g>
-                    </g>
-                  </svg>
-                  Procedimientos</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/tablageneral/">
-                  <svg
-                    width="28px"
-                    height="28px"
-                    viewBox="0 0 16 16"
-                    version="1.1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    fill="#000000"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
+                        d="M273.772,96.516H236.18c-4.971,0-9,4.029-9,9V246.22c0,4.971,4.029,9,9,9h37.591c4.971,0,9-4.029,9-9V105.516 C282.772,100.545,278.742,96.516,273.772,96.516z M264.772,237.22H245.18V114.516h19.591V237.22z">
+                      </path>
                       <path
-                        fill="#444"
-                        d="M0 1v15h16v-15h-16zM5 15h-4v-2h4v2zM5 12h-4v-2h4v2zM5 9h-4v-2h4v2zM5 6h-4v-2h4v2zM10 15h-4v-2h4v2zM10 12h-4v-2h4v2zM10 9h-4v-2h4v2zM10 6h-4v-2h4v2zM15 15h-4v-2h4v2zM15 12h-4v-2h4v2zM15 9h-4v-2h4v2zM15 6h-4v-2h4v2z"
-                      ></path>
+                        d="M178.918,112.796c3.276,2.381,7.739,2.28,10.905-0.246l67.269-53.682l-0.298,8.847c-0.167,4.968,3.724,9.131,8.692,9.298 c0.104,0.003,0.206,0.005,0.309,0.005c4.831,0,8.826-3.833,8.99-8.697l1.061-31.466c0.083-2.491-0.869-4.905-2.631-6.667 c-1.762-1.763-4.184-2.719-6.667-2.631l-31.466,1.061c-4.968,0.167-8.859,4.331-8.692,9.298c0.167,4.967,4.314,8.85,9.298,8.692 l8.261-0.278l-59.993,47.876l-68.22-49.585c-2.988-2.172-7-2.298-10.117-0.317L4.176,108.734 c-4.196,2.665-5.437,8.227-2.772,12.422c1.715,2.7,4.628,4.176,7.605,4.176c1.65,0,3.321-0.454,4.817-1.404l96.276-61.15 L178.918,112.796z">
+                      </path>
                     </g>
-                  </svg>
-                  Tabla Operacional</a
-                >
-              </li>
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <svg
-                    width="25px"
-                    height="30px"
-                    viewBox="0 0 1024 1024"
-                    class="icon"
-                    version="1.1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="#000000"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
+                  </g>
+                </svg>
+                Estadisticas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/instagram/">
+                <svg width="25px" height="30px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <g fill="#2e3436">
                       <path
-                        d="M786.358857 809.325714a88.356571 88.356571 0 0 1 176.566857 0 88.283429 88.283429 0 0 1-176.566857 0z m-274.797714 89.234286c-48.64 0-88.210286-39.497143-88.210286-88.064a88.210286 88.210286 0 0 1 176.420572 0c0 48.566857-39.570286 88.064-88.210286 88.064zM512.512 59.538286c48.566857 0 88.137143 39.497143 88.137143 87.917714a88.137143 88.137143 0 0 1-176.201143 0c0-48.493714 39.497143-87.917714 88.064-87.917714zM145.334857 896.731429c-48.64 0-88.210286-39.497143-88.210286-88.137143a88.283429 88.283429 0 0 1 176.493715 0c0 48.64-39.643429 88.137143-88.283429 88.137143zM905.069714 425.691429a29.549714 29.549714 0 0 0-8.265143-20.48 30.793143 30.793143 0 0 0-20.48-8.265143H541.257143V291.181714a147.309714 147.309714 0 0 0 117.906286-144.237714 147.163429 147.163429 0 0 0-294.253715 0c0 71.826286 49.883429 131.510857 118.125715 144.237714-0.146286 0.365714-1.974857 105.691429-1.974858 105.691429H147.675429a28.452571 28.452571 0 0 0-20.48 8.265143 30.134857 30.134857 0 0 0-8.923429 20.48l0.658286 241.590857c-59.245714 9.508571-118.345143 70.656-118.345143 143.725714 0 81.042286 65.974857 147.017143 147.090286 147.017143 81.188571 0 147.163429-65.974857 147.163428-147.017143 0-70.656-53.101714-131.437714-112.128-143.725714V464.969143h300.324572v191.488c0 3.730286 0.877714 7.094857 2.048 10.24a147.017143 147.017143 0 0 0-120.173715 144.237714 147.236571 147.236571 0 0 0 294.253715 0c0-71.899429-52.077714-131.657143-120.539429-144.237714a29.110857 29.110857 0 0 0 1.974857-10.24V464.969143h300.617143v202.24c-64.365714 14.116571-112.054857 73.142857-112.054857 143.725714a147.236571 147.236571 0 0 0 294.253714 0c0-72.996571-57.344-134.656-118.345143-144.530286 0.365714-1.097143 0-240.786286 0-240.786285z"
-                        fill="#000000"
-                      ></path>
+                        d="m 3 0 c -1.644531 0 -3 1.355469 -3 3 v 10 c 0 1.644531 1.355469 3 3 3 h 10 c 1.644531 0 3 -1.355469 3 -3 v -10 c 0 -1.644531 -1.355469 -3 -3 -3 z m 0 2 h 10 c 0.570312 0 1 0.429688 1 1 v 10 c 0 0.570312 -0.429688 1 -1 1 h -10 c -0.570312 0 -1 -0.429688 -1 -1 v -10 c 0 -0.570312 0.429688 -1 1 -1 z m 0 0">
+                      </path>
+                      <path d="m 4 7 h 8 v 2 h -8 z m 0 0"></path>
+                      <path d="m 9 4 v 8 h -2 v -8 z m 0 0"></path>
                     </g>
-                  </svg>
-                  Divisiones
-                </a>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" href="/rescate/">• Rescate</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="/operaciones/"
-                      >• Operaciones</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="/prevencion/"
-                      >• Prevencion</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="/prehospitalaria/"
-                      >• PreHospitalaria</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="/enfermeria/"
-                      >• Enfermeria</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="/serviciosmedicos/"
-                      >• Servicios Medicos</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="/psicologia/"
-                      >• Psicologia</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="/capacitacion/"
-                      >• Capacitacion</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="/grumae/">• Grumae</a>
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/estadisticas/">
-                  <svg
-                    fill="#000000"
-                    width="25px"
-                    height="30px"
-                    version="1.1"
-                    id="Capa_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 282.772 282.772"
-                    xml:space="preserve"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
+                  </g>
+                </svg>
+                Instagram Post</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/antecedentes/">
+                <svg fill="#000000" height="35px" width="30px" version="1.1" id="Layer_1"
+                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
+                  xml:space="preserve">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <g>
                       <g>
                         <path
-                          d="M61.472,143.036H23.881c-4.971,0-9,4.029-9,9v94.185c0,4.971,4.029,9,9,9h37.591c4.971,0,9-4.029,9-9v-94.185 C70.472,147.065,66.443,143.036,61.472,143.036z M52.472,237.22H32.881v-76.185h19.591V237.22z"
-                        ></path>
-                        <path
-                          d="M132.238,93.194H94.648c-4.971,0-9,4.029-9,9V246.22c0,4.971,4.029,9,9,9h37.591c4.971,0,9-4.029,9-9V102.194 C141.238,97.224,137.209,93.194,132.238,93.194z M123.238,237.22h-19.591V111.194h19.591V237.22z"
-                        ></path>
-                        <path
-                          d="M203.005,150.471h-37.591c-4.971,0-9,4.029-9,9v86.749c0,4.971,4.029,9,9,9h37.591c4.971,0,9-4.029,9-9v-86.749 C212.005,154.5,207.976,150.471,203.005,150.471z M194.005,237.22h-19.591v-68.749h19.591V237.22z"
-                        ></path>
-                        <path
-                          d="M273.772,96.516H236.18c-4.971,0-9,4.029-9,9V246.22c0,4.971,4.029,9,9,9h37.591c4.971,0,9-4.029,9-9V105.516 C282.772,100.545,278.742,96.516,273.772,96.516z M264.772,237.22H245.18V114.516h19.591V237.22z"
-                        ></path>
-                        <path
-                          d="M178.918,112.796c3.276,2.381,7.739,2.28,10.905-0.246l67.269-53.682l-0.298,8.847c-0.167,4.968,3.724,9.131,8.692,9.298 c0.104,0.003,0.206,0.005,0.309,0.005c4.831,0,8.826-3.833,8.99-8.697l1.061-31.466c0.083-2.491-0.869-4.905-2.631-6.667 c-1.762-1.763-4.184-2.719-6.667-2.631l-31.466,1.061c-4.968,0.167-8.859,4.331-8.692,9.298c0.167,4.967,4.314,8.85,9.298,8.692 l8.261-0.278l-59.993,47.876l-68.22-49.585c-2.988-2.172-7-2.298-10.117-0.317L4.176,108.734 c-4.196,2.665-5.437,8.227-2.772,12.422c1.715,2.7,4.628,4.176,7.605,4.176c1.65,0,3.321-0.454,4.817-1.404l96.276-61.15 L178.918,112.796z"
-                        ></path>
+                          d="M311.257,403.215c-0.983-3.026-3.476-5.315-6.575-6.036l-26.731-6.225l-14.181-23.497 c-1.642-2.723-4.591-4.388-7.772-4.388s-6.128,1.664-7.772,4.388l-14.181,23.497l-26.731,6.225 c-3.099,0.721-5.592,3.012-6.575,6.036c-0.984,3.025-0.311,6.344,1.771,8.748l17.966,20.747l-2.34,27.345 c-0.271,3.169,1.135,6.249,3.709,8.119c1.576,1.145,3.448,1.733,5.337,1.733c1.193,0,2.395-0.236,3.529-0.715l25.285-10.676 l25.284,10.676c2.929,1.237,6.293,0.851,8.866-1.018c2.573-1.869,3.98-4.949,3.709-8.118l-2.34-27.345l17.967-20.747 C311.568,409.559,312.241,406.241,311.257,403.215z M275.286,423.723c-1.604,1.852-2.392,4.275-2.182,6.717l1.383,16.176 l-14.956-6.315c-1.129-0.477-2.33-0.715-3.531-0.715s-2.401,0.238-3.531,0.715l-14.957,6.315l1.385-16.176 c0.209-2.443-0.579-4.865-2.182-6.717l-10.627-12.273l15.811-3.682c2.387-0.556,4.447-2.053,5.713-4.152l8.389-13.9l8.389,13.9 c1.266,2.098,3.326,3.595,5.713,4.152l15.811,3.682L275.286,423.723z">
+                        </path>
                       </g>
                     </g>
-                  </svg>
-                  Estadisticas</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/instagram/">
-                  <svg
-                    width="25px"
-                    height="30px"
-                    viewBox="0 0 16 16"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="#000000"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <g fill="#2e3436">
+                    <g>
+                      <g>
                         <path
-                          d="m 3 0 c -1.644531 0 -3 1.355469 -3 3 v 10 c 0 1.644531 1.355469 3 3 3 h 10 c 1.644531 0 3 -1.355469 3 -3 v -10 c 0 -1.644531 -1.355469 -3 -3 -3 z m 0 2 h 10 c 0.570312 0 1 0.429688 1 1 v 10 c 0 0.570312 -0.429688 1 -1 1 h -10 c -0.570312 0 -1 -0.429688 -1 -1 v -10 c 0 -0.570312 0.429688 -1 1 -1 z m 0 0"
-                        ></path>
-                        <path d="m 4 7 h 8 v 2 h -8 z m 0 0"></path>
-                        <path d="m 9 4 v 8 h -2 v -8 z m 0 0"></path>
+                          d="M456.706,0H55.293c-5.015,0-9.078,4.065-9.078,9.078V419.73c0,5.013,4.063,9.078,9.078,9.078s9.078-4.065,9.078-9.078 V18.156h383.258v475.688H64.371V448.78c0-5.013-4.063-9.078-9.078-9.078s-9.078,4.065-9.078,9.078v54.142 c0,5.013,4.063,9.078,9.078,9.078h401.414c5.015,0,9.078-4.065,9.078-9.078V9.078C465.784,4.065,461.721,0,456.706,0z">
+                        </path>
                       </g>
                     </g>
-                  </svg>
-                  Instagram Post</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/antecedentes/">
-                  <svg
-                    fill="#000000"
-                    height="35px"
-                    width="30px"
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 512 512"
-                    xml:space="preserve"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
+                    <g>
                       <g>
-                        <g>
-                          <path
-                            d="M311.257,403.215c-0.983-3.026-3.476-5.315-6.575-6.036l-26.731-6.225l-14.181-23.497 c-1.642-2.723-4.591-4.388-7.772-4.388s-6.128,1.664-7.772,4.388l-14.181,23.497l-26.731,6.225 c-3.099,0.721-5.592,3.012-6.575,6.036c-0.984,3.025-0.311,6.344,1.771,8.748l17.966,20.747l-2.34,27.345 c-0.271,3.169,1.135,6.249,3.709,8.119c1.576,1.145,3.448,1.733,5.337,1.733c1.193,0,2.395-0.236,3.529-0.715l25.285-10.676 l25.284,10.676c2.929,1.237,6.293,0.851,8.866-1.018c2.573-1.869,3.98-4.949,3.709-8.118l-2.34-27.345l17.967-20.747 C311.568,409.559,312.241,406.241,311.257,403.215z M275.286,423.723c-1.604,1.852-2.392,4.275-2.182,6.717l1.383,16.176 l-14.956-6.315c-1.129-0.477-2.33-0.715-3.531-0.715s-2.401,0.238-3.531,0.715l-14.957,6.315l1.385-16.176 c0.209-2.443-0.579-4.865-2.182-6.717l-10.627-12.273l15.811-3.682c2.387-0.556,4.447-2.053,5.713-4.152l8.389-13.9l8.389,13.9 c1.266,2.098,3.326,3.595,5.713,4.152l15.811,3.682L275.286,423.723z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M456.706,0H55.293c-5.015,0-9.078,4.065-9.078,9.078V419.73c0,5.013,4.063,9.078,9.078,9.078s9.078-4.065,9.078-9.078 V18.156h383.258v475.688H64.371V448.78c0-5.013-4.063-9.078-9.078-9.078s-9.078,4.065-9.078,9.078v54.142 c0,5.013,4.063,9.078,9.078,9.078h401.414c5.015,0,9.078-4.065,9.078-9.078V9.078C465.784,4.065,461.721,0,456.706,0z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M198.595,138.981c6.809-11.378,10.953-24.842,10.953-36.582c0-27.978-22.763-50.74-50.74-50.74 c-27.986,0-50.753,22.762-50.753,50.74c0,11.742,4.146,25.209,10.955,36.587c-14.075,9.301-22.973,25.27-22.973,42.561v35.029 c0,5.013,4.063,9.078,9.078,9.078h107.375c5.015,0,9.078-4.065,9.078-9.078v-35.029 C221.567,164.245,212.669,148.277,198.595,138.981z M158.808,69.815c17.967,0,32.584,14.617,32.584,32.584 c0,10.92-5.291,24.621-13.166,34.091c-0.001,0.001-0.002,0.002-0.004,0.004c-3.522,4.241-10.73,11.356-19.415,11.356 c-8.695,0-15.906-7.115-19.432-11.36c-7.875-9.47-13.166-23.171-13.166-34.091C126.21,84.432,140.834,69.815,158.808,69.815z M203.411,207.498h-89.219v-25.951c0-11.661,6.299-22.373,16.12-28.21c8.594,8.208,18.514,12.668,28.495,12.668 c9.976,0,19.894-4.462,28.487-12.671c9.819,5.831,16.117,16.543,16.117,28.212V207.498z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M403.665,91.912H266.329c-5.015,0-9.078,4.065-9.078,9.078s4.063,9.078,9.078,9.078h137.336 c5.015,0,9.078-4.065,9.078-9.078S408.68,91.912,403.665,91.912z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M403.665,149.555h-16.938c-5.015,0-9.078,4.065-9.078,9.078s4.063,9.078,9.078,9.078h16.938 c5.015,0,9.078-4.065,9.078-9.078S408.68,149.555,403.665,149.555z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M360.098,149.555h-93.769c-5.015,0-9.078,4.065-9.078,9.078s4.065,9.078,9.078,9.078h93.769 c5.015,0,9.078-4.065,9.078-9.078S365.112,149.555,360.098,149.555z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M403.665,207.197H266.329c-5.015,0-9.078,4.065-9.078,9.078s4.065,9.078,9.078,9.078h137.336 c5.015,0,9.078-4.065,9.078-9.078S408.68,207.197,403.665,207.197z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M403.665,264.84H178.537c-5.015,0-9.078,4.065-9.078,9.078c0,5.013,4.063,9.078,9.078,9.078h225.128 c5.015,0,9.078-4.065,9.078-9.078C412.743,268.904,408.68,264.84,403.665,264.84z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M150.698,264.84h-42.364c-5.015,0-9.078,4.065-9.078,9.078c0,5.013,4.063,9.078,9.078,9.078h42.364 c5.015,0,9.078-4.065,9.078-9.078C159.776,268.904,155.713,264.84,150.698,264.84z"
-                          ></path>
-                        </g>
-                      </g>
-                      <g>
-                        <g>
-                          <path
-                            d="M403.665,322.481H108.334c-5.015,0-9.078,4.065-9.078,9.078s4.063,9.078,9.078,9.078h295.331 c5.015,0,9.078-4.065,9.078-9.078S408.68,322.481,403.665,322.481z"
-                          ></path>
-                        </g>
+                        <path
+                          d="M198.595,138.981c6.809-11.378,10.953-24.842,10.953-36.582c0-27.978-22.763-50.74-50.74-50.74 c-27.986,0-50.753,22.762-50.753,50.74c0,11.742,4.146,25.209,10.955,36.587c-14.075,9.301-22.973,25.27-22.973,42.561v35.029 c0,5.013,4.063,9.078,9.078,9.078h107.375c5.015,0,9.078-4.065,9.078-9.078v-35.029 C221.567,164.245,212.669,148.277,198.595,138.981z M158.808,69.815c17.967,0,32.584,14.617,32.584,32.584 c0,10.92-5.291,24.621-13.166,34.091c-0.001,0.001-0.002,0.002-0.004,0.004c-3.522,4.241-10.73,11.356-19.415,11.356 c-8.695,0-15.906-7.115-19.432-11.36c-7.875-9.47-13.166-23.171-13.166-34.091C126.21,84.432,140.834,69.815,158.808,69.815z M203.411,207.498h-89.219v-25.951c0-11.661,6.299-22.373,16.12-28.21c8.594,8.208,18.514,12.668,28.495,12.668 c9.976,0,19.894-4.462,28.487-12.671c9.819,5.831,16.117,16.543,16.117,28.212V207.498z">
+                        </path>
                       </g>
                     </g>
-                  </svg>
-                  Antecedentes</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/alpha04/" target="_blank">
-                  <svg
-                    fill="#000000"
-                    width="30px"
-                    height="40px"
-                    viewBox="0 0 1920 1920"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
+                    <g>
+                      <g>
+                        <path
+                          d="M403.665,91.912H266.329c-5.015,0-9.078,4.065-9.078,9.078s4.063,9.078,9.078,9.078h137.336 c5.015,0,9.078-4.065,9.078-9.078S408.68,91.912,403.665,91.912z">
+                        </path>
+                      </g>
+                    </g>
+                    <g>
+                      <g>
+                        <path
+                          d="M403.665,149.555h-16.938c-5.015,0-9.078,4.065-9.078,9.078s4.063,9.078,9.078,9.078h16.938 c5.015,0,9.078-4.065,9.078-9.078S408.68,149.555,403.665,149.555z">
+                        </path>
+                      </g>
+                    </g>
+                    <g>
+                      <g>
+                        <path
+                          d="M360.098,149.555h-93.769c-5.015,0-9.078,4.065-9.078,9.078s4.065,9.078,9.078,9.078h93.769 c5.015,0,9.078-4.065,9.078-9.078S365.112,149.555,360.098,149.555z">
+                        </path>
+                      </g>
+                    </g>
+                    <g>
+                      <g>
+                        <path
+                          d="M403.665,207.197H266.329c-5.015,0-9.078,4.065-9.078,9.078s4.065,9.078,9.078,9.078h137.336 c5.015,0,9.078-4.065,9.078-9.078S408.68,207.197,403.665,207.197z">
+                        </path>
+                      </g>
+                    </g>
+                    <g>
+                      <g>
+                        <path
+                          d="M403.665,264.84H178.537c-5.015,0-9.078,4.065-9.078,9.078c0,5.013,4.063,9.078,9.078,9.078h225.128 c5.015,0,9.078-4.065,9.078-9.078C412.743,268.904,408.68,264.84,403.665,264.84z">
+                        </path>
+                      </g>
+                    </g>
+                    <g>
+                      <g>
+                        <path
+                          d="M150.698,264.84h-42.364c-5.015,0-9.078,4.065-9.078,9.078c0,5.013,4.063,9.078,9.078,9.078h42.364 c5.015,0,9.078-4.065,9.078-9.078C159.776,268.904,155.713,264.84,150.698,264.84z">
+                        </path>
+                      </g>
+                    </g>
+                    <g>
+                      <g>
+                        <path
+                          d="M403.665,322.481H108.334c-5.015,0-9.078,4.065-9.078,9.078s4.063,9.078,9.078,9.078h295.331 c5.015,0,9.078-4.065,9.078-9.078S408.68,322.481,403.665,322.481z">
+                        </path>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+                Antecedentes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/alpha04/" target="_blank">
+                <svg fill="#000000" width="30px" height="40px" viewBox="0 0 1920 1920"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M276.941 440.584v565.722c0 422.4 374.174 625.468 674.71 788.668l8.02 4.292 8.131-4.292c300.537-163.2 674.71-366.268 674.71-788.668V440.584l-682.84-321.657L276.94 440.584Zm682.73 1479.529c-9.262 0-18.523-2.372-26.993-6.89l-34.9-18.974C588.095 1726.08 164 1495.906 164 1006.306V404.78c0-21.91 12.65-41.788 32.414-51.162L935.727 5.42c15.134-7.228 32.866-7.228 48 0l739.313 348.2c19.765 9.374 32.414 29.252 32.414 51.162v601.525c0 489.6-424.207 719.774-733.779 887.943l-34.899 18.975c-8.47 4.517-17.731 6.889-27.105 6.889Zm467.158-547.652h-313.412l-91.595-91.482v-83.803H905.041v-116.78h-83.69l-58.503-58.504c-1.92.113-3.84.113-5.76.113-176.075 0-319.285-143.21-319.285-319.285 0-176.075 143.21-319.398 319.285-319.398 176.075 0 319.285 143.323 319.285 319.398 0 1.92 0 3.84-.113 5.647l350.57 350.682v313.412Zm-266.654-112.941h153.713v-153.713L958.462 750.155l3.953-37.27c1.017-123.897-91.595-216.621-205.327-216.621S550.744 588.988 550.744 702.72c0 113.845 92.612 206.344 206.344 206.344l47.21-5.309 63.811 63.7h149.873v116.78h116.781v149.986l25.412 25.299Zm-313.4-553.57c0 46.758-37.949 84.706-84.706 84.706-46.758 0-84.706-37.948-84.706-84.706s37.948-84.706 84.706-84.706c46.757 0 84.706 37.948 84.706 84.706"
+                      fill-rule="evenodd"></path>
+                  </g>
+                </svg>
+                Panel Admin</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link download-link" href="/descargar-base-datos/">
+                <svg fill="#000000" height="30px" width="32px" version="1.1" id="Layer_1"
+                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
+                  xml:space="preserve">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <g>
+                      <g>
+                        <path
+                          d="M350.862,36.407c-21.64,0-42.15,2.544-60.84,7.18C260.852,19.393,214.4,4.015,161.139,4.015 C70.78,4.014,0,48.265,0,104.755c0,0,0.008,201.659,0.009,201.828L0,407.245c0,56.49,70.78,100.74,161.139,100.74 c73.802,0,134.536-29.523,154.315-71.122c11.364,1.536,23.204,2.35,35.408,2.35c90.359,0,161.138-44.25,161.138-100.741V137.147 C512,80.658,441.22,36.407,350.862,36.407z M281.856,407.245c-0.001,28.531-49.578,60.32-120.717,60.32 c-71.141,0-120.717-31.79-120.717-60.32v-33.77c29.303,20.574,72.181,33.346,120.717,33.346s91.415-12.772,120.717-33.346V407.245 z M281.856,306.079c0,28.531-49.576,60.32-120.717,60.32s-120.717-31.79-120.717-60.32v-33.268 c29.303,20.574,72.181,33.346,120.717,33.346s91.415-12.772,120.717-33.346V306.079z M281.856,205.417 c0,28.531-49.576,60.32-120.717,60.32s-120.717-31.79-120.717-60.32v-33.268c29.303,20.574,72.181,33.346,120.717,33.346 s91.415-12.772,120.717-33.346V205.417z M161.139,165.074c-71.141,0-120.717-31.789-120.717-60.319s49.576-60.32,120.717-60.32 c71.14,0,120.717,31.79,120.717,60.32C281.856,133.286,232.28,165.074,161.139,165.074z M471.579,338.471 c0,28.531-49.576,60.32-120.717,60.32c-9.985,0-19.527-0.645-28.586-1.801v-59.957c9.256,0.996,18.805,1.516,28.586,1.516 c48.535,0,91.415-12.772,120.717-33.346V338.471z M471.579,237.809c0,28.531-49.576,60.32-120.717,60.32 c-9.985,0-19.527-0.645-28.586-1.801v-59.957c9.256,0.996,18.805,1.516,28.586,1.516c48.535,0,91.415-12.772,120.717-33.346 V237.809z M350.862,197.468c-9.985,0-19.527-0.645-28.586-1.801v-90.911c0-8.817-1.725-17.335-4.979-25.434 c10.512-1.598,21.732-2.494,33.564-2.494c71.141,0.001,120.717,31.79,120.717,60.32S422.003,197.468,350.862,197.468z">
+                        </path>
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+                Backup</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link download-link" href="/registros/">
+                <svg fill="#000000" height="35px" width="30px" version="1.1" id="Capa_1"
+                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 60 60"
+                  xml:space="preserve" stroke="#000000" stroke-width="1.0799999999999998">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC"
+                    stroke-width="0.12"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <g>
                       <path
-                        d="M276.941 440.584v565.722c0 422.4 374.174 625.468 674.71 788.668l8.02 4.292 8.131-4.292c300.537-163.2 674.71-366.268 674.71-788.668V440.584l-682.84-321.657L276.94 440.584Zm682.73 1479.529c-9.262 0-18.523-2.372-26.993-6.89l-34.9-18.974C588.095 1726.08 164 1495.906 164 1006.306V404.78c0-21.91 12.65-41.788 32.414-51.162L935.727 5.42c15.134-7.228 32.866-7.228 48 0l739.313 348.2c19.765 9.374 32.414 29.252 32.414 51.162v601.525c0 489.6-424.207 719.774-733.779 887.943l-34.899 18.975c-8.47 4.517-17.731 6.889-27.105 6.889Zm467.158-547.652h-313.412l-91.595-91.482v-83.803H905.041v-116.78h-83.69l-58.503-58.504c-1.92.113-3.84.113-5.76.113-176.075 0-319.285-143.21-319.285-319.285 0-176.075 143.21-319.398 319.285-319.398 176.075 0 319.285 143.323 319.285 319.398 0 1.92 0 3.84-.113 5.647l350.57 350.682v313.412Zm-266.654-112.941h153.713v-153.713L958.462 750.155l3.953-37.27c1.017-123.897-91.595-216.621-205.327-216.621S550.744 588.988 550.744 702.72c0 113.845 92.612 206.344 206.344 206.344l47.21-5.309 63.811 63.7h149.873v116.78h116.781v149.986l25.412 25.299Zm-313.4-553.57c0 46.758-37.949 84.706-84.706 84.706-46.758 0-84.706-37.948-84.706-84.706s37.948-84.706 84.706-84.706c46.757 0 84.706 37.948 84.706 84.706"
-                        fill-rule="evenodd"
-                      ></path>
-                    </g>
-                  </svg>
-                  Panel Admin</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link download-link" href="/descargar-base-datos/">
-                  <svg
-                    fill="#000000"
-                    height="30px"
-                    width="32px"
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 512 512"
-                    xml:space="preserve"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <g>
-                        <g>
-                          <path
-                            d="M350.862,36.407c-21.64,0-42.15,2.544-60.84,7.18C260.852,19.393,214.4,4.015,161.139,4.015 C70.78,4.014,0,48.265,0,104.755c0,0,0.008,201.659,0.009,201.828L0,407.245c0,56.49,70.78,100.74,161.139,100.74 c73.802,0,134.536-29.523,154.315-71.122c11.364,1.536,23.204,2.35,35.408,2.35c90.359,0,161.138-44.25,161.138-100.741V137.147 C512,80.658,441.22,36.407,350.862,36.407z M281.856,407.245c-0.001,28.531-49.578,60.32-120.717,60.32 c-71.141,0-120.717-31.79-120.717-60.32v-33.77c29.303,20.574,72.181,33.346,120.717,33.346s91.415-12.772,120.717-33.346V407.245 z M281.856,306.079c0,28.531-49.576,60.32-120.717,60.32s-120.717-31.79-120.717-60.32v-33.268 c29.303,20.574,72.181,33.346,120.717,33.346s91.415-12.772,120.717-33.346V306.079z M281.856,205.417 c0,28.531-49.576,60.32-120.717,60.32s-120.717-31.79-120.717-60.32v-33.268c29.303,20.574,72.181,33.346,120.717,33.346 s91.415-12.772,120.717-33.346V205.417z M161.139,165.074c-71.141,0-120.717-31.789-120.717-60.319s49.576-60.32,120.717-60.32 c71.14,0,120.717,31.79,120.717,60.32C281.856,133.286,232.28,165.074,161.139,165.074z M471.579,338.471 c0,28.531-49.576,60.32-120.717,60.32c-9.985,0-19.527-0.645-28.586-1.801v-59.957c9.256,0.996,18.805,1.516,28.586,1.516 c48.535,0,91.415-12.772,120.717-33.346V338.471z M471.579,237.809c0,28.531-49.576,60.32-120.717,60.32 c-9.985,0-19.527-0.645-28.586-1.801v-59.957c9.256,0.996,18.805,1.516,28.586,1.516c48.535,0,91.415-12.772,120.717-33.346 V237.809z M350.862,197.468c-9.985,0-19.527-0.645-28.586-1.801v-90.911c0-8.817-1.725-17.335-4.979-25.434 c10.512-1.598,21.732-2.494,33.564-2.494c71.141,0.001,120.717,31.79,120.717,60.32S422.003,197.468,350.862,197.468z"
-                          ></path>
-                        </g>
-                      </g>
-                    </g>
-                  </svg>
-                  Backup</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link download-link" href="/registros/">
-                  <svg
-                    fill="#000000"
-                    height="35px"
-                    width="30px"
-                    version="1.1"
-                    id="Capa_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                    viewBox="0 0 60 60"
-                    xml:space="preserve"
-                    stroke="#000000"
-                    stroke-width="1.0799999999999998"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke="#CCCCCC"
-                      stroke-width="0.12"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <g>
-                        <path
-                          d="M58.126,36.454l-2.849-2.85c-1.128-1.127-3.094-1.127-4.222,0L35.664,48.995l-2.121,7.779l-0.519,0.519 c-0.388,0.388-0.389,1.014-0.006,1.405l-0.005,0.02l0.019-0.005C33.227,58.903,33.479,59,33.731,59 c0.256,0,0.512-0.098,0.707-0.293l0.52-0.52l7.778-2.121l15.39-15.391C59.29,39.512,59.29,37.618,58.126,36.454z M37.974,49.515 l10.243-10.243l4.243,4.243L42.217,53.758L37.974,49.515z M37.071,51.44l3.22,3.22l-4.428,1.208L37.071,51.44z M56.712,39.262 l-2.839,2.839l-4.243-4.243l2.839-2.839c0.372-0.373,1.021-0.373,1.393,0l2.85,2.85C57.096,38.252,57.096,38.878,56.712,39.262z"
-                        ></path>
-                        <path
-                          d="M22.505,18h10.991c1.933,0,3.505-1.572,3.505-3.505V13c0-0.553-0.448-1-1-1s-1,0.447-1,1v1.495 c0,0.83-0.675,1.505-1.505,1.505H22.505c-0.83,0-1.504-0.675-1.504-1.505V13c0-0.553-0.448-1-1-1s-1,0.447-1,1v1.495 C19.001,16.428,20.573,18,22.505,18z"
-                        ></path>
-                        <path
-                          d="M30.001,45h-7.496c-0.83,0-1.504-0.675-1.504-1.505V42c0-0.553-0.448-1-1-1s-1,0.447-1,1v1.495 c0,1.933,1.572,3.505,3.504,3.505h7.496c0.552,0,1-0.447,1-1S30.553,45,30.001,45z"
-                        ></path>
-                        <path
-                          d="M27.001,58H3.833c-0.459,0-0.832-0.373-0.832-0.832V31h51c0.552,0,1-0.447,1-1V2.832C55.001,1.271,53.73,0,52.168,0H3.833 C2.271,0,1.001,1.271,1.001,2.832v54.336C1.001,58.729,2.271,60,3.833,60h23.168c0.552,0,1-0.447,1-1S27.553,58,27.001,58z M3.833,2h48.335c0.459,0,0.833,0.373,0.833,0.832V29h-50V2.832C3.001,2.373,3.374,2,3.833,2z"
-                        ></path>
-                      </g>
-                    </g>
-                  </svg>
-                  Registros</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/">
-                  <svg
-                    fill="#000000"
-                    width="25px"
-                    height="30px"
-                    viewBox="0 0 1024 1024"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
+                        d="M58.126,36.454l-2.849-2.85c-1.128-1.127-3.094-1.127-4.222,0L35.664,48.995l-2.121,7.779l-0.519,0.519 c-0.388,0.388-0.389,1.014-0.006,1.405l-0.005,0.02l0.019-0.005C33.227,58.903,33.479,59,33.731,59 c0.256,0,0.512-0.098,0.707-0.293l0.52-0.52l7.778-2.121l15.39-15.391C59.29,39.512,59.29,37.618,58.126,36.454z M37.974,49.515 l10.243-10.243l4.243,4.243L42.217,53.758L37.974,49.515z M37.071,51.44l3.22,3.22l-4.428,1.208L37.071,51.44z M56.712,39.262 l-2.839,2.839l-4.243-4.243l2.839-2.839c0.372-0.373,1.021-0.373,1.393,0l2.85,2.85C57.096,38.252,57.096,38.878,56.712,39.262z">
+                      </path>
                       <path
-                        d="M532.528 661.408c-12.512 12.496-12.513 32.752-.001 45.248 6.256 6.256 14.432 9.376 22.624 9.376s16.368-3.12 22.624-9.376l189.008-194L577.775 318.64c-12.496-12.496-32.752-12.496-45.248 0-12.512 12.496-12.512 32.752 0 45.248l115.744 115.76H31.839c-17.68 0-32 14.336-32 32s14.32 32 32 32h618.448zM960.159 0h-576c-35.36 0-64.017 28.656-64.017 64v288h64.432V103.024c0-21.376 17.344-38.72 38.72-38.72h496.704c21.408 0 38.72 17.344 38.72 38.72l1.007 818.288c0 21.376-17.311 38.72-38.72 38.72H423.31c-21.376 0-38.72-17.344-38.72-38.72V670.944l-64.432.08V960c0 35.344 28.656 64 64.017 64h576c35.344 0 64-28.656 64-64V64c-.016-35.344-28.672-64-64.016-64z"
-                      ></path>
+                        d="M22.505,18h10.991c1.933,0,3.505-1.572,3.505-3.505V13c0-0.553-0.448-1-1-1s-1,0.447-1,1v1.495 c0,0.83-0.675,1.505-1.505,1.505H22.505c-0.83,0-1.504-0.675-1.504-1.505V13c0-0.553-0.448-1-1-1s-1,0.447-1,1v1.495 C19.001,16.428,20.573,18,22.505,18z">
+                      </path>
+                      <path
+                        d="M30.001,45h-7.496c-0.83,0-1.504-0.675-1.504-1.505V42c0-0.553-0.448-1-1-1s-1,0.447-1,1v1.495 c0,1.933,1.572,3.505,3.504,3.505h7.496c0.552,0,1-0.447,1-1S30.553,45,30.001,45z">
+                      </path>
+                      <path
+                        d="M27.001,58H3.833c-0.459,0-0.832-0.373-0.832-0.832V31h51c0.552,0,1-0.447,1-1V2.832C55.001,1.271,53.73,0,52.168,0H3.833 C2.271,0,1.001,1.271,1.001,2.832v54.336C1.001,58.729,2.271,60,3.833,60h23.168c0.552,0,1-0.447,1-1S27.553,58,27.001,58z M3.833,2h48.335c0.459,0,0.833,0.373,0.833,0.832V29h-50V2.832C3.001,2.373,3.374,2,3.833,2z">
+                      </path>
                     </g>
-                  </svg>
-                  Salir</a
-                >
-              </li>
-            </ul>
-          </div>
+                  </g>
+                </svg>
+                Registros</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <svg fill="#000000" width="25px" height="30px" viewBox="0 0 1024 1024"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path
+                      d="M532.528 661.408c-12.512 12.496-12.513 32.752-.001 45.248 6.256 6.256 14.432 9.376 22.624 9.376s16.368-3.12 22.624-9.376l189.008-194L577.775 318.64c-12.496-12.496-32.752-12.496-45.248 0-12.512 12.496-12.512 32.752 0 45.248l115.744 115.76H31.839c-17.68 0-32 14.336-32 32s14.32 32 32 32h618.448zM960.159 0h-576c-35.36 0-64.017 28.656-64.017 64v288h64.432V103.024c0-21.376 17.344-38.72 38.72-38.72h496.704c21.408 0 38.72 17.344 38.72 38.72l1.007 818.288c0 21.376-17.311 38.72-38.72 38.72H423.31c-21.376 0-38.72-17.344-38.72-38.72V670.944l-64.432.08V960c0 35.344 28.656 64 64.017 64h576c35.344 0 64-28.656 64-64V64c-.016-35.344-28.672-64-64.016-64z">
+                    </path>
+                  </g>
+                </svg>
+                Salir</a>
+            </li>
+          </ul>
         </div>
       </div>
-    </nav>
-    <!-- Pantalla de carga -->
-    <div
-      id="loadingScreen"
-      style="display: none"
-      class="text-center justify-content-center"
-    >
-      <div class="spinner-border text-danger">
-        <span class="visually-hidden">Loading...</span>
-      </div>
     </div>
+  </nav>
+  <!-- Pantalla de carga -->
+  <div id="loadingScreen" style="display: none" class="text-center justify-content-center">
+    <div class="spinner-border text-danger">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
 
-    <script src="../../static/js/loader-function.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>
-    <script src="../../static/js/off.js"></script>
-    <script src="../../static/js/export.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.7.1/dist/pptxgen.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="../../static/js/filter-personal.js"></script>
-    {% block content %} {% endblock %}
-  </body>
+  <script src="../../static/js/loader-function.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+    integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>
+  <script src="../../static/js/off.js"></script>
+  <script src="../../static/js/export.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.7.1/dist/pptxgen.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="../../static/js/filter-personal.js"></script>
+  {% block content %} {% endblock %}
+</body>
+
 </html>
