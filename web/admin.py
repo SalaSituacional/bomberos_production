@@ -71,4 +71,8 @@ admin.site.register(Detalles_Personal)
 # admin.site.register(Inspeccion_Arbol)
 # admin.site.register(Inspeccion_Otros)
 
+admin.site.register(Comercio)
+admin.site.register(Solicitudes)
+admin.site.register(Requisitos)
+
 

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+# from sequences import get_next_value
 
 # Modelos Para Agregar Datos Aparte
 class InstagramPost(models.Model):
@@ -967,3 +968,67 @@ class Investigacion_Estructura_Vivienda(models.Model):
   descripcion = models.TextField()
   material_utilizado = models.TextField()
   status = models.CharField(max_length=20)
+
+# =========================================== MODELOS PARA EL AREA DE SOLICITUDES DE PREVENCION =====================================================================================
+
+class Comercio(models.Model):
+    id_comercio = models.CharField(max_length=10, unique=True, editable=False, default='')
+    nombre_comercio = models.CharField(max_length=100)
+    rif_empresarial = models.CharField(max_length=100)
+
+    def save(self, *args, **kwargs):
+        if not self.id_comercio:
+            last_comercio = Comercio.objects.order_by('-id').first()  # Obtiene el último objeto
+            next_value = 1 if not last_comercio else int(last_comercio.id_comercio.split('-')[1]) + 1
+            self.id_comercio = f'BSC-{next_value:03d}'
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.id_comercio} - {self.nombre_comercio}"
+
+class Solicitudes(models.Model):
+  id_solicitud = models.ForeignKey(Comercio, on_delete=models.CASCADE)
+  fecha_solicitud = models.DateField()
+  hora_solicitud = models.TimeField()
+  tipo_servicio = models.CharField()
+  solicitante_nombre_apellido = models.CharField()
+  solicitante_cedula = models.CharField()
+  tipo_representante = models.CharField()
+  rif_representante_legal = models.CharField()
+  direccion = models.CharField()
+  estado = models.CharField()
+  municipio = models.ForeignKey(Municipios, on_delete=models.CASCADE)
+  parroquia = models.ForeignKey(Parroquias, on_delete=models.CASCADE)
+  numero_telefono = models.CharField()
+  correo_electronico = models.CharField()
+  pago_tasa = models.CharField()
+  referencia = models.CharField()
+
+  def __str__(self):
+        return f"Solicitud {self.id_solicitud} - {self.tipo_servicio} - {self.solicitante_nombre_apellido}"
+
+
+class Requisitos(models.Model):
+  id_solicitud = models.ForeignKey(Solicitudes, on_delete=models.CASCADE)
+  cedula_identidad = models.BooleanField()
+  cedula_vencimiento = models.DateField(null=True)
+  
+  rif_representante = models.BooleanField()
+  rif_representante_vencimiento = models.DateField(null=True)
+  
+  rif_comercio = models.BooleanField()
+  rif_comercio_vencimiento = models.DateField(null=True)
+  
+  permiso_anterior = models.BooleanField()
+  registro_comercio = models.BooleanField()
+  documento_propiedad = models.BooleanField()
+  
+  cedula_catastral = models.BooleanField()
+  cedula_catastral_vencimiento = models.DateField(null=True)
+  
+  carta_autorizacion = models.BooleanField()
+  
+  def __str__(self):
+        return f"Requisitos para Solicitud {self.id_solicitud}"
+
+  
