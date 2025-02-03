@@ -2721,6 +2721,36 @@ summary > * {
 .fecha_manual{
   width: 50%;
 }
+/* ********************Estilos Seccion de Prevencino (Solicitudes)******************************** */
+.request-prevencion{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+}
+.request-prevencion-container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+}
+.request-prevencion-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 20%;
+  height: 20rem;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 20px;
+  background-color: #FFF;
+}
+
 
 @media (min-width: 1400px ){
   .inicial-carrousel-one{
