@@ -646,12 +646,11 @@ def api_procedimientos_tipo_detalles(request):
 
     # Filtrar y agrupar según el tipo de procedimiento
     if tipo_procedimiento_id == "100":  # Ejemplo: ID para "Abastecimiento de Agua"
+        atenciones = Atenciones_Paramedicas.objects.filter(id_procedimientos__in=procedimientos)
          # Agrupar y contar por tipo de accidente
-        accidentes_data = Accidentes_Transito.objects.values(
+        accidentes_data = Accidentes_Transito.objects.filter(id_atencion__in=atenciones).values(
             'tipo_de_accidente__tipo_accidente'  # Accedemos al nombre del tipo de accidente
-        ).annotate(
-            count=Count('id')
-        ).order_by('-count')  # Ordenar de mayor a menor
+        ).annotate(count=Count('id')).order_by('tipo_de_accidente__tipo_accidente')  # Ordenar de mayor a menor
 
         # Convertir a una estructura de datos adecuada para la gráfica
         resultados = [
