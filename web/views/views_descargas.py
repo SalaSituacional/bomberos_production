@@ -782,7 +782,11 @@ def generar_excel_prevencion(request):
     procedimientos = Procedimientos.objects.filter(id_division=division, fecha__year=año, fecha__month=mes_num).select_related(
         "id_solicitante", "id_jefe_comision", "id_municipio", "id_parroquia", "id_tipo_procedimiento"
     ).prefetch_related(
-        Prefetch("evaluacion_riesgo_set", to_attr="evaluacion_data"), # Ya
+        Prefetch("evaluacion_riesgo_set", 
+             queryset=Evaluacion_Riesgo.objects.prefetch_related(
+                 Prefetch("persona_presente_eval_set", to_attr="personas_eval_data")
+             ), 
+             to_attr="evaluacion_data"),
         Prefetch("asesoramiento_set", to_attr="asesoramiento_data"),
         Prefetch("inspeccion_prevencion_asesorias_tecnicas_set"),
         Prefetch("inspeccion_habitabilidad_set"),
