@@ -181,6 +181,13 @@ def Asignar_op_Comsion():
        op.append((str(procedimiento.id), procedimiento.tipo_comision))
    return op
 
+def Asignar_Comercios():
+   procedimientos = Comercio.objects.all()
+   op = [("", "Seleccione Una Opcion")]
+   for procedimiento in procedimientos:
+       op.append((str(procedimiento.id_comercio), f"{procedimiento.id_comercio}: {procedimiento.nombre_comercio}"))
+   return op
+
 
 class FormularioBusquedaCedula(forms.Form):
     nacionalidad = forms.ChoiceField(choices=[("V", "V"),("E", "E") ], label="Nacionalidad")
@@ -927,24 +934,31 @@ class Formulario_Solicitud(forms.Form):
         ("6", "Francisco Romero Lobo"),
     ]
 
-    nombre_comercio = forms.CharField(required=False)
-    rif_empresarial = forms.CharField(required=False)
-    fecha_solicitud = forms.DateField(required=False)
-    hora_solicitud = forms.TimeField(required=False)
+    comercio = forms.ChoiceField(choices=Asignar_Comercios,required=False,widget=forms.Select(attrs={'class': 'disable-first-option'}))
 
-    tipo_servicio = forms.CharField()
+    fecha_solicitud = forms.DateField(
+        label="Fecha Solicitud",
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False
+    )
 
-    solicitante_nombre_apellido = forms.CharField()
+    hora_solicitud = forms.TimeField(
+        widget=forms.TimeInput(attrs={'type': 'time'}, format='%H:%M'),
+        required=False)  #
 
-    solicitante_cedula = forms.CharField()
+    tipo_servicio = forms.ChoiceField(choices=(("", "Selecione Una Opcion"), ("Inspeccion", "Inspeccion"), ("Reinspeccion", "Reinspeccion")), required=False, widget=forms.Select(attrs={'class': 'disable-first-option'}))
 
-    tipo_representante = forms.CharField()
+    solicitante_nombre_apellido = forms.CharField(label="Nombres Y Apellidos del Solicitante",required=False)
 
-    rif_representante_legal = forms.CharField()
+    solicitante_cedula = forms.CharField(label="Cedula Solicitante",required=False)
 
-    direccion = forms.CharField()
+    tipo_representante = forms.ChoiceField(choices=(("", "Selecione Una Opcion"), ("Presidente", "Presidente"), ("Propietario", "Propietario"), ("Representante Legal", "Representante Legal"), ("Encargado", "Encargado")), required=False, widget=forms.Select(attrs={'class': 'disable-first-option'}))
 
-    estado = forms.CharField()
+    rif_representante_legal = forms.CharField(required=False)
+
+    direccion = forms.CharField(required=False)
+
+    estado = forms.CharField(required=False)
 
     municipio = forms.ChoiceField(choices=Asignar_op_Municipios, required=False,
         widget=forms.Select(attrs={'class': 'disable-first-option'}))
@@ -952,26 +966,42 @@ class Formulario_Solicitud(forms.Form):
     parroquia = forms.ChoiceField(choices=opc, required=False,
         widget=forms.Select(attrs={'class': 'disable-first-option'}))
     
-    numero_telefono = forms.NumberInput()
-    correo_electronico = forms.EmailField()
-    pago_tasa = forms.CharField()
-    referencia = forms.CharField()
+    numero_telefono = forms.CharField(required=False)
+    correo_electronico = forms.EmailField(required=False)
+    pago_tasa = forms.CharField(required=False)
+    referencia = forms.CharField(required=False)
 
 class Formularia_Requisitos(forms.Form):
     cedula_identidad = forms.BooleanField(required=False,label="Cedula de Identidad")
-    cedula_vecimiento = forms.DateField(required=False)
+    cedula_vecimiento = forms.DateField(
+        label="Fecha Vencimiento",
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False
+    )
 
     rif_representante = forms.BooleanField(required=False,label="RIF Representante")
-    rif_representante_vencimiento = forms.DateField(required=False)
+    rif_representante_vencimiento = forms.DateField(
+        label="Fecha Vencimiento",
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False
+    )
 
     rif_comercio = forms.BooleanField(required=False,label="RIF Comercio")
-    rif_comercio_vencimiento = forms.DateField(required=False)
+    rif_comercio_vencimiento = forms.DateField(
+        label="Fecha Vencimiento",
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False
+    )
 
     permiso_anterior = forms.BooleanField(required=False,label="Permiso Anterior (En Caso de Renovacion)")
     registro_comercio = forms.BooleanField(required=False,label="Registro Comercio")
     documento_propiedad = forms.BooleanField(required=False,label="Documento de Propiedad o Carta de Arrendamiento")
     
     cedula_catastral = forms.BooleanField(required=False,label="Cedula Catastral")
-    cedula_catastral_vencimiento = forms.DateField(required=False)
+    cedula_catastral_vencimiento = forms.DateField(
+        label="Fecha Vencimiento",
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False
+    )
 
     carta_autorizacion = forms.BooleanField(required=False,label="Carta Autorizacion")

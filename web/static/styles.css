@@ -3105,6 +3105,102 @@ summary>* {
   }
 }
 
+/* Estilos Formularios planillas de prevencion */
+.content-form{
+  width: 70%;
+  margin: 0 auto;
+  form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.parte-a{
+  width: 100%;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  h2{
+    text-align: center;
+  }
+
+  div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin: 2rem;
+    
+    div{
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 1rem 0;
+
+      label{
+        align-self: flex-start;
+      }
+    }
+
+    select, input{
+      width: 100%;
+      align-items: center;
+      padding: 0.3rem;
+      border-radius: .5rem;
+      border: solid .1px #0004;
+    }
+  }
+}
+.agg_comercio{
+  /* display: block; */
+  width: 20%;
+  align-self: self-end;
+}
+
+.parte-b{
+  width: 100%;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  h2{
+    text-align: center;
+  }
+  div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 2rem;
+    
+    div{
+      width: 40%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 1rem 0;
+
+      label{
+        align-self: flex-start;
+        margin-right: 1rem;
+      }
+    }
+  }
+}
+
+.registrar{
+  width: 20%;
+  align-self: center;  
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 3px;
+  display: none; /* Se oculta por defecto */
+}
 
 @media (min-width: 1400px) {
   .inicial-carrousel-one {
