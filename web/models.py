@@ -980,7 +980,7 @@ class Comercio(models.Model):
         if not self.id_comercio:
             last_comercio = Comercio.objects.order_by('-id').first()  # Obtiene el último objeto
             next_value = 1 if not last_comercio else int(last_comercio.id_comercio.split('-')[1]) + 1
-            self.id_comercio = f'BSC-{next_value:03d}'
+            self.id_comercio = f'SEG-{next_value:06d}'
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -1010,23 +1010,23 @@ class Solicitudes(models.Model):
 
 class Requisitos(models.Model):
   id_solicitud = models.ForeignKey(Solicitudes, on_delete=models.CASCADE)
-  cedula_identidad = models.BooleanField()
-  cedula_vencimiento = models.DateField(null=True)
+  cedula_identidad = models.BooleanField(default=False)
+  cedula_vencimiento = models.DateField(blank=True)
   
-  rif_representante = models.BooleanField()
-  rif_representante_vencimiento = models.DateField(null=True)
+  rif_representante = models.BooleanField(default=False)
+  rif_representante_vencimiento = models.DateField(blank=True)
   
-  rif_comercio = models.BooleanField()
-  rif_comercio_vencimiento = models.DateField(null=True)
+  rif_comercio = models.BooleanField(default=False)
+  rif_comercio_vencimiento = models.DateField(blank=True)
   
-  permiso_anterior = models.BooleanField()
-  registro_comercio = models.BooleanField()
-  documento_propiedad = models.BooleanField()
+  permiso_anterior = models.BooleanField(default=False)
+  registro_comercio = models.BooleanField(default=False)
+  documento_propiedad = models.BooleanField(default=False)
   
-  cedula_catastral = models.BooleanField()
-  cedula_catastral_vencimiento = models.DateField(null=True)
+  cedula_catastral = models.BooleanField(default=False)
+  cedula_catastral_vencimiento = models.DateField(blank=True)
   
-  carta_autorizacion = models.BooleanField()
+  carta_autorizacion = models.BooleanField(default=False)
   
   def __str__(self):
         return f"Requisitos para Solicitud {self.id_solicitud}"

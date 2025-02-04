@@ -31,6 +31,25 @@
 <!-- <aca va el formulario> -->
 
 
+<article class="content-form">
+  <form action="{% url 'agregar_solicitud' %}" method="POST">
+    {% csrf_token %}
+    
+    <section class="parte-a">
+      <h2>Formulario Solicitud</h2>
+      <button type="button" class="btn btn-danger agg_comercio" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@fat">Agregar Comercio</button>  
+      <div>{{ solicitud.as_div }}</div>
+    </section>
+
+    <section class="parte-b">
+      <h2>Requisitos</h2>
+      <div>{{ requisitos.as_div }}</div>
+    </section>
+    
+    <button type="submit" class="btn btn-danger registrar">Registrar</button>
+    
+  </form>
+</article>
 
 <!-- fin formulario -->
 <footer class="footer">
@@ -38,4 +57,32 @@
     <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar Comercio</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <form action="{% url 'agregar_comercio' %}" method="POST">
+          {% csrf_token %}
+          {{ comercio }}
+          <button type="submit" class="btn btn-primary">Agregar Comercio</button>
+        </form>
+      
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../static/js/prevencion-seguridad/formularios.js"></script>
+
 {% endblock %}

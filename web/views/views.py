@@ -4466,15 +4466,120 @@ def cerfiticados_prevencion(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
     })
+
 # Vista de la seccion de Estadisticas
 def formulario_certificado_prevencion(request):
     user = request.session.get('user')
     if not user:
             return redirect('/')
 
+    
+
     return render(request, "Seguridad-prevencion/formularioSolicitud.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
+        "solicitud": Formulario_Solicitud,
+        "requisitos": Formularia_Requisitos,
+        "comercio": Comercios,
     })
+
+def agregar_solicitud(request):
+    if request.method == "POST":
+        comercio = request.POST.get("comercio")  # Obtener el valor del formulario
+        fecha_solicitud = request.POST.get("fecha_solicitud")  # Obtener el valor del formulario
+        hora_solicitud = request.POST.get("hora_solicitud")  # Obtener el valor del formulario
+        tipo_servicio = request.POST.get("tipo_servicio")  # Obtener el valor del formulario
+        solicitante = request.POST.get("solicitante_nombre_apellido")  # Obtener el valor del formulario
+        solicitante_cedula = request.POST.get("solicitante_cedula")  # Obtener el valor del formulario
+        tipo_representante = request.POST.get("tipo_representante")  # Obtener el valor del formulario
+        rif_representante = request.POST.get("rif_representante_legal")  # Obtener el valor del formulario
+        direccion = request.POST.get("direccion")  # Obtener el valor del formulario
+        estado = request.POST.get("estado")  # Obtener el valor del formulario
+        municipio = request.POST.get("municipio")  # Obtener el valor del formulario
+        parroquia = request.POST.get("parroquia")  # Obtener el valor del formulario
+        numero_telefono = request.POST.get("numero_telefono")  # Obtener el valor del formulario
+        correo = request.POST.get("correo_electronico")  # Obtener el valor del formulario
+        pago = request.POST.get("pago_tasa")  # Obtener el valor del formulario
+        referencia = request.POST.get("referencia")  # Obtener el valor del formulario
+        
+        comercio_instance = Comercio.objects.get(id_comercio=comercio)
+        municipio_instance = Municipios.objects.get(id=municipio)
+        parroquia_instance = Parroquias.objects.get(id=parroquia)
+
+
+        cedula = request.POST.get("cedula_identidad") == "on"
+        rifRepresentante = request.POST.get("rif_representante") == "on"
+        rif_comercio = request.POST.get("rif_comercio") == "on"
+        permiso_anterior = request.POST.get("permiso_anterior") == "on"
+        registro_comercio = request.POST.get("registro_comercio") == "on"
+        documento_propiedad = request.POST.get("documento_propiedad") == "on"
+        cedula_catastral = request.POST.get("cedula_catastral") == "on"
+        carta_autorizacion = request.POST.get("carta_autorizacion") == "on"
+        cedula_vencimiento = request.POST.get("cedula_vecimiento")
+        rif_representante_vencimiento = request.POST.get("rif_representante_vencimiento")
+        rif_comercio_vencimiento = request.POST.get("rif_comercio_vencimiento")
+        cedula_catastral_vencimiento = request.POST.get("cedula_catastral_vencimiento")
+
+        new = Solicitudes(
+            id_solicitud=comercio_instance,
+            fecha_solicitud=fecha_solicitud,
+            hora_solicitud=hora_solicitud,
+            tipo_servicio=tipo_servicio,
+            solicitante_nombre_apellido=solicitante,
+            solicitante_cedula=solicitante_cedula,
+            tipo_representante=tipo_representante,
+            rif_representante_legal=rif_representante,
+            direccion=direccion,
+            estado=estado,
+            municipio=municipio_instance,
+            parroquia=parroquia_instance,
+            numero_telefono=numero_telefono,
+            correo_electronico=correo,
+            pago_tasa=pago,
+            referencia=referencia,
+        )
+        new.save()
+
+        # Requisitos
+        req = Requisitos(
+            id_solicitud=new,
+            cedula_identidad=cedula,
+            cedula_vencimiento=cedula_vencimiento,
+            rif_representante=rifRepresentante,
+            rif_representante_vencimiento=rif_representante_vencimiento,
+            rif_comercio=rif_comercio,
+            rif_comercio_vencimiento=rif_comercio_vencimiento,
+            permiso_anterior=permiso_anterior,
+            registro_comercio=registro_comercio,
+            documento_propiedad=documento_propiedad,
+            cedula_catastral=cedula_catastral,
+            cedula_catastral_vencimiento=cedula_catastral_vencimiento,
+            carta_autorizacion=carta_autorizacion,
+
+        )
+        req.save()
+
+        # Guardar en la base de datos
+
+        # Redirigir a la misma página para recargar
+        return redirect("/certificadosprevencion/")  # Redirige a la misma URL
+
+    return HttpResponse("Método no permitido", status=405)
+
+def agregar_comercio(request):
+    if request.method == "POST":
+        comercio = request.POST.get("nombre_comercio")  # Obtener el valor del formulario
+        rif_empresarial = request.POST.get("rif_empresarial")  # Obtener el valor del formulario
+        
+        # Guardar en la base de datos
+        Comercio.objects.create(
+            nombre_comercio=comercio,
+            rif_empresarial=rif_empresarial
+        )
+
+        # Redirigir a la misma página para recargar
+        return redirect("/formulariocertificados/")  # Redirige a la misma URL
+
+    return HttpResponse("Método no permitido", status=405)
