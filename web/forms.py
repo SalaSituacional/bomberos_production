@@ -993,10 +993,6 @@ class Formularia_Requisitos(forms.Form):
         required=False
     )
 
-    permiso_anterior = forms.BooleanField(required=False,label="Permiso Anterior (En Caso de Renovacion)")
-    registro_comercio = forms.BooleanField(required=False,label="Registro Comercio")
-    documento_propiedad = forms.BooleanField(required=False,label="Documento de Propiedad o Carta de Arrendamiento")
-    
     cedula_catastral = forms.BooleanField(required=False,label="Cedula Catastral")
     cedula_catastral_vencimiento = forms.DateField(
         label="Fecha Vencimiento",
@@ -1004,4 +1000,8 @@ class Formularia_Requisitos(forms.Form):
         required=False
     )
 
+
+    documento_propiedad = forms.BooleanField(required=False,label="Documento de Propiedad/Carta de Arrendamiento")
+    permiso_anterior = forms.BooleanField(required=False,label="Permiso Anterior (En Caso de Renovacion)")
     carta_autorizacion = forms.BooleanField(required=False,label="Carta Autorizacion")
+    registro_comercio = forms.BooleanField(required=False,label="Registro Comercio")
