@@ -59,6 +59,9 @@ urlpatterns = [
     # Certificados Prevencion
     path('certificadosprevencion/', cerfiticados_prevencion),
     path('formulariocertificados/', formulario_certificado_prevencion),
+    path('planillacertificado/', planilla_certificado),
+    path('generar_documento/', generar_doc, name='generar_documento'),
+
     
     path('agregar_comercio/', agregar_comercio , name='agregar_comercio'),
     path('agregar_solicitud/', agregar_solicitud , name='agregar_solicitud'),

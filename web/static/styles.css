@@ -3311,6 +3311,15 @@ checkbox-styles {
   display: none; /* Se oculta por defecto */
 }
 
+
+
+
+
+
+
+
+/* ------------------------------- Media querys ------------------------------------------ */
+
 @media (min-width: 1400px) {
   .inicial-carrousel-one {
     height: 40rem;

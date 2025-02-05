@@ -16,7 +16,7 @@ from datetime import timedelta
 from django.utils.timezone import make_aware
 from django.db.models import Prefetch
 from datetime import date
-
+from docxtpl import DocxTemplate
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
     return render(request, "404.html", status=404)
@@ -4468,6 +4468,19 @@ def cerfiticados_prevencion(request):
     })
 
 # Vista de la seccion de Estadisticas
+def planilla_certificado(request):
+    user = request.session.get('user')
+    if not user:
+            return redirect('/')
+
+    return render(request, "Seguridad-prevencion/planillaCertificadoDeConformidad.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+# Vista de la seccion de Estadisticas
 def formulario_certificado_prevencion(request):
     user = request.session.get('user')
     if not user:
@@ -4583,3 +4596,45 @@ def agregar_comercio(request):
         return redirect("/formulariocertificados/")  # Redirige a la misma URL
 
     return HttpResponse("Método no permitido", status=405)
+
+
+def generar_doc(request):
+    # Ruta al archivo plantilla en el directorio estático
+    doc = DocxTemplate("web/static/assets/Solictud_2025.docx")
+    
+    # Datos para reemplazar en la plantilla (predefinidos según los campos)
+    datos = {
+        "ID_Comercio": "12345",
+        "Fecha_Solicitud": "05/02/2025",
+        "Hora": "10:30 AM",
+        "Tipo_Servicio": "Inspección",
+        "Solicitante": "Juan Pérez",
+        "CI": "V-12345678",
+        "Tipo_Representante": "Natural",
+        "Nombre_Comercio": "Tech Solutions",
+        "Rif_Empresarial": "J-12345678-9",
+        "Rif_Representante_Legal": "V-98765432",
+        "Direccion": "Av. Principal #123",
+        "Estado": "Táchira",
+        "Municipio": "San Cristóbal",
+        "Parroquia": "La Concordia",
+        "Telefono": "0412-3456789",
+        "Correo_Electronico": "contacto@techsolutions.com",
+        "Pago_Tasa_Servicio": "Pagado",
+        "Metodo_Pago": "Transferencia",
+        "Referencia": "REF12345",
+        "Encargado_Atencion": "María Gómez",
+        "Status" : "Completado",
+    }
+
+    # Rellenar la plantilla con los datos
+    doc.render(datos)
+
+    # Preparar el archivo para la respuesta HTTP
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = 'attachment; filename="Solicitud_Completada.docx"'
+
+    # Guardar el documento procesado en la respuesta HTTP
+    doc.save(response)
+
+    return response
