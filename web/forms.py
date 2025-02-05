@@ -48,10 +48,7 @@ def Asignar_op_Municipios():
     return op
 
 def Asignar_op_Tipos_Procedimientos():
-    procedimientos = Tipos_Procedimientos.objects.all()
     op = [("", "Seleccione Una Opcion")]
-    for procedimiento in procedimientos:
-        op.append((str(procedimiento.id), procedimiento))
     return op
 
 def Asignar_opc_tipos_suministros():
@@ -129,13 +126,6 @@ def Asignar_opc_motivos_riesgo_mitigacion():
    op = [("", "Seleccione Una Opcion")]
    for procedimiento in procedimientos:
        op.append((str(procedimiento.id), procedimiento.tipo_servicio))
-   return op
-
-def Asignar_opc_unidades():
-   procedimientos = Unidades.objects.all()
-   op = [("", "Seleccione Una Opcion")]
-   for procedimiento in procedimientos:
-       op.append((str(procedimiento.id), procedimiento.nombre_unidad))
    return op
 
 def Asignar_opc_avanzada():
@@ -261,7 +251,7 @@ class SeleccionarInfo(forms.Form):
     solicitante = forms.ChoiceField(choices=Asignar_ops_Solicitante(), required=False,
         widget=forms.Select(attrs={'class': 'disable-first-option'}))
     solicitante_externo = forms.CharField(required=False)
-    unidad = forms.ChoiceField(choices=Asignar_opc_unidades(), required=False,
+    unidad = forms.ChoiceField(choices=[("", "Seleccione Una Opcion")], required=False,
         widget=forms.Select(attrs={'class': 'disable-first-option'}))
     efectivos_enviados = forms.IntegerField(widget=forms.NumberInput(attrs={'maxlength': '3'}), required=False)
     jefe_comision = forms.ChoiceField(choices=Asignar_ops_Personal(), required=False,
