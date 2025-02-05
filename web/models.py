@@ -125,6 +125,7 @@ class Tipo_apoyo(models.Model):
 # tabla de tipos de procedimientos
 class Tipos_Procedimientos(models.Model):
     tipo_procedimiento = models.CharField(max_length=70)
+    id_division = models.ManyToManyField(Divisiones)
     
     def __str__(self):
       return self.tipo_procedimiento
@@ -181,6 +182,7 @@ class Motivo_Avanzada(models.Model):
 # tabla de listado de unidades del cuerpo de bomberos
 class Unidades(models.Model):
   nombre_unidad = models.CharField(max_length=70)
+  id_division = models.ManyToManyField(Divisiones)  
   
   def __str__(self):
     return self.nombre_unidad

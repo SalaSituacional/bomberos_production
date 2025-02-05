@@ -57,7 +57,14 @@
       <h2>Solicitud de certificado de conformidad de uso</h2>
       <div id="solicitud-comerce">{{ solicitud.as_div }}</div>
     </section>
-    <button type="submit" class="btn btn-danger registrar">Crear Solicitud</button>
+
+    <section class="parte-b">
+      <h2>Requisitos</h2>
+      <div>{{ requisitos.as_div }}</div>
+    </section>
+    
+    <button type="submit" class="btn btn-danger registrar" disabled>Registrar</button>
+    
   </form>
 </article>
 <!-- fin formulario -->

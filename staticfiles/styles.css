@@ -3094,16 +3094,24 @@ summary>* {
   align-items: center;
   justify-content: center;
   text-align: center;
+<<<<<<< HEAD
   align-content: center;
   width: 22rem;
   height: 20rem;
   margin: 1rem;
   padding: .5rem;
+=======
+  width: 30%;
+  height: 20rem;
+  margin: 1rem;
+  padding: 2rem;
+>>>>>>> a22952a5db9f2819d8f781d937aeaa44c2b47372
   border-radius: 20px;
   background-color: #FFF;
   p{
     width: 60%;
   }
+<<<<<<< HEAD
   svg{
     padding: .5rem;
     margin-bottom: 1rem;
@@ -3112,6 +3120,8 @@ summary>* {
     width: 70%;
     margin: .5rem;
   }
+=======
+>>>>>>> a22952a5db9f2819d8f781d937aeaa44c2b47372
 }
 .contain-request{
   margin: 0 auto;
@@ -3127,8 +3137,106 @@ summary>* {
   border-top-right-radius: 50px;
 } 
 
+/* Estilos Formularios planillas de prevencion */
+.content-form{
+  width: 70%;
+  margin: 0 auto;
+  form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
 
+<<<<<<< HEAD
 
+=======
+.parte-a{
+  width: 100%;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  h2{
+    text-align: center;
+  }
+
+  div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin: 2rem;
+    
+    div{
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 1rem 0;
+
+      label{
+        align-self: flex-start;
+      }
+    }
+
+    select, input{
+      width: 100%;
+      align-items: center;
+      padding: 0.3rem;
+      border-radius: .5rem;
+      border: solid .1px #0004;
+    }
+  }
+}
+.agg_comercio{
+  /* display: block; */
+  width: 20%;
+  align-self: self-end;
+}
+
+.parte-b{
+  width: 100%;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  h2{
+    text-align: center;
+  }
+  div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 2rem;
+    
+    div{
+      width: 40%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 1rem 0;
+
+      label{
+        align-self: flex-start;
+        margin-right: 1rem;
+      }
+    }
+  }
+}
+
+.registrar{
+  width: 20%;
+  align-self: center;  
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 3px;
+  display: none; /* Se oculta por defecto */
+}
+>>>>>>> a22952a5db9f2819d8f781d937aeaa44c2b47372
 
 @media (min-width: 1400px) {
   .inicial-carrousel-one {
