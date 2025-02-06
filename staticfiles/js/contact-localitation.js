@@ -2,7 +2,7 @@
 const stations = {
   0: {
     address:
-      "Cuartel Central, Coronel (B) Justo Pastor Daza P Av. 19 de Abril.",
+      "Cuartel Central, Coronel (B) Justo Pastor Daza P Av. 19 de Abril. ",
     map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d494.150335348621!2d-72.21435923777214!3d7.768319283748523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e666cbf9c23cba1%3A0xb510c881c0b32597!2sCuerpo%20de%20Bomberos%20de%20San%20Crist%C3%B3bal!5e0!3m2!1ses-419!2sus!4v1731684840657!5m2!1ses-419!2sus",
   },
   1: {
