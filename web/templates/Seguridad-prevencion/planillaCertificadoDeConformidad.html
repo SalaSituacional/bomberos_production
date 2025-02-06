@@ -9,9 +9,16 @@
 </head>
 
 <body>
-    <button class="btn btn-danger" id="descargar">
-        <a href="{% url 'generar_documento' %}">Descargar planilla</a>
-    </button>
+    <div class="">
+        <button class="btn btn-danger" id="descargar">
+            <a href="{% url 'generar_documento_guia' %}">Descargar planilla Documento Guia</a>
+        </button>
+    </div>
+    <div class="">
+        <button class="btn btn-danger" id="descargar">
+            <a href="{% url 'generar_documento_inspeccion' %}">Descargar guia inspeccion</a>
+        </button>
+    </div>
 </body>
 
 </html>

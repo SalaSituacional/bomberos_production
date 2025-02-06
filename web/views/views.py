@@ -4598,10 +4598,10 @@ def agregar_comercio(request):
     return HttpResponse("Método no permitido", status=405)
 
 
-def generar_doc(request):
+def doc_Guia(request):
     # Ruta al archivo plantilla en el directorio estático
-    doc = DocxTemplate("web/static/assets/Solictud_2025.docx")
-    
+    guia = DocxTemplate("web/static/assets/Solictud_2025.docx")
+
     # Datos para reemplazar en la plantilla (predefinidos según los campos)
     datos = {
         "ID_Comercio": "12345",
@@ -4628,13 +4628,55 @@ def generar_doc(request):
     }
 
     # Rellenar la plantilla con los datos
-    doc.render(datos)
+    guia.render(datos)
 
     # Preparar el archivo para la respuesta HTTP
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    response['Content-Disposition'] = 'attachment; filename="Solicitud_Completada.docx"'
+    response['Content-Disposition'] = 'attachment; filename="Guia_Solicitud.docx"'
 
     # Guardar el documento procesado en la respuesta HTTP
-    doc.save(response)
+    guia.save(response)
+
+    return response
+
+    
+def doc_Inspeccion(request):
+    # Ruta al archivo plantilla en el directorio estático
+    inspeccion = DocxTemplate("web/static/assets/Inspeccion_2025.docx")
+
+    # Datos para reemplazar en la plantilla (predefinidos según los campos)
+    datos = {
+        "ID_Comercio": "12345",
+        "Fecha_Solicitud": "05/02/2025",
+        "Hora": "10:30 AM",
+        "Tipo_Servicio": "Inspección",
+        "Solicitante": "Juan Pérez",
+        "CI": "V-12345678",
+        "Tipo_Representante": "Natural",
+        "Nombre_Comercio": "Tech Solutions",
+        "Rif_Empresarial": "J-12345678-9",
+        "Rif_Representante_Legal": "V-98765432",
+        "Direccion": "Av. Principal #123",
+        "Estado": "Táchira",
+        "Municipio": "San Cristóbal",
+        "Parroquia": "La Concordia",
+        "Telefono": "0412-3456789",
+        "Correo_Electronico": "contacto@techsolutions.com",
+        "Pago_Tasa_Servicio": "Pagado",
+        "Metodo_Pago": "Transferencia",
+        "Referencia": "REF12345",
+        "Encargado_Atencion": "María Gómez",
+        "Status" : "Completado",
+    }
+
+    # Rellenar la plantilla con los datos
+    inspeccion.render(datos)
+
+    # Preparar el archivo para la respuesta HTTP
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = 'attachment; filename="Solicitud_inspeccion.docx"'
+
+    # Guardar el documento procesado en la respuesta HTTP
+    inspeccion.save(response)
 
     return response
