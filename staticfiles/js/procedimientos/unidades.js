@@ -35,3 +35,5 @@ async function cargarUnidades(division) {
 selectOpciones_Unidad.addEventListener("change", function () {
   cargarUnidades(selectOpciones_Unidad.value);
 });
+
+cargarUnidades(0)

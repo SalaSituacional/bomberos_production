@@ -251,8 +251,7 @@ class SeleccionarInfo(forms.Form):
     solicitante = forms.ChoiceField(choices=Asignar_ops_Solicitante(), required=False,
         widget=forms.Select(attrs={'class': 'disable-first-option'}))
     solicitante_externo = forms.CharField(required=False)
-    unidad = forms.ChoiceField(choices=[("", "Seleccione Una Opcion")], required=False,
-        widget=forms.Select(attrs={'class': 'disable-first-option'}))
+    unidad = forms.CharField(required=False, widget=forms.Select(attrs={'class': 'disable-first-option'}))
     efectivos_enviados = forms.IntegerField(widget=forms.NumberInput(attrs={'maxlength': '3'}), required=False)
     jefe_comision = forms.ChoiceField(choices=Asignar_ops_Personal(), required=False,
         widget=forms.Select(attrs={'class': 'disable-first-option'}))
@@ -315,7 +314,7 @@ class Comision_Tres(forms.Form):
 
 # Form4
 class Selecc_Tipo_Procedimiento(forms.Form):
-    tipo_procedimiento = forms.ChoiceField(choices=Asignar_op_Tipos_Procedimientos(), required=False, widget=forms.Select(attrs={"class": "disable-first-option"}))
+    tipo_procedimiento = forms.CharField(required=False, widget=forms.Select(attrs={"class": "disable-first-option"}))
 
 # Formulario Principal de Enfermeria
 class Formulario_Enfermeria(forms.Form):

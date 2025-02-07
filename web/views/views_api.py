@@ -2602,6 +2602,10 @@ def api_unidades(request):
     if not division_id:
         return JsonResponse({"error": "El parámetro 'division' es requerido"}, status=400)
 
+    if division_id == 0:
+        resultado = [("", "Seleccione Una Opcion")]
+        return JsonResponse(resultado, safe=False)
+
     try:
         division = Divisiones.objects.get(id=division_id)  # Verificar si la división existe
     except Divisiones.DoesNotExist:
