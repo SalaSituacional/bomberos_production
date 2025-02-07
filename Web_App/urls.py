@@ -60,7 +60,7 @@ urlpatterns = [
     path('certificadosprevencion/', cerfiticados_prevencion),
     path('formulariocertificados/', formulario_certificado_prevencion),
     path('planillacertificado/', planilla_certificado),
-    path('generar_documento_guia/', doc_Guia, name='generar_documento_guia'),
+    path('generar_documento_guia/<int:id>/', doc_Guia, name='generar_documento_guia'),
     path('generar_documento_inspeccion/', doc_Inspeccion, name='generar_documento_inspeccion'),
 
     

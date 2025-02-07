@@ -4498,29 +4498,44 @@ def formulario_certificado_prevencion(request):
         "comercio": Comercios,
     })
 
+def agregar_comercio(request):
+    if request.method == "POST":
+        comercio = request.POST.get("nombre_comercio")  # Obtener el valor del formulario
+        rif_empresarial = request.POST.get("rif_empresarial")  # Obtener el valor del formulario
+        
+        # Guardar en la base de datos
+        Comercio.objects.create(
+            nombre_comercio=comercio,
+            rif_empresarial=rif_empresarial
+        )
+
+        # Redirigir a la misma página para recargar
+        return redirect("/formulariocertificados/")  # Redirige a la misma URL
+
+    return HttpResponse("Método no permitido", status=405)
+
 def agregar_solicitud(request):
     if request.method == "POST":
-        comercio = request.POST.get("comercio")  # Obtener el valor del formulario
-        fecha_solicitud = request.POST.get("fecha_solicitud")  # Obtener el valor del formulario
-        hora_solicitud = request.POST.get("hora_solicitud")  # Obtener el valor del formulario
-        tipo_servicio = request.POST.get("tipo_servicio")  # Obtener el valor del formulario
-        solicitante = request.POST.get("solicitante_nombre_apellido")  # Obtener el valor del formulario
-        solicitante_cedula = request.POST.get("solicitante_cedula")  # Obtener el valor del formulario
-        tipo_representante = request.POST.get("tipo_representante")  # Obtener el valor del formulario
-        rif_representante = request.POST.get("rif_representante_legal")  # Obtener el valor del formulario
-        direccion = request.POST.get("direccion")  # Obtener el valor del formulario
-        estado = request.POST.get("estado")  # Obtener el valor del formulario
-        municipio = request.POST.get("municipio")  # Obtener el valor del formulario
-        parroquia = request.POST.get("parroquia")  # Obtener el valor del formulario
-        numero_telefono = request.POST.get("numero_telefono")  # Obtener el valor del formulario
-        correo = request.POST.get("correo_electronico")  # Obtener el valor del formulario
-        pago = request.POST.get("pago_tasa")  # Obtener el valor del formulario
-        referencia = request.POST.get("referencia")  # Obtener el valor del formulario
-        
+        comercio = request.POST.get("comercio")
+        fecha_solicitud = request.POST.get("fecha_solicitud")
+        hora_solicitud = request.POST.get("hora_solicitud")
+        tipo_servicio = request.POST.get("tipo_servicio")
+        solicitante = request.POST.get("solicitante_nombre_apellido")
+        solicitante_cedula = request.POST.get("solicitante_cedula")
+        tipo_representante = request.POST.get("tipo_representante")
+        rif_representante = request.POST.get("rif_representante_legal")
+        direccion = request.POST.get("direccion")
+        estado = request.POST.get("estado")
+        municipio = request.POST.get("municipio")
+        parroquia = request.POST.get("parroquia")
+        numero_telefono = request.POST.get("numero_telefono")
+        correo = request.POST.get("correo_electronico")
+        pago = request.POST.get("pago_tasa")
+        referencia = request.POST.get("referencia")
+
         comercio_instance = Comercio.objects.get(id_comercio=comercio)
         municipio_instance = Municipios.objects.get(id=municipio)
         parroquia_instance = Parroquias.objects.get(id=parroquia)
-
 
         cedula = request.POST.get("cedula_identidad") == "on"
         rifRepresentante = request.POST.get("rif_representante") == "on"
@@ -4535,7 +4550,7 @@ def agregar_solicitud(request):
         rif_comercio_vencimiento = request.POST.get("rif_comercio_vencimiento")
         cedula_catastral_vencimiento = request.POST.get("cedula_catastral_vencimiento")
 
-        new = Solicitudes(
+        new = Solicitudes.objects.create(
             id_solicitud=comercio_instance,
             fecha_solicitud=fecha_solicitud,
             hora_solicitud=hora_solicitud,
@@ -4553,10 +4568,8 @@ def agregar_solicitud(request):
             pago_tasa=pago,
             referencia=referencia,
         )
-        new.save()
 
-        # Requisitos
-        req = Requisitos(
+        req = Requisitos.objects.create(
             id_solicitud=new,
             cedula_identidad=cedula,
             cedula_vencimiento=cedula_vencimiento,
@@ -4570,75 +4583,56 @@ def agregar_solicitud(request):
             cedula_catastral=cedula_catastral,
             cedula_catastral_vencimiento=cedula_catastral_vencimiento,
             carta_autorizacion=carta_autorizacion,
-
         )
-        req.save()
 
-        # Guardar en la base de datos
-
-        # Redirigir a la misma página para recargar
-        return redirect("/certificadosprevencion/")  # Redirige a la misma URL
+        # Redirigir después de generar el documento
+        return redirect("/certificadosprevencion/")
 
     return HttpResponse("Método no permitido", status=405)
 
-def agregar_comercio(request):
-    if request.method == "POST":
-        comercio = request.POST.get("nombre_comercio")  # Obtener el valor del formulario
-        rif_empresarial = request.POST.get("rif_empresarial")  # Obtener el valor del formulario
-        
-        # Guardar en la base de datos
-        Comercio.objects.create(
-            nombre_comercio=comercio,
-            rif_empresarial=rif_empresarial
-        )
+def doc_Guia(request, id):
+    solicitud = Solicitudes.objects.get(id = id)
+    datos_solicitud = Comercio.objects.get(id_comercio = solicitud.id_solicitud.id_comercio)
+    requisitos = Requisitos.objects.get(id_solicitud = solicitud.id)
 
-        # Redirigir a la misma página para recargar
-        return redirect("/formulariocertificados/")  # Redirige a la misma URL
-
-    return HttpResponse("Método no permitido", status=405)
-
-
-def doc_Guia(request):
     # Ruta al archivo plantilla en el directorio estático
     guia = DocxTemplate("web/static/assets/Solictud_2025.docx")
 
     # Datos para reemplazar en la plantilla (predefinidos según los campos)
     datos = {
-        "ID_Comercio": "12345",
-        "Fecha_Solicitud": "05/02/2025",
-        "Hora": "10:30 AM",
-        "Tipo_Servicio": "Inspección",
-        "Solicitante": "Juan Pérez",
-        "CI": "V-12345678",
-        "Tipo_Representante": "Natural",
-        "Nombre_Comercio": "Tech Solutions",
-        "Rif_Empresarial": "J-12345678-9",
-        "Rif_Representante_Legal": "V-98765432",
-        "Direccion": "Av. Principal #123",
-        "Estado": "Táchira",
-        "Municipio": "San Cristóbal",
-        "Parroquia": "La Concordia",
-        "Telefono": "0412-3456789",
-        "Correo_Electronico": "contacto@techsolutions.com",
-        "Pago_Tasa_Servicio": "Pagado",
-        "Metodo_Pago": "Transferencia",
-        "Referencia": "REF12345",
-        "Encargado_Atencion": "María Gómez",
-        "Status" : "Completado",
+        "ID_Comercio": datos_solicitud.id_comercio,
+        "Fecha_Solicitud": solicitud.fecha_solicitud,
+        "Hora": solicitud.hora_solicitud,
+        "Tipo_Servicio": solicitud.tipo_servicio,
+        "Solicitante": solicitud.solicitante_nombre_apellido,
+        "CI": solicitud.solicitante_cedula,
+        "Tipo_Representante": solicitud.tipo_representante,
+        "Nombre_Comercio": datos_solicitud.nombre_comercio,
+        "Rif_Empresarial": datos_solicitud.rif_empresarial,
+        "Rif_Representante_Legal": solicitud.rif_representante_legal,
+        "Direccion": solicitud.direccion,
+        "Estado": solicitud.estado,
+        "Municipio": solicitud.municipio,
+        "Parroquia": solicitud.parroquia,
+        "Telefono": solicitud.numero_telefono,
+        "Correo_Electronico": solicitud.correo_electronico,
+        "Pago_Tasa_Servicio": solicitud.pago_tasa,
+        "Metodo_Pago": "",
+        "Referencia": solicitud.referencia,
+        "Encargado_Atencion": "",
+        "Status" : "",
     }
 
     # Rellenar la plantilla con los datos
     guia.render(datos)
 
-    # Preparar el archivo para la respuesta HTTP
+    # Guardar el documento en la respuesta
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = 'attachment; filename="Guia_Solicitud.docx"'
-
-    # Guardar el documento procesado en la respuesta HTTP
     guia.save(response)
 
+    # Renderizar una plantilla que inicia la descarga y redirige automáticamente
     return response
-
     
 def doc_Inspeccion(request):
     # Ruta al archivo plantilla en el directorio estático

@@ -1013,24 +1013,25 @@ class Solicitudes(models.Model):
 class Requisitos(models.Model):
   id_solicitud = models.ForeignKey(Solicitudes, on_delete=models.CASCADE)
   cedula_identidad = models.BooleanField(default=False)
-  cedula_vencimiento = models.DateField(blank=True)
+  cedula_vencimiento = models.DateField(blank=True, null=True)
   
   rif_representante = models.BooleanField(default=False)
-  rif_representante_vencimiento = models.DateField(blank=True)
+  rif_representante_vencimiento = models.DateField(blank=True, null=True)
   
   rif_comercio = models.BooleanField(default=False)
-  rif_comercio_vencimiento = models.DateField(blank=True)
+  rif_comercio_vencimiento = models.DateField(blank=True, null=True)
   
   permiso_anterior = models.BooleanField(default=False)
   registro_comercio = models.BooleanField(default=False)
   documento_propiedad = models.BooleanField(default=False)
   
   cedula_catastral = models.BooleanField(default=False)
-  cedula_catastral_vencimiento = models.DateField(blank=True)
+  cedula_catastral_vencimiento = models.DateField(blank=True, null=True)
   
   carta_autorizacion = models.BooleanField(default=False)
   
   def __str__(self):
-        return f"Requisitos para Solicitud {self.id_solicitud}"
+      return f"Requisitos para Solicitud {self.id_solicitud}"
+
 
   
