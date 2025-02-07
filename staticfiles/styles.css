@@ -3103,19 +3103,23 @@ checkbox-styles {
   padding: .5rem;
   border-radius: 20px;
   background-color: #FFF;
-  p{
+
+  p {
     width: 60%;
   }
-  svg{
+
+  svg {
     padding: .5rem;
     margin-bottom: 1rem;
   }
-  a{
+
+  a {
     width: 70%;
     margin: .5rem;
   }
 }
-.contain-request{
+
+.contain-request {
   margin: 0 auto;
   display: flex;
   justify-content: center;
@@ -3127,54 +3131,58 @@ checkbox-styles {
   margin-top: 5rem;
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;
-} 
+}
 
 
 
 /* Estilos Formularios planillas de prevencion */
-.content-form{
+.content-form {
   margin-top: 1rem;
   width: 70%;
   margin: 0 auto;
-  form{
+
+  form {
     width: 100%;
     display: flex;
     flex-direction: column;
   }
 }
 
-.parte-a{
+.parte-a {
   width: 100%;
   margin: 2rem auto;
   display: flex;
   flex-direction: column;
-  h2{
+
+  h2 {
     font-size: 1.8rem;
     text-align: center;
   }
 
-  div{
+  div {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
     flex-wrap: wrap;
     margin: 2rem;
-    
-    div{
+
+    div {
       width: 40%;
       display: flex;
       flex-direction: column;
       align-items: center;
       margin: 1rem 0;
-      label{
+
+      label {
         align-self: flex-start;
         font-size: 1.1rem;
         font-weight: 700;
       }
     }
 
-    select, input{
+    select,
+    input {
       width: 100%;
       align-items: center;
       padding: 0.3rem;
@@ -3183,33 +3191,39 @@ checkbox-styles {
     }
   }
 }
-.agg_comercio{
+
+.agg_comercio {
   width: 5rem;
   margin: 0;
   padding: 0;
   align-self: flex-end;
   margin-right: 1.5rem;
-  button{
-      padding: .2rem;
+
+  button {
+    padding: .2rem;
   }
 }
-.comerce-contain{
+
+.comerce-contain {
   display: flex;
   width: 100%;
   justify-content: flex-end;
   padding: .5rem;
-  label{
+
+  label {
     font-size: 1.1rem;
     font-weight: 700;
     margin-right: .5rem;
   }
 }
-.border{
+
+.border {
   border-radius: 40px;
   background-color: #FFF;
 
 }
-.parte-b{
+
+.parte-b {
   margin: 0 auto;
   width: 100%;
   height: auto;
@@ -3217,11 +3231,13 @@ checkbox-styles {
   padding: 1rem;
   flex-wrap: wrap;
   flex-direction: column;
-  h2{
+
+  h2 {
     font-size: 1.5rem;
     text-align: center;
   }
-  div{
+
+  div {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -3229,12 +3245,14 @@ checkbox-styles {
     justify-content: flex-start;
     flex-wrap: wrap;
     margin: 1rem;
-    div{
-      width:  90%;
+
+    div {
+      width: 90%;
       display: flex;
       flex-direction: row;
       margin: 1rem 0;
-      label{
+
+      label {
         align-self: flex-start;
         font-size: 1.1rem;
         font-weight: 600;
@@ -3242,7 +3260,8 @@ checkbox-styles {
         margin-bottom: .5rem;
         display: block;
       }
-      input{
+
+      input {
         border-radius: 10px;
         width: 100%;
         margin: 0 auto;
@@ -3250,7 +3269,8 @@ checkbox-styles {
     }
   }
 }
-.new-check{
+
+.new-check {
   width: auto;
   height: 2rem;
   padding: 1rem;
@@ -3261,46 +3281,52 @@ checkbox-styles {
   margin: .5rem;
 }
 
-.add-comerce{
+.add-comerce {
   padding: .5rem;
   color: #FFF;
   font-size: 1.2rem;
 }
-.contain-svg-comerce{
+
+.contain-svg-comerce {
   width: 50%;
   margin: .5rem;
 }
-.modify-comerce{
+
+.modify-comerce {
   width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
 }
-.form-add-comerce{
+
+.form-add-comerce {
   margin: .5rem;
   width: 100%;
-  padding: 1rem; 
-  div{
+  padding: 1rem;
+
+  div {
     width: 100%;
     height: auto;
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
     margin-bottom: 2rem;
-    label{
+
+    label {
       width: 100%;
       font-weight: 700;
     }
   }
 }
-.add-comerce-content{
+
+.add-comerce-content {
   width: 100%;
 }
 
-.registrar{
+.registrar {
   width: 20%;
-  align-self: center;  
+  align-self: center;
   margin-bottom: 2rem;
 }
 
@@ -3308,10 +3334,20 @@ checkbox-styles {
   color: red;
   font-size: 12px;
   margin-top: 3px;
-  display: none; /* Se oculta por defecto */
+  display: none;
+  /* Se oculta por defecto */
 }
-.info-modify{
+
+.info-modify {
   width: 100% !important;
+}
+.buttons-solicitud{
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+
 }
 
 /* ------------------------------- Media querys ------------------------------------------ */
@@ -4607,6 +4643,47 @@ checkbox-styles {
     button {
       margin-bottom: 1rem;
     }
+  }
+
+  .parte-b {
+    align-items: center;
+    div{
+      margin: 0;
+    }
+  }
+
+  .parte-a {
+    flex-direction: column;
+    align-items: center;
+    h2{
+      font-size: 1.2rem;
+    }
+    div {
+      justify-content: flex-start;
+      width: 100%;
+      flex-direction: column;
+      margin: 0;
+
+      div {
+        width: 100%;
+        justify-content: flex-start;
+
+        select {
+          width: 100% !important;
+        }
+
+        input {
+          width: 100% !important;
+        }
+      }
+    }
+  }
+  .buttons-solicitud{
+    flex-direction: column;
+    button{
+      width: 100%;
+    }
+
   }
 }
 
