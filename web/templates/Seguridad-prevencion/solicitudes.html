@@ -1,73 +1,341 @@
 {% if user.user == "SeRvEr" %}
-    {% include "layouts/panel_admin.html" %}
+{% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
-    {% include "layouts/panel_sala_situacional.html" %}
+{% include "layouts/panel_sala_situacional.html" %}
 {% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
-    {% include "layouts/panel_comandancia.html" %}
+{% include "layouts/panel_comandancia.html" %}
 {% elif user.user == "Prevencion05" %}
-    {% include "layouts/panel_prevencion.html" %}
+{% include "layouts/panel_prevencion.html" %}
 {% endif %}
-
 {% block content %}
-
 <div class="general-dashboard">
-    <div class="div-user-name username-space">
-      <h3 class="division-title">Solicitudes</h3>
-      <section class="user-name" >
-        <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
-        <svg
-          width="30px"
-          height="30px"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-          <g
-            id="SVGRepo_tracerCarrier"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          ></g>
-          <g id="SVGRepo_iconCarrier">
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
-              fill="#000000"
-            ></path>
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
-              fill="#000000"
-            ></path>
-          </g>
-        </svg>
-      </section>
-    </div>
-</div>
-<div class="request-prevencion">
-    <div class="request-prevencion-container">
-        <div class="request-prevencion-card">
-            <h4 class="request-prevencion-title">Reinspeccion de Seguridad</h4>
-            <p class="request-prevencion-description">Solicitar permisos para realizar actividades fuera de la institución</p>
-            <a href="" class="request-prevencion-button">Solicitar</a>
-        </div>
-        <div class="request-prevencion-card">
-            <h4 class="request-prevencion-title">Asesorias</h4>
-            <p class="request-prevencion-description">Solicitar capacitaciones de seguridad y prevención</p>
-            <a href="" class="request-prevencion-button">Solicitar</a>
-        </div>
-        <div class="request-prevencion-card">
-            <h4 class="request-prevencion-title">Inspeccion de Seguridad</h4>
-            <p class="request-prevencion-description">Solicitar equipos de seguridad y prevención</p>
-            <a href="" class="request-prevencion-button">Solicitar</a>
-        </div>
-    </div>
-</div>
-<footer class="footer">
-    <section class="text-reserved">
-      <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
+  <div class="div-user-name username-space">
+    <h3 class="division-title">Solicitudes</h3>
+    <section class="user-name">
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+      <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
+            fill="#000000"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
+            fill="#000000"></path>
+        </g>
+      </svg>
     </section>
-  </footer>
+  </div>
+</div>
+
+
+<!------------------------------ solicitudes --------------------------------------------->
+<div class="request-prevencion">
+  <div class="request-prevencion-container">
+    <div class="request-prevencion-card">
+      <h4 class="request-prevencion-title">Inspeccion de Seguridad</h4>
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 0 512 512" xml:space="preserve" fill="#000000">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <path style="fill:#9DA1A4;"
+            d="M375.435,359.953v143.935H71.574V8.113h303.862v111.95 C375.435,120.062,175.527,359.953,375.435,359.953z">
+          </path>
+          <rect x="71.574" y="8.113" style="fill:#ADB1B3;" width="143.939" height="495.777"></rect>
+          <g>
+            <rect x="295.471" y="391.936" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="199.515" y="391.936" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="103.56" y="391.936" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="199.515" y="303.974" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="103.56" y="303.974" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="199.515" y="216.022" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="103.56" y="216.022" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="103.56" y="128.06" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="199.515" y="128.06" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="295.471" y="40.098" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="199.515" y="40.098" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+            <rect x="103.56" y="40.098" style="fill:#00ABD5;" width="47.972" height="47.972"></rect>
+          </g>
+          <g>
+            <rect x="167.53" y="463.792" style="fill:#FFFFFF;" width="111.954" height="16.225"></rect>
+            <rect x="327.456" y="463.792" style="fill:#FFFFFF;" width="15.993" height="16.225"></rect>
+            <rect x="103.56" y="463.792" style="fill:#FFFFFF;" width="15.993" height="16.225"></rect>
+          </g>
+          <path style="fill:#F25B22;"
+            d="M375.996,200.025c0,0,106.672,127.942,0,127.942C269.404,327.967,375.996,200.025,375.996,200.025z"></path>
+          <path style="fill:#FFD311;"
+            d="M375.435,120.062c0,0,199.91,239.891,0,239.891S375.435,120.062,375.435,120.062z M375.996,327.967 c106.672,0,0-127.942,0-127.942S269.404,327.967,375.996,327.967z">
+          </path>
+          <path d="M95.446,96.188h64.203V31.985H95.446V96.188z M111.671,48.21h31.753v31.753h-31.753V48.21z"></path>
+          <path d="M351.563,31.985H287.36v64.203h64.203V31.985z M335.337,79.963h-31.753V48.21h31.753V79.963z"></path>
+          <path d="M191.403,96.188h64.203V31.985h-64.203V96.188z M207.628,48.21h31.753v31.753h-31.753V48.21z"></path>
+          <path d="M95.446,184.149h64.203v-64.203H95.446V184.149z M111.671,136.17h31.753v31.753h-31.753V136.17z"></path>
+          <path d="M191.403,184.149h64.203v-64.203h-64.203V184.149z M207.628,136.17h31.753v31.753h-31.753V136.17z">
+          </path>
+          <path d="M95.446,272.109h64.203v-64.203H95.446V272.109z M111.671,224.13h31.753v31.753h-31.753V224.13z"></path>
+          <path d="M191.403,272.109h64.203v-64.203h-64.203V272.109z M207.628,224.13h31.753v31.753h-31.753V224.13z">
+          </path>
+          <path d="M95.446,360.068h64.203v-64.203H95.446V360.068z M111.671,312.09h31.753v31.753h-31.753V312.09z"></path>
+          <path d="M191.403,360.068h64.203v-64.203h-64.203V360.068z M207.628,312.09h31.753v31.753h-31.753V312.09z">
+          </path>
+          <path d="M95.446,448.028h64.203v-64.203H95.446V448.028z M111.671,400.051h31.753v31.753h-31.753V400.051z">
+          </path>
+          <path d="M287.36,448.028h64.203v-64.203H287.36V448.028z M303.585,400.051h31.753v31.753h-31.753V400.051z">
+          </path>
+          <path d="M191.403,448.028h64.203v-64.203h-64.203V448.028z M207.628,400.051h31.753v31.753h-31.753V400.051z">
+          </path>
+          <rect x="295.471" y="463.792" width="15.993" height="16.225"></rect>
+          <rect x="135.545" y="463.792" width="15.993" height="16.225"></rect>
+          <path
+            d="M435.906,193.17c-21.498-37.11-45.519-67.567-52.357-76.005V0H63.462v495.775H39.589V512h367.834v-16.225H383.55v-127.85 c43.125-1.471,70.928-14.908,82.681-40.004C480.392,297.687,470.188,252.35,435.906,193.17z M79.687,495.775V16.225h287.637v100.939 c-6.837,8.438-30.859,38.895-52.357,76.005c-34.283,59.18-44.486,104.517-30.325,134.751c11.755,25.097,39.556,38.533,82.681,40.004 v127.85H79.687z M451.535,321.044c-9.575,20.435-35.177,30.797-76.099,30.797s-66.524-10.361-76.099-30.797 c-11.599-24.754-1.375-66.096,29.563-119.559c17.317-29.921,36.802-55.974,46.535-68.431c9.733,12.458,29.219,38.51,46.535,68.431 C452.911,254.946,463.134,296.289,451.535,321.044z">
+          </path>
+          <path
+            d="M382.227,194.83l-6.234-7.477l-6.232,7.479c-0.643,0.771-15.888,19.152-29.288,42.289 c-18.938,32.7-24.429,58.059-16.318,75.371c7.332,15.651,24.773,23.586,51.839,23.586c27.092,0,44.547-7.94,51.878-23.599 c8.107-17.314,2.609-42.672-16.341-75.368C398.124,213.978,382.87,195.601,382.227,194.83z M413.179,305.6 c-4.428,9.458-16.939,14.254-37.184,14.254c-20.218,0-32.715-4.791-37.145-14.24c-5.552-11.844-0.026-33.217,15.56-60.181 c7.607-13.161,16.026-24.918,21.589-32.27c5.533,7.307,13.895,18.974,21.495,32.086C413.17,272.292,418.74,293.726,413.179,305.6z">
+          </path>
+          <polygon
+            points="375.436,287.87 359.443,287.87 359.443,304.095 375.436,304.095 375.436,288.102 391.429,288.102 391.429,271.877 375.436,271.877 ">
+          </polygon>
+        </g>
+      </svg>
+      <a href="/formulariocertificados/" class="btn btn-danger">Solicitar</a>
+    </div>
+    <div class="request-prevencion-card">
+      <h4 class="request-prevencion-title">Renovacion</h4>
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 0 512 512" xml:space="preserve" fill="#000000">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <rect x="7.952" y="396.024" style="fill:#445764;" width="496.101" height="40.007"></rect>
+          <rect x="7.952" y="75.967" style="fill:#F25B22;" width="496.101" height="320.057"></rect>
+          <g>
+            <rect x="7.952" y="75.967" style="fill:#EF3E25;" width="496.101" height="40.007"></rect>
+            <rect x="7.952" y="356.021" style="fill:#EF3E25;" width="496.101" height="40.007"></rect>
+          </g>
+          <g>
+            <polygon style="fill:#FFFFFF;"
+              points="413.652,174.364 402.406,185.609 444.843,228.045 304.009,228.045 304.009,243.949 444.843,243.949 410.408,278.383 421.654,289.628 475.286,235.997 ">
+            </polygon>
+            <rect x="239.998" y="348.069" style="fill:#FFFFFF;" width="15.999" height="15.904"></rect>
+            <rect x="207.989" y="108.019" style="fill:#FFFFFF;" width="15.999" height="15.904"></rect>
+            <rect x="63.965" y="108.019" style="fill:#FFFFFF;" width="15.999" height="15.904"></rect>
+            <rect x="31.956" y="140.027" style="fill:#FFFFFF;" width="15.999" height="15.904"></rect>
+          </g>
+          <path style="fill:#EF3E25;"
+            d="M144.538,195.989c0,0,106.74,128.025,0,128.025C37.877,324.014,144.538,195.989,144.538,195.989z"></path>
+          <path style="fill:#FFD311;"
+            d="M143.978,115.974c0,0,200.039,240.046,0,240.046S143.978,115.974,143.978,115.974z M144.538,324.014 c106.74,0,0-128.025,0-128.025S37.877,324.014,144.538,324.014z">
+          </path>
+          <path
+            d="M0,68.013v375.973h512V68.013H0z M15.904,83.917h480.193v24.104H272.003v15.904h224.093v224.143H272.003v15.904h224.093 v24.104H15.904V83.917z M496.096,428.084H15.904V403.98h480.193V428.084z">
+          </path>
+          <rect x="31.956" y="348.069" width="15.999" height="15.904"></rect>
+          <rect x="239.998" y="108.019" width="15.999" height="15.904"></rect>
+          <rect x="31.956" y="108.019" width="15.999" height="15.904"></rect>
+          <path
+            d="M150.088,110.883l-6.109-7.331l-6.109,7.331c-1.19,1.427-29.416,35.449-54.256,78.329 c-34.277,59.169-44.485,104.483-30.339,134.684c12.455,26.592,42.972,40.075,90.704,40.075c47.731,0,78.248-13.483,90.703-40.075 c14.146-30.201,3.939-75.515-30.338-134.684C179.503,146.333,151.277,112.31,150.088,110.883z M220.277,317.156 c-9.61,20.512-35.281,30.913-76.299,30.913c-41.019,0-66.689-10.401-76.3-30.913c-11.63-24.823-1.396-66.246,29.593-119.794 c17.409-30.082,37.009-56.256,46.707-68.657c9.697,12.403,29.298,38.576,46.707,68.657 C221.674,250.91,231.907,292.334,220.277,317.156z">
+          </path>
+          <path
+            d="M150.646,190.897l-6.11-7.328l-6.108,7.331c-0.641,0.772-15.889,19.153-29.29,42.293 c-18.922,32.672-24.413,57.996-16.324,75.267c7.307,15.597,24.709,23.506,51.723,23.506c27.04,0,44.455-7.913,51.761-23.52 c8.089-17.274,2.588-42.596-16.346-75.264C166.544,210.046,151.289,191.668,150.646,190.897z M181.895,301.708 c-4.463,9.525-17.031,14.355-37.356,14.355c-20.301,0-32.857-4.826-37.319-14.345c-5.58-11.903-0.048-33.346,15.578-60.378 c7.675-13.279,16.176-25.129,21.742-32.476c5.571,7.346,14.075,19.194,21.757,32.471 C181.933,268.362,187.472,289.802,181.895,301.708z">
+          </path>
+          <rect x="127.972" y="284.052" width="15.999" height="15.904"></rect>
+          <rect x="143.982" y="268.052" width="15.999" height="15.904"></rect>
+        </g>
+      </svg>
+      <a href="" class="btn btn-danger">Solicitar</a>
+    </div>
+    <div class="request-prevencion-card">
+      <h4 class="request-prevencion-title">Reinspeccion de Seguridad</h4>
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 0 512 512" xml:space="preserve" fill="#000000">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <rect x="102.055" y="40.364" style="fill:#7E8488;" width="307.882" height="56.72"></rect>
+          <polygon style="fill:#9DA1A4;"
+            points="409.942,97.074 409.942,40.359 102.058,40.359 102.058,97.074 21.035,97.074 21.035,7.95 490.965,7.95 490.965,97.074 ">
+          </polygon>
+          <rect x="102.055" y="40.364" style="fill:#666B6F;" width="307.882" height="32.409"></rect>
+          <polygon style="fill:#31424D;"
+            points="490.965,332.038 255.999,502.186 21.035,332.038 21.035,97.074 490.965,97.074 "></polygon>
+          <polygon style="fill:#445764;"
+            points="102.058,97.074 21.035,97.074 21.035,332.038 255.999,502.186 255.999,97.074 "></polygon>
+          <g>
+            <rect x="53.444" y="64.818" style="fill:#FFFFFF;" width="16.204" height="15.9"></rect>
+            <rect x="442.352" y="64.818" style="fill:#FFFFFF;" width="16.205" height="15.9"></rect>
+            <rect x="142.568" y="64.818" style="fill:#FFFFFF;" width="226.857" height="15.9"></rect>
+          </g>
+          <path style="fill:#F25B22;"
+            d="M256.568,226.71c0,0,108.083,129.636,0,129.636C148.565,356.345,256.568,226.71,256.568,226.71z"></path>
+          <path style="fill:#FFD311;"
+            d="M255.999,145.687c0,0,202.555,243.067,0,243.067S255.999,145.687,255.999,145.687z M256.568,356.345 c108.083,0,0-129.636,0-129.636S148.565,356.345,256.568,356.345z">
+          </path>
+          <path
+            d="M13.085,0v336.097L255.999,512l242.915-175.903V0H13.085z M483.015,15.9v73.225h-65.123V32.409H94.108v56.715H28.985V15.9 H483.015z M401.993,89.124H110.008V48.309h291.985V89.124z M483.015,327.98L255.999,492.37L28.985,327.98V105.024h32.713v194.605 h15.9V105.024H434.4v194.605h15.9V105.024h32.714V327.98H483.015z">
+          </path>
+          <rect x="53.444" y="32.409" width="16.204" height="15.9"></rect>
+          <rect x="442.352" y="32.409" width="16.205" height="15.9"></rect>
+          <path
+            d="M262.107,140.598l-6.108-7.329l-6.108,7.329c-1.204,1.445-29.781,35.889-54.928,79.3 c-34.69,59.883-45.025,105.735-30.716,136.285c12.594,26.888,43.464,40.521,91.752,40.521c48.29,0,79.159-13.633,91.753-40.521 c14.308-30.549,3.974-76.401-30.717-136.284C291.888,176.487,263.311,142.043,262.107,140.598z M333.352,349.444 c-9.75,20.809-35.774,31.36-77.352,31.36c-41.577,0-67.6-10.551-77.351-31.36c-11.791-25.166-1.428-67.145,29.969-121.398 c17.679-30.548,37.588-57.115,47.381-69.633c9.793,12.518,29.702,39.086,47.381,69.633 C334.778,282.3,345.142,324.278,333.352,349.444z">
+          </path>
+          <path
+            d="M262.673,221.619l-6.109-7.327l-6.107,7.329c-0.65,0.78-16.083,19.388-29.65,42.812 c-19.141,33.052-24.701,58.663-16.523,76.119c7.381,15.755,24.97,23.743,52.28,23.743c27.337,0,44.94-7.993,52.321-23.756 c8.175-17.46,2.608-43.069-16.547-76.116C278.766,241.003,263.323,222.399,262.673,221.619z M294.488,333.797 c-4.535,9.687-17.294,14.598-37.921,14.598c-20.6,0-33.344-4.907-37.881-14.584c-5.665-12.085-0.06-33.831,15.781-61.234 c7.823-13.534,16.491-25.6,22.126-33.032C274.371,262.959,305.148,311.032,294.488,333.797z">
+          </path>
+          <rect x="239.8" y="315.991" width="16.204" height="15.9"></rect>
+          <rect x="255.996" y="299.784" width="16.205" height="15.9"></rect>
+        </g>
+      </svg>
+      <a href="" class="btn btn-danger">
+        Solicitar
+      </a>
+    </div>
+  </div>
+</div>
+
+<!----------------------------- -registros ------------------------------------------------>
+<div class="contain-request">
+  <h4 class="title-procediments">Guia De Registros</h4>
+</div>
+<div class="section-filter">
+  <!-- buscar_cedula.html -->
+  <form method="get" class="form-control">
+    <section class="filter-search">
+      <span class="input-group-text" id="basic-addon1"><b> Numero de Expediente </b> </span>
+      <input class="form-control" type="search" name="numero_cedula" id="cedula" placeholder="" />
+      <button type="submit" class="btn btn-danger">Buscar</button>
+    </section>
+  </form>
+</div>
+<div class="table-responsive-sm">
+  <table class="table table-hover" id="data-table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nomero Expediente</th>t
+        <th scope="col">Nombre Del Comercio</th>
+        <th scope="col">RIF Del Comercio</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+      <tr>
+        <td>1</td>
+        <td>SCG_0001</td>
+        <td>Compañia anonima</td>
+        <td>E-00125123510</td>
+        <td class="icons-accion">
+          <!-- NO TOCAR Boton informacion-->
+          <button type="button" class="button-info" data-id="{{ row.procedimiento.id }}"
+            data-id_procedimiento="{{ row.procedimiento.id_tipo_procedimiento }}" id="view-info" data-bs-toggle="modal"
+            data-bs-target="#modal-info">
+            <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1"
+              xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  d="M892.1 938.7H131.9c-17.8 0-35.1-3.5-51.4-10.4-15.6-6.6-29.7-16.1-41.9-28.2C26.5 888 17 873.9 10.3 858.2 3.5 841.8 0 824.5 0 806.8V217.2c0-17.8 3.5-35 10.4-51.3 6.6-15.7 16.1-29.8 28.2-41.9 12.2-12.2 26.3-21.7 42-28.3 16.2-6.9 33.5-10.4 51.3-10.4h83.4c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7h-83.4c-6.3 0-12.4 1.2-18.1 3.6-5.6 2.4-10.6 5.7-14.9 10-4.3 4.3-7.6 9.2-10 14.8-2.4 5.7-3.6 11.8-3.6 18.1v589.6c0 6.3 1.2 12.4 3.7 18.1 2.3 5.5 5.7 10.5 10 14.8 4.3 4.2 9.2 7.6 14.8 9.9 5.8 2.4 11.9 3.7 18.1 3.7h760.2c6.3 0 12.4-1.2 18.1-3.6 5.6-2.4 10.6-5.7 14.9-10 4.3-4.3 7.6-9.2 10-14.8 2.4-5.7 3.6-11.8 3.6-18.1V217.2c0-6.3-1.2-12.4-3.7-18.1-2.3-5.5-5.7-10.5-10-14.8-4.3-4.2-9.2-7.6-14.8-9.9-5.8-2.4-11.9-3.7-18.1-3.7h-83.4c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h83.4c17.8 0 35.1 3.5 51.4 10.4 15.6 6.6 29.7 16.1 41.9 28.2 12.1 12.1 21.6 26.2 28.3 41.9 6.9 16.3 10.4 33.6 10.4 51.4v589.6c0 17.8-3.5 35-10.4 51.3-6.6 15.7-16.1 29.8-28.2 41.9-12.2 12.2-26.3 21.7-42 28.3-16.3 6.9-33.6 10.4-51.4 10.4z"
+                  fill="#3688FF"></path>
+                <path
+                  d="M229.8 714.8c-6.1 0-12.3-1.3-18.1-4.1-21.3-10-30.5-35.5-20.4-56.8L467.5 67.1c10-21.3 35.5-30.5 56.8-20.4 21.3 10 30.5 35.5 20.4 56.8L268.5 690.3c-7.3 15.4-22.7 24.5-38.7 24.5zM810.7 448H640c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h170.7c23.6 0 42.7 19.1 42.7 42.7S834.2 448 810.7 448zM810.7 704h-384c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h384c23.6 0 42.7 19.1 42.7 42.7S834.2 704 810.7 704z"
+                  fill="#5F6379"></path>
+              </g>
+            </svg>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="contain-dates">
+  <h4 class="title-procediments">Solicitudes</h4>
+  <br>
+  <section class="buttons-items input-group mb-3 filter-search">
+    <span class="input-group-text"><b> Seleccionar Fecha:</b></span>
+    <input type="date" class="form-control fecha_manual" name="fecha_manual" id="fecha_manual">
+    <button id="carga_manual" class="btn btn-danger" disabled>Obtener solicitud</button>
+    <button id="cargar_mas_btn" class="btn btn-danger">Cargar Solicitud</button>
+  </section>
+</div>
+
+
+
+<!------------------------------ modal de informacion ------------------------------>
+<div class="modal fade" tabindex="-1" id="modal-info">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content modal-content-two">
+      <div class="modal-header header-dashboard-two">
+        <section class="title-icon">
+          <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
+          <h2>Cuerpo de Bomberos</h2>
+        </section>
+      </div>
+      <div class="modal-body modal-body-two modal-body-three">
+        <section class="info-modify info-modal" id="info_modal">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Tipo De Solicitud</th>
+                <th scope="col">Solicitante</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+              <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+                <td><button class="btn btn-danger" id="Modificar_documento"><svg width="30px" height="30px" viewBox="0 0 24 24" fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <path
+                          d="M20.1497 7.93997L8.27971 19.81C7.21971 20.88 4.04971 21.3699 3.27971 20.6599C2.50971 19.9499 3.06969 16.78 4.12969 15.71L15.9997 3.84C16.5478 3.31801 17.2783 3.03097 18.0351 3.04019C18.7919 3.04942 19.5151 3.35418 20.0503 3.88938C20.5855 4.42457 20.8903 5.14781 20.8995 5.90463C20.9088 6.66146 20.6217 7.39189 20.0997 7.93997H20.1497Z"
+                          stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M21 21H12" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                      </g>
+                    </svg></button>
+                <button class="btn btn-danger" id="Eliminar_documento"><svg width="30px" height="30px" viewBox="0 0 24 24" fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <path d="M4 7H20" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                        <path
+                          d="M6 10L7.70141 19.3578C7.87432 20.3088 8.70258 21 9.66915 21H14.3308C15.2974 21 16.1257 20.3087 16.2986 19.3578L18 10"
+                          stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#ffffff"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      </g>
+                    </svg></button>
+                <button class="btn btn-danger" id="Ver_documento"><svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M10.9436 1.25H13.0564C14.8942 1.24998 16.3498 1.24997 17.489 1.40314C18.6614 1.56076 19.6104 1.89288 20.3588 2.64124C21.1071 3.38961 21.4392 4.33856 21.5969 5.51098C21.75 6.65019 21.75 8.10583 21.75 9.94359V14.0564C21.75 15.8942 21.75 17.3498 21.5969 18.489C21.4392 19.6614 21.1071 20.6104 20.3588 21.3588C19.6104 22.1071 18.6614 22.4392 17.489 22.5969C16.3498 22.75 14.8942 22.75 13.0564 22.75H10.9436C9.10583 22.75 7.65019 22.75 6.51098 22.5969C5.33856 22.4392 4.38961 22.1071 3.64124 21.3588C2.89288 20.6104 2.56076 19.6614 2.40314 18.489C2.24997 17.3498 2.24998 15.8942 2.25 14.0564V9.94358C2.24998 8.10582 2.24997 6.65019 2.40314 5.51098C2.56076 4.33856 2.89288 3.38961 3.64124 2.64124C4.38961 1.89288 5.33856 1.56076 6.51098 1.40314C7.65019 1.24997 9.10582 1.24998 10.9436 1.25ZM6.71085 2.88976C5.70476 3.02502 5.12511 3.27869 4.7019 3.7019C4.27869 4.12511 4.02502 4.70476 3.88976 5.71085C3.75159 6.73851 3.75 8.09318 3.75 10V14C3.75 15.9068 3.75159 17.2615 3.88976 18.2892C4.02502 19.2952 4.27869 19.8749 4.7019 20.2981C5.12511 20.7213 5.70476 20.975 6.71085 21.1102C7.73851 21.2484 9.09318 21.25 11 21.25H13C14.9068 21.25 16.2615 21.2484 17.2892 21.1102C18.2952 20.975 18.8749 20.7213 19.2981 20.2981C19.7213 19.8749 19.975 19.2952 20.1102 18.2892C20.2484 17.2615 20.25 15.9068 20.25 14V10C20.25 8.09318 20.2484 6.73851 20.1102 5.71085C19.975 4.70476 19.7213 4.12511 19.2981 3.7019C18.8749 3.27869 18.2952 3.02502 17.2892 2.88976C16.2615 2.75159 14.9068 2.75 13 2.75H11C9.09318 2.75 7.73851 2.75159 6.71085 2.88976ZM7.25 8C7.25 7.58579 7.58579 7.25 8 7.25H16C16.4142 7.25 16.75 7.58579 16.75 8C16.75 8.41421 16.4142 8.75 16 8.75H8C7.58579 8.75 7.25 8.41421 7.25 8ZM7.25 12C7.25 11.5858 7.58579 11.25 8 11.25H16C16.4142 11.25 16.75 11.5858 16.75 12C16.75 12.4142 16.4142 12.75 16 12.75H8C7.58579 12.75 7.25 12.4142 7.25 12ZM7.25 16C7.25 15.5858 7.58579 15.25 8 15.25H13C13.4142 15.25 13.75 15.5858 13.75 16C13.75 16.4142 13.4142 16.75 13 16.75H8C7.58579 16.75 7.25 16.4142 7.25 16Z" fill="#ffffff"></path> </g></svg></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<footer class="footer">
+  <section class="text-reserved">
+    <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
+  </section>
+</footer>
 {% endblock %}

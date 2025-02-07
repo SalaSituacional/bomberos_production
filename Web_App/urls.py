@@ -58,6 +58,14 @@ urlpatterns = [
     
     # Certificados Prevencion
     path('certificadosprevencion/', cerfiticados_prevencion),
+    path('formulariocertificados/', formulario_certificado_prevencion),
+    path('planillacertificado/', planilla_certificado),
+    path('generar_documento_guia/<int:id>/', doc_Guia, name='generar_documento_guia'),
+    path('generar_documento_inspeccion/', doc_Inspeccion, name='generar_documento_inspeccion'),
+
+    
+    path('agregar_comercio/', agregar_comercio , name='agregar_comercio'),
+    path('agregar_solicitud/', agregar_solicitud , name='agregar_solicitud'),
 
 
     # Tablas
@@ -94,6 +102,9 @@ urlpatterns = [
     path('instagram/', instagram_feed, name='instagram_feed'),
 
     path('api/obtener_informacion/<int:id>/', obtener_informacion_editar, name='obtener_informacion'),
+    path('api/obtener_unidades/', api_unidades, name='obtener_unidades'),
+    path('api/obtener_tipos_procedimientos/', api_tipos_procedimientos, name='obtener_tipos_procedimientos'),
+    
 
     # Descargas
     path('descargar-excel_personal/', generar_excel_personal, name='descargar_excel_personal'),

@@ -16,7 +16,7 @@ from datetime import timedelta
 from django.utils.timezone import make_aware
 from django.db.models import Prefetch
 from datetime import date
-
+from docxtpl import DocxTemplate
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
     return render(request, "404.html", status=404)
@@ -4466,3 +4466,218 @@ def cerfiticados_prevencion(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
     })
+
+# Vista de la seccion de Estadisticas
+def planilla_certificado(request):
+    user = request.session.get('user')
+    if not user:
+            return redirect('/')
+
+    return render(request, "Seguridad-prevencion/planillaCertificadoDeConformidad.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+# Vista de la seccion de Estadisticas
+def formulario_certificado_prevencion(request):
+    user = request.session.get('user')
+    if not user:
+            return redirect('/')
+
+    
+
+    return render(request, "Seguridad-prevencion/formularioSolicitud.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "solicitud": Formulario_Solicitud,
+        "requisitos": Formularia_Requisitos,
+        "comercio": Comercios,
+    })
+
+def agregar_comercio(request):
+    if request.method == "POST":
+        comercio = request.POST.get("nombre_comercio")  # Obtener el valor del formulario
+        rif_empresarial = request.POST.get("rif_empresarial")  # Obtener el valor del formulario
+        
+        # Guardar en la base de datos
+        Comercio.objects.create(
+            nombre_comercio=comercio,
+            rif_empresarial=rif_empresarial
+        )
+
+        # Redirigir a la misma página para recargar
+        return redirect("/formulariocertificados/")  # Redirige a la misma URL
+
+    return HttpResponse("Método no permitido", status=405)
+
+def agregar_solicitud(request):
+    if request.method == "POST":
+        comercio = request.POST.get("comercio")
+        fecha_solicitud = request.POST.get("fecha_solicitud")
+        hora_solicitud = request.POST.get("hora_solicitud")
+        tipo_servicio = request.POST.get("tipo_servicio")
+        solicitante = request.POST.get("solicitante_nombre_apellido")
+        solicitante_cedula = request.POST.get("solicitante_cedula")
+        tipo_representante = request.POST.get("tipo_representante")
+        rif_representante = request.POST.get("rif_representante_legal")
+        direccion = request.POST.get("direccion")
+        estado = request.POST.get("estado")
+        municipio = request.POST.get("municipio")
+        parroquia = request.POST.get("parroquia")
+        numero_telefono = request.POST.get("numero_telefono")
+        correo = request.POST.get("correo_electronico")
+        pago = request.POST.get("pago_tasa")
+        referencia = request.POST.get("referencia")
+
+        comercio_instance = Comercio.objects.get(id_comercio=comercio)
+        municipio_instance = Municipios.objects.get(id=municipio)
+        parroquia_instance = Parroquias.objects.get(id=parroquia)
+
+        cedula = request.POST.get("cedula_identidad") == "on"
+        rifRepresentante = request.POST.get("rif_representante") == "on"
+        rif_comercio = request.POST.get("rif_comercio") == "on"
+        permiso_anterior = request.POST.get("permiso_anterior") == "on"
+        registro_comercio = request.POST.get("registro_comercio") == "on"
+        documento_propiedad = request.POST.get("documento_propiedad") == "on"
+        cedula_catastral = request.POST.get("cedula_catastral") == "on"
+        carta_autorizacion = request.POST.get("carta_autorizacion") == "on"
+        cedula_vencimiento = request.POST.get("cedula_vecimiento")
+        rif_representante_vencimiento = request.POST.get("rif_representante_vencimiento")
+        rif_comercio_vencimiento = request.POST.get("rif_comercio_vencimiento")
+        cedula_catastral_vencimiento = request.POST.get("cedula_catastral_vencimiento")
+
+        new = Solicitudes.objects.create(
+            id_solicitud=comercio_instance,
+            fecha_solicitud=fecha_solicitud,
+            hora_solicitud=hora_solicitud,
+            tipo_servicio=tipo_servicio,
+            solicitante_nombre_apellido=solicitante,
+            solicitante_cedula=solicitante_cedula,
+            tipo_representante=tipo_representante,
+            rif_representante_legal=rif_representante,
+            direccion=direccion,
+            estado=estado,
+            municipio=municipio_instance,
+            parroquia=parroquia_instance,
+            numero_telefono=numero_telefono,
+            correo_electronico=correo,
+            pago_tasa=pago,
+            referencia=referencia,
+        )
+
+        req = Requisitos.objects.create(
+            id_solicitud=new,
+            cedula_identidad=cedula,
+            cedula_vencimiento=cedula_vencimiento,
+            rif_representante=rifRepresentante,
+            rif_representante_vencimiento=rif_representante_vencimiento,
+            rif_comercio=rif_comercio,
+            rif_comercio_vencimiento=rif_comercio_vencimiento,
+            permiso_anterior=permiso_anterior,
+            registro_comercio=registro_comercio,
+            documento_propiedad=documento_propiedad,
+            cedula_catastral=cedula_catastral,
+            cedula_catastral_vencimiento=cedula_catastral_vencimiento,
+            carta_autorizacion=carta_autorizacion,
+        )
+
+        # Redirigir después de generar el documento
+        return redirect("/certificadosprevencion/")
+
+    return HttpResponse("Método no permitido", status=405)
+
+def doc_Guia(request, id):
+    solicitud = Solicitudes.objects.get(id=id)
+    datos_solicitud = Comercio.objects.get(id_comercio=solicitud.id_solicitud.id_comercio)
+    requisitos = Requisitos.objects.get(id_solicitud=solicitud.id)
+
+    # Ruta al archivo plantilla en el directorio estático
+    guia = DocxTemplate("web/static/assets/Solictud_2025.docx")
+
+    # Datos para reemplazar en la plantilla (predefinidos según los campos)
+    datos = {
+        "ID_Comercio": datos_solicitud.id_comercio,
+        "Fecha_Solicitud": solicitud.fecha_solicitud,
+        "Hora": solicitud.hora_solicitud,
+        "Tipo_Servicio": solicitud.tipo_servicio,
+        "Solicitante": solicitud.solicitante_nombre_apellido,
+        "CI": solicitud.solicitante_cedula,
+        "Tipo_Representante": solicitud.tipo_representante,
+        "Nombre_Comercio": datos_solicitud.nombre_comercio,
+        "Rif_Empresarial": datos_solicitud.rif_empresarial,
+        "Rif_Representante_Legal": solicitud.rif_representante_legal,
+        "Direccion": solicitud.direccion,
+        "Estado": solicitud.estado,
+        "Municipio": solicitud.municipio,
+        "Parroquia": solicitud.parroquia,
+        "Telefono": solicitud.numero_telefono,
+        "Correo_Electronico": solicitud.correo_electronico,
+        "Pago_Tasa_Servicio": solicitud.pago_tasa,
+        "Metodo_Pago": "",
+        "Referencia": solicitud.referencia,
+        "Status_Cedula": "Completado" if requisitos.cedula_identidad else "Incompleto",
+        "Status_Rif": "Completado" if requisitos.rif_representante else "Incompleto",
+        "Status_Comercio": "Completado" if requisitos.rif_comercio else "Incompleto",
+        "Status_Permiso": "Completado" if requisitos.permiso_anterior else "Incompleto",
+        "Status_Registro_Comercio": "Completado" if requisitos.registro_comercio else "Incompleto",
+        "Status_Documento_Propiedad": "Completado" if requisitos.documento_propiedad else "Incompleto",
+        "Status_Cedula_Catastral": "Completado" if requisitos.cedula_catastral else "Incompleto",
+        "Status_Carta_Autorizacion": "Completado" if requisitos.carta_autorizacion else "Incompleto",
+        "Status_Plano": "",
+    }
+
+    # Rellenar la plantilla con los datos
+    guia.render(datos)
+
+    # Guardar el documento en la respuesta
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = 'attachment; filename="Guia_Solicitud.docx"'
+    guia.save(response)
+
+    # Renderizar una plantilla que inicia la descarga y redirige automáticamente
+    return response
+
+def doc_Inspeccion(request):
+    # Ruta al archivo plantilla en el directorio estático
+    inspeccion = DocxTemplate("web/static/assets/Inspeccion_2025.docx")
+
+    # Datos para reemplazar en la plantilla (predefinidos según los campos)
+    datos = {
+        "ID_Comercio": "12345",
+        "Fecha_Solicitud": "05/02/2025",
+        "Hora": "10:30 AM",
+        "Tipo_Servicio": "Inspección",
+        "Solicitante": "Juan Pérez",
+        "CI": "V-12345678",
+        "Tipo_Representante": "Natural",
+        "Nombre_Comercio": "Tech Solutions",
+        "Rif_Empresarial": "J-12345678-9",
+        "Rif_Representante_Legal": "V-98765432",
+        "Direccion": "Av. Principal #123",
+        "Estado": "Táchira",
+        "Municipio": "San Cristóbal",
+        "Parroquia": "La Concordia",
+        "Telefono": "0412-3456789",
+        "Correo_Electronico": "contacto@techsolutions.com",
+        "Pago_Tasa_Servicio": "Pagado",
+        "Metodo_Pago": "Transferencia",
+        "Referencia": "REF12345",
+        "Encargado_Atencion": "María Gómez",
+        "Status" : "Completado",
+    }
+
+    # Rellenar la plantilla con los datos
+    inspeccion.render(datos)
+
+    # Preparar el archivo para la respuesta HTTP
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = 'attachment; filename="Solicitud_inspeccion.docx"'
+
+    # Guardar el documento procesado en la respuesta HTTP
+    inspeccion.save(response)
+
+    return response

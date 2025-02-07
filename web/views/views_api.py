@@ -2595,3 +2595,46 @@ def api_procedimientos_bar_horizontales(request):
     ).annotate(count=Count('id')).order_by('-count')  # Orden descendente por cantidad
     
     return JsonResponse(list(conteo_procedimientos), safe=False)
+
+def api_unidades(request):
+    division_id = request.GET.get("division")  # Obtener el ID de la división desde la URL
+
+    if not division_id:
+        return JsonResponse({"error": "El parámetro 'division' es requerido"}, status=400)
+
+    try:
+        division = Divisiones.objects.get(id=division_id)  # Verificar si la división existe
+    except Divisiones.DoesNotExist:
+        return JsonResponse({"error": "La división no existe"}, status=404)
+
+    # Filtrar unidades que están asociadas con la división
+    unidades = Unidades.objects.filter(id_division=division)
+
+    # Construir la respuesta en formato JSON
+    resultado = [("", "Seleccione Una Opcion")]
+    for unidad in unidades:
+        resultado.append((str(unidad.id), unidad.nombre_unidad))
+
+    return JsonResponse(resultado, safe=False)
+
+def api_tipos_procedimientos(request):
+    division_id = request.GET.get("division")  # Obtener el ID de la división desde la URL
+
+    if not division_id:
+        return JsonResponse({"error": "El parámetro 'division' es requerido"}, status=400)
+
+    try:
+        division = Divisiones.objects.get(id=division_id)  # Verificar si la división existe
+    except Divisiones.DoesNotExist:
+        return JsonResponse({"error": "La división no existe"}, status=404)
+
+    # Filtrar unidades que están asociadas con la división
+    procedimientos = Tipos_Procedimientos.objects.filter(id_division=division)
+
+    # Construir la respuesta en formato JSON
+    resultado = [("", "Seleccione Una Opcion")]
+    for proc in procedimientos:
+        resultado.append((str(proc.id), proc.tipo_procedimiento))
+
+    return JsonResponse(resultado, safe=False)
+   
