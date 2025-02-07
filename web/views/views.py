@@ -4591,9 +4591,9 @@ def agregar_solicitud(request):
     return HttpResponse("Método no permitido", status=405)
 
 def doc_Guia(request, id):
-    solicitud = Solicitudes.objects.get(id = id)
-    datos_solicitud = Comercio.objects.get(id_comercio = solicitud.id_solicitud.id_comercio)
-    requisitos = Requisitos.objects.get(id_solicitud = solicitud.id)
+    solicitud = Solicitudes.objects.get(id=id)
+    datos_solicitud = Comercio.objects.get(id_comercio=solicitud.id_solicitud.id_comercio)
+    requisitos = Requisitos.objects.get(id_solicitud=solicitud.id)
 
     # Ruta al archivo plantilla en el directorio estático
     guia = DocxTemplate("web/static/assets/Solictud_2025.docx")
@@ -4619,8 +4619,15 @@ def doc_Guia(request, id):
         "Pago_Tasa_Servicio": solicitud.pago_tasa,
         "Metodo_Pago": "",
         "Referencia": solicitud.referencia,
-        "Encargado_Atencion": "",
-        "Status" : "",
+        "Status_Cedula": "Completado" if requisitos.cedula_identidad else "Incompleto",
+        "Status_Rif": "Completado" if requisitos.rif_representante else "Incompleto",
+        "Status_Comercio": "Completado" if requisitos.rif_comercio else "Incompleto",
+        "Status_Permiso": "Completado" if requisitos.permiso_anterior else "Incompleto",
+        "Status_Registro_Comercio": "Completado" if requisitos.registro_comercio else "Incompleto",
+        "Status_Documento_Propiedad": "Completado" if requisitos.documento_propiedad else "Incompleto",
+        "Status_Cedula_Catastral": "Completado" if requisitos.cedula_catastral else "Incompleto",
+        "Status_Carta_Autorizacion": "Completado" if requisitos.carta_autorizacion else "Incompleto",
+        "Status_Plano": "",
     }
 
     # Rellenar la plantilla con los datos
@@ -4633,7 +4640,7 @@ def doc_Guia(request, id):
 
     # Renderizar una plantilla que inicia la descarga y redirige automáticamente
     return response
-    
+
 def doc_Inspeccion(request):
     # Ruta al archivo plantilla en el directorio estático
     inspeccion = DocxTemplate("web/static/assets/Inspeccion_2025.docx")
