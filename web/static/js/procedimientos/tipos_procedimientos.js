@@ -1,6 +1,8 @@
 const selectDivision = document.getElementById("id_form1-opciones");
 const selectTipoProcedimiento = document.getElementById("id_form4-tipo_procedimiento");
 
+selectTipoProcedimiento.innerHTML = `<option value="" selected="">Seleccione Una Opcion</option>`
+
 // const division = selectOpciones_Unidad.value;
 async function cargarTipos(division) {
   const url = `/api/obtener_tipos_procedimientos?division=${division}`; // URL con la fecha como parámetro
