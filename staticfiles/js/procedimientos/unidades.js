@@ -1,6 +1,8 @@
 const selectOpciones_Unidad = document.getElementById("id_form1-opciones");
 const selectUnidad = document.getElementById("id_form2-unidad");
 
+selectUnidad.innerHTML = `<option value="" selected="">Seleccione Una Opcion</option>`
+
 // const division = selectOpciones_Unidad.value;
 async function cargarUnidades(division) {
   const url = `/api/obtener_unidades?division=${division}`; // URL con la fecha como parámetro
