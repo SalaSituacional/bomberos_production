@@ -949,6 +949,7 @@ class Formulario_Solicitud(forms.Form):
     numero_telefono = forms.CharField(required=False)
     correo_electronico = forms.EmailField(required=False)
     pago_tasa = forms.CharField(required=False)
+    metodo_pago = forms.CharField(required=False)
     referencia = forms.CharField(required=False)
 
 class Formularia_Requisitos(forms.Form):
@@ -984,4 +985,5 @@ class Formularia_Requisitos(forms.Form):
     documento_propiedad = forms.BooleanField(required=False,label="Documento de Propiedad/Carta de Arrendamiento")
     permiso_anterior = forms.BooleanField(required=False,label="Permiso Anterior (En Caso de Renovacion)")
     carta_autorizacion = forms.BooleanField(required=False,label="Carta Autorizacion")
+    plano_bomberil = forms.BooleanField(required=False,label="Plano de Uso Bomberil")
     registro_comercio = forms.BooleanField(required=False,label="Registro Comercio")

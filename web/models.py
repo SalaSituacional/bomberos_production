@@ -1004,6 +1004,7 @@ class Solicitudes(models.Model):
   numero_telefono = models.CharField()
   correo_electronico = models.CharField()
   pago_tasa = models.CharField()
+  metodo_pago = models.CharField()
   referencia = models.CharField()
 
   def __str__(self):
@@ -1029,6 +1030,7 @@ class Requisitos(models.Model):
   cedula_catastral_vencimiento = models.DateField(blank=True, null=True)
   
   carta_autorizacion = models.BooleanField(default=False)
+  plano_bomberil = models.BooleanField(blank=True, default=False)
   
   def __str__(self):
       return f"Requisitos para Solicitud {self.id_solicitud}"

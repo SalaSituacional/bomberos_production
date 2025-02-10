@@ -170,6 +170,7 @@
     var elemento8 = document.getElementById("id_permiso_anterior");
     var elemento9 = document.getElementById("id_carta_autorizacion");
     var elemento10 = document.getElementById("id_registro_comercio");
+    var elemento11 = document.getElementById("id_plano_bomberil");
 
     // Asignar una clase de CSS a cada elemento si existe
     if (elemento) {
@@ -209,6 +210,10 @@
     if (elemento10) {
         elemento10.classList.remove("form-select");
         elemento10.classList.add("new-check");
+    }
+    if (elemento11) {
+        elemento11.classList.remove("form-select");
+        elemento11.classList.add("new-check");
     }
 });
 

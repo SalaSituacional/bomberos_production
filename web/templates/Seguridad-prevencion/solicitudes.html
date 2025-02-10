@@ -220,16 +220,15 @@
       </tr>
     </thead>
     <tbody class="table-group-divider">
+      {% for row in comercios %}
       <tr>
-        <td>1</td>
-        <td>SCG_0001</td>
-        <td>Compañia anonima</td>
-        <td>E-00125123510</td>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ row.id_comercio }}</td>
+        <td>{{ row.nombre_comercio }}</td>
+        <td>{{ row.rif_empresarial }}</td>
         <td class="icons-accion">
           <!-- NO TOCAR Boton informacion-->
-          <button type="button" class="button-info" data-id="{{ row.procedimiento.id }}"
-            data-id_procedimiento="{{ row.procedimiento.id_tipo_procedimiento }}" id="view-info" data-bs-toggle="modal"
-            data-bs-target="#modal-info">
+          <button type="button" class="button-info" data-id="{{ row.id_comercio }}" id="view-info" data-bs-toggle="modal" data-bs-target="#modal-info">
             <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1"
               xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;">
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -246,6 +245,7 @@
           </button>
         </td>
       </tr>
+      {% endfor %}
     </tbody>
   </table>
 </div>
