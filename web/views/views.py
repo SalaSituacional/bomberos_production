@@ -17,6 +17,8 @@ from django.utils.timezone import make_aware
 from django.db.models import Prefetch
 from datetime import date
 from docxtpl import DocxTemplate
+
+
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
     return render(request, "404.html", status=404)

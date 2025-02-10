@@ -104,6 +104,7 @@ urlpatterns = [
     path('api/obtener_informacion/<int:id>/', obtener_informacion_editar, name='obtener_informacion'),
     path('api/obtener_unidades/', api_unidades, name='obtener_unidades'),
     path('api/obtener_tipos_procedimientos/', api_tipos_procedimientos, name='obtener_tipos_procedimientos'),
+    path('api/obtener_solicitante/', api_solicitantes, name='obtener_solicitante'),
     
 
     # Descargas

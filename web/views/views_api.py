@@ -12,6 +12,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from datetime import timedelta
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Case, When
  
 # Api para crear seccion de lista de procedimientos por cada division, por tipo y parroquia en la seccion de Estadistica
 def generar_resultados(request):
@@ -2641,4 +2642,13 @@ def api_tipos_procedimientos(request):
         resultado.append((str(proc.id), proc.tipo_procedimiento))
 
     return JsonResponse(resultado, safe=False)
-   
+
+def api_solicitantes(request):
+
+    jerarquias = ["General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+    personal = Personal.objects.filter(status="Activo").filter(rol="Bombero").order_by("id").exclude(id=4)
+    personal_ordenado = personal.order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) ) 
+    op = [("", "Seleccione Una Opcion"), ("0", "Externo")] 
+    for persona in personal_ordenado: op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}")) 
+
+    return JsonResponse(op, safe=False)
