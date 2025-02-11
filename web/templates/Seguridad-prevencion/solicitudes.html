@@ -202,8 +202,9 @@
   <!-- buscar_cedula.html -->
   <form method="get" class="form-control">
     <section class="filter-search">
-      <span class="input-group-text" id="basic-addon1"><b> Numero de Expediente </b> </span>
-      <input class="form-control" type="search" name="numero_cedula" id="cedula" placeholder="" />
+      <span class="input-group-text" id="basic-addon1"><b> Registros Totales: </b> <span>{{ conteo }}</span></span>
+      <span class="input-group-text" id="basic-addon1"><b> Numero de Expediente: </b> </span>
+      <input class="form-control" type="search" name="numero_expediente" id="cedula" value="{{ numero_expediente }}" />
       <button type="submit" class="btn btn-danger">Buscar</button>
     </section>
   </form>
@@ -213,13 +214,14 @@
     <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Nomero Expediente</th>t
+        <th scope="col">Número Expediente</th>
         <th scope="col">Nombre Del Comercio</th>
         <th scope="col">RIF Del Comercio</th>
         <th scope="col">Acciones</th>
       </tr>
     </thead>
     <tbody class="table-group-divider">
+      {% if comercios %}
       {% for row in comercios %}
       <tr>
         <td>{{ forloop.counter }}</td>
@@ -246,23 +248,23 @@
         </td>
       </tr>
       {% endfor %}
+      {% else %}
+      {% if request.GET.numero_expediente %}
+      <tr>
+        <td colspan="5" class="text-center text-warning">No se encontraron resultados.</td>
+      </tr>
+      {% endif %}
+      {% endif %}
     </tbody>
   </table>
 </div>
-
 <div class="contain-dates">
-  <h4 class="title-procediments">Solicitudes</h4>
+  <h4 class="title-procediments">Registros                                                                                                                                                                                                                                       </h4>
   <br>
   <section class="buttons-items input-group mb-3 filter-search">
-    <span class="input-group-text"><b> Seleccionar Fecha:</b></span>
-    <input type="date" class="form-control fecha_manual" name="fecha_manual" id="fecha_manual">
-    <button id="carga_manual" class="btn btn-danger" disabled>Obtener solicitud</button>
-    <button id="cargar_mas_btn" class="btn btn-danger">Cargar Solicitud</button>
+    <button id="cargar_mas_btn" class="btn btn-danger">Cargar Registros</button>
   </section>
 </div>
-
-
-
 <!------------------------------ modal de informacion ------------------------------>
 <div class="modal fade" tabindex="-1" id="modal-info">
   <div class="modal-dialog modal-xl">
@@ -286,7 +288,6 @@
               </tr>
             </thead>
             <tbody class="table-group-divider" id="tabla-contenido-prevencion">
-              
             </tbody>
           </table>
         </section>
@@ -300,6 +301,11 @@
   </div>
 </div>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("cedula").value = "";
+  });
+</script>
 
 <footer class="footer">
   <section class="text-reserved">

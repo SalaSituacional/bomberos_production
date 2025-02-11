@@ -2155,7 +2155,7 @@ def Antecedentes(request):
 
     user = request.session.get('user')
 
-    if not user:
+    if not user:                                                                                                                                                                                                                                                                                                                                              
         return redirect('/')
     
     procedimientos_ids = set()
@@ -4456,14 +4456,22 @@ def View_Procedimiento_Editar(request):
         "form_brigada": form_brigada,
         })
 
-# Vista de la seccion de Estadisticas
 def cerfiticados_prevencion(request):
     user = request.session.get('user')
     if not user:
-            return redirect('/')
+        return redirect('/')
+
+    numero_expediente = request.GET.get('numero_expediente', '').strip()
     
-    comercios = Comercio.objects.all()
-    conteo = comercios.count()
+    # Obtener el total de registros en la base de datos
+    total_comercios = Comercio.objects.count()
+
+    # Inicialmente, la tabla estará vacía
+    comercios = Comercio.objects.none()
+
+    # Si el usuario busca, filtra los resultados
+    if numero_expediente:
+        comercios = Comercio.objects.filter(id_comercio__icontains=numero_expediente)
 
     return render(request, "Seguridad-prevencion/solicitudes.html", {
         "user": user,
@@ -4471,8 +4479,11 @@ def cerfiticados_prevencion(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         "comercios": comercios,
-        "conteo": conteo,
+        "conteo": total_comercios,  # Mantiene el conteo total fijo
+        "numero_expediente": numero_expediente,
     })
+
+
 
 # Vista de la seccion de Estadisticas
 def planilla_certificado(request):
