@@ -2652,3 +2652,17 @@ def api_solicitantes(request):
     for persona in personal_ordenado: op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}")) 
 
     return JsonResponse(op, safe=False)
+
+# Apis para prevencion =======================================================================================================
+def api_get_solicitudes(request, id):
+    solicitudes = Solicitudes.objects.filter(id_solicitud=id)
+    data = []
+    for solicitud in solicitudes:
+        data.append({
+            "id": solicitud.id_solicitud.id_comercio,
+            "fecha": solicitud.fecha_solicitud,
+            "solicitante": solicitud.solicitante_nombre_apellido,
+            "tipo_solicitud": solicitud.tipo_servicio,
+        })
+
+    return JsonResponse(data, safe=False)
