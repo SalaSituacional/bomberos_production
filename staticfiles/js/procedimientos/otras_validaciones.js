@@ -59,7 +59,7 @@ document
 document.addEventListener("DOMContentLoaded", function () {
     const selects = document.querySelectorAll(".disable-first-option");
     selects.forEach((select) => {
-      select.options[0].disabled = true;
+      select.options[0].setAttribute("disabled", true);
     });
   });
   

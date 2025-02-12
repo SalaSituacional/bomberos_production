@@ -17,6 +17,8 @@ from django.utils.timezone import make_aware
 from django.db.models import Prefetch
 from datetime import date
 from docxtpl import DocxTemplate
+
+
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
     return render(request, "404.html", status=404)
@@ -2153,7 +2155,7 @@ def Antecedentes(request):
 
     user = request.session.get('user')
 
-    if not user:
+    if not user:                                                                                                                                                                                                                                                                                                                                              
         return redirect('/')
     
     procedimientos_ids = set()
@@ -4454,18 +4456,34 @@ def View_Procedimiento_Editar(request):
         "form_brigada": form_brigada,
         })
 
-# Vista de la seccion de Estadisticas
 def cerfiticados_prevencion(request):
     user = request.session.get('user')
     if not user:
-            return redirect('/')
+        return redirect('/')
+
+    numero_expediente = request.GET.get('numero_expediente', '').strip()
+    
+    # Obtener el total de registros en la base de datos
+    total_comercios = Comercio.objects.count()
+
+    # Inicialmente, la tabla estará vacía
+    comercios = Comercio.objects.none()
+
+    # Si el usuario busca, filtra los resultados
+    if numero_expediente:
+        comercios = Comercio.objects.filter(id_comercio__icontains=numero_expediente)
 
     return render(request, "Seguridad-prevencion/solicitudes.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
+        "comercios": comercios,
+        "conteo": total_comercios,  # Mantiene el conteo total fijo
+        "numero_expediente": numero_expediente,
     })
+
+
 
 # Vista de la seccion de Estadisticas
 def planilla_certificado(request):
@@ -4486,7 +4504,6 @@ def formulario_certificado_prevencion(request):
     if not user:
             return redirect('/')
 
-    
 
     return render(request, "Seguridad-prevencion/formularioSolicitud.html", {
         "user": user,
@@ -4522,6 +4539,7 @@ def agregar_solicitud(request):
         tipo_servicio = request.POST.get("tipo_servicio")
         solicitante = request.POST.get("solicitante_nombre_apellido")
         solicitante_cedula = request.POST.get("solicitante_cedula")
+        nacionalidad = request.POST.get("nacionalidad")
         tipo_representante = request.POST.get("tipo_representante")
         rif_representante = request.POST.get("rif_representante_legal")
         direccion = request.POST.get("direccion")
@@ -4531,7 +4549,10 @@ def agregar_solicitud(request):
         numero_telefono = request.POST.get("numero_telefono")
         correo = request.POST.get("correo_electronico")
         pago = request.POST.get("pago_tasa")
+        metodo_pago = request.POST.get("metodo_pago")
         referencia = request.POST.get("referencia")
+
+        print(nacionalidad)
 
         comercio_instance = Comercio.objects.get(id_comercio=comercio)
         municipio_instance = Municipios.objects.get(id=municipio)
@@ -4549,6 +4570,7 @@ def agregar_solicitud(request):
         rif_representante_vencimiento = request.POST.get("rif_representante_vencimiento")
         rif_comercio_vencimiento = request.POST.get("rif_comercio_vencimiento")
         cedula_catastral_vencimiento = request.POST.get("cedula_catastral_vencimiento")
+        plano_bomberil = request.POST.get("plano_bomberil") == "on" 
 
         new = Solicitudes.objects.create(
             id_solicitud=comercio_instance,
@@ -4556,7 +4578,7 @@ def agregar_solicitud(request):
             hora_solicitud=hora_solicitud,
             tipo_servicio=tipo_servicio,
             solicitante_nombre_apellido=solicitante,
-            solicitante_cedula=solicitante_cedula,
+            solicitante_cedula=f"{nacionalidad}-{solicitante_cedula}",
             tipo_representante=tipo_representante,
             rif_representante_legal=rif_representante,
             direccion=direccion,
@@ -4567,6 +4589,7 @@ def agregar_solicitud(request):
             correo_electronico=correo,
             pago_tasa=pago,
             referencia=referencia,
+            metodo_pago=metodo_pago,
         )
 
         req = Requisitos.objects.create(
@@ -4583,6 +4606,7 @@ def agregar_solicitud(request):
             cedula_catastral=cedula_catastral,
             cedula_catastral_vencimiento=cedula_catastral_vencimiento,
             carta_autorizacion=carta_autorizacion,
+            plano_bomberil=plano_bomberil,
         )
 
         # Redirigir después de generar el documento
@@ -4617,7 +4641,7 @@ def doc_Guia(request, id):
         "Telefono": solicitud.numero_telefono,
         "Correo_Electronico": solicitud.correo_electronico,
         "Pago_Tasa_Servicio": solicitud.pago_tasa,
-        "Metodo_Pago": "",
+        "Metodo_Pago": solicitud.metodo_pago,
         "Referencia": solicitud.referencia,
         "Status_Cedula": "Completado" if requisitos.cedula_identidad else "Incompleto",
         "Status_Rif": "Completado" if requisitos.rif_representante else "Incompleto",
@@ -4627,7 +4651,7 @@ def doc_Guia(request, id):
         "Status_Documento_Propiedad": "Completado" if requisitos.documento_propiedad else "Incompleto",
         "Status_Cedula_Catastral": "Completado" if requisitos.cedula_catastral else "Incompleto",
         "Status_Carta_Autorizacion": "Completado" if requisitos.carta_autorizacion else "Incompleto",
-        "Status_Plano": "",
+        "Status_Plano": "Completado" if requisitos.plano_bomberil else "Incompleto",
     }
 
     # Rellenar la plantilla con los datos

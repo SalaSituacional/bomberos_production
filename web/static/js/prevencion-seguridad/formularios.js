@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let parroquia = document.getElementById("id_parroquia");
         let numeroTelefono = document.getElementById("id_numero_telefono");
         let referencia = document.getElementById("id_referencia");
+        let metodoPago = document.getElementById("id_metodo_pago");
 
         // Validación de comercio
         if (!comercio.value) {
@@ -171,6 +172,14 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             clearError(referencia);
         }
+        
+        // Validación de Metoodo de Pago
+        if (!metodoPago.value) {
+            showError(metodoPago, "⚠️ Ingrese el Metodo de Pago.");
+            isValid = false;
+        } else {
+            clearError(metodoPago);
+        }
 
         // Validación de cédula
         const telefonoPattern = /^[0-9]+$/;
@@ -229,6 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     selectNacionalidad.id = "nacionalidad";
     selectNacionalidad.innerHTML = `<option value="V">V</option><option value="E">E</option>`;
+    selectNacionalidad.setAttribute("name", "nacionalidad");
 
     cedulaContainer.insertBefore(selectNacionalidad, cedulaInput);
 

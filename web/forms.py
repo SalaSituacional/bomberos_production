@@ -11,14 +11,6 @@ def Asignar_ops_Personal():
     for persona in personal_ordenado: op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}")) 
     return op 
 
-def Asignar_ops_Solicitante(): 
-    jerarquias = ["General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
-    personal = Personal.objects.filter(status="Activo").filter(rol="Bombero").order_by("id").exclude(id=4)
-    personal_ordenado = personal.order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) ) 
-    op = [("", "Seleccione Una Opcion"), ("0", "Externo")] 
-    for persona in personal_ordenado: op.append((str(persona.id), f"{persona.jerarquia} {persona.nombres} {persona.apellidos}")) 
-    return op
-
 def Asignar_op_Doctores():
     personal = Doctores.objects.all()
     op = [("", "Seleccione Una Opcion")]
@@ -248,13 +240,12 @@ class SelectorDivision(forms.Form):
 
 # Form2 
 class SeleccionarInfo(forms.Form):
-    solicitante = forms.ChoiceField(choices=Asignar_ops_Solicitante(), required=False,
-        widget=forms.Select(attrs={'class': 'disable-first-option'}))
+    solicitante = forms.CharField(required=False, widget=forms.Select(attrs={'class': 'disable-first-option'}))
+
     solicitante_externo = forms.CharField(required=False)
     unidad = forms.CharField(required=False, widget=forms.Select(attrs={'class': 'disable-first-option'}))
     efectivos_enviados = forms.IntegerField(widget=forms.NumberInput(attrs={'maxlength': '3'}), required=False)
-    jefe_comision = forms.ChoiceField(choices=Asignar_ops_Personal(), required=False,
-        widget=forms.Select(attrs={'class': 'disable-first-option'}))
+    jefe_comision = forms.CharField(required=False,widget=forms.Select(attrs={'class': 'disable-first-option'}))
 
 # Form3
 class Datos_Ubicacion(forms.Form):
@@ -958,6 +949,7 @@ class Formulario_Solicitud(forms.Form):
     numero_telefono = forms.CharField(required=False)
     correo_electronico = forms.EmailField(required=False)
     pago_tasa = forms.CharField(required=False)
+    metodo_pago = forms.CharField(required=False)
     referencia = forms.CharField(required=False)
 
 class Formularia_Requisitos(forms.Form):
@@ -993,4 +985,5 @@ class Formularia_Requisitos(forms.Form):
     documento_propiedad = forms.BooleanField(required=False,label="Documento de Propiedad/Carta de Arrendamiento")
     permiso_anterior = forms.BooleanField(required=False,label="Permiso Anterior (En Caso de Renovacion)")
     carta_autorizacion = forms.BooleanField(required=False,label="Carta Autorizacion")
+    plano_bomberil = forms.BooleanField(required=False,label="Plano de Uso Bomberil")
     registro_comercio = forms.BooleanField(required=False,label="Registro Comercio")

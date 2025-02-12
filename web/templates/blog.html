@@ -1,350 +1,228 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Blog Del cuerpo de Bomberos Estado Tachira">
-    <meta name="robots" content="index">
-    <meta name="robots" content="follow">
-    <meta name="author" content="Cuerpo De Bomberos - San Cristobal - Estado Tachira">
-    <link
-      rel="shortcut icon"
-      href="../../static/assets/logo bomberos 2.ico"
-      type="image/x-icon"
-    />
-    <title>Cuerpo De Bomberos - San Cristobal</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../static/styles.css" />
-  </head>
-  <body>
-    <div class="nav navbar-expand-lg bg-body-tertiary">
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="120"
-            height="120"
-            class="bi"
-            fill="currentColor"
-            viewBox="0 0 16 16"
-          >
+
+<head>
+  {% load pwa %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Blog Del cuerpo de Bomberos Estado Tachira">
+  <meta name="robots" content="index">
+  <meta name="robots" content="follow">
+  <meta name="title" content="Blog">
+  <meta name="author" content="Cuerpo De Bomberos - San Cristobal - Estado Tachira">
+  <link rel="icon" href="../../static/assets/logo bomberos 2.png" type="image/x-icon" />
+  <title>Cuerpo De Bomberos - San Cristobal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../static/styles.css" />
+  <link rel="canonical" href="https://cuerpobomberossc.com/">
+  <link rel="manifest" href="../static/js/pwa/manifest.json">
+  {% progressive_web_app_meta %}
+</head>
+
+<body>
+  <div class="nav navbar-expand-lg bg-body-tertiary">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" class="bi" fill="currentColor"
+          viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z">
+          </path>
+        </svg>
+      </span>
+    </button>
+    <div class="icon-to-title">
+      <div class="icon">
+        <img src="../static/assets/logo bomberos 2.png"
+          alt="Logotipo del Cuerpo de Bomberos del Municipio San Cristóbal" />
+      </div>
+      <div class="title-blog">
+        <p>Cuerpo Bomberos Tachira</p>
+        <span>Disciplina y Abnegacion</span>
+      </div>
+    </div>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <nav class="nav-bar">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Inicio</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="/informacion/" role="button"
+            aria-expanded="false">Informacion</a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="/informacion/">Reseña Historica</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/informacion/#mision">Mision</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/informacion/#vision">Vision</a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="/noticias/" role="button"
+            aria-expanded="false">Noticias</a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="/proceso_captacion/">Proceso de Captacion</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/noticias/#publicaciones">Publicaciones</a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="/zoedan/" role="button"
+            aria-expanded="false">Zoedan Tachira</a>
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="/zoedan/#informacion-zoedan">Informacion</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/zoedan/#Ubicaciones-zoedan">Ubicaciones</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="/zoedan/#estaciones-zoedan">Estaciones</a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/contacto/">Contacto</a>
+        </li>
+      </nav>
+    </div>
+    <div class="link-to-system">
+      <a href="/login/">
+        <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+          <g id="SVGRepo_iconCarrier">
             <path
-              fill-rule="evenodd"
-              d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
-            ></path>
-          </svg>
-        </span>
-      </button>
+              d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
+              stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z" stroke="#ffffff" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"></path>
+          </g>
+        </svg>
+        Ingresar
+      </a>
+    </div>
+  </div>
+
+  <!-- scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+    integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+    crossorigin="anonymous"></script>
+  {% block content %} {% endblock %}
+  <footer class="blog-footer">
+    <div class="log-social-media">
       <div class="icon-to-title">
         <div class="icon">
-          <img src="../static/assets/logo bomberos 2.png" alt="Logotipo del Cuerpo de Bomberos del Municipio San Cristóbal" />
+          <img src="../static/assets/logo bomberos 2.svg" alt="Logo bomberos" />
         </div>
         <div class="title-blog">
           <p>Cuerpo Bomberos Tachira</p>
           <span>Disciplina y Abnegacion</span>
         </div>
       </div>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <nav class="nav-bar">
-          <li class="nav-item">
-            <a class="nav-link" href="/">Inicio</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              data-bs-toggle="dropdown"
-              href="/informacion/"
-              role="button"
-              aria-expanded="false"
-              >Informacion</a
-            >
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="/informacion/"
-                  >Reseña Historica</a
-                >
-              </li>
-              <li>
-                <a class="dropdown-item" href="/informacion/#mision">Mision</a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="/informacion/#vision">Vision</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              data-bs-toggle="dropdown"
-              href="/noticias/"
-              role="button"
-              aria-expanded="false"
-              >Noticias</a
-            >
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="/proceso_captacion/"
-                  >Proceso de Captacion</a
-                >
-              </li>
-              <li>
-                <a class="dropdown-item" href="/noticias/#publicaciones"
-                  >Publicaciones</a
-                >
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              data-bs-toggle="dropdown"
-              href="/zoedan/"
-              role="button"
-              aria-expanded="false"
-              >Zoedan Tachira</a
-            >
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="/zoedan/#informacion-zoedan"
-                  >Informacion</a
-                >
-              </li>
-              <li>
-                <a class="dropdown-item" href="/zoedan/#Ubicaciones-zoedan"
-                  >Ubicaciones</a
-                >
-              </li>
-              <li>
-                <a class="dropdown-item" href="/zoedan/#estaciones-zoedan"
-                  >Estaciones</a
-                >
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/contacto/">Contacto</a>
-          </li>
-        </nav>
-      </div>
-      <div class="link-to-system">
-        <a href="/login/">
-          <svg
-            width="40px"
-            height="40px"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+      <div class="social-media">
+        <a href="#"><svg fill="#000000" width="40px" height="40px" viewBox="0 0 32 32" version="1.1"
+            xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g
-              id="SVGRepo_tracerCarrier"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            ></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
             <g id="SVGRepo_iconCarrier">
+              <title>facebook</title>
               <path
-                d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z"
-                stroke="#ffffff"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></path>
-              <path
-                d="M12 14C8.13401 14 5 17.134 5 21H19C19 17.134 15.866 14 12 14Z"
-                stroke="#ffffff"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></path>
+                d="M30.996 16.091c-0.001-8.281-6.714-14.994-14.996-14.994s-14.996 6.714-14.996 14.996c0 7.455 5.44 13.639 12.566 14.8l0.086 0.012v-10.478h-3.808v-4.336h3.808v-3.302c-0.019-0.167-0.029-0.361-0.029-0.557 0-2.923 2.37-5.293 5.293-5.293 0.141 0 0.281 0.006 0.42 0.016l-0.018-0.001c1.199 0.017 2.359 0.123 3.491 0.312l-0.134-0.019v3.69h-1.892c-0.086-0.012-0.185-0.019-0.285-0.019-1.197 0-2.168 0.97-2.168 2.168 0 0.068 0.003 0.135 0.009 0.202l-0.001-0.009v2.812h4.159l-0.665 4.336h-3.494v10.478c7.213-1.174 12.653-7.359 12.654-14.814v-0z">
+              </path>
             </g>
           </svg>
-          Ingresar
         </a>
-      </div>
-    </div>
-
-    <!-- scripts -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-      crossorigin="anonymous"
-    ></script>
-    {% block content %} {% endblock %}
-    <footer class="blog-footer">
-      <div class="log-social-media">
-        <div class="icon-to-title">
-          <div class="icon">
-            <img
-              src="../static/assets/logo bomberos 2.svg"
-              alt="Logo bomberos"
-            />
-          </div>
-          <div class="title-blog">
-            <p>Cuerpo Bomberos Tachira</p>
-            <span>Disciplina y Abnegacion</span>
-          </div>
-        </div>
-        <div class="social-media">
-          <a href="#"
-            ><svg
-              fill="#000000"
-              width="40px"
-              height="40px"
-              viewBox="0 0 32 32"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <title>facebook</title>
+        <a href="#"><svg fill="#000000" height="40px" width="40px" version="1.1" id="Layer_1"
+            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-143 145 512 512"
+            xml:space="preserve">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                d="M113,145c-141.4,0-256,114.6-256,256s114.6,256,256,256s256-114.6,256-256S254.4,145,113,145z M215.2,361.2 c0.1,2.2,0.1,4.5,0.1,6.8c0,69.5-52.9,149.7-149.7,149.7c-29.7,0-57.4-8.7-80.6-23.6c4.1,0.5,8.3,0.7,12.6,0.7 c24.6,0,47.3-8.4,65.3-22.5c-23-0.4-42.5-15.6-49.1-36.5c3.2,0.6,6.5,0.9,9.9,0.9c4.8,0,9.5-0.6,13.9-1.9 C13.5,430-4.6,408.7-4.6,383.2v-0.6c7.1,3.9,15.2,6.3,23.8,6.6c-14.1-9.4-23.4-25.6-23.4-43.8c0-9.6,2.6-18.7,7.1-26.5 c26,31.9,64.7,52.8,108.4,55c-0.9-3.8-1.4-7.8-1.4-12c0-29,23.6-52.6,52.6-52.6c15.1,0,28.8,6.4,38.4,16.6 c12-2.4,23.2-6.7,33.4-12.8c-3.9,12.3-12.3,22.6-23.1,29.1c10.6-1.3,20.8-4.1,30.2-8.3C234.4,344.5,225.5,353.7,215.2,361.2z">
+              </path>
+            </g>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/bomberos.sc/">
+          <svg fill="#000000" height="40px" width="40px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-143 145 512 512" xml:space="preserve">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <g>
                 <path
-                  d="M30.996 16.091c-0.001-8.281-6.714-14.994-14.996-14.994s-14.996 6.714-14.996 14.996c0 7.455 5.44 13.639 12.566 14.8l0.086 0.012v-10.478h-3.808v-4.336h3.808v-3.302c-0.019-0.167-0.029-0.361-0.029-0.557 0-2.923 2.37-5.293 5.293-5.293 0.141 0 0.281 0.006 0.42 0.016l-0.018-0.001c1.199 0.017 2.359 0.123 3.491 0.312l-0.134-0.019v3.69h-1.892c-0.086-0.012-0.185-0.019-0.285-0.019-1.197 0-2.168 0.97-2.168 2.168 0 0.068 0.003 0.135 0.009 0.202l-0.001-0.009v2.812h4.159l-0.665 4.336h-3.494v10.478c7.213-1.174 12.653-7.359 12.654-14.814v-0z"
-                ></path>
-              </g>
-            </svg>
-          </a>
-          <a href="#"
-            ><svg
-              fill="#000000"
-              height="40px"
-              width="40px"
-              version="1.1"
-              id="Layer_1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              viewBox="-143 145 512 512"
-              xml:space="preserve"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
+                  d="M113,446c24.8,0,45.1-20.2,45.1-45.1c0-9.8-3.2-18.9-8.5-26.3c-8.2-11.3-21.5-18.8-36.5-18.8s-28.3,7.4-36.5,18.8 c-5.3,7.4-8.5,16.5-8.5,26.3C68,425.8,88.2,446,113,446z">
+                </path>
+                <polygon points="211.4,345.9 211.4,308.1 211.4,302.5 205.8,302.5 168,302.6 168.2,346 "></polygon>
                 <path
-                  d="M113,145c-141.4,0-256,114.6-256,256s114.6,256,256,256s256-114.6,256-256S254.4,145,113,145z M215.2,361.2 c0.1,2.2,0.1,4.5,0.1,6.8c0,69.5-52.9,149.7-149.7,149.7c-29.7,0-57.4-8.7-80.6-23.6c4.1,0.5,8.3,0.7,12.6,0.7 c24.6,0,47.3-8.4,65.3-22.5c-23-0.4-42.5-15.6-49.1-36.5c3.2,0.6,6.5,0.9,9.9,0.9c4.8,0,9.5-0.6,13.9-1.9 C13.5,430-4.6,408.7-4.6,383.2v-0.6c7.1,3.9,15.2,6.3,23.8,6.6c-14.1-9.4-23.4-25.6-23.4-43.8c0-9.6,2.6-18.7,7.1-26.5 c26,31.9,64.7,52.8,108.4,55c-0.9-3.8-1.4-7.8-1.4-12c0-29,23.6-52.6,52.6-52.6c15.1,0,28.8,6.4,38.4,16.6 c12-2.4,23.2-6.7,33.4-12.8c-3.9,12.3-12.3,22.6-23.1,29.1c10.6-1.3,20.8-4.1,30.2-8.3C234.4,344.5,225.5,353.7,215.2,361.2z"
-                ></path>
+                  d="M183,401c0,38.6-31.4,70-70,70c-38.6,0-70-31.4-70-70c0-9.3,1.9-18.2,5.2-26.3H10v104.8C10,493,21,504,34.5,504h157 c13.5,0,24.5-11,24.5-24.5V374.7h-38.2C181.2,382.8,183,391.7,183,401z">
+                </path>
+                <path
+                  d="M113,145c-141.4,0-256,114.6-256,256s114.6,256,256,256s256-114.6,256-256S254.4,145,113,145z M241,374.7v104.8 c0,27.3-22.2,49.5-49.5,49.5h-157C7.2,529-15,506.8-15,479.5V374.7v-52.3c0-27.3,22.2-49.5,49.5-49.5h157 c27.3,0,49.5,22.2,49.5,49.5V374.7z">
+                </path>
               </g>
-            </svg>
-          </a>
-          <a href="https://www.instagram.com/bomberos.sc/">
-            <svg
-              fill="#000000"
-              height="40px"
-              width="40px"
-              version="1.1"
-              id="Layer_1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              viewBox="-143 145 512 512"
-              xml:space="preserve"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <g>
-                  <path
-                    d="M113,446c24.8,0,45.1-20.2,45.1-45.1c0-9.8-3.2-18.9-8.5-26.3c-8.2-11.3-21.5-18.8-36.5-18.8s-28.3,7.4-36.5,18.8 c-5.3,7.4-8.5,16.5-8.5,26.3C68,425.8,88.2,446,113,446z"
-                  ></path>
-                  <polygon
-                    points="211.4,345.9 211.4,308.1 211.4,302.5 205.8,302.5 168,302.6 168.2,346 "
-                  ></polygon>
-                  <path
-                    d="M183,401c0,38.6-31.4,70-70,70c-38.6,0-70-31.4-70-70c0-9.3,1.9-18.2,5.2-26.3H10v104.8C10,493,21,504,34.5,504h157 c13.5,0,24.5-11,24.5-24.5V374.7h-38.2C181.2,382.8,183,391.7,183,401z"
-                  ></path>
-                  <path
-                    d="M113,145c-141.4,0-256,114.6-256,256s114.6,256,256,256s256-114.6,256-256S254.4,145,113,145z M241,374.7v104.8 c0,27.3-22.2,49.5-49.5,49.5h-157C7.2,529-15,506.8-15,479.5V374.7v-52.3c0-27.3,22.2-49.5,49.5-49.5h157 c27.3,0,49.5,22.2,49.5,49.5V374.7z"
-                  ></path>
-                </g>
-              </g>
-            </svg>
-          </a>
-          <a href="#">
-            <svg
-              width="40px"
-              height="40px"
-              viewBox="0 0 20 20"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              fill="#000000"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <title>whatsapp [#128]</title>
-                <desc>Created with Sketch.</desc>
-                <defs></defs>
-                <g
-                  id="Page-1"
-                  stroke="none"
-                  stroke-width="1"
-                  fill="none"
-                  fill-rule="evenodd"
-                >
-                  <g
-                    id="Dribbble-Light-Preview"
-                    transform="translate(-300.000000, -7599.000000)"
-                    fill="#000000"
-                  >
-                    <g id="icons" transform="translate(56.000000, 160.000000)">
-                      <path
-                        d="M259.821,7453.12124 C259.58,7453.80344 258.622,7454.36761 257.858,7454.53266 C257.335,7454.64369 256.653,7454.73172 254.355,7453.77943 C251.774,7452.71011 248.19,7448.90097 248.19,7446.36621 C248.19,7445.07582 248.934,7443.57337 250.235,7443.57337 C250.861,7443.57337 250.999,7443.58538 251.205,7444.07952 C251.446,7444.6617 252.034,7446.09613 252.104,7446.24317 C252.393,7446.84635 251.81,7447.19946 251.387,7447.72462 C251.252,7447.88266 251.099,7448.05372 251.27,7448.3478 C251.44,7448.63589 252.028,7449.59418 252.892,7450.36341 C254.008,7451.35771 254.913,7451.6748 255.237,7451.80984 C255.478,7451.90987 255.766,7451.88687 255.942,7451.69881 C256.165,7451.45774 256.442,7451.05762 256.724,7450.6635 C256.923,7450.38141 257.176,7450.3464 257.441,7450.44643 C257.62,7450.50845 259.895,7451.56477 259.991,7451.73382 C260.062,7451.85686 260.062,7452.43903 259.821,7453.12124 M254.002,7439 L253.997,7439 L253.997,7439 C248.484,7439 244,7443.48535 244,7449 C244,7451.18666 244.705,7453.21526 245.904,7454.86076 L244.658,7458.57687 L248.501,7457.3485 C250.082,7458.39482 251.969,7459 254.002,7459 C259.515,7459 264,7454.51465 264,7449 C264,7443.48535 259.515,7439 254.002,7439"
-                        id="whatsapp-[#128]"
-                      ></path>
-                    </g>
+            </g>
+          </svg>
+        </a>
+        <a href="#">
+          <svg width="40px" height="40px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <title>whatsapp [#128]</title>
+              <desc>Created with Sketch.</desc>
+              <defs></defs>
+              <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="Dribbble-Light-Preview" transform="translate(-300.000000, -7599.000000)" fill="#000000">
+                  <g id="icons" transform="translate(56.000000, 160.000000)">
+                    <path
+                      d="M259.821,7453.12124 C259.58,7453.80344 258.622,7454.36761 257.858,7454.53266 C257.335,7454.64369 256.653,7454.73172 254.355,7453.77943 C251.774,7452.71011 248.19,7448.90097 248.19,7446.36621 C248.19,7445.07582 248.934,7443.57337 250.235,7443.57337 C250.861,7443.57337 250.999,7443.58538 251.205,7444.07952 C251.446,7444.6617 252.034,7446.09613 252.104,7446.24317 C252.393,7446.84635 251.81,7447.19946 251.387,7447.72462 C251.252,7447.88266 251.099,7448.05372 251.27,7448.3478 C251.44,7448.63589 252.028,7449.59418 252.892,7450.36341 C254.008,7451.35771 254.913,7451.6748 255.237,7451.80984 C255.478,7451.90987 255.766,7451.88687 255.942,7451.69881 C256.165,7451.45774 256.442,7451.05762 256.724,7450.6635 C256.923,7450.38141 257.176,7450.3464 257.441,7450.44643 C257.62,7450.50845 259.895,7451.56477 259.991,7451.73382 C260.062,7451.85686 260.062,7452.43903 259.821,7453.12124 M254.002,7439 L253.997,7439 L253.997,7439 C248.484,7439 244,7443.48535 244,7449 C244,7451.18666 244.705,7453.21526 245.904,7454.86076 L244.658,7458.57687 L248.501,7457.3485 C250.082,7458.39482 251.969,7459 254.002,7459 C259.515,7459 264,7454.51465 264,7449 C264,7443.48535 259.515,7439 254.002,7439"
+                      id="whatsapp-[#128]"></path>
                   </g>
                 </g>
               </g>
-            </svg>
-          </a>
-        </div>
-      </div>
-      <div class="author">
-        <p>Todos los derechos Reservados</p>
-      </div>
-    </footer>
-
-    <!-- Pantalla de carga -->
-    <div
-      id="loadingScreen"
-      style="display: none"
-      class="text-center justify-content-center"
-    >
-      <div class="spinner-border text-danger">
-        <span class="visually-hidden">Loading...</span>
+            </g>
+          </svg>
+        </a>
       </div>
     </div>
-    <script src="../static/js/loader-function.js"></script>
-  </body>
+    <div class="author">
+      <p>Todos los derechos Reservados</p>
+    </div>
+  </footer>
+
+  <!-- Pantalla de carga -->
+  <div id="loadingScreen" style="display: none" class="text-center justify-content-center">
+    <div class="spinner-border text-danger">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <script src="../static/js/loader-function.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/static/js/pwa/serviceworker.js')
+        .then(function (registration) {
+          console.log('Service Worker registrado con éxito:', registration);
+        })
+        .catch(function (error) {
+          console.log('Error al registrar el Service Worker:', error);
+        });
+    }
+  </script>
+</body>
+
 </html>
