@@ -6,11 +6,17 @@ window.addEventListener('beforeinstallprompt', (e) => {
     // Guardar el evento para poder mostrar el banner de instalación personalizado
     deferredPrompt = e;
 
-    // Mostrar la ventana modal solo si la PWA no está instalada
-    $('#ModalPWA').modal('show');
+    // Habilitar el botón de descarga
+    $('#downloadPWA').show();
 });
 
 $(document).ready(function() {
+    // Verificar si la PWA está instalada
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('La PWA ya está instalada');
+        $('#downloadPWA').hide(); // Ocultar el botón si la PWA ya está instalada
+    }
+
     // Habilitar el botón de descarga de la PWA
     $('#downloadPWA').on('click', function() {
         if (deferredPrompt) {
@@ -28,10 +34,4 @@ $(document).ready(function() {
             });
         }
     });
-
-    // Si el usuario ya tiene la PWA instalada, no mostrar la ventana modal
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        alert('La PWA ya está instalada');
-        $('#ModalPWA').modal('hide');
-    }
 });

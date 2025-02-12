@@ -3341,7 +3341,8 @@ checkbox-styles {
 .info-modify {
   width: 100% !important;
 }
-.buttons-solicitud{
+
+.buttons-solicitud {
   margin: 0 auto;
   width: 100%;
   display: flex;
@@ -3349,21 +3350,37 @@ checkbox-styles {
   justify-content: space-evenly;
 
 }
-.add-pwa-content{
+
+.add-pwa-content {
   margin-top: 30%;
 }
-.modify-pwa{
+
+.modify-pwa {
   display: flex;
   flex-direction: column;
 }
+
 .contain-svg-pwa {
   width: 80%;
   margin: .5rem;
 }
-.buttons-pwa{
+
+.buttons-pwa {
   width: 100%;
   padding: 1rem;
 }
+
+.link-to-pwa {
+  margin-right: 1.5rem;
+  margin-top: 1.3rem;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
@@ -3534,256 +3551,261 @@ checkbox-styles {
     width: 15%;
   }
 
-  .inicial-carrousel-one {
-    margin-top: 5rem;
-    width: 100%;
+  .link-to-pwa {
+    margin: 0.1rem;
   }
+}
 
-  .carousel-inner {
-    height: 100%;
+
+.inicial-carrousel-one {
+  margin-top: 5rem;
+  width: 100%;
+}
+
+.carousel-inner {
+  height: 100%;
+}
+
+.carousel-inner img {
+  object-fit: cover;
+}
+
+.link-function {
+  width: 100%;
+}
+
+.atention-person {
+  width: 45%;
+  margin-top: 10px;
+}
+
+.atention-person span {
+  text-align: center;
+  font-size: 14px;
+}
+
+.name-fuction h3 {
+  text-align: center;
+}
+
+.card-comand {
+  width: 45%;
+  height: 25rem;
+}
+
+.content-card-comand {
+  width: 45%;
+  font-size: 17px;
+  padding: 18px;
+}
+
+.contain-comand {
+  align-items: center;
+}
+
+.content-card-comand h2 {
+  font-size: 1.5rem;
+  text-align: center;
+  width: auto;
+}
+
+.client-info {
+  width: 100%;
+  height: 40rem;
+  margin-bottom: 2rem;
+}
+
+.background-img-info {
+  width: 100%;
+  background-position: -310px;
+}
+
+.background-img-localitation {
+  width: 100%;
+  display: none;
+}
+
+.information-background h3 {
+  font-size: 2rem
+}
+
+.log-social-media {
+  flex-wrap: wrap;
+}
+
+.social-media {
+  margin: 1rem 0;
+}
+
+.social-media a {
+  margin: 0.5rem;
+}
+
+.title-blog span,
+.title-blog p {
+  text-align: center;
+}
+
+/* Seccion GLP */
+.text-inter {
+  margin: 0;
+
+  h2 {
+    font-size: 2.3rem;
   }
+}
 
-  .carousel-inner img {
-    object-fit: cover;
+.to-glp {
+  background-position: center 40px;
+}
+
+.title-information-section {
+  font-size: 2.5rem;
+  padding: 1rem;
+  margin-top: 8rem;
+}
+
+.row-information {
+  flex-direction: column;
+}
+
+.content-text {
+  width: 90%;
+}
+
+.content-image {
+  width: 90%;
+
+  /* height: 12rem; */
+  img {
+    border-radius: 2rem;
   }
+}
 
-  .link-function {
-    width: 100%;
-  }
+.order-by {
+  order: 1;
+}
 
-  .atention-person {
-    width: 45%;
-    margin-top: 10px;
-  }
+.content-text {
+  margin: 1.5rem auto;
+}
 
-  .atention-person span {
-    text-align: center;
-    font-size: 14px;
-  }
+.to-capacitation {
+  background-position: -20px 110px;
+}
 
-  .name-fuction h3 {
-    text-align: center;
-  }
+/* Psicologia */
+.to-psicologa {
+  background-position: center 100px;
+}
 
-  .card-comand {
-    width: 45%;
-    height: 25rem;
-  }
-
-  .content-card-comand {
-    width: 45%;
-    font-size: 17px;
-    padding: 18px;
-  }
-
-  .contain-comand {
-    align-items: center;
-  }
-
-  .content-card-comand h2 {
-    font-size: 1.5rem;
-    text-align: center;
-    width: auto;
-  }
-
-  .client-info {
-    width: 100%;
-    height: 40rem;
-    margin-bottom: 2rem;
-  }
-
-  .background-img-info {
-    width: 100%;
-    background-position: -310px;
-  }
-
-  .background-img-localitation {
-    width: 100%;
-    display: none;
-  }
-
-  .information-background h3 {
-    font-size: 2rem
-  }
-
-  .log-social-media {
-    flex-wrap: wrap;
-  }
-
-  .social-media {
-    margin: 1rem 0;
-  }
-
-  .social-media a {
-    margin: 0.5rem;
-  }
-
-  .title-blog span,
-  .title-blog p {
-    text-align: center;
-  }
-
-  /* Seccion GLP */
-  .text-inter {
-    margin: 0;
-
-    h2 {
-      font-size: 2.3rem;
-    }
-  }
-
-  .to-glp {
-    background-position: center 40px;
-  }
-
-  .title-information-section {
-    font-size: 2.5rem;
-    padding: 1rem;
-    margin-top: 8rem;
-  }
-
-  .row-information {
-    flex-direction: column;
-  }
-
-  .content-text {
-    width: 90%;
-  }
-
-  .content-image {
-    width: 90%;
-
-    /* height: 12rem; */
-    img {
-      border-radius: 2rem;
-    }
-  }
-
-  .order-by {
-    order: 1;
-  }
-
-  .content-text {
-    margin: 1.5rem auto;
-  }
-
-  .to-capacitation {
-    background-position: -20px 110px;
-  }
-
-  /* Psicologia */
-  .to-psicologa {
-    background-position: center 100px;
-  }
-
-  .content-text {
-    a {
-      button {
-        width: 100%;
-      }
-    }
-  }
-
-  /* information */
-  .to-information {
-    background-repeat: no-repeat;
-    background-position: center center;
-  }
-
-  /* Contacto */
-  .to-contact {
-    background-size: cover;
-    background-position: -270px;
-  }
-
-  .text-inter h2 {
-    font-size: 1.5rem;
-  }
-
-  .localitation {
-    width: 80%;
-    height: 12rem;
-    flex-wrap: wrap;
-    padding: .5rem;
-  }
-
-  .ubication {
-    width: 70%;
-    padding: .5rem;
-    order: 1;
-  }
-
-  #stationInfo {
-    padding: .5rem;
-
-    #stationAddress {
-      margin-top: .5rem;
-      display: block;
-      text-align: center;
-    }
-
-  }
-
-  .iframe-maps {
-    width: 100%;
-    bottom: 12rem;
-  }
-
-  /* Galeria */
-  .card-gallery {
-    width: 30%;
-  }
-
-  /* Dashboard */
-  .card-parroquies {
-    height: 9rem;
-    width: 15rem;
-
-    span {
-      border-radius: inherit;
-      width: 40%;
-    }
-  }
-
-  .progress-bar {
-    width: 28%;
-
-    p {
-      align-self: center;
-    }
-  }
-
-  .form_personal div {
-    width: 40%;
-
-    label,
-    input,
-    select {
+.content-text {
+  a {
+    button {
       width: 100%;
     }
   }
+}
 
-  .table {
-    width: 170%;
+/* information */
+.to-information {
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Contacto */
+.to-contact {
+  background-size: cover;
+  background-position: -270px;
+}
+
+.text-inter h2 {
+  font-size: 1.5rem;
+}
+
+.localitation {
+  width: 80%;
+  height: 12rem;
+  flex-wrap: wrap;
+  padding: .5rem;
+}
+
+.ubication {
+  width: 70%;
+  padding: .5rem;
+  order: 1;
+}
+
+#stationInfo {
+  padding: .5rem;
+
+  #stationAddress {
+    margin-top: .5rem;
+    display: block;
+    text-align: center;
   }
 
-  .content-stadist {
-    flex-direction: column;
-  }
+}
 
-  .stadist-column {
-    width: 80%;
-    margin: 2rem auto;
-    order: -1;
-  }
+.iframe-maps {
+  width: 100%;
+  bottom: 12rem;
+}
 
-  .barts {
-    height: 560px;
-  }
+/* Galeria */
+.card-gallery {
+  width: 30%;
+}
 
-  .bar-graphic {
-    height: 100% !important;
+/* Dashboard */
+.card-parroquies {
+  height: 9rem;
+  width: 15rem;
+
+  span {
+    border-radius: inherit;
+    width: 40%;
   }
+}
+
+.progress-bar {
+  width: 28%;
+
+  p {
+    align-self: center;
+  }
+}
+
+.form_personal div {
+  width: 40%;
+
+  label,
+  input,
+  select {
+    width: 100%;
+  }
+}
+
+.table {
+  width: 170%;
+}
+
+.content-stadist {
+  flex-direction: column;
+}
+
+.stadist-column {
+  width: 80%;
+  margin: 2rem auto;
+  order: -1;
+}
+
+.barts {
+  height: 560px;
+}
+
+.bar-graphic {
+  height: 100% !important;
 }
 
 @media (max-width: 990px) {
@@ -3794,6 +3816,16 @@ checkbox-styles {
   .link-to-system {
     margin: 0;
     width: 25%;
+  }
+
+  .link-to-pwa {
+    margin: 0;
+    padding: 0;
+
+    button {
+      padding: 0;
+    }
+
   }
 
   /* information */
@@ -4661,7 +4693,8 @@ checkbox-styles {
 
   .parte-b {
     align-items: center;
-    div{
+
+    div {
       margin: 0;
     }
   }
@@ -4669,9 +4702,11 @@ checkbox-styles {
   .parte-a {
     flex-direction: column;
     align-items: center;
-    h2{
+
+    h2 {
       font-size: 1.2rem;
     }
+
     div {
       justify-content: flex-start;
       width: 100%;
@@ -4692,9 +4727,11 @@ checkbox-styles {
       }
     }
   }
-  .buttons-solicitud{
+
+  .buttons-solicitud {
     flex-direction: column;
-    button{
+
+    button {
       width: 100%;
     }
 
