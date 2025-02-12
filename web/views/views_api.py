@@ -2659,6 +2659,7 @@ def api_get_solicitudes(request, id):
     data = []
     for solicitud in solicitudes:
         data.append({
+            "id_solicitud": solicitud.id,
             "id": solicitud.id_solicitud.id_comercio,
             "fecha": solicitud.fecha_solicitud,
             "solicitante": solicitud.solicitante_nombre_apellido,
