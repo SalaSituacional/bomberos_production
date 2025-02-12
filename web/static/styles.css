@@ -3349,6 +3349,21 @@ checkbox-styles {
   justify-content: space-evenly;
 
 }
+.add-pwa-content{
+  margin-top: 30%;
+}
+.modify-pwa{
+  display: flex;
+  flex-direction: column;
+}
+.contain-svg-pwa {
+  width: 80%;
+  margin: .5rem;
+}
+.buttons-pwa{
+  width: 100%;
+  padding: 1rem;
+}
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
