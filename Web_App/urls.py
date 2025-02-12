@@ -16,13 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import handler404
-from django.urls import path
+from django.urls import path, include
 from web.views.views import *
 from web.views.views_api import *
 from web.views.views_blog import *
 from web.views.views_descargas import *
 from web.views.views_tables import *
-
+from django.views.generic import TemplateView
 handler404 = custom_404_view
 
 #Se crean las rutas que se podran visitar en la aplicacion web.
@@ -122,4 +122,8 @@ urlpatterns = [
     path('descargar-excel-prevencion/', generar_excel_prevencion, name='descargar_excel_prevencion'),
     path('descargar-excel-enfermeria/', generar_excel_enfermeria, name='descargar_excel_enfermeria'),
     path('descargar-excel-operacional/', generar_excel_operacional, name='descargar_excel_operacional'),
+
+# PWA
+    path('', include('pwa.urls')),
+    path('serviceworker.js', TemplateView.as_view(template_name='web/static/js/pwa/serviceworker.js', content_type='application/javascript')),
 ]

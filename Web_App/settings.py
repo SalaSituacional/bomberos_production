@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-usf!gyb)c_93(yhk-ab2gm%&_(hlk1ough81m110qhhrn4$cvy
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Debug true significa desarrollo modo de pruebas
-DEBUG = True
+DEBUG = False
 
 #------------- modo produccion-----------------
 # Debug false significa produccion quiere decir listo para usarse
@@ -39,10 +39,6 @@ DEBUG = True
 # ALLOWED_HOSTS = []
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1','cuerpobomberossc.com', 'www.cuerpobomberossc.com']
-
-
-
-
 
 # Application definition
 
@@ -53,7 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "web"
+    "web",
+    'pwa',
 ]
 
 MIDDLEWARE = [
@@ -99,7 +96,40 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Web_App.wsgi.application'
 
+# app PWA
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,  'web/static'),
+]
+
+PWA_APP_NAME = 'Cuerpo Bomberos SC'
+PWA_APP_DESCRIPTION = "App Web del cuerpo de bomberos"
+PWA_APP_THEME_COLOR = '#0A0302'
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/images/logo bomberos 2.png',
+        'sizes': '160x160'
+    }
+]
+PWA_APP_SPLASH_SCREEN = [
+    {
+        'src': '/static/images/icons/splash-640x1136.png',
+        'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+    }
+]
+
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'web/static/js/pwa/serviceworker.js')
+
+
+
+
+# ------------------------------------------------------------------------------
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
