@@ -4665,33 +4665,34 @@ def doc_Guia(request, id):
     # Renderizar una plantilla que inicia la descarga y redirige automáticamente
     return response
 
-def doc_Inspeccion(request):
+def doc_Inspeccion(request, id):
+    solicitud = Solicitudes.objects.get(id=id)
+    datos_solicitud = Comercio.objects.get(id_comercio=solicitud.id_solicitud.id_comercio)
+
     # Ruta al archivo plantilla en el directorio estático
     inspeccion = DocxTemplate("web/static/assets/Inspeccion_2025.docx")
 
     # Datos para reemplazar en la plantilla (predefinidos según los campos)
     datos = {
-        "ID_Comercio": "12345",
-        "Fecha_Solicitud": "05/02/2025",
-        "Hora": "10:30 AM",
-        "Tipo_Servicio": "Inspección",
-        "Solicitante": "Juan Pérez",
-        "CI": "V-12345678",
-        "Tipo_Representante": "Natural",
-        "Nombre_Comercio": "Tech Solutions",
-        "Rif_Empresarial": "J-12345678-9",
-        "Rif_Representante_Legal": "V-98765432",
-        "Direccion": "Av. Principal #123",
-        "Estado": "Táchira",
-        "Municipio": "San Cristóbal",
-        "Parroquia": "La Concordia",
-        "Telefono": "0412-3456789",
-        "Correo_Electronico": "contacto@techsolutions.com",
-        "Pago_Tasa_Servicio": "Pagado",
-        "Metodo_Pago": "Transferencia",
-        "Referencia": "REF12345",
-        "Encargado_Atencion": "María Gómez",
-        "Status" : "Completado",
+        "ID_Comercio": datos_solicitud.id_comercio,
+        "Fecha_Solicitud": solicitud.fecha_solicitud,
+        "Hora": solicitud.hora_solicitud,
+        "Tipo_Servicio": solicitud.tipo_servicio,
+        "Solicitante": solicitud.solicitante_nombre_apellido,
+        "CI": solicitud.solicitante_cedula,
+        "Tipo_Representante": solicitud.tipo_representante,
+        "Nombre_Comercio": datos_solicitud.nombre_comercio,
+        "Rif_Empresarial": datos_solicitud.rif_empresarial,
+        "Rif_Representante_Legal": solicitud.rif_representante_legal,
+        "Direccion": solicitud.direccion,
+        "Estado": solicitud.estado,
+        "Municipio": solicitud.municipio,
+        "Parroquia": solicitud.parroquia,
+        "Telefono": solicitud.numero_telefono,
+        "Correo_Electronico": solicitud.correo_electronico,
+        "Pago_Tasa_Servicio": solicitud.pago_tasa,
+        "Metodo_Pago": solicitud.metodo_pago,
+        "Referencia": solicitud.referencia,
     }
 
     # Rellenar la plantilla con los datos
