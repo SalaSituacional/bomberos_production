@@ -2667,3 +2667,8 @@ def api_get_solicitudes(request, id):
         })
 
     return JsonResponse(data, safe=False)
+
+def api_eliminar_solicitudes(request, id):
+    solicitud = get_object_or_404(Solicitudes, id=id)
+    solicitud.delete()
+    return JsonResponse({"message": "Solicitud eliminada correctamente"}, status=200)

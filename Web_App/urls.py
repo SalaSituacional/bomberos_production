@@ -62,7 +62,8 @@ urlpatterns = [
     path('planillacertificado/', planilla_certificado),
     path('api/get_solicitudes/<int:id>/', api_get_solicitudes, name='api_get_solicitudes'),
     path('generar_documento_guia/<int:id>/', doc_Guia, name='generar_documento_guia'),
-    path('generar_documento_inspeccion/', doc_Inspeccion, name='generar_documento_inspeccion'),
+    path('api/eliminar_solicitudes/<int:id>/', api_eliminar_solicitudes, name='api_eliminar_solicitudes'),
+    path('generar_documento_inspeccion/<int:id>/', doc_Inspeccion, name='generar_documento_inspeccion'),
 
     
     path('agregar_comercio/', agregar_comercio , name='agregar_comercio'),
