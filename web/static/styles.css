@@ -3773,6 +3773,10 @@ checkbox-styles {
 .table {
   width: 170%;
 }
+.table-modify{
+  margin: 0 auto;
+  width: 100%;
+}
 
 .content-stadist {
   flex-direction: column;
@@ -4119,6 +4123,10 @@ checkbox-styles {
 
   .table {
     width: 220%;
+  }
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
   }
 
   .filter-search {
@@ -4547,7 +4555,10 @@ checkbox-styles {
   .table {
     width: 260%;
   }
-
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
+  }
   .modal-xl {
     max-width: 100% !important;
   }
@@ -4618,6 +4629,10 @@ checkbox-styles {
 
   .table {
     width: 380%;
+  }
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
   }
 
   .division-title {
@@ -5113,6 +5128,10 @@ checkbox-styles {
   .table {
     width: 520%;
   }
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
+  }
 
   .info-modal p {
     font-size: .9rem;
@@ -5239,7 +5258,10 @@ checkbox-styles {
   .table {
     width: 600%;
   }
-
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
+  }
   .barts {
     height: 320px;
   }

@@ -19,7 +19,7 @@ function descargarWordSolicitud() {
                   // Crear un enlace oculto y simular el clic
                   const a = document.createElement("a");
                   a.href = url;
-                  a.download = `Guia_Solicitud.docx`; // Nombre personalizado
+                  a.download = `Guia_Solicitud.pdf`; // Nombre personalizado
                   document.body.appendChild(a);
                   a.click();
                   document.body.removeChild(a);
@@ -44,7 +44,7 @@ function descargarWordSolicitud() {
                   // Crear un enlace oculto y simular el clic
                   const a = document.createElement("a");
                   a.href = url;
-                  a.download = `Guia de Inspeccion.docx`; // Nombre personalizado
+                  a.download = `Guia de Inspeccion.pdf`; // Nombre personalizado
                   document.body.appendChild(a);
                   a.click();
                   document.body.removeChild(a);
