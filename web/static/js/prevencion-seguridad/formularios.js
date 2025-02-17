@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector("form");
     const submitButton = document.querySelector(".registrar"); // Botón de enviar
 
+    document.getElementById("id_referencia").setAttribute("disabled", true)
+
     // Función para agregar mensajes de error
     function showError(input, message) {
         let errorSpan = input.nextElementSibling;
@@ -165,13 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
             clearError(parroquia);
         }
         
-        // Validación de fecha solicitud
-        if (!referencia.value) {
-            showError(referencia, "⚠️ Ingrese el Numero de Refererncia.");
-            isValid = false;
-        } else {
-            clearError(referencia);
-        }
+        
         
         // Validación de Metoodo de Pago
         if (!metodoPago.value) {
@@ -193,6 +189,22 @@ document.addEventListener("DOMContentLoaded", function () {
             clearError(numeroTelefono);
         }
 
+        metodoPago.addEventListener("change", function () {
+            if (metodoPago.value === "Transferencia" || metodoPago.value === "Deposito") {
+                referencia.removeAttribute("disabled")
+
+                // Validación de fecha solicitud
+                if (!referencia.value) {
+                    showError(referencia, "⚠️ Ingrese el Numero de Refererncia.");
+                    isValid = false;
+                } else {
+                    clearError(referencia);
+                }   
+            } else{
+                referencia.setAttribute("disabled", true)
+                clearError(referencia);
+            }
+        })
    
 
         // Activar o desactivar el botón de enviar

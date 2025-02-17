@@ -66,6 +66,8 @@ openModalPrevencion.addEventListener('click', async () => {
             </td>
         <tr>
         `;
+
+        i++;
     });
 
     descargarWordSolicitud();
