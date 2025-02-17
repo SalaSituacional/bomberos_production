@@ -3369,18 +3369,6 @@ checkbox-styles {
   width: 100%;
   padding: 1rem;
 }
-
-.link-to-pwa {
-  margin-right: 1.5rem;
-  margin-top: 1.3rem;
-  width: auto;
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-}
-
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
@@ -3549,10 +3537,6 @@ checkbox-styles {
   .link-to-system {
     margin: 0;
     width: 15%;
-  }
-
-  .link-to-pwa {
-    margin: 0.1rem;
   }
 }
 
@@ -3789,6 +3773,10 @@ checkbox-styles {
 .table {
   width: 170%;
 }
+.table-modify{
+  margin: 0 auto;
+  width: 100%;
+}
 
 .content-stadist {
   flex-direction: column;
@@ -3817,17 +3805,6 @@ checkbox-styles {
     margin: 0;
     width: 25%;
   }
-
-  .link-to-pwa {
-    margin: 0;
-    padding: 0;
-
-    button {
-      padding: 0;
-    }
-
-  }
-
   /* information */
   .to-information {
     background-repeat: no-repeat;
@@ -4146,6 +4123,10 @@ checkbox-styles {
 
   .table {
     width: 220%;
+  }
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
   }
 
   .filter-search {
@@ -4574,7 +4555,10 @@ checkbox-styles {
   .table {
     width: 260%;
   }
-
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
+  }
   .modal-xl {
     max-width: 100% !important;
   }
@@ -4645,6 +4629,10 @@ checkbox-styles {
 
   .table {
     width: 380%;
+  }
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
   }
 
   .division-title {
@@ -5140,6 +5128,10 @@ checkbox-styles {
   .table {
     width: 520%;
   }
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
+  }
 
   .info-modal p {
     font-size: .9rem;
@@ -5266,7 +5258,10 @@ checkbox-styles {
   .table {
     width: 600%;
   }
-
+  .table-modify{
+    margin: 0 auto;
+    width: 100%;
+  }
   .barts {
     height: 320px;
   }
