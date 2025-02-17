@@ -8,17 +8,9 @@
 
 ".\venv\Scripts\activate" -- Ejecutar el activador
 
-### 2do - Descargar Django en el Entorno Virtual
-
-"py -m pip install django" -- Descargar la libreria de Django
+### 2do - Instalar las librerias mediante el requirement.txt
 
 "pip install -r requirements.txt " descargar las librerias usadas en el programa"
-
-# Ejecutar el Django
-
-### 3ero - Ingresar a la ruta
-
-C:\Users\usuario\Desktop\CuerpoBomberos\Cuerpo_bomberos
 
 ### Ejecutar:
 

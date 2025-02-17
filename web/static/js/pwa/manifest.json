@@ -1,0 +1,66 @@
+{
+    "name": "Cuerpo De bomberos SC",
+    "short_name": "BomberosSC",
+    "description": "App web para cuerpo de bomberos",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#0A0302",
+    "icons": [
+        {
+            "src": "/static/assets/icons/180.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/80.png",
+            "sizes": "80x80",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/120.png",
+            "sizes": "120x120",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/57.png",
+            "sizes": "57x57",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/58.png",
+            "sizes": "58x58",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/29.png",
+            "sizes": "29x29",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/87.png",
+            "sizes": "87x87",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/114.png",
+            "sizes": "114x114",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/40.png",
+            "sizes": "40x40",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/60.png",
+            "sizes": "60x60",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/assets/icons/1024.png",
+            "sizes": "1024x1024",
+            "type": "image/png"
+        }
+    ]
+}
