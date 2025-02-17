@@ -1,3 +1,5 @@
+import io
+import instaloader
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from ..models import Usuarios, Divisiones, Procedimientos
@@ -8,7 +10,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.db.models import Case, When
-import instaloader
 from datetime import timezone as dt_timezone
 from django.http import JsonResponse
 from datetime import datetime
@@ -16,8 +17,8 @@ from datetime import timedelta
 from django.utils.timezone import make_aware
 from django.db.models import Prefetch
 from datetime import date
-from docxtpl import DocxTemplate
-
+from django.shortcuts import get_object_or_404
+import fitz
 
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
@@ -4615,93 +4616,165 @@ def agregar_solicitud(request):
     return HttpResponse("Método no permitido", status=405)
 
 def doc_Guia(request, id):
-    solicitud = Solicitudes.objects.get(id=id)
-    datos_solicitud = Comercio.objects.get(id_comercio=solicitud.id_solicitud.id_comercio)
-    requisitos = Requisitos.objects.get(id_solicitud=solicitud.id)
+    solicitud = get_object_or_404(Solicitudes, id=id)
+    datos_solicitud = get_object_or_404(Comercio, id_comercio=solicitud.id_solicitud.id_comercio)
+    requisitos = get_object_or_404(Requisitos, id_solicitud=solicitud.id)
+    
+    # Ruta al archivo PDF plantilla en tu directorio estático
+    template_path = "web/static/assets/Solictud_2025.pdf"
+    doc = fitz.open(template_path)  # Abrimos la plantilla PDF
 
-    # Ruta al archivo plantilla en el directorio estático
-    guia = DocxTemplate("web/static/assets/Solictud_2025.docx")
-
-    # Datos para reemplazar en la plantilla (predefinidos según los campos)
+    # Datos para reemplazar en la plantilla
     datos = {
-        "ID_Comercio": datos_solicitud.id_comercio,
-        "Fecha_Solicitud": solicitud.fecha_solicitud,
-        "Hora": solicitud.hora_solicitud,
-        "Tipo_Servicio": solicitud.tipo_servicio,
-        "Solicitante": solicitud.solicitante_nombre_apellido,
-        "CI": solicitud.solicitante_cedula,
-        "Tipo_Representante": solicitud.tipo_representante,
-        "Nombre_Comercio": datos_solicitud.nombre_comercio,
-        "Rif_Empresarial": datos_solicitud.rif_empresarial,
-        "Rif_Representante_Legal": solicitud.rif_representante_legal,
-        "Direccion": solicitud.direccion,
-        "Estado": solicitud.estado,
-        "Municipio": solicitud.municipio,
-        "Parroquia": solicitud.parroquia,
-        "Telefono": solicitud.numero_telefono,
-        "Correo_Electronico": solicitud.correo_electronico,
-        "Pago_Tasa_Servicio": solicitud.pago_tasa,
-        "Metodo_Pago": solicitud.metodo_pago,
-        "Referencia": solicitud.referencia,
-        "Status_Cedula": "Completado" if requisitos.cedula_identidad else "Incompleto",
-        "Status_Rif": "Completado" if requisitos.rif_representante else "Incompleto",
-        "Status_Comercio": "Completado" if requisitos.rif_comercio else "Incompleto",
-        "Status_Permiso": "Completado" if requisitos.permiso_anterior else "Incompleto",
-        "Status_Registro_Comercio": "Completado" if requisitos.registro_comercio else "Incompleto",
-        "Status_Documento_Propiedad": "Completado" if requisitos.documento_propiedad else "Incompleto",
-        "Status_Cedula_Catastral": "Completado" if requisitos.cedula_catastral else "Incompleto",
-        "Status_Carta_Autorizacion": "Completado" if requisitos.carta_autorizacion else "Incompleto",
-        "Status_Plano": "Completado" if requisitos.plano_bomberil else "Incompleto",
+            "ID_Comercio": str(datos_solicitud.id_comercio),
+            "Fecha_Solicitud": str(solicitud.fecha_solicitud),
+            "Hora": str(solicitud.hora_solicitud),
+            "Tipo_Servicio": str(solicitud.tipo_servicio),
+            "Solicitante": str(solicitud.solicitante_nombre_apellido),
+            "CI": str(solicitud.solicitante_cedula),
+            "Tipo_Representante": str(solicitud.tipo_representante),
+            "Nombre_Comercio": str(datos_solicitud.nombre_comercio),
+            "Rif_Empresarial": str(datos_solicitud.rif_empresarial),
+            "Rif_Representante_Legal": str(solicitud.rif_representante_legal),
+            "Direccion": str(solicitud.direccion),
+            "Estado": str(solicitud.estado),
+            "Municipio": str(solicitud.municipio),
+            "Parroquia": str(solicitud.parroquia),
+            "Telefono": str(solicitud.numero_telefono),
+            "Correo_Electronico": str(solicitud.correo_electronico),
+            "Pago_Tasa_Servicio": str(solicitud.pago_tasa),
+            "Metodo_Pago": str(solicitud.metodo_pago),
+            "Referencia": str(solicitud.referencia),
+            "Status_Cedula": "Completado" if requisitos.cedula_identidad else "Incompleto",
+            "Status_Rif": "Completado" if requisitos.rif_representante else "Incompleto",
+            "Status_Comercio": "Completado" if requisitos.rif_comercio else "Incompleto",
+            "Status_Permiso": "Completado" if requisitos.permiso_anterior else "Incompleto",
+            "Status_Registro_Comercio": "Completado" if requisitos.registro_comercio else "Incompleto",
+            "Status_Documento_Propiedad": "Completado" if requisitos.documento_propiedad else "Incompleto",
+            "Status_Cedula_Catastral": "Completado" if requisitos.cedula_catastral else "Incompleto",
+            "Status_Carta_Autorizacion": "Completado" if requisitos.carta_autorizacion else "Incompleto",
+            "Status_Plano": "Completado" if requisitos.plano_bomberil else "Incompleto",
     }
 
-    # Rellenar la plantilla con los datos
-    guia.render(datos)
+    # Rellenar la plantilla PDF
+    for page in doc:
+        for campo, valor in datos.items():
+            # Buscar las etiquetas sin espacios, como {{ID_Comercio}}
+            search_str = f"{{{{{campo}}}}}" 
+            text_instances = page.search_for(search_str)
 
-    # Guardar el documento en la respuesta
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    response['Content-Disposition'] = 'attachment; filename="Guia_Solicitud.docx"'
-    guia.save(response)
+            for inst in text_instances:
+                x, y, x1, y1 = inst  # Obtener coordenadas
+                y_adjusted = y + 7.5  # Ajustar la coordenada Y hacia abajo en 7.5 unidades (ajusta este valor según sea necesario)
+                # Borrar el texto anterior
+                rect = fitz.Rect(x, y, x1, y1)
+                page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))
+                # Insertar el nuevo texto en la posición ajustada
+                page.insert_text((x, y_adjusted), valor, fontsize=8, color=(0, 0, 0))
 
-    # Renderizar una plantilla que inicia la descarga y redirige automáticamente
+    # Guardar el PDF modificado en memoria
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    doc.close()
+    buffer.seek(0)
+
+    # Configurar la respuesta HTTP para descargar el PDF
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="Guia_Solicitud.pdf"'
+
     return response
 
-def doc_Inspeccion(request):
-    # Ruta al archivo plantilla en el directorio estático
-    inspeccion = DocxTemplate("web/static/assets/Inspeccion_2025.docx")
+def doc_Inspeccion(request, id):
+    solicitud = get_object_or_404(Solicitudes, id=id)
+    datos_solicitud = get_object_or_404(Comercio, id_comercio=solicitud.id_solicitud.id_comercio)
 
-    # Datos para reemplazar en la plantilla (predefinidos según los campos)
+    template_path = "web/static/assets/Inspeccion_2025.pdf"
+    doc = fitz.open(template_path)
+
     datos = {
-        "ID_Comercio": "12345",
-        "Fecha_Solicitud": "05/02/2025",
-        "Hora": "10:30 AM",
-        "Tipo_Servicio": "Inspección",
-        "Solicitante": "Juan Pérez",
-        "CI": "V-12345678",
-        "Tipo_Representante": "Natural",
-        "Nombre_Comercio": "Tech Solutions",
-        "Rif_Empresarial": "J-12345678-9",
-        "Rif_Representante_Legal": "V-98765432",
-        "Direccion": "Av. Principal #123",
-        "Estado": "Táchira",
-        "Municipio": "San Cristóbal",
-        "Parroquia": "La Concordia",
-        "Telefono": "0412-3456789",
-        "Correo_Electronico": "contacto@techsolutions.com",
-        "Pago_Tasa_Servicio": "Pagado",
-        "Metodo_Pago": "Transferencia",
-        "Referencia": "REF12345",
-        "Encargado_Atencion": "María Gómez",
-        "Status" : "Completado",
+        "ID_Comercio": str(datos_solicitud.id_comercio),
+        "Fecha_Solicitud": str(solicitud.fecha_solicitud),
+        "Hora": str(solicitud.hora_solicitud),
+        "Tipo_Servicio": str(solicitud.tipo_servicio),
+        "Solicitante": str(solicitud.solicitante_nombre_apellido),
+        "CI": str(solicitud.solicitante_cedula),
+        "Tipo_Representante": str(solicitud.tipo_representante),
+        "Nombre_Comercio": str(datos_solicitud.nombre_comercio),
+        "Rif_Empresarial": str(datos_solicitud.rif_empresarial),
+        "Rif_Representante_Legal": str(solicitud.rif_representante_legal),
+        "Direccion": str(solicitud.direccion),
+        "Estado": str(solicitud.estado),
+        "Municipio": str(solicitud.municipio),
+        "Parroquia": str(solicitud.parroquia),
+        "Telefono": str(solicitud.numero_telefono),
+        "Correo_Electronico": str(solicitud.correo_electronico),
+        "Pago_Tasa_Servicio": str(solicitud.pago_tasa),
+        "Metodo_Pago": str(solicitud.metodo_pago),
+        "Referencia": str(solicitud.referencia),
     }
+    for page in doc:
+        for campo, valor in datos.items():
+            # Buscar las etiquetas sin espacios, como {{ID_Comercio}}
+            search_str = f"{{{{{campo}}}}}" 
+            text_instances = page.search_for(search_str)
 
-    # Rellenar la plantilla con los datos
-    inspeccion.render(datos)
+            for inst in text_instances:
+                x, y, x1, y1 = inst  # Obtener coordenadas
+                y_adjusted = y + 7.5  # Ajustar la coordenada Y hacia abajo en 2 unidades (ajusta este valor según sea necesario)
+                # Borrar el texto anterior
+                rect = fitz.Rect(x, y, x1, y1)
+                page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))
+                # Insertar el nuevo texto en la posición ajustada
+                page.insert_text((x, y_adjusted), valor, fontsize=8, color=(0, 0, 0))
 
-    # Preparar el archivo para la respuesta HTTP
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    response['Content-Disposition'] = 'attachment; filename="Solicitud_inspeccion.docx"'
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    doc.close()
+    buffer.seek(0)
 
-    # Guardar el documento procesado en la respuesta HTTP
-    inspeccion.save(response)
+    response = HttpResponse(buffer, content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="Solicitud_inspeccion.pdf"'
 
     return response
+
+# def doc_Inspeccion(request, id):
+#     solicitud = Solicitudes.objects.get(id=id)
+#     datos_solicitud = Comercio.objects.get(id_comercio=solicitud.id_solicitud.id_comercio)
+
+#     # Ruta al archivo plantilla en el directorio estático
+#     inspeccion = DocxTemplate("web/static/assets/Inspeccion_2025.docx")
+
+#     # Datos para reemplazar en la plantilla (predefinidos según los campos)
+#     datos = {
+#         "ID_Comercio": datos_solicitud.id_comercio,
+#         "Fecha_Solicitud": solicitud.fecha_solicitud,
+#         "Hora": solicitud.hora_solicitud,
+#         "Tipo_Servicio": solicitud.tipo_servicio,
+#         "Solicitante": solicitud.solicitante_nombre_apellido,
+#         "CI": solicitud.solicitante_cedula,
+#         "Tipo_Representante": solicitud.tipo_representante,
+#         "Nombre_Comercio": datos_solicitud.nombre_comercio,
+#         "Rif_Empresarial": datos_solicitud.rif_empresarial,
+#         "Rif_Representante_Legal": solicitud.rif_representante_legal,
+#         "Direccion": solicitud.direccion,
+#         "Estado": solicitud.estado,
+#         "Municipio": solicitud.municipio,
+#         "Parroquia": solicitud.parroquia,
+#         "Telefono": solicitud.numero_telefono,
+#         "Correo_Electronico": solicitud.correo_electronico,
+#         "Pago_Tasa_Servicio": solicitud.pago_tasa,
+#         "Metodo_Pago": solicitud.metodo_pago,
+#         "Referencia": solicitud.referencia,
+#     }
+
+#     # Rellenar la plantilla con los datos
+#     inspeccion.render(datos)
+
+#     # Preparar el archivo para la respuesta HTTP
+#     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+#     response['Content-Disposition'] = 'attachment; filename="Solicitud_inspeccion.docx"'
+
+#     # Guardar el documento procesado en la respuesta HTTP
+#     inspeccion.save(response)
+
+#     return response

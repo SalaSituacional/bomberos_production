@@ -949,7 +949,7 @@ class Formulario_Solicitud(forms.Form):
     numero_telefono = forms.CharField(required=False)
     correo_electronico = forms.EmailField(required=False)
     pago_tasa = forms.CharField(required=False)
-    metodo_pago = forms.CharField(required=False)
+    metodo_pago = forms.ChoiceField(choices=(("", "Seleccione Una Opcion"), ("Efectivo", "Efectivo"), ("Transferencia", "Transferencia"), ("Deposito", "Deposito"), ("Otra Moneda", "Otra Moneda")),required=False)
     referencia = forms.CharField(required=False)
 
 class Formularia_Requisitos(forms.Form):
