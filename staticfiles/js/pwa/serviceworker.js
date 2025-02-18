@@ -3,16 +3,16 @@ const urlsToCache = [
   '/',
   '/static/styles.css',
   '/static/js/pwa/manifest.json',
-  '/static/assets/icons/29.png',
-  '/static/assets/icons/40.png',
-  '/static/assets/icons/58.png',
-  '/static/assets/icons/60.png',
-  '/static/assets/icons/80.png',
-  '/static/assets/icons/87.png',
-  '/static/assets/icons/114.png',
-  '/static/assets/icons/120.png',
-  '/static/assets/icons/180.png',
-  '/static/assets/icons/1024.png'
+  'https://i.postimg.cc/CLr88W67/29.png',
+  'https://i.postimg.cc/52ZF78JF/40.png',
+  'https://i.postimg.cc/63K4wwyW/58.png',
+  'https://i.postimg.cc/NGp2h3Yt/60.png',
+  'https://i.postimg.cc/15Xnyv5q/80.png',
+  'https://i.postimg.cc/X7PZq9pD/87.png',
+  'https://i.postimg.cc/GpF9XNzZ/114.png',
+  'https://i.postimg.cc/DZ50TX96/120.png',
+  'https://i.postimg.cc/90nf4jFq/180.png',
+  'https://i.postimg.cc/44Ly2pbN/1024.png'
 ];
 
 // Instalación del Service Worker
