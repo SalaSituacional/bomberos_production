@@ -64,6 +64,8 @@ urlpatterns = [
     path('generar_documento_guia/<int:id>/', doc_Guia, name='generar_documento_guia'),
     path('api/eliminar_solicitudes/<int:id>/', api_eliminar_solicitudes, name='api_eliminar_solicitudes'),
     path('generar_documento_inspeccion/<int:id>/', doc_Inspeccion, name='generar_documento_inspeccion'),
+    path("validar-cedula/", validar_cedula, name="validar_cedula"),
+    path("validar-rif/", validar_rif, name="validar_rif"),
 
     
     path('agregar_comercio/', agregar_comercio , name='agregar_comercio'),

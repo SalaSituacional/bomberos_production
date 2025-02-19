@@ -51,7 +51,9 @@
         </button>
       </article>
       <h2>Requisitos de Solicitud</h2>
-      <div id="requisitos-comerce">{{ requisitos.as_div }}</div>
+      <div id="requisitos-comerce">
+        {{ requisitos.as_div }}
+      </div>
     </section>
     <section class="parte-a">
       <h2>Solicitud de certificado de conformidad de uso</h2>
@@ -127,7 +129,7 @@
           {% csrf_token %}
           {{ comercio }}
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-          <button type="submit" class="btn btn-danger">Agregar Comercio</button>
+          <button type="submit" class="btn btn-danger" id="boton-agregar-comercio">Agregar Comercio</button>
         </form>
       </div>
     </div>

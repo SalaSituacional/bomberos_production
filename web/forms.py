@@ -930,11 +930,7 @@ class Formulario_Solicitud(forms.Form):
 
     solicitante_nombre_apellido = forms.CharField(label="Nombres Y Apellidos del Solicitante",required=False)
 
-    solicitante_cedula = forms.CharField(label="Cedula Solicitante",required=False)
-
     tipo_representante = forms.ChoiceField(choices=(("", "Selecione Una Opcion"), ("Presidente", "Presidente"), ("Propietario", "Propietario"), ("Representante Legal", "Representante Legal"), ("Encargado", "Encargado")), required=False, widget=forms.Select(attrs={'class': 'disable-first-option'}))
-
-    rif_representante_legal = forms.CharField(required=False)
 
     direccion = forms.CharField(required=False)
 
@@ -959,6 +955,7 @@ class Formularia_Requisitos(forms.Form):
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=False
     )
+    solicitante_cedula = forms.CharField(label="Cedula Solicitante",required=False)
 
     rif_representante = forms.BooleanField(required=False,label="RIF Representante")
     rif_representante_vencimiento = forms.DateField(
@@ -966,6 +963,7 @@ class Formularia_Requisitos(forms.Form):
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=False
     )
+    rif_representante_legal = forms.CharField(required=False)
 
     rif_comercio = forms.BooleanField(required=False,label="RIF Comercio")
     rif_comercio_vencimiento = forms.DateField(

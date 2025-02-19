@@ -4553,8 +4553,9 @@ def agregar_solicitud(request):
         metodo_pago = request.POST.get("metodo_pago")
         referencia = request.POST.get("referencia")
 
-        print(nacionalidad)
-
+        if referencia == None:
+            referencia = "SIN REFERENCIA"
+        
         comercio_instance = Comercio.objects.get(id_comercio=comercio)
         municipio_instance = Municipios.objects.get(id=municipio)
         parroquia_instance = Parroquias.objects.get(id=parroquia)
@@ -4736,45 +4737,3 @@ def doc_Inspeccion(request, id):
     response["Content-Disposition"] = 'attachment; filename="Solicitud_inspeccion.pdf"'
 
     return response
-
-# def doc_Inspeccion(request, id):
-#     solicitud = Solicitudes.objects.get(id=id)
-#     datos_solicitud = Comercio.objects.get(id_comercio=solicitud.id_solicitud.id_comercio)
-
-#     # Ruta al archivo plantilla en el directorio estático
-#     inspeccion = DocxTemplate("web/static/assets/Inspeccion_2025.docx")
-
-#     # Datos para reemplazar en la plantilla (predefinidos según los campos)
-#     datos = {
-#         "ID_Comercio": datos_solicitud.id_comercio,
-#         "Fecha_Solicitud": solicitud.fecha_solicitud,
-#         "Hora": solicitud.hora_solicitud,
-#         "Tipo_Servicio": solicitud.tipo_servicio,
-#         "Solicitante": solicitud.solicitante_nombre_apellido,
-#         "CI": solicitud.solicitante_cedula,
-#         "Tipo_Representante": solicitud.tipo_representante,
-#         "Nombre_Comercio": datos_solicitud.nombre_comercio,
-#         "Rif_Empresarial": datos_solicitud.rif_empresarial,
-#         "Rif_Representante_Legal": solicitud.rif_representante_legal,
-#         "Direccion": solicitud.direccion,
-#         "Estado": solicitud.estado,
-#         "Municipio": solicitud.municipio,
-#         "Parroquia": solicitud.parroquia,
-#         "Telefono": solicitud.numero_telefono,
-#         "Correo_Electronico": solicitud.correo_electronico,
-#         "Pago_Tasa_Servicio": solicitud.pago_tasa,
-#         "Metodo_Pago": solicitud.metodo_pago,
-#         "Referencia": solicitud.referencia,
-#     }
-
-#     # Rellenar la plantilla con los datos
-#     inspeccion.render(datos)
-
-#     # Preparar el archivo para la respuesta HTTP
-#     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-#     response['Content-Disposition'] = 'attachment; filename="Solicitud_inspeccion.docx"'
-
-#     # Guardar el documento procesado en la respuesta HTTP
-#     inspeccion.save(response)
-
-#     return response

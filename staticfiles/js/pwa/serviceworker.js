@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Cuerpo Bomberos V1';
+const CACHE_NAME = 'cuerpo-bomberos-v2'; // Cambié el nombre de la caché para forzar la actualización
 const urlsToCache = [
   '/',
   '/static/styles.css',
@@ -19,26 +19,47 @@ const urlsToCache = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
   );
+  self.skipWaiting(); // Fuerza la activación del nuevo Service Worker
 });
 
 // Intercepta las solicitudes y devuelve las respuestas en caché
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-  );
+  if (event.request.url.startsWith('http')) { // Solo manejar solicitudes HTTP(S)
+    event.respondWith(
+      caches.match(event.request)
+        .then(response => {
+          if (response) {
+            // Realiza una solicitud en segundo plano para actualizar la caché
+            fetch(event.request).then(newResponse => {
+              if (newResponse && newResponse.status === 200) {
+                caches.open(CACHE_NAME).then(cache => {
+                  cache.put(event.request, newResponse.clone());
+                });
+              }
+            }).catch(error => console.log("Error fetching new version of the file:", error));
+            return response;
+          }
+          return fetch(event.request).then(
+            newResponse => {
+              if (!newResponse || newResponse.status !== 200 || newResponse.type !== 'basic') {
+                return newResponse;
+              }
+              const responseToCache = newResponse.clone();
+              caches.open(CACHE_NAME)
+                .then(cache => {
+                  cache.put(event.request, responseToCache);
+                });
+              return newResponse;
+            }
+          );
+        })
+    );
+  }
 });
 
-// Actualización del Service Worker
+// Limpieza de caché y actualización del Service Worker
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -50,6 +71,8 @@ self.addEventListener('activate', event => {
           }
         })
       );
+    }).then(() => {
+      return self.clients.claim();
     })
   );
 });

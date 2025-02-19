@@ -8,57 +8,52 @@
     "theme_color": "#0A0302",
     "icons": [
         {
-            "src": "/static/assets/icons/180.png",
+            "src": "https://i.postimg.cc/90nf4jFq/180.png",
             "sizes": "180x180",
             "type": "image/png"
         },
         {
-            "src": "/static/assets/icons/80.png",
+            "src": "https://i.postimg.cc/15Xnyv5q/80.png",
             "sizes": "80x80",
             "type": "image/png"
         },
         {
-            "src": "/static/assets/icons/120.png",
+            "src": "https://i.postimg.cc/DZ50TX96/120.png",
             "sizes": "120x120",
             "type": "image/png"
         },
         {
-            "src": "/static/assets/icons/57.png",
-            "sizes": "57x57",
-            "type": "image/png"
-        },
-        {
-            "src": "/static/assets/icons/58.png",
+            "src": "https://i.postimg.cc/63K4wwyW/58.png",
             "sizes": "58x58",
             "type": "image/png"
         },
         {
-            "src": "/static/assets/icons/29.png",
+            "src": "https://i.postimg.cc/CLr88W67/29.png",
             "sizes": "29x29",
             "type": "image/png"
         },
         {
-            "src": "/static/assets/icons/87.png",
+            "src": "https://i.postimg.cc/X7PZq9pD/87.png",
             "sizes": "87x87",
             "type": "image/png"
         },
         {
-            "src": "/static/assets/icons/114.png",
+            "src": "https://i.postimg.cc/GpF9XNzZ/114.png",
             "sizes": "114x114",
             "type": "image/png"
         },
         {
-            "src": "/static/assets/icons/40.png",
+            "src": "https://i.postimg.cc/52ZF78JF/40.png",
             "sizes": "40x40",
             "type": "image/png"
         },
         {
-            "src": "/static/assets/icons/60.png",
+            "src": "https://i.postimg.cc/NGp2h3Yt/60.png",
             "sizes": "60x60",
             "type": "image/png"
         },
         {
-            "src": "/static/assets/icons/1024.png",
+            "src": "https://i.postimg.cc/44Ly2pbN/1024.png",
             "sizes": "1024x1024",
             "type": "image/png"
         }
