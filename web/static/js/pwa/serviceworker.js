@@ -1,7 +1,7 @@
-const CACHE_NAME = 'cuerpo-bomberos-v1';
+const CACHE_NAME = 'cuerpo-bomberos-v2'; // Cambié el nombre de la caché para forzar la actualización
 const urlsToCache = [
   '/',
-  './static/styles.css',
+  '/static/styles.css',
   '/static/js/pwa/manifest.json',
   'https://i.postimg.cc/CLr88W67/29.png',
   'https://i.postimg.cc/52ZF78JF/40.png',
@@ -21,6 +21,7 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
   );
+  self.skipWaiting(); // Fuerza la activación del nuevo Service Worker
 });
 
 // Intercepta las solicitudes y devuelve las respuestas en caché
@@ -30,19 +31,27 @@ self.addEventListener('fetch', event => {
       caches.match(event.request)
         .then(response => {
           if (response) {
+            // Realiza una solicitud en segundo plano para actualizar la caché
+            fetch(event.request).then(newResponse => {
+              if (newResponse && newResponse.status === 200) {
+                caches.open(CACHE_NAME).then(cache => {
+                  cache.put(event.request, newResponse.clone());
+                });
+              }
+            }).catch(error => console.log("Error fetching new version of the file:", error));
             return response;
           }
           return fetch(event.request).then(
-            response => {
-              if (!response || response.status !== 200 || response.type !== 'basic') {
-                return response;
+            newResponse => {
+              if (!newResponse || newResponse.status !== 200 || newResponse.type !== 'basic') {
+                return newResponse;
               }
-              const responseToCache = response.clone();
+              const responseToCache = newResponse.clone();
               caches.open(CACHE_NAME)
                 .then(cache => {
                   cache.put(event.request, responseToCache);
                 });
-              return response;
+              return newResponse;
             }
           );
         })

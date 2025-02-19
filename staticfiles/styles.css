@@ -3316,6 +3316,7 @@ checkbox-styles {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
+    flex-wrap: wrap;
     margin-bottom: 2rem;
 
     label {
@@ -3338,6 +3339,14 @@ checkbox-styles {
 .error-message {
   color: red;
   font-size: 12px;
+  margin-top: 3px;
+  display: none;
+  /* Se oculta por defecto */
+}
+.warning-message {
+  color: black;
+  font-weight: bold;
+  font-size: 1rem;
   margin-top: 3px;
   display: none;
   /* Se oculta por defecto */
