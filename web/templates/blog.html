@@ -14,8 +14,8 @@
   <title>Cuerpo De Bomberos - San Cristobal</title>
   <link rel="canonical" href="https://cuerpobomberossc.com/">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="../static/styles.css" />
   <link rel="manifest" href="../static/js/pwa/manifest.json">
+  <link rel="stylesheet" href="../static/styles.css" />
   {% progressive_web_app_meta %}
 </head>
 
@@ -111,10 +111,6 @@
       </a>
     </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="../static/js/loader-function.js"></script>
-  <script src="../static/js/pwa/pwa_android.js"></script>
   {% block content %} {% endblock %}
   <footer class="blog-footer">
     <div class="log-social-media">
@@ -198,6 +194,7 @@
     </div>
     <div class="author">
       <p>Todos los derechos Reservados</p>
+      <button id="installpwa" class="btn btn-danger">Descargar App</button>
     </div>
   </footer>
 
@@ -207,6 +204,10 @@
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="../static/js/loader-function.js"></script>
+  <script src="../static/js/pwa/install-pwa.js"></script>
 </body>
 
 </html>

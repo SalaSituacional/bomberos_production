@@ -1,7 +1,7 @@
-const CACHE_NAME = 'Cuerpo Bomberos V1';
+const CACHE_NAME = 'cuerpo-bomberos-v1';
 const urlsToCache = [
   '/',
-  '/static/styles.css',
+  './static/styles.css',
   '/static/js/pwa/manifest.json',
   'https://i.postimg.cc/CLr88W67/29.png',
   'https://i.postimg.cc/52ZF78JF/40.png',
@@ -19,26 +19,38 @@ const urlsToCache = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
 // Intercepta las solicitudes y devuelve las respuestas en caché
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-  );
+  if (event.request.url.startsWith('http')) { // Solo manejar solicitudes HTTP(S)
+    event.respondWith(
+      caches.match(event.request)
+        .then(response => {
+          if (response) {
+            return response;
+          }
+          return fetch(event.request).then(
+            response => {
+              if (!response || response.status !== 200 || response.type !== 'basic') {
+                return response;
+              }
+              const responseToCache = response.clone();
+              caches.open(CACHE_NAME)
+                .then(cache => {
+                  cache.put(event.request, responseToCache);
+                });
+              return response;
+            }
+          );
+        })
+    );
+  }
 });
 
-// Actualización del Service Worker
+// Limpieza de caché y actualización del Service Worker
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -50,6 +62,8 @@ self.addEventListener('activate', event => {
           }
         })
       );
+    }).then(() => {
+      return self.clients.claim();
     })
   );
 });
