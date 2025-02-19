@@ -1005,7 +1005,7 @@ class Solicitudes(models.Model):
   correo_electronico = models.CharField()
   pago_tasa = models.CharField()
   metodo_pago = models.CharField()
-  referencia = models.CharField()
+  referencia = models.CharField(default="NO HAY REFERENCIA")
 
   def __str__(self):
         return f"Solicitud {self.id_solicitud} - {self.tipo_servicio} - {self.solicitante_nombre_apellido}"

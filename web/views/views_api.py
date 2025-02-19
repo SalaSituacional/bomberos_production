@@ -2672,3 +2672,48 @@ def api_eliminar_solicitudes(request, id):
     solicitud = get_object_or_404(Solicitudes, id=id)
     solicitud.delete()
     return JsonResponse({"message": "Solicitud eliminada correctamente"}, status=200)
+
+def validar_cedula(request):
+    cedula = request.GET.get("cedula", "").strip()
+    comercio_id = request.GET.get("comercio", "").strip()  # Obtener comercio enviado desde el frontend
+
+    if not cedula or not cedula.startswith(("V-", "E-")):
+        return JsonResponse({"error": "Formato inválido. Use V-12345678 o E-12345678."}, status=400)
+
+    # Obtener todos los comercios distintos asociados a la cédula
+    comercios_asociados = Solicitudes.objects.filter(solicitante_cedula=cedula).values_list("id_solicitud", flat=True).distinct()
+    cantidad_comercios = len(set(comercios_asociados))
+
+    # Validar si el comercio actual ya está en la lista de comercios asociados
+    if comercio_id in comercios_asociados:
+        return JsonResponse({
+            "existe": True,
+            "cantidad_comercios": cantidad_comercios,
+            "valido": True  # Permitimos el registro si ya está asociado a este comercio
+        })
+
+    # Si el comercio es nuevo y ya hay 3 comercios asociados, bloqueamos el registro
+    if cantidad_comercios >= 3:
+        return JsonResponse({
+            "existe": True,
+            "cantidad_comercios": cantidad_comercios,
+            "valido": False,  # Bloqueamos el registro
+            "mensaje": "❌ La cédula ya está asociada a 3 comercios distintos."
+        })
+
+    return JsonResponse({
+        "existe": cantidad_comercios > 0,
+        "cantidad_comercios": cantidad_comercios,
+        "valido": True  # Permitimos el registro
+    })
+
+def validar_rif(request):
+    rif = request.GET.get("rif", "").strip()
+
+    if not rif:
+        return JsonResponse({"error": "El RIF no puede estar vacío."}, status=400)
+
+    # Verificar si el RIF ya existe en la base de datos
+    existe = Comercio.objects.filter(rif_empresarial=rif).exists()
+
+    return JsonResponse({"existe": existe})

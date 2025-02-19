@@ -1,19 +1,19 @@
-const openModalPrevencion = document.getElementById('view-solicitudes');
-const tablaPrevencionContenido = document.getElementById('tabla-contenido-prevencion');
-let i = 1
+const openModalPrevencion = document.getElementById("view-solicitudes");
+const tablaPrevencionContenido = document.getElementById(
+  "tabla-contenido-prevencion"
+);
 
-openModalPrevencion.addEventListener('click', async () => {
-    let referencia = openModalPrevencion.getAttribute("data-id");
+openModalPrevencion.addEventListener("click", async () => {
+  let referencia = openModalPrevencion.getAttribute("data-id");
 
-    tablaPrevencionContenido.textContent = '';
+  tablaPrevencionContenido.textContent = "";
 
-    const response = await fetchWithLoader(`/api/get_solicitudes/${referencia}/`);
-    const data = await response;
-
-
-
-    data.forEach((item) => {
-        tablaPrevencionContenido.innerHTML += `
+  const response = await fetchWithLoader(`/api/get_solicitudes/${referencia}/`);
+  const data = await response;
+  
+  let i = 1;
+  data.forEach((item) => {
+    tablaPrevencionContenido.innerHTML += `
         <tr>
             <td>${i}</td>
             <td>Solicitud</td>
@@ -52,9 +52,9 @@ openModalPrevencion.addEventListener('click', async () => {
         <tr>
         `;
 
-        i++;
+    i++;
 
-        tablaPrevencionContenido.innerHTML += `
+    tablaPrevencionContenido.innerHTML += `
         <tr>
           <td>${i}</td>
           <td>Guia de Inspeccion</td>
@@ -67,9 +67,9 @@ openModalPrevencion.addEventListener('click', async () => {
         <tr>
         `;
 
-        i++;
-    });
+    i++;
+  });
 
-    descargarWordSolicitud();
-    eliminarSolicitud();
-})
+  descargarWordSolicitud();
+  eliminarSolicitud();
+});
