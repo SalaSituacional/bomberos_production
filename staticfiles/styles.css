@@ -1043,13 +1043,14 @@ checkbox-styles {
 .icons-accion {
   width: 10rem;
   padding: 0;
-
   button {
+    margin: 1rem;
     width: 50px;
     height: 60px;
     background-color: transparent;
     border: none;
     padding: 0;
+    margin-bottom: .5rem;
   }
 }
 
@@ -2161,6 +2162,10 @@ checkbox-styles {
 }
 
 .author {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   text-align: center;
   font-family: var(--sofia-sans);
   padding: 1rem;
@@ -2171,7 +2176,7 @@ checkbox-styles {
   width: 100%;
   height: auto;
   box-shadow: #000 .1rem .2rem .5rem;
-  margin-top: .2rem;
+  margin-top: .1rem;
 }
 
 .section-area-tecnical-function {
@@ -3369,6 +3374,172 @@ checkbox-styles {
   width: 100%;
   padding: 1rem;
 }
+
+.inicial-carrousel-one {
+  margin-top: 4rem;
+  width: 100%;
+}
+
+.carousel-inner {
+  height: 100%;
+}
+
+.carousel-inner img {
+  object-fit: cover;
+}
+.name-fuction h3 {
+  text-align: center;
+}
+
+.log-social-media {
+  flex-wrap: wrap;
+}
+
+.social-media {
+  margin: 1rem 0;
+}
+
+.social-media a {
+  margin: 0.5rem;
+}
+
+.title-blog span,
+.title-blog p {
+  text-align: center;
+}
+.text-inter {
+  margin: 0;
+
+  h2 {
+    font-size: 2.3rem;
+  }
+}
+
+.to-glp {
+  background-position: center 40px;
+}
+
+.title-information-section {
+  font-size: 2.5rem;
+  padding: 1rem;
+  margin-top: 8rem;
+}
+
+.to-capacitation {
+  background-position: -20px 110px;
+}
+
+.to-psicologa {
+  background-position: center 100px;
+}
+
+.content-text {
+  a {
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.to-information {
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.to-contact {
+  background-size: cover;
+  background-position: -270px;
+}
+
+.text-inter h2 {
+  font-size: 1.5rem;
+}
+
+.localitation {
+  width: 80%;
+  height: 12rem;
+  flex-wrap: wrap;
+  padding: .5rem;
+}
+
+.ubication {
+  width: 70%;
+  padding: .5rem;
+  order: 1;
+}
+
+#stationInfo {
+  padding: .5rem;
+
+  #stationAddress {
+    margin-top: .5rem;
+    display: block;
+    text-align: center;
+  }
+
+}
+
+.iframe-maps {
+  width: 100%;
+  bottom: 12rem;
+}
+
+.card-gallery {
+  width: 30%;
+}
+.card-parroquies {
+  height: 9rem;
+  width: 15rem;
+
+  span {
+    border-radius: inherit;
+    width: 40%;
+  }
+}
+
+.progress-bar {
+  width: 28%;
+
+  p {
+    align-self: center;
+  }
+}
+
+.form_personal div {
+  width: 40%;
+
+  label,
+  input,
+  select {
+    width: 100%;
+  }
+}
+
+.table {
+  width: 170%;
+}
+.table-modify{
+  margin: 0 auto;
+  width: 100%;
+}
+
+.content-stadist {
+  flex-direction: column;
+}
+
+.stadist-column {
+  width: 80%;
+  margin: 2rem auto;
+  order: -1;
+}
+
+.barts {
+  height: 560px;
+}
+
+.bar-graphic {
+  height: 100% !important;
+} 
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
@@ -3538,262 +3709,6 @@ checkbox-styles {
     margin: 0;
     width: 15%;
   }
-}
-
-
-.inicial-carrousel-one {
-  margin-top: 5rem;
-  width: 100%;
-}
-
-.carousel-inner {
-  height: 100%;
-}
-
-.carousel-inner img {
-  object-fit: cover;
-}
-
-.link-function {
-  width: 100%;
-}
-
-.atention-person {
-  width: 45%;
-  margin-top: 10px;
-}
-
-.atention-person span {
-  text-align: center;
-  font-size: 14px;
-}
-
-.name-fuction h3 {
-  text-align: center;
-}
-
-.card-comand {
-  width: 45%;
-  height: 25rem;
-}
-
-.content-card-comand {
-  width: 45%;
-  font-size: 17px;
-  padding: 18px;
-}
-
-.contain-comand {
-  align-items: center;
-}
-
-.content-card-comand h2 {
-  font-size: 1.5rem;
-  text-align: center;
-  width: auto;
-}
-
-.client-info {
-  width: 100%;
-  height: 40rem;
-  margin-bottom: 2rem;
-}
-
-.background-img-info {
-  width: 100%;
-  background-position: -310px;
-}
-
-.background-img-localitation {
-  width: 100%;
-  display: none;
-}
-
-.information-background h3 {
-  font-size: 2rem
-}
-
-.log-social-media {
-  flex-wrap: wrap;
-}
-
-.social-media {
-  margin: 1rem 0;
-}
-
-.social-media a {
-  margin: 0.5rem;
-}
-
-.title-blog span,
-.title-blog p {
-  text-align: center;
-}
-
-/* Seccion GLP */
-.text-inter {
-  margin: 0;
-
-  h2 {
-    font-size: 2.3rem;
-  }
-}
-
-.to-glp {
-  background-position: center 40px;
-}
-
-.title-information-section {
-  font-size: 2.5rem;
-  padding: 1rem;
-  margin-top: 8rem;
-}
-
-.row-information {
-  flex-direction: column;
-}
-
-.content-text {
-  width: 90%;
-}
-
-.content-image {
-  width: 90%;
-
-  /* height: 12rem; */
-  img {
-    border-radius: 2rem;
-  }
-}
-
-.order-by {
-  order: 1;
-}
-
-.content-text {
-  margin: 1.5rem auto;
-}
-
-.to-capacitation {
-  background-position: -20px 110px;
-}
-
-/* Psicologia */
-.to-psicologa {
-  background-position: center 100px;
-}
-
-.content-text {
-  a {
-    button {
-      width: 100%;
-    }
-  }
-}
-
-/* information */
-.to-information {
-  background-repeat: no-repeat;
-  background-position: center center;
-}
-
-/* Contacto */
-.to-contact {
-  background-size: cover;
-  background-position: -270px;
-}
-
-.text-inter h2 {
-  font-size: 1.5rem;
-}
-
-.localitation {
-  width: 80%;
-  height: 12rem;
-  flex-wrap: wrap;
-  padding: .5rem;
-}
-
-.ubication {
-  width: 70%;
-  padding: .5rem;
-  order: 1;
-}
-
-#stationInfo {
-  padding: .5rem;
-
-  #stationAddress {
-    margin-top: .5rem;
-    display: block;
-    text-align: center;
-  }
-
-}
-
-.iframe-maps {
-  width: 100%;
-  bottom: 12rem;
-}
-
-/* Galeria */
-.card-gallery {
-  width: 30%;
-}
-
-/* Dashboard */
-.card-parroquies {
-  height: 9rem;
-  width: 15rem;
-
-  span {
-    border-radius: inherit;
-    width: 40%;
-  }
-}
-
-.progress-bar {
-  width: 28%;
-
-  p {
-    align-self: center;
-  }
-}
-
-.form_personal div {
-  width: 40%;
-
-  label,
-  input,
-  select {
-    width: 100%;
-  }
-}
-
-.table {
-  width: 170%;
-}
-.table-modify{
-  margin: 0 auto;
-  width: 100%;
-}
-
-.content-stadist {
-  flex-direction: column;
-}
-
-.stadist-column {
-  width: 80%;
-  margin: 2rem auto;
-  order: -1;
-}
-
-.barts {
-  height: 560px;
-}
-
-.bar-graphic {
-  height: 100% !important;
 }
 
 @media (max-width: 990px) {
@@ -4055,8 +3970,7 @@ checkbox-styles {
   }
 
   #stationInfo {
-    padding: .5rem;
-
+    padding: .1rem;
     #stationAddress {
       margin-top: .5rem;
       display: block;
@@ -4126,7 +4040,7 @@ checkbox-styles {
   }
   .table-modify{
     margin: 0 auto;
-    width: 100%;
+    width: 100%;  
   }
 
   .filter-search {
