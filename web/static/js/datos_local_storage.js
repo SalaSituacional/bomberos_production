@@ -1,32 +1,23 @@
-document.addEventListener("DOMContentLoaded", function () {
+function iniciarDatosLocalStorage() {
 
-// Leer los datos del localStorage
-const storedData = localStorage.getItem('fetchedData');
-if (storedData) {
-    const data = JSON.parse(storedData);
+ // Leer los datos del localStorage
+ const storedData = localStorage.getItem('fetchedData');
+ if (storedData) {
+     const data = JSON.parse(storedData);
+     console.log("Datos en localStorage:", data);
 
-    // Renderizar los datos en la página
-    // datos = JSON.stringify(data, null, 2)
-    let datos = data
+     // Procesar los datos como antes...
+     let datos = data;
+     inputsValor("id_form1-opciones", datos.id_division);
+     atributeDisable("id_form1-opciones");
 
-    inputsValor("id_form1-opciones", datos.id_division)
-    atributeDisable("id_form1-opciones")
+     const divisionSelect = document.getElementById("id_form1-opciones");
+     const event = new Event("change");
+     divisionSelect.dispatchEvent(event);
 
-    // Disparar manualmente el evento 'change' para el select de tipo_procedimiento
-    const divisionSelect = document.getElementById("id_form1-opciones");
-    const event = new Event("change");
-    divisionSelect.dispatchEvent(event);
-    
-    // Ahora actualizamos las opciones basadas en la división seleccionada
-    actualizarOpcionesUnidad()
-    actualizarOpciones();
-
-    RellenarValores(datos)
-    
-    // Disparar manualmente el evento 'change' para el select de tipo_procedimiento
-    const tipoProcedimientoSelect = document.getElementById("id_form4-tipo_procedimiento");
-    atributeDisable("id_form4-tipo_procedimiento")
-    tipoProcedimientoSelect.dispatchEvent(event);
+     RellenarValores(datos);
+     document.getElementById("id_form4-tipo_procedimiento").dispatchEvent(event);
+     atributeDisable("id_form4-tipo_procedimiento");
     
     const dependenciaSelect = document.getElementById("id_form_capacitacion-dependencia");
     dependenciaSelect.dispatchEvent(event);
@@ -78,7 +69,7 @@ function RellenarValores(datos) {
 
     let parroquia = ""
     if (datos.parroquia !== 0) {
-        let parroquia = datos.parroquia
+        parroquia = datos.parroquia
     }
 
     if (division === 1 || division === 2 || division === 4 || division === 5) {
@@ -937,4 +928,4 @@ window.addEventListener('popstate', () => {
     localStorage.removeItem('fetchedData');
 });
 
-})
+}

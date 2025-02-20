@@ -1,8 +1,8 @@
 const selectSolicitante = document.getElementById("id_form2-solicitante");
 const selectJefeComision = document.getElementById("id_form2-jefe_comision");
 
-selectSolicitante.innerHTML = `<option value="" selected="">Seleccione Una Opcion</option>`
-selectJefeComision.innerHTML = `<option value="" selected="">Seleccione Una Opcion</option>`
+selectSolicitante.innerHTML = `<option value="" selected="">Seleccione Una Opcion</option>`;
+selectJefeComision.innerHTML = `<option value="" selected="">Seleccione Una Opcion</option>`;
 
 // const division = selectOpciones_Unidad.value;
 async function cargarSolicitante() {
@@ -17,33 +17,36 @@ async function cargarSolicitante() {
       },
     });
 
-    selectSolicitante.innerText = ""
-    selectJefeComision.innerText = ""
+    selectSolicitante.innerText = "";
+    selectJefeComision.innerText = "";
 
-    data.forEach(unidad => {
-      const option = document.createElement("option")
-      option.value = unidad[0]
+    data.forEach((unidad) => {
+      const option = document.createElement("option");
+      option.value = unidad[0];
       if (!option.value) {
-        option.setAttribute("disabled", true)
-        option.setAttribute("selected", true)
+        option.setAttribute("disabled", true);
+        option.setAttribute("selected", true);
       }
-      option.innerText = unidad[1]
-      selectSolicitante.appendChild(option)
+      option.innerText = unidad[1];
+      selectSolicitante.appendChild(option);
     });
 
-    data.forEach(unidad => {
-      const option = document.createElement("option")
-      option.value = unidad[0]
+    data.forEach((unidad) => {
+      const option = document.createElement("option");
+      option.value = unidad[0];
       if (!option.value) {
-          option.setAttribute("disabled", true)
-          option.setAttribute("selected", true)
-        }
-      option.innerText = unidad[1]
-      selectJefeComision.appendChild(option)
+        option.setAttribute("disabled", true);
+        option.setAttribute("selected", true);
+      }
+      option.innerText = unidad[1];
+      selectJefeComision.appendChild(option);
     });
 
     selectJefeComision.options[1].remove();
-    
+
+    window.cargasCompletas.solicitante = true;
+    verificarCargaCompleta();
+
   } catch (error) {
     console.error("Error al cargar procedimientos:", error);
   }
