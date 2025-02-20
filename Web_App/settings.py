@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-usf!gyb)c_93(yhk-ab2gm%&_(hlk1ough81m110qhhrn4$cvy
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Debug true significa desarrollo modo de pruebas
-DEBUG = True
+DEBUG = False
 
 #------------- modo produccion-----------------
 # Debug false significa produccion quiere decir listo para usarse
@@ -198,7 +198,7 @@ TIME_ZONE = 'America/Caracas'  # Usa la zona horaria de tu región
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type

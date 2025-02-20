@@ -1,8 +1,9 @@
 const CACHE_NAME = 'cuerpo-bomberos-v2'; // Nombre de la caché actualizado
 const urlsToCache = [
   '/',
-  './static/styles.css',
-  './static/js/pwa/manifest.json',
+  '/staticfiles/styles.css',
+  '/staticfiles/js/pwa/manifest.json',
+  '/staticfiles/js/pwa/install-pwa.js',
   'https://i.postimg.cc/CLr88W67/29.png',
   'https://i.postimg.cc/52ZF78JF/40.png',
   'https://i.postimg.cc/63K4wwyW/58.png',

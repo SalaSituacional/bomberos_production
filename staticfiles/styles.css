@@ -1041,6 +1041,20 @@ checkbox-styles {
 }
 
 .icons-accion {
+  width: 18rem;
+  padding: 0;
+  button {
+    margin: 1rem;
+    width: 50px;
+    height: 60px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: .5rem;
+  }
+}
+
+.icons-accion-two {
   width: 10rem;
   padding: 0;
   button {
