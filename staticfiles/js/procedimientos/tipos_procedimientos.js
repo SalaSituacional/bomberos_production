@@ -1,3 +1,4 @@
+let storedData = localStorage.getItem("fetchedData");
 const selectDivision = document.getElementById("id_form1-opciones");
 const selectTipoProcedimiento = document.getElementById("id_form4-tipo_procedimiento");
 
@@ -22,7 +23,7 @@ async function cargarTipos(division) {
             },
         });
 
-        selectTipoProcedimiento.innerHTML = `<option value="" selected="">Seleccione Una Opcion</option>`; // Limpia antes de cargar
+        selectTipoProcedimiento.innerHTML = ``; // Limpia antes de cargar
 
         data.forEach((tipo) => {
             const option = document.createElement("option");
@@ -31,16 +32,17 @@ async function cargarTipos(division) {
             selectTipoProcedimiento.appendChild(option);
         });
 
-        window.cargasCompletas.procedimientos = true;
-        verificarCargaCompleta(); // Verifica si todas las cargas están completas
+        if (storedData) {
+            window.cargasCompletas.procedimientos = true;
+            verificarCargaCompleta(); // Verifica si todas las cargas están completas
+        }
 
     } catch (error) {
-        console.error("❌ Error al cargar procedimientos:", error);
+        
     }
 }
 
 // Si hay datos en localStorage, cargar automáticamente
-let storedData = localStorage.getItem("fetchedData");
 
 if (storedData) {
     const data = JSON.parse(storedData);
@@ -48,7 +50,6 @@ if (storedData) {
         cargarTipos(data.id_division);
     }
 } else {
-    console.log("⚠ No hay datos en localStorage, esperando selección manual...");
 }
 
 // Escuchar cambios en el select solo si no es la misma división
