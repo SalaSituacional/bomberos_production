@@ -2,7 +2,6 @@ const selectSolicitante = document.getElementById("id_form2-solicitante");
 const selectJefeComision = document.getElementById("id_form2-jefe_comision");
 
 selectSolicitante.innerHTML = `<option value="" selected="">Seleccione Una Opcion</option>`;
-selectJefeComision.innerHTML = `<option value="" selected="">Seleccione Una Opcion</option>`;
 
 // const division = selectOpciones_Unidad.value;
 async function cargarSolicitante() {
@@ -18,7 +17,6 @@ async function cargarSolicitante() {
     });
 
     selectSolicitante.innerText = "";
-    selectJefeComision.innerText = "";
 
     data.forEach((unidad) => {
       const option = document.createElement("option");
@@ -44,8 +42,10 @@ async function cargarSolicitante() {
 
     selectJefeComision.options[1].remove();
 
-    window.cargasCompletas.solicitante = true;
-    verificarCargaCompleta();
+    if (storedData) {
+      window.cargasCompletas.solicitante = true;
+      verificarCargaCompleta();
+    }
 
   } catch (error) {
     console.error("Error al cargar procedimientos:", error);

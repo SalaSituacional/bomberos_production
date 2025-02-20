@@ -571,7 +571,7 @@
 
   function verificarCargaCompleta() {
       if (Object.values(window.cargasCompletas).every(carga => carga)) {
-          console.log("🚀 Todas las peticiones han terminado, ejecutando datos_local_storage.js");
+          // console.log("🚀 Todas las peticiones han terminado, ejecutando datos_local_storage.js");
           iniciarDatosLocalStorage(); // Llamar a la función cuando todo está listo
       }
   }
@@ -584,8 +584,8 @@
 <script src="../static/js/procedimientos/tipos_procedimientos.js"></script>
 <script src="../static/js/procedimientos/unidades.js"></script>
 <script src="../static/js/procedimientos/solicitante.js"></script>
-<script src="../static/js/procedimientos/otras_validaciones.js"></script>
 <script src="../static/js/datos_local_storage.js"></script>
+<script src="../static/js/procedimientos/otras_validaciones.js"></script>
 
 
 {% if errors %}

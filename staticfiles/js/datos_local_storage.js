@@ -4,7 +4,6 @@ function iniciarDatosLocalStorage() {
  const storedData = localStorage.getItem('fetchedData');
  if (storedData) {
      const data = JSON.parse(storedData);
-     console.log("Datos en localStorage:", data);
 
      // Procesar los datos como antes...
      let datos = data;
