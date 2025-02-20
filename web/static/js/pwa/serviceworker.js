@@ -1,8 +1,8 @@
-const CACHE_NAME = 'cuerpo-bomberos-v2'; // Cambié el nombre de la caché para forzar la actualización
+const CACHE_NAME = 'cuerpo-bomberos-v2'; // Nombre de la caché actualizado
 const urlsToCache = [
   '/',
-  '/static/styles.css',
-  '/static/js/pwa/manifest.json',
+  './static/styles.css',
+  './static/js/pwa/manifest.json',
   'https://i.postimg.cc/CLr88W67/29.png',
   'https://i.postimg.cc/52ZF78JF/40.png',
   'https://i.postimg.cc/63K4wwyW/58.png',
