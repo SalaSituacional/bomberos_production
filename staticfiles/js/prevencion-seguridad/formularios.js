@@ -45,10 +45,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById("id_referencia").setAttribute("disabled", true);
 
+  // Obtener parámetros de la URL
+  const params = new URLSearchParams(window.location.search);
+  // Obtener el valor de 'comercio_id'
+  const comercioId = params.get("comercio_id");
+
+  // Verificar si existe y usarlo
+  if (comercioId) {
+    document.getElementById("id_comercio").value = comercioId;
+  }
+
+
   // Función para validar los campos y activar/desactivar el botón de envío
   function validateForm() {
     let isValid = true;
 
+    
     // Obtener valores
     let comercio = document.getElementById("id_comercio");
     let cedulaInput = document.getElementById("id_solicitante_cedula");
@@ -58,12 +70,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let horaSolicitud = document.getElementById("id_hora_solicitud");
     let tipoServicio = document.getElementById("id_tipo_servicio");
     let tipoRepresentante = document.getElementById("id_tipo_representante");
-    let solicitanteNombre = document.getElementById(
-      "id_solicitante_nombre_apellido"
-    );
-    let rifRepresentante = document.getElementById(
-      "id_rif_representante_legal"
-    );
+    let solicitanteNombre = document.getElementById("id_solicitante_nombre_apellido");
+    let rifRepresentante = document.getElementById("id_rif_representante_legal");
     let direccion = document.getElementById("id_direccion");
     let estado = document.getElementById("id_estado");
     let municipio = document.getElementById("id_municipio");
@@ -192,12 +200,17 @@ document.addEventListener("DOMContentLoaded", function () {
       clearError(solicitanteNombre);
     }
 
-    // Validación de fecha solicitud
-    if (!rifRepresentante.value) {
-      showError(rifRepresentante, "⚠️ Ingrese el RIF del Representante Legal.");
-      isValid = false;
-    } else {
-      clearError(rifRepresentante);
+    // Validación de RIF del Representante Legal solo si el campo NO está deshabilitado
+    if (!rifRepresentante.hasAttribute("disabled")) {
+      if (!rifRepresentante.value) {
+        showError(
+          rifRepresentante,
+          "⚠️ Ingrese el RIF del Representante Legal."
+        );
+        isValid = false;
+      } else {
+        clearError(rifRepresentante);
+      }
     }
 
     // Validación de fecha solicitud
@@ -279,11 +292,13 @@ document.addEventListener("DOMContentLoaded", function () {
     submitButton.disabled = !isValid;
   }
 
-  // Activar validaciones en tiempo real
-  document.querySelectorAll("input, select").forEach((element) => {
-    element.addEventListener("input", validateForm);
-    element.addEventListener("change", validateForm);
-  });
+  // Activar validaciones en tiempo real sin afectar a los checkbox
+  document
+    .querySelectorAll("input:not([type='checkbox']), select")
+    .forEach((element) => {
+      element.addEventListener("input", validateForm);
+      element.addEventListener("change", validateForm);
+    });
 
   // Función para manejar la activación de fechas según los checkboxes
   function toggleFechaVencimiento(checkboxId, fechaId) {
@@ -292,23 +307,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     checkbox.addEventListener("change", function () {
       fechaInput.disabled = !this.checked;
-      if (!this.checked) fechaInput.value = "";
+      if (!this.checked) {
+        fechaInput.value = "";
+        clearError(fechaInput);
+      }
     });
 
-    if (!checkbox.checked) fechaInput.disabled = true;
+    if (!checkbox.checked) {
+      fechaInput.disabled = true;
+      clearError(fechaInput);
+    }
   }
-
-  // Aplicar la función a cada checkbox-fecha
-  toggleFechaVencimiento("id_cedula_identidad", "id_cedula_vecimiento");
-  toggleFechaVencimiento(
-    "id_rif_representante",
-    "id_rif_representante_vencimiento"
-  );
-  toggleFechaVencimiento("id_rif_comercio", "id_rif_comercio_vencimiento");
-  toggleFechaVencimiento(
-    "id_cedula_catastral",
-    "id_cedula_catastral_vencimiento"
-  );
 
   // Agregar selección de "V" o "E" para la cédula
   const cedulaInput = document.getElementById("id_solicitante_cedula");
@@ -320,6 +329,27 @@ document.addEventListener("DOMContentLoaded", function () {
   selectNacionalidad.setAttribute("name", "nacionalidad");
 
   cedulaContainer.insertBefore(selectNacionalidad, cedulaInput);
+
+  // Aplicar la función a cada checkbox-fecha
+  toggleFechaVencimiento("id_cedula_identidad", "id_cedula_vecimiento");
+  toggleFechaVencimiento("id_cedula_identidad", "id_solicitante_cedula");
+  toggleFechaVencimiento("id_cedula_identidad", "nacionalidad");
+
+  toggleFechaVencimiento(
+    "id_rif_representante",
+    "id_rif_representante_vencimiento"
+  );
+  toggleFechaVencimiento("id_rif_representante", "id_rif_representante_legal");
+
+  toggleFechaVencimiento("id_rif_comercio", "id_rif_comercio_vencimiento");
+  toggleFechaVencimiento(
+    "id_cedula_catastral",
+    "id_cedula_catastral_vencimiento"
+  );
+  toggleFechaVencimiento(
+    "id_documento_propiedad",
+    "id_documento_propiedad_vencimiento"
+  );
 
   // Validar que solo haya números en la cédula
   cedulaInput.addEventListener("input", function () {

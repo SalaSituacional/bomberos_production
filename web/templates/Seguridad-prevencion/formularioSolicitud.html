@@ -139,8 +139,8 @@
 <script>
  document.addEventListener("DOMContentLoaded", function () {
     // Seleccionar todos los inputs, labels y selects dentro del div con el id 'solicitud-comerce'
-    var solicitudComerceElements = document.querySelectorAll('#solicitud-comerce input, #solicitud-comerce label, #solicitud-comerce select');
-    var requisitosComerceInputs = document.querySelectorAll('#requisitos-comerce input');
+    var solicitudComerceElements = document.querySelectorAll('#solicitud-comerce input, #solicitud-comerce label, #solicitud-comerce select' );
+    var requisitosComerceInputs = document.querySelectorAll('#requisitos-comerce input','#requisitos-comerce select');
 
     // Iterar sobre cada elemento y asignar las clases correspondientes
     solicitudComerceElements.forEach(function (element) {
@@ -217,9 +217,9 @@
         elemento11.classList.remove("form-select");
         elemento11.classList.add("new-check");
     }
+
+    document.getElementById("nacionalidad").classList.add("form-select");
 });
-
-
 </script>
 
 <script src="../../static/js/prevencion-seguridad/formularios.js"></script>
