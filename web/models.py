@@ -994,9 +994,9 @@ class Solicitudes(models.Model):
   hora_solicitud = models.TimeField()
   tipo_servicio = models.CharField()
   solicitante_nombre_apellido = models.CharField()
-  solicitante_cedula = models.CharField()
+  solicitante_cedula = models.CharField(blank=True, null=True)
   tipo_representante = models.CharField()
-  rif_representante_legal = models.CharField()
+  rif_representante_legal = models.CharField(blank=True, null=True)
   direccion = models.CharField()
   estado = models.CharField()
   municipio = models.ForeignKey(Municipios, on_delete=models.CASCADE)
@@ -1024,7 +1024,9 @@ class Requisitos(models.Model):
   
   permiso_anterior = models.BooleanField(default=False)
   registro_comercio = models.BooleanField(default=False)
+  
   documento_propiedad = models.BooleanField(default=False)
+  documento_propiedad_vencimiento = models.DateField(blank=True, null=True)
   
   cedula_catastral = models.BooleanField(default=False)
   cedula_catastral_vencimiento = models.DateField(blank=True, null=True)

@@ -4524,15 +4524,15 @@ def agregar_comercio(request):
     if request.method == "POST":
         comercio = request.POST.get("nombre_comercio")  # Obtener el valor del formulario
         rif_empresarial = request.POST.get("rif_empresarial")  # Obtener el valor del formulario
-        
-        # Guardar en la base de datos
-        Comercio.objects.create(
+
+        # Guardar en la base de datos y obtener el objeto creado
+        nuevo_comercio = Comercio.objects.create(
             nombre_comercio=comercio,
             rif_empresarial=rif_empresarial
         )
 
-        # Redirigir a la misma página para recargar
-        return redirect("/formulariocertificados/")  # Redirige a la misma URL
+        # Redirigir a la misma página con el ID del comercio en la URL
+        return redirect(f"/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
 
     return HttpResponse("Método no permitido", status=405)
 
@@ -4572,11 +4572,12 @@ def agregar_solicitud(request):
         documento_propiedad = request.POST.get("documento_propiedad") == "on"
         cedula_catastral = request.POST.get("cedula_catastral") == "on"
         carta_autorizacion = request.POST.get("carta_autorizacion") == "on"
+        plano_bomberil = request.POST.get("plano_bomberil") == "on" 
         cedula_vencimiento = request.POST.get("cedula_vecimiento")
         rif_representante_vencimiento = request.POST.get("rif_representante_vencimiento")
         rif_comercio_vencimiento = request.POST.get("rif_comercio_vencimiento")
         cedula_catastral_vencimiento = request.POST.get("cedula_catastral_vencimiento")
-        plano_bomberil = request.POST.get("plano_bomberil") == "on" 
+        documento_propiedad_vencimiento = request.POST.get("documento_propiedad_vencimiento")
 
         new = Solicitudes.objects.create(
             id_solicitud=comercio_instance,
@@ -4609,6 +4610,7 @@ def agregar_solicitud(request):
             permiso_anterior=permiso_anterior,
             registro_comercio=registro_comercio,
             documento_propiedad=documento_propiedad,
+            documento_propiedad_vencimiento=documento_propiedad_vencimiento,
             cedula_catastral=cedula_catastral,
             cedula_catastral_vencimiento=cedula_catastral_vencimiento,
             carta_autorizacion=carta_autorizacion,
