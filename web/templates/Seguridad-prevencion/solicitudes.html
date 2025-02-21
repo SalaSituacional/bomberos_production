@@ -204,8 +204,10 @@
     <section class="filter-search">
       <span class="input-group-text" id="basic-addon1"><b> Registros Totales: </b> <span>{{ conteo }}</span></span>
       <span class="input-group-text" id="basic-addon1"><b> Numero de Expediente: </b> </span>
-      <input class="form-control" type="search" name="numero_expediente" id="cedula" value="{{ numero_expediente }}" />
-      <button type="submit" class="btn btn-danger">Buscar</button>
+      <input class="form-control" type="search" name="numero_expediente" id="expediente" value="{{ numero_expediente }}" />
+      <span class="input-group-text" id="basic-addon1"><b> Rif Del Comercio: </b> </span>
+      <input class="form-control" type="search" name="rif_empresarial" id="rif" value="{{ rif_empresarial }}" />
+      <button type="submit" class="btn btn-danger">Buscar</button>      
     </section>
   </form>
 </div>
@@ -302,11 +304,6 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("cedula").value = "";
-  });
-</script>
 
 <footer class="footer">
   <section class="text-reserved">
@@ -314,7 +311,14 @@
   </section>
 </footer>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("expediente").value = "";
+    document.getElementById("rif").value = "";
+  });
+</script>
 <script src="../../static/js/prevencion-seguridad/api_descargar_solicitud.js"></script>
 <script src="../../static/js/prevencion-seguridad/api_eliminar_solicitud.js"></script>
 <script src="../../static/js/prevencion-seguridad/api_tablas_prevencion.js"></script>
+<script src="../../static/js/loader-function.js"></script>
 {% endblock %}

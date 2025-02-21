@@ -4457,22 +4457,26 @@ def View_Procedimiento_Editar(request):
         "form_brigada": form_brigada,
         })
 
-def cerfiticados_prevencion(request):
+def certificados_prevencion(request):
     user = request.session.get('user')
     if not user:
         return redirect('/')
 
     numero_expediente = request.GET.get('numero_expediente', '').strip()
+    rif_empresarial = request.GET.get('rif_empresarial', '').strip()
     
     # Obtener el total de registros en la base de datos
     total_comercios = Comercio.objects.count()
-
     # Inicialmente, la tabla estará vacía
     comercios = Comercio.objects.none()
 
     # Si el usuario busca, filtra los resultados
     if numero_expediente:
+        # Filtra por numero_expediente
         comercios = Comercio.objects.filter(id_comercio__icontains=numero_expediente)
+    elif rif_empresarial:
+        # Filtra por rif_empresarial
+        comercios = Comercio.objects.filter(rif_empresarial__icontains=rif_empresarial)
 
     return render(request, "Seguridad-prevencion/solicitudes.html", {
         "user": user,
@@ -4482,8 +4486,8 @@ def cerfiticados_prevencion(request):
         "comercios": comercios,
         "conteo": total_comercios,  # Mantiene el conteo total fijo
         "numero_expediente": numero_expediente,
+        "rif_empresarial": rif_empresarial,
     })
-
 
 
 # Vista de la seccion de Estadisticas
@@ -4681,7 +4685,7 @@ def doc_Guia(request, id):
 
     # Configurar la respuesta HTTP para descargar el PDF
     response = HttpResponse(buffer, content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename="Guia_Solicitud.pdf"'
+    response["Content-Disposition"] = 'inline; filename="Guia_Solicitud.pdf"'
 
     return response
 
@@ -4734,6 +4738,7 @@ def doc_Inspeccion(request, id):
     buffer.seek(0)
 
     response = HttpResponse(buffer, content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename="Solicitud_inspeccion.pdf"'
+    response["Content-Disposition"] = 'inline; filename="Solicitud_inspeccion.pdf"'
+
 
     return response
