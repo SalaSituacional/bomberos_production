@@ -57,7 +57,7 @@ urlpatterns = [
     path('antecedentes/', Antecedentes),
     
     # Certificados Prevencion
-    path('certificadosprevencion/', cerfiticados_prevencion),
+    path('certificadosprevencion/', certificados_prevencion),
     path('formulariocertificados/', formulario_certificado_prevencion),
     path('planillacertificado/', planilla_certificado),
     path('api/get_solicitudes/<int:id>/', api_get_solicitudes, name='api_get_solicitudes'),

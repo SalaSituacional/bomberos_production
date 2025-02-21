@@ -4457,22 +4457,26 @@ def View_Procedimiento_Editar(request):
         "form_brigada": form_brigada,
         })
 
-def cerfiticados_prevencion(request):
+def certificados_prevencion(request):
     user = request.session.get('user')
     if not user:
         return redirect('/')
 
     numero_expediente = request.GET.get('numero_expediente', '').strip()
+    rif_empresarial = request.GET.get('rif_empresarial', '').strip()
     
     # Obtener el total de registros en la base de datos
     total_comercios = Comercio.objects.count()
-
     # Inicialmente, la tabla estará vacía
     comercios = Comercio.objects.none()
 
     # Si el usuario busca, filtra los resultados
     if numero_expediente:
+        # Filtra por numero_expediente
         comercios = Comercio.objects.filter(id_comercio__icontains=numero_expediente)
+    elif rif_empresarial:
+        # Filtra por rif_empresarial
+        comercios = Comercio.objects.filter(rif_empresarial__icontains=rif_empresarial)
 
     return render(request, "Seguridad-prevencion/solicitudes.html", {
         "user": user,
@@ -4482,8 +4486,8 @@ def cerfiticados_prevencion(request):
         "comercios": comercios,
         "conteo": total_comercios,  # Mantiene el conteo total fijo
         "numero_expediente": numero_expediente,
+        "rif_empresarial": rif_empresarial,
     })
-
 
 
 # Vista de la seccion de Estadisticas
@@ -4520,15 +4524,15 @@ def agregar_comercio(request):
     if request.method == "POST":
         comercio = request.POST.get("nombre_comercio")  # Obtener el valor del formulario
         rif_empresarial = request.POST.get("rif_empresarial")  # Obtener el valor del formulario
-        
-        # Guardar en la base de datos
-        Comercio.objects.create(
+
+        # Guardar en la base de datos y obtener el objeto creado
+        nuevo_comercio = Comercio.objects.create(
             nombre_comercio=comercio,
             rif_empresarial=rif_empresarial
         )
 
-        # Redirigir a la misma página para recargar
-        return redirect("/formulariocertificados/")  # Redirige a la misma URL
+        # Redirigir a la misma página con el ID del comercio en la URL
+        return redirect(f"/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
 
     return HttpResponse("Método no permitido", status=405)
 
@@ -4568,11 +4572,12 @@ def agregar_solicitud(request):
         documento_propiedad = request.POST.get("documento_propiedad") == "on"
         cedula_catastral = request.POST.get("cedula_catastral") == "on"
         carta_autorizacion = request.POST.get("carta_autorizacion") == "on"
+        plano_bomberil = request.POST.get("plano_bomberil") == "on" 
         cedula_vencimiento = request.POST.get("cedula_vecimiento")
         rif_representante_vencimiento = request.POST.get("rif_representante_vencimiento")
         rif_comercio_vencimiento = request.POST.get("rif_comercio_vencimiento")
         cedula_catastral_vencimiento = request.POST.get("cedula_catastral_vencimiento")
-        plano_bomberil = request.POST.get("plano_bomberil") == "on" 
+        documento_propiedad_vencimiento = request.POST.get("documento_propiedad_vencimiento")
 
         new = Solicitudes.objects.create(
             id_solicitud=comercio_instance,
@@ -4605,6 +4610,7 @@ def agregar_solicitud(request):
             permiso_anterior=permiso_anterior,
             registro_comercio=registro_comercio,
             documento_propiedad=documento_propiedad,
+            documento_propiedad_vencimiento=documento_propiedad_vencimiento,
             cedula_catastral=cedula_catastral,
             cedula_catastral_vencimiento=cedula_catastral_vencimiento,
             carta_autorizacion=carta_autorizacion,
@@ -4681,7 +4687,7 @@ def doc_Guia(request, id):
 
     # Configurar la respuesta HTTP para descargar el PDF
     response = HttpResponse(buffer, content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename="Guia_Solicitud.pdf"'
+    response["Content-Disposition"] = 'inline; filename="Guia_Solicitud.pdf"'
 
     return response
 
@@ -4734,6 +4740,7 @@ def doc_Inspeccion(request, id):
     buffer.seek(0)
 
     response = HttpResponse(buffer, content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename="Solicitud_inspeccion.pdf"'
+    response["Content-Disposition"] = 'inline; filename="Solicitud_inspeccion.pdf"'
+
 
     return response

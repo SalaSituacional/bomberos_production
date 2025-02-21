@@ -950,20 +950,20 @@ class Formulario_Solicitud(forms.Form):
 
 class Formularia_Requisitos(forms.Form):
     cedula_identidad = forms.BooleanField(required=False,label="Cedula de Identidad")
+    solicitante_cedula = forms.CharField(label="Cedula Solicitante",required=False)
     cedula_vecimiento = forms.DateField(
         label="Fecha Vencimiento",
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=False
     )
-    solicitante_cedula = forms.CharField(label="Cedula Solicitante",required=False)
 
     rif_representante = forms.BooleanField(required=False,label="RIF Representante")
+    rif_representante_legal = forms.CharField(required=False)
     rif_representante_vencimiento = forms.DateField(
         label="Fecha Vencimiento",
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=False
     )
-    rif_representante_legal = forms.CharField(required=False)
 
     rif_comercio = forms.BooleanField(required=False,label="RIF Comercio")
     rif_comercio_vencimiento = forms.DateField(
@@ -979,8 +979,13 @@ class Formularia_Requisitos(forms.Form):
         required=False
     )
 
-
     documento_propiedad = forms.BooleanField(required=False,label="Documento de Propiedad/Carta de Arrendamiento")
+    documento_propiedad_vencimiento = forms.DateField(
+        label="Fecha Vencimiento",
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=False
+    )
+    
     permiso_anterior = forms.BooleanField(required=False,label="Permiso Anterior (En Caso de Renovacion)")
     carta_autorizacion = forms.BooleanField(required=False,label="Carta Autorizacion")
     plano_bomberil = forms.BooleanField(required=False,label="Plano de Uso Bomberil")
