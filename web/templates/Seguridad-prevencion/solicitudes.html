@@ -232,7 +232,7 @@
         <td>{{ row.rif_empresarial }}</td>
         <td class="icons-accion-two">
           <!-- NO TOCAR Boton informacion-->
-          <button type="button" class="button-info" data-id="{{ row.id }}" id="view-solicitudes" data-bs-toggle="modal" data-bs-target="#modal-info">
+          <button type="button" class="button-info view-solicitudes" data-id="{{ row.id_comercio }}" data-bs-toggle="modal" data-bs-target="#modal-info">
             <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1"
               xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;">
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -317,8 +317,8 @@
     document.getElementById("rif").value = "";
   });
 </script>
+<script src="../../static/js/prevencion-seguridad/api_tablas_prevencion.js"></script>
 <script src="../../static/js/prevencion-seguridad/api_descargar_solicitud.js"></script>
 <script src="../../static/js/prevencion-seguridad/api_eliminar_solicitud.js"></script>
-<script src="../../static/js/prevencion-seguridad/api_tablas_prevencion.js"></script>
 <script src="../../static/js/loader-function.js"></script>
 {% endblock %}

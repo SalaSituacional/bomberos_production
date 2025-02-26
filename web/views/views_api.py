@@ -2654,8 +2654,8 @@ def api_solicitantes(request):
     return JsonResponse(op, safe=False)
 
 # Apis para prevencion =======================================================================================================
-def api_get_solicitudes(request, id):
-    solicitudes = Solicitudes.objects.filter(id_solicitud=id)
+def api_get_solicitudes(request, referencia):
+    solicitudes = Solicitudes.objects.filter(id_solicitud__id_comercio=referencia)
     data = []
     for solicitud in solicitudes:
         data.append({
@@ -2677,34 +2677,33 @@ def validar_cedula(request):
     cedula = request.GET.get("cedula", "").strip()
     comercio_id = request.GET.get("comercio", "").strip()  # Obtener comercio enviado desde el frontend
 
+    # print(f"Cédula recibida: {cedula}")
+    # print(f"Comercio recibido: {comercio_id}")
+
     if not cedula or not cedula.startswith(("V-", "E-")):
         return JsonResponse({"error": "Formato inválido. Use V-12345678 o E-12345678."}, status=400)
 
-    # Obtener todos los comercios distintos asociados a la cédula
-    comercios_asociados = Solicitudes.objects.filter(solicitante_cedula=cedula).values_list("id_solicitud", flat=True).distinct()
-    cantidad_comercios = len(set(comercios_asociados))
+    # Obtener los comercios asociados a la cédula
+    solicitudes = Solicitudes.objects.filter(solicitante_cedula=cedula)
+    comercios_asociados = set(solicitudes.values_list("id_solicitud__id_comercio", flat=True))
+    cantidad_comercios = len(comercios_asociados)
 
-    # Validar si el comercio actual ya está en la lista de comercios asociados
-    if comercio_id in comercios_asociados:
+    # print(f"Comercios asociados encontrados: {comercios_asociados}")
+    # print(f"Cantidad de comercios asociados: {cantidad_comercios}")
+
+    # Si la cédula ya está en 3 comercios y el comercio actual no está en la lista, bloquear registro
+    if cantidad_comercios >= 3 and comercio_id not in comercios_asociados:
         return JsonResponse({
             "existe": True,
             "cantidad_comercios": cantidad_comercios,
-            "valido": True  # Permitimos el registro si ya está asociado a este comercio
-        })
-
-    # Si el comercio es nuevo y ya hay 3 comercios asociados, bloqueamos el registro
-    if cantidad_comercios >= 3:
-        return JsonResponse({
-            "existe": True,
-            "cantidad_comercios": cantidad_comercios,
-            "valido": False,  # Bloqueamos el registro
+            "valido": False,  # Bloquear el registro
             "mensaje": "❌ La cédula ya está asociada a 3 comercios distintos."
         })
 
     return JsonResponse({
         "existe": cantidad_comercios > 0,
         "cantidad_comercios": cantidad_comercios,
-        "valido": True  # Permitimos el registro
+        "valido": True  # Permitir el registro
     })
 
 def validar_rif(request):
