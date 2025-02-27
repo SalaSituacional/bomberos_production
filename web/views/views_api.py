@@ -2653,20 +2653,79 @@ def api_solicitantes(request):
 
     return JsonResponse(op, safe=False)
 
-# Apis para prevencion =======================================================================================================
-def api_get_solicitudes(request, id):
-    solicitudes = Solicitudes.objects.filter(id_solicitud=id)
+def api_get_solicitudes(request, referencia):
+    solicitudes = Solicitudes.objects.filter(id_solicitud__id_comercio=referencia)
     data = []
+    documentos = True
+    hoy = datetime.today().date()
+    proximo_mes = hoy + timedelta(days=30)
+
     for solicitud in solicitudes:
+        requisitos = Requisitos.objects.filter(id_solicitud=solicitud)
+        
+        requisitos_faltantes = []
+        documentos_proximos_vencer = []
+        documentos_vencidos = []
+
+        if requisitos.exists():
+            req = requisitos.first()
+            
+            # Verificar requisitos faltantes
+            if not req.cedula_identidad:
+                requisitos_faltantes.append("Cédula de identidad")
+            if not req.rif_representante:
+                requisitos_faltantes.append("RIF del representante")
+            if not req.rif_comercio:
+                requisitos_faltantes.append("RIF del comercio")
+            if not req.permiso_anterior:
+                requisitos_faltantes.append("Permiso anterior")
+            if not req.registro_comercio:
+                requisitos_faltantes.append("Registro de comercio")
+            if not req.documento_propiedad:
+                requisitos_faltantes.append("Documento de propiedad")
+            if not req.cedula_catastral:
+                requisitos_faltantes.append("Cédula catastral")
+            if not req.carta_autorizacion:
+                requisitos_faltantes.append("Carta de autorización")
+            if not req.plano_bomberil:
+                requisitos_faltantes.append("Plano bomberil")
+
+            # Verificar documentos próximos a vencer o ya vencidos
+            documentos_vencimiento = {
+                "Cédula de identidad": req.cedula_vencimiento,
+                "RIF del representante": req.rif_representante_vencimiento,
+                "RIF del comercio": req.rif_comercio_vencimiento,
+                "Documento de propiedad": req.documento_propiedad_vencimiento,
+                "Cédula catastral": req.cedula_catastral_vencimiento,
+            }
+
+            for nombre_doc, fecha_vencimiento in documentos_vencimiento.items():
+                if fecha_vencimiento:
+                    if fecha_vencimiento < hoy:
+                        documentos_vencidos.append(f"{nombre_doc} (venció el {fecha_vencimiento})")
+                    elif hoy <= fecha_vencimiento <= proximo_mes:
+                        documentos_proximos_vencer.append(f"{nombre_doc} (vence el {fecha_vencimiento})")
+
+        else:
+            requisitos_faltantes.append("No hay requisitos registrados para esta solicitud")
+            documentos = False
+        
         data.append({
             "id_solicitud": solicitud.id,
             "id": solicitud.id_solicitud.id_comercio,
             "fecha": solicitud.fecha_solicitud,
             "solicitante": solicitud.solicitante_nombre_apellido,
             "tipo_solicitud": solicitud.tipo_servicio,
+            "papeles_incompletos": bool(requisitos_faltantes),
+            "documentos_faltantes": requisitos_faltantes if requisitos_faltantes else ["Todos los documentos están en orden"],
+            "documentos_proximos_vencer": documentos_proximos_vencer if documentos_proximos_vencer else ["No hay documentos próximos a vencer"],
+            "documentos_vencidos": documentos_vencidos if documentos_vencidos else ["No hay documentos vencidos"],
+            "documentos": documentos
         })
-
+    
     return JsonResponse(data, safe=False)
+
+
 
 def api_eliminar_solicitudes(request, id):
     solicitud = get_object_or_404(Solicitudes, id=id)
@@ -2677,34 +2736,33 @@ def validar_cedula(request):
     cedula = request.GET.get("cedula", "").strip()
     comercio_id = request.GET.get("comercio", "").strip()  # Obtener comercio enviado desde el frontend
 
+    # print(f"Cédula recibida: {cedula}")
+    # print(f"Comercio recibido: {comercio_id}")
+
     if not cedula or not cedula.startswith(("V-", "E-")):
         return JsonResponse({"error": "Formato inválido. Use V-12345678 o E-12345678."}, status=400)
 
-    # Obtener todos los comercios distintos asociados a la cédula
-    comercios_asociados = Solicitudes.objects.filter(solicitante_cedula=cedula).values_list("id_solicitud", flat=True).distinct()
-    cantidad_comercios = len(set(comercios_asociados))
+    # Obtener los comercios asociados a la cédula
+    solicitudes = Solicitudes.objects.filter(solicitante_cedula=cedula)
+    comercios_asociados = set(solicitudes.values_list("id_solicitud__id_comercio", flat=True))
+    cantidad_comercios = len(comercios_asociados)
 
-    # Validar si el comercio actual ya está en la lista de comercios asociados
-    if comercio_id in comercios_asociados:
+    # print(f"Comercios asociados encontrados: {comercios_asociados}")
+    # print(f"Cantidad de comercios asociados: {cantidad_comercios}")
+
+    # Si la cédula ya está en 3 comercios y el comercio actual no está en la lista, bloquear registro
+    if cantidad_comercios >= 3 and comercio_id not in comercios_asociados:
         return JsonResponse({
             "existe": True,
             "cantidad_comercios": cantidad_comercios,
-            "valido": True  # Permitimos el registro si ya está asociado a este comercio
-        })
-
-    # Si el comercio es nuevo y ya hay 3 comercios asociados, bloqueamos el registro
-    if cantidad_comercios >= 3:
-        return JsonResponse({
-            "existe": True,
-            "cantidad_comercios": cantidad_comercios,
-            "valido": False,  # Bloqueamos el registro
+            "valido": False,  # Bloquear el registro
             "mensaje": "❌ La cédula ya está asociada a 3 comercios distintos."
         })
 
     return JsonResponse({
         "existe": cantidad_comercios > 0,
         "cantidad_comercios": cantidad_comercios,
-        "valido": True  # Permitimos el registro
+        "valido": True  # Permitir el registro
     })
 
 def validar_rif(request):

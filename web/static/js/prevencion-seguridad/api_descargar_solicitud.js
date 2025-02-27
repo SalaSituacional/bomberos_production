@@ -30,7 +30,7 @@ async function descargarWordSolicitud() {
           // Abre el PDF en una nueva pestaña
           window.open(pdfUrl, "_blank");
           // Asigna un nombre al archivo en la URL de la pestaña
-          pdfWindow.document.title = nombreArchivo; // Cambia el título de la pestaña
+          // pdfWindow.document.title = nombreArchivo; // Cambia el título de la pestaña
 
         } catch (error) {
           console.error("❌ Error al abrir el archivo:", error);

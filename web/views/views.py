@@ -4462,7 +4462,7 @@ def certificados_prevencion(request):
     if not user:
         return redirect('/')
 
-    numero_expediente = request.GET.get('numero_expediente', '').strip()
+    numero_expediente = request.GET.get('numero_expediente', '')
     rif_empresarial = request.GET.get('rif_empresarial', '').strip()
     
     # Obtener el total de registros en la base de datos
@@ -4471,9 +4471,14 @@ def certificados_prevencion(request):
     comercios = Comercio.objects.none()
 
     # Si el usuario busca, filtra los resultados
-    if numero_expediente:
+    if numero_expediente == "GET ALL":
+        comercios = list(Comercio.objects.all())
+        comercios = [{'id': comercio.id, 'id_comercio': comercio.id_comercio, 'nombre_comercio': comercio.nombre_comercio, 'rif_empresarial': comercio.rif_empresarial} for comercio in comercios]
+    
+    if numero_expediente and numero_expediente!="GET ALL":
         # Filtra por numero_expediente
         comercios = Comercio.objects.filter(id_comercio__icontains=numero_expediente)
+
     elif rif_empresarial:
         # Filtra por rif_empresarial
         comercios = Comercio.objects.filter(rif_empresarial__icontains=rif_empresarial)
@@ -4692,6 +4697,7 @@ def doc_Guia(request, id):
     return response
 
 def doc_Inspeccion(request, id):
+    # id = int(id)
     solicitud = get_object_or_404(Solicitudes, id=id)
     datos_solicitud = get_object_or_404(Comercio, id_comercio=solicitud.id_solicitud.id_comercio)
 
