@@ -58,62 +58,69 @@ document.addEventListener("DOMContentLoaded", () => {
           <tr>
           `;
 
-        if (
+        let tieneDocumentosFaltantes =
           Array.isArray(item.documentos_faltantes) &&
           item.documentos_faltantes.length > 0 &&
-          item.documentos_faltantes[0] !== "Todos los documentos están en orden"
-        ) {
-          let documentosHTML = item.documentos_faltantes.join(", ");
+          item.documentos_faltantes[0] !==
+            "Todos los documentos están en orden";
 
-          tablaPrevencionContenido.innerHTML += `
-              <tr>
-                <td colspan="6" style="color: red; font-weight: bold; text-align: justify;">
-                  ⚠️ Documentos Faltantes: ${documentosHTML}
-                </td>
-              </tr>
-            `;
-        } else {
-          // Si no hay documentos faltantes, mostrar mensaje de todo correcto
-          tablaPrevencionContenido.innerHTML += `
-              <tr>
-                <td colspan="6" style="color: green; font-weight: bold; text-align: justify;">
-                  ✅ Todos los documentos están en orden
-                </td>
-              </tr>
-            `;
-        }
-
-        if (
+        let tieneDocumentosProximosVencer =
           Array.isArray(item.documentos_proximos_vencer) &&
           item.documentos_proximos_vencer.length > 0 &&
           item.documentos_proximos_vencer[0] !==
-            "No hay documentos próximos a vencer"
-        ) {
-          let proximosVencerHTML = item.documentos_proximos_vencer.join(", ");
+            "No hay documentos próximos a vencer";
 
-          tablaPrevencionContenido.innerHTML += `
-              <tr>
-                <td colspan="6" style="color: orange; font-weight: bold; text-align: justify;">
-                  ⏳ Documentos Próximos a Vencer: ${proximosVencerHTML}
-                </td>
-              </tr>
-            `;
-        }
-
-        if (
+        let tieneDocumentosVencidos =
           Array.isArray(item.documentos_vencidos) &&
           item.documentos_vencidos.length > 0 &&
-          item.documentos_vencidos[0] !== "No hay documentos vencidos"
-        ) {
-          let vencidosHTML = item.documentos_vencidos.join(", ");
+          item.documentos_vencidos[0] !== "No hay documentos vencidos";
 
+        if (tieneDocumentosFaltantes) {
+          let documentosHTML = item.documentos_faltantes.join(", ");
           tablaPrevencionContenido.innerHTML += `
               <tr>
-                <td colspan="6" style="color: darkred; font-weight: bold; text-align: justify;">
-                  ❌ Documentos Vencidos: ${vencidosHTML}
-                </td>
+                  <td colspan="6" style="color: red; font-weight: bold; text-align: justify;">
+                      ⚠️ Documentos Faltantes: ${documentosHTML}
+                  </td>
               </tr>
-            `;
+          `;
+        }
+
+        if (tieneDocumentosProximosVencer) {
+          let proximosVencerHTML = item.documentos_proximos_vencer.join(", ");
+          tablaPrevencionContenido.innerHTML += `
+              <tr>
+                  <td colspan="6" style="color: orange; font-weight: bold; text-align: justify;">
+                      ⏳ Documentos Próximos a Vencer: ${proximosVencerHTML}
+                  </td>
+              </tr>
+          `;
+        }
+
+        if (tieneDocumentosVencidos) {
+          let vencidosHTML = item.documentos_vencidos.join(", ");
+          tablaPrevencionContenido.innerHTML += `
+              <tr>
+                  <td colspan="6" style="color: darkred; font-weight: bold; text-align: justify;">
+                      ❌ Documentos Vencidos: ${vencidosHTML}
+                  </td>
+              </tr>
+          `;
+        }
+
+        // Solo mostrar "Todos los documentos están en orden" si no hay documentos pendientes, vencidos o próximos a vencer
+        if (
+          !tieneDocumentosFaltantes &&
+          !tieneDocumentosProximosVencer &&
+          !tieneDocumentosVencidos
+        ) {
+          tablaPrevencionContenido.innerHTML += `
+          <tr>
+              <td colspan="6" style="color: green; font-weight: bold; text-align: justify;">
+                  ✅ Todos los documentos están en orden
+              </td>
+          </tr>
+      `;
         }
 
         i++;
@@ -131,62 +138,69 @@ document.addEventListener("DOMContentLoaded", () => {
           <tr>
           `;
 
-        if (
+        tieneDocumentosFaltantes =
           Array.isArray(item.documentos_faltantes) &&
           item.documentos_faltantes.length > 0 &&
-          item.documentos_faltantes[0] !== "Todos los documentos están en orden"
-        ) {
-          let documentosHTML = item.documentos_faltantes.join(", ");
+          item.documentos_faltantes[0] !==
+            "Todos los documentos están en orden";
 
-          tablaPrevencionContenido.innerHTML += `
-              <tr>
-                <td colspan="6" style="color: red; font-weight: bold; text-align: justify;">
-                  ⚠️ Documentos Faltantes: ${documentosHTML}
-                </td>
-              </tr>
-            `;
-        } else {
-          // Si no hay documentos faltantes, mostrar mensaje de todo correcto
-          tablaPrevencionContenido.innerHTML += `
-              <tr>
-                <td colspan="6" style="color: green; font-weight: bold; text-align: justify;">
-                  ✅ Todos los documentos están en orden
-                </td>
-              </tr>
-            `;
-        }
-
-        if (
+        tieneDocumentosProximosVencer =
           Array.isArray(item.documentos_proximos_vencer) &&
           item.documentos_proximos_vencer.length > 0 &&
           item.documentos_proximos_vencer[0] !==
-            "No hay documentos próximos a vencer"
-        ) {
-          let proximosVencerHTML = item.documentos_proximos_vencer.join(", ");
+            "No hay documentos próximos a vencer";
 
-          tablaPrevencionContenido.innerHTML += `
-              <tr>
-                <td colspan="6" style="color: orange; font-weight: bold; text-align: justify;">
-                  ⏳ Documentos Próximos a Vencer: ${proximosVencerHTML}
-                </td>
-              </tr>
-            `;
-        }
-
-        if (
+        tieneDocumentosVencidos =
           Array.isArray(item.documentos_vencidos) &&
           item.documentos_vencidos.length > 0 &&
-          item.documentos_vencidos[0] !== "No hay documentos vencidos"
-        ) {
-          let vencidosHTML = item.documentos_vencidos.join(", ");
+          item.documentos_vencidos[0] !== "No hay documentos vencidos";
 
+        if (tieneDocumentosFaltantes) {
+          let documentosHTML = item.documentos_faltantes.join(", ");
           tablaPrevencionContenido.innerHTML += `
-              <tr>
-                <td colspan="6" style="color: darkred; font-weight: bold; text-align: justify;">
-                  ❌ Documentos Vencidos: ${vencidosHTML}
+            <tr>
+                <td colspan="6" style="color: red; font-weight: bold; text-align: justify;">
+                    ⚠️ Documentos Faltantes: ${documentosHTML}
                 </td>
-              </tr>
-            `;
+            </tr>
+        `;
+        }
+
+        if (tieneDocumentosProximosVencer) {
+          let proximosVencerHTML = item.documentos_proximos_vencer.join(", ");
+          tablaPrevencionContenido.innerHTML += `
+            <tr>
+                <td colspan="6" style="color: orange; font-weight: bold; text-align: justify;">
+                    ⏳ Documentos Próximos a Vencer: ${proximosVencerHTML}
+                </td>
+            </tr>
+        `;
+        }
+
+        if (tieneDocumentosVencidos) {
+          let vencidosHTML = item.documentos_vencidos.join(", ");
+          tablaPrevencionContenido.innerHTML += `
+            <tr>
+                <td colspan="6" style="color: darkred; font-weight: bold; text-align: justify;">
+                    ❌ Documentos Vencidos: ${vencidosHTML}
+                </td>
+            </tr>
+        `;
+        }
+
+        // Solo mostrar "Todos los documentos están en orden" si no hay documentos pendientes, vencidos o próximos a vencer
+        if (
+          !tieneDocumentosFaltantes &&
+          !tieneDocumentosProximosVencer &&
+          !tieneDocumentosVencidos
+        ) {
+          tablaPrevencionContenido.innerHTML += `
+          <tr>
+              <td colspan="6" style="color: green; font-weight: bold; text-align: justify;">
+                  ✅ Todos los documentos están en orden
+              </td>
+          </tr>
+      `;
         }
 
         i++;

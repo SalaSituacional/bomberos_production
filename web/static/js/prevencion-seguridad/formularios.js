@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
     checkField(direccionInput, "⚠️ Ingrese la Dirección.");
     checkField(estadoInput, "⚠️ Ingrese el Estado.");
     checkField(municipioInput, "⚠️ Ingrese el Municipio.");
-    checkField(parroquiaInput, "⚠️ Ingrese la Parroquia.");
+    // checkField(parroquiaInput, "⚠️ Ingrese la Parroquia.");
     checkField(numeroTelefonoInput, "⚠️ Ingrese el Número de Teléfono.");
     checkField(metodoPagoInput, "⚠️ Ingrese el Método de Pago.");
 
@@ -156,9 +156,22 @@ document.addEventListener("DOMContentLoaded", function () {
       metodoPagoInput.value === "Deposito"
     ) {
       checkField(referenciaInput, "⚠️ Ingrese el Número de Referencia.");
+      referenciaInput.removeAttribute("disabled");
     } else {
       referenciaInput.setAttribute("disabled", true);
       clearError(referenciaInput);
+      referenciaInput.value = ""
+    }
+
+    if (
+      municipioInput.value === "1" || municipioInput.value === ""
+    ) {
+      checkField(parroquiaInput, "⚠️ Ingrese La Parroquia.");
+      parroquiaInput.removeAttribute("disabled");
+    } else {
+      parroquiaInput.setAttribute("disabled", true);
+      clearError(parroquiaInput);
+      parroquiaInput.value = ""
     }
 
     if (!rifRepresentanteInput.hasAttribute("disabled")) {

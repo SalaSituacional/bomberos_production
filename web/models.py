@@ -1000,7 +1000,7 @@ class Solicitudes(models.Model):
   direccion = models.CharField()
   estado = models.CharField()
   municipio = models.ForeignKey(Municipios, on_delete=models.CASCADE)
-  parroquia = models.ForeignKey(Parroquias, on_delete=models.CASCADE)
+  parroquia = models.ForeignKey(Parroquias, on_delete=models.CASCADE, default="0")
   numero_telefono = models.CharField()
   correo_electronico = models.CharField()
   pago_tasa = models.CharField()
