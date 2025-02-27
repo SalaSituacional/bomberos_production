@@ -57,17 +57,17 @@
     </section>
     <section class="parte-a">
       <h2>Solicitud de certificado de conformidad de uso</h2>
-
-      <div class="autocomplete-container">
-        <input type="text" id="comercioSearch" placeholder="Buscar comercio...">
+      <div class="autocomplete-container ">
+        <label class="form-label"><b>Auto-Completado Para Busqueda De Comercio: </b></label>
+        <input type="text" id="comercioSearch" class="form-control" placeholder="Buscar comercio...">
         <ul id="comercioList" class="autocomplete-list"></ul>
       </div>
-    
+
       <div id="solicitud-comerce">{{ solicitud.as_div }}</div>
     </section>
     <div class="buttons-solicitud">
       <button type="submit" class="btn btn-danger registrar" disabled>Crear Solicitud</button>
-      <button type="button" class="btn btn-danger registrar" >Cancelar solicitud</button>
+      <button type="button" class="btn btn-danger registrar">Cancelar solicitud</button>
     </div>
   </form>
 </article>
@@ -143,28 +143,28 @@
 </div>
 
 <script>
- document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
     // Seleccionar todos los inputs, labels y selects dentro del div con el id 'solicitud-comerce'
-    var solicitudComerceElements = document.querySelectorAll('#solicitud-comerce input, #solicitud-comerce label, #solicitud-comerce select' );
-    var requisitosComerceInputs = document.querySelectorAll('#requisitos-comerce input','#requisitos-comerce select');
+    var solicitudComerceElements = document.querySelectorAll('#solicitud-comerce input, #solicitud-comerce label, #solicitud-comerce select');
+    var requisitosComerceInputs = document.querySelectorAll('#requisitos-comerce input', '#requisitos-comerce select');
 
     // Iterar sobre cada elemento y asignar las clases correspondientes
     solicitudComerceElements.forEach(function (element) {
-        if (element.tagName.toLowerCase() === 'input' && element.type === 'checkbox') {
-            element.classList.add("form-control");
-            element.parentElement.classList.add("checkbox-styles");
-        } else if (element.tagName.toLowerCase() === 'input') {
-            element.classList.add("form-control");
-        } else if (element.tagName.toLowerCase() === 'label') {
-            element.classList.add("form-label");
-        } else if (element.tagName.toLowerCase() === 'select') {
-            element.classList.add("form-select");
-        }
+      if (element.tagName.toLowerCase() === 'input' && element.type === 'checkbox') {
+        element.classList.add("form-control");
+        element.parentElement.classList.add("checkbox-styles");
+      } else if (element.tagName.toLowerCase() === 'input') {
+        element.classList.add("form-control");
+      } else if (element.tagName.toLowerCase() === 'label') {
+        element.classList.add("form-label");
+      } else if (element.tagName.toLowerCase() === 'select') {
+        element.classList.add("form-select");
+      }
     });
 
     // Iterar sobre cada input en 'requisitos-comerce' y asignar la clase 'form-select'
     requisitosComerceInputs.forEach(function (input) {
-        input.classList.add("form-select");
+      input.classList.add("form-select");
     });
 
     // Seleccionar los elementos por sus ID y asignar clases específicas
@@ -182,50 +182,50 @@
 
     // Asignar una clase de CSS a cada elemento si existe
     if (elemento) {
-        elemento.classList.add("form-control");
+      elemento.classList.add("form-control");
     }
     if (elemento2) {
-        elemento2.classList.add("form-control");
+      elemento2.classList.add("form-control");
     }
     if (elemento3) {
-        elemento3.classList.remove("form-select");
-        elemento3.classList.add("new-check");
+      elemento3.classList.remove("form-select");
+      elemento3.classList.add("new-check");
     }
     if (elemento4) {
-        elemento4.classList.remove("form-select");
-        elemento4.classList.add("new-check");
+      elemento4.classList.remove("form-select");
+      elemento4.classList.add("new-check");
     }
     if (elemento5) {
-        elemento5.classList.remove("form-select");
-        elemento5.classList.add("new-check");
+      elemento5.classList.remove("form-select");
+      elemento5.classList.add("new-check");
     }
     if (elemento6) {
-        elemento6.classList.remove("form-select");
-        elemento6.classList.add("new-check");
+      elemento6.classList.remove("form-select");
+      elemento6.classList.add("new-check");
     }
     if (elemento7) {
-        elemento7.classList.remove("form-select");
-        elemento7.classList.add("new-check");
+      elemento7.classList.remove("form-select");
+      elemento7.classList.add("new-check");
     }
     if (elemento8) {
-        elemento8.classList.remove("form-select");
-        elemento8.classList.add("new-check");
+      elemento8.classList.remove("form-select");
+      elemento8.classList.add("new-check");
     }
     if (elemento9) {
-        elemento9.classList.remove("form-select");
-        elemento9.classList.add("new-check");
+      elemento9.classList.remove("form-select");
+      elemento9.classList.add("new-check");
     }
     if (elemento10) {
-        elemento10.classList.remove("form-select");
-        elemento10.classList.add("new-check");
+      elemento10.classList.remove("form-select");
+      elemento10.classList.add("new-check");
     }
     if (elemento11) {
-        elemento11.classList.remove("form-select");
-        elemento11.classList.add("new-check");
+      elemento11.classList.remove("form-select");
+      elemento11.classList.add("new-check");
     }
 
     document.getElementById("nacionalidad").classList.add("form-select");
-});
+  });
 </script>
 
 <script src="../../static/js/prevencion-seguridad/formularios.js"></script>
