@@ -3354,9 +3354,60 @@ checkbox-styles {
   color: red;
   font-size: 12px;
   margin-top: 3px;
-  display: none;
+  /* display: none; */
   /* Se oculta por defecto */
 }
+
+
+
+/* Estilos para el Autocompletado */
+.autocomplete-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+
+  input {
+    width: 40% !important;
+  }
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 30%;
+  width: 40%;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: none;
+}
+
+.autocomplete-list li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.autocomplete-list li:hover {
+  background-color: #f0f0f0;
+}
+
+
+
+
+
+
+
+
+
+
+
 .warning-message {
   color: black;
   font-weight: bold;
