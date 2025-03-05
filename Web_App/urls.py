@@ -55,6 +55,11 @@ urlpatterns = [
     path('prueba/', Prueba),
     path('registros/', ver_registros),
     path('antecedentes/', Antecedentes),
+
+    # Unidades
+    path('unidades/', View_Unidades),
+    path('formularioUnidades/', View_Form_unidades),
+
     
     # Certificados Prevencion
     path('certificadosprevencion/', certificados_prevencion),

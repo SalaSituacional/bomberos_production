@@ -4508,7 +4508,6 @@ def planilla_certificado(request):
         "apellidos": user["apellidos"],
     })
 
-# Vista de la seccion de Estadisticas
 def formulario_certificado_prevencion(request):
     user = request.session.get('user')
     if not user:
@@ -4620,7 +4619,6 @@ def agregar_o_actualizar_solicitud(request):
         return redirect("/certificadosprevencion/")
 
     return HttpResponse("Método no permitido", status=405)
-
 
 def doc_Guia(request, id):
     solicitud = get_object_or_404(Solicitudes, id=id)
@@ -4745,3 +4743,28 @@ def doc_Inspeccion(request, id):
 
 
     return response
+
+#---------------- unidades-----------------
+# Vista de la seccion de Estadisticas
+def View_Unidades(request):
+    user = request.session.get('user')
+    if not user:
+            return redirect('/')
+
+    return render(request, "unidades/unidades_inicio.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+def View_Form_unidades(request):
+    user = request.session.get('user')
+    if not user:
+            return redirect('/')
+
+    return render(request, "unidades/unidades_form.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
