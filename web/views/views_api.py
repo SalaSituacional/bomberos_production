@@ -2726,6 +2726,53 @@ def api_get_solicitudes(request, referencia):
     return JsonResponse(data, safe=False)
 
 
+def api_modificar_solicitudes(request, id):
+    solicitud = get_object_or_404(Solicitudes, id=id)
+    datos_solicitud = get_object_or_404(Comercio, id_comercio=solicitud.id_solicitud.id_comercio)
+    requisitos = get_object_or_404(Requisitos, id_solicitud=solicitud.id)
+
+     # Datos para reemplazar en la plantilla
+    datos = {
+            "Id_Solicitud": solicitud.id,
+
+            "ID_Comercio": str(datos_solicitud.id_comercio),
+            "Fecha_Solicitud": str(solicitud.fecha_solicitud),
+            "Hora": str(solicitud.hora_solicitud),
+            "Tipo_Servicio": str(solicitud.tipo_servicio),
+            "Solicitante": str(solicitud.solicitante_nombre_apellido),
+            "CI": str(solicitud.solicitante_cedula),
+            "Tipo_Representante": str(solicitud.tipo_representante),
+            "Nombre_Comercio": str(datos_solicitud.nombre_comercio),
+            "Rif_Empresarial": str(datos_solicitud.rif_empresarial),
+            "Rif_Representante_Legal": str(solicitud.rif_representante_legal),
+            "Direccion": str(solicitud.direccion),
+            "Estado": str(solicitud.estado),
+            "Municipio": solicitud.municipio.id,
+            "Parroquia": solicitud.parroquia.id,
+            "Telefono": str(solicitud.numero_telefono),
+            "Correo_Electronico": str(solicitud.correo_electronico),
+            "Pago_Tasa_Servicio": str(solicitud.pago_tasa),
+            "Metodo_Pago": str(solicitud.metodo_pago),
+            "Referencia": str(solicitud.referencia),
+
+            "Status_Cedula": requisitos.cedula_identidad,
+            "Status_Rif": requisitos.rif_representante,
+            "Status_Comercio": requisitos.rif_comercio,
+            "Status_Permiso": requisitos.permiso_anterior,
+            "Status_Registro_Comercio": requisitos.registro_comercio,
+            "Status_Documento_Propiedad": requisitos.documento_propiedad,
+            "Status_Cedula_Catastral": requisitos.cedula_catastral,
+            "Status_Carta_Autorizacion": requisitos.carta_autorizacion,
+            "Status_Plano": requisitos.plano_bomberil,
+
+            "Fecha_Vencimiento_Cedula": requisitos.cedula_vencimiento,
+            "Fecha_Vencimiento_Rif": requisitos.rif_representante_vencimiento,
+            "Fecha_Vencimiento_Rif_Comercio": requisitos.rif_comercio_vencimiento,
+            "Fecha_Vencimiento_Documento_Propiedad": requisitos.documento_propiedad_vencimiento,
+            "Fecha_Vencimiento_Cedula_Catastral": requisitos.cedula_catastral_vencimiento,
+    }
+
+    return JsonResponse(datos, safe=False)
 
 def api_eliminar_solicitudes(request, id):
     solicitud = get_object_or_404(Solicitudes, id=id)

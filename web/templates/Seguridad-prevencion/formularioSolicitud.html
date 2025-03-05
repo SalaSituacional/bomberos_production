@@ -30,7 +30,7 @@
 </div>
 <!-- <aca va el formulario> -->
 <article class="content-form">
-  <form class="form-control border" action="{% url 'agregar_solicitud' %}" method="POST">
+  <form class="form-control border" id="formularioCrearSolicitudes" action="{% url 'agregar_solicitud' %}" method="POST">
     {% csrf_token %}
     <section class="parte-b">
       <article class="comerce-contain">
@@ -230,5 +230,6 @@
 
 <script src="../../static/js/prevencion-seguridad/formularios.js"></script>
 <script src="../../static/js/prevencion-seguridad/autocompletado.js"></script>
+<script src="../../static/js/prevencion-seguridad/llenar_valores.js"></script>
 
 {% endblock %}

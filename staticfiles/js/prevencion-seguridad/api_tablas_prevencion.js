@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <td>${item.solicitante}</td>
               <td>${item.fecha}</td>
               <td>
-              <button class="btn btn-danger" id="Modificar_documento"><svg width="30px" height="30px" viewBox="0 0 24 24" fill="none"
+              <button class="btn btn-danger" id="Modificar_documento" data-solicitud=${item.id_solicitud}><svg width="30px" height="30px" viewBox="0 0 24 24" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -208,6 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       descargarWordSolicitud();
       eliminarSolicitud();
+      editarSolicitud();
     });
   });
 });
