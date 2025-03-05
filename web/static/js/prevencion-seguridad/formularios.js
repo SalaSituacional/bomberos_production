@@ -55,27 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("id_comercio").value = comercioId;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   let comercioSelect = document.getElementById("id_comercio");
   let cedulaInput = document.getElementById("id_solicitante_cedula");
   let emailInput = document.getElementById("id_correo_electronico");
@@ -160,18 +139,16 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       referenciaInput.setAttribute("disabled", true);
       clearError(referenciaInput);
-      referenciaInput.value = ""
+      referenciaInput.value = "";
     }
 
-    if (
-      municipioInput.value === "1" || municipioInput.value === ""
-    ) {
+    if (municipioInput.value === "1" || municipioInput.value === "") {
       checkField(parroquiaInput, "⚠️ Ingrese La Parroquia.");
       parroquiaInput.removeAttribute("disabled");
     } else {
       parroquiaInput.setAttribute("disabled", true);
       clearError(parroquiaInput);
-      parroquiaInput.value = ""
+      parroquiaInput.value = "";
     }
 
     if (!rifRepresentanteInput.hasAttribute("disabled")) {
@@ -278,54 +255,6 @@ document.addEventListener("DOMContentLoaded", function () {
   metodoPagoInput.addEventListener("change", validateForm);
   referenciaInput.addEventListener("input", validateForm);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // // Activar validaciones en tiempo real sin afectar a los checkbox
   // document
   //   .querySelectorAll("input:not([type='checkbox']), select")
@@ -341,17 +270,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     checkbox.addEventListener("change", function () {
       fechaInput.disabled = !this.checked;
-      fechaInput.setAttribute("required", true)
+      fechaInput.setAttribute("required", true);
       if (!this.checked) {
         fechaInput.value = "";
-        fechaInput.removeAttribute("required")
+        fechaInput.removeAttribute("required");
         clearError(fechaInput);
       }
     });
-    
+
     if (!checkbox.checked) {
       fechaInput.disabled = true;
-      fechaInput.removeAttribute("required")
+      fechaInput.removeAttribute("required");
       clearError(fechaInput);
     }
   }
@@ -392,6 +321,8 @@ document.addEventListener("DOMContentLoaded", function () {
   cedulaInput.addEventListener("input", function () {
     this.value = this.value.replace(/\D/g, "");
   });
+
+  window.validacion = validarCedulaYComercio()
 });
 
 document.addEventListener("DOMContentLoaded", () => {

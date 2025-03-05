@@ -4541,9 +4541,11 @@ def agregar_comercio(request):
 
     return HttpResponse("Método no permitido", status=405)
 
-def agregar_solicitud(request):
+def agregar_o_actualizar_solicitud(request):
     if request.method == "POST":
-        comercio = request.POST.get("comercio")
+        id_solicitud = request.POST.get("id_solicitud")
+
+        comercio_id = request.POST.get("comercio")
         fecha_solicitud = request.POST.get("fecha_solicitud")
         hora_solicitud = request.POST.get("hora_solicitud")
         tipo_servicio = request.POST.get("tipo_servicio")
@@ -4554,78 +4556,71 @@ def agregar_solicitud(request):
         rif_representante = request.POST.get("rif_representante_legal")
         direccion = request.POST.get("direccion")
         estado = request.POST.get("estado")
-        municipio = request.POST.get("municipio")
-        parroquia = request.POST.get("parroquia")
+        municipio_id = request.POST.get("municipio")
+        parroquia_id = request.POST.get("parroquia")
         numero_telefono = request.POST.get("numero_telefono")
         correo = request.POST.get("correo_electronico")
         pago = request.POST.get("pago_tasa")
         metodo_pago = request.POST.get("metodo_pago")
-        referencia = request.POST.get("referencia")
+        referencia = request.POST.get("referencia") or "SIN REFERENCIA"
 
-        if referencia == None:
-            referencia = "SIN REFERENCIA"
-        
-        comercio_instance = Comercio.objects.get(id_comercio=comercio)
-        municipio_instance = Municipios.objects.get(id=municipio)
-        parroquia_instance = Parroquias.objects.get(id=parroquia)
+        # Convertir valores de checkboxes
+        def get_checkbox_value(field_name):
+            return request.POST.get(field_name) == "on"
 
-        cedula = request.POST.get("cedula_identidad") == "on"
-        rifRepresentante = request.POST.get("rif_representante") == "on"
-        rif_comercio = request.POST.get("rif_comercio") == "on"
-        permiso_anterior = request.POST.get("permiso_anterior") == "on"
-        registro_comercio = request.POST.get("registro_comercio") == "on"
-        documento_propiedad = request.POST.get("documento_propiedad") == "on"
-        cedula_catastral = request.POST.get("cedula_catastral") == "on"
-        carta_autorizacion = request.POST.get("carta_autorizacion") == "on"
-        plano_bomberil = request.POST.get("plano_bomberil") == "on" 
-        cedula_vencimiento = request.POST.get("cedula_vecimiento")
-        rif_representante_vencimiento = request.POST.get("rif_representante_vencimiento")
-        rif_comercio_vencimiento = request.POST.get("rif_comercio_vencimiento")
-        cedula_catastral_vencimiento = request.POST.get("cedula_catastral_vencimiento")
-        documento_propiedad_vencimiento = request.POST.get("documento_propiedad_vencimiento")
+        # Obtener instancias de modelos relacionados
+        comercio_instance = get_object_or_404(Comercio, id_comercio=comercio_id)
+        municipio_instance = get_object_or_404(Municipios, id=municipio_id)
+        parroquia_instance = get_object_or_404(Parroquias, id=parroquia_id)
 
-        new = Solicitudes.objects.create(
-            id_solicitud=comercio_instance,
-            fecha_solicitud=fecha_solicitud,
-            hora_solicitud=hora_solicitud,
-            tipo_servicio=tipo_servicio,
-            solicitante_nombre_apellido=solicitante,
-            solicitante_cedula=f"{nacionalidad}-{solicitante_cedula}",
-            tipo_representante=tipo_representante,
-            rif_representante_legal=rif_representante,
-            direccion=direccion,
-            estado=estado,
-            municipio=municipio_instance,
-            parroquia=parroquia_instance,
-            numero_telefono=numero_telefono,
-            correo_electronico=correo,
-            pago_tasa=pago,
-            referencia=referencia,
-            metodo_pago=metodo_pago,
+        # Buscar si la solicitud ya existe
+        solicitud, created = Solicitudes.objects.update_or_create(
+            id=id_solicitud,
+            defaults={
+                "fecha_solicitud": fecha_solicitud,
+                "hora_solicitud": hora_solicitud,
+                "tipo_servicio": tipo_servicio,
+                "solicitante_nombre_apellido": solicitante,
+                "solicitante_cedula": f"{nacionalidad}-{solicitante_cedula}",
+                "tipo_representante": tipo_representante,
+                "rif_representante_legal": rif_representante,
+                "direccion": direccion,
+                "estado": estado,
+                "municipio": municipio_instance,
+                "parroquia": parroquia_instance,
+                "numero_telefono": numero_telefono,
+                "correo_electronico": correo,
+                "pago_tasa": pago,
+                "referencia": referencia,
+                "metodo_pago": metodo_pago,
+            },
         )
 
-        req = Requisitos.objects.create(
-            id_solicitud=new,
-            cedula_identidad=cedula,
-            cedula_vencimiento=cedula_vencimiento,
-            rif_representante=rifRepresentante,
-            rif_representante_vencimiento=rif_representante_vencimiento,
-            rif_comercio=rif_comercio,
-            rif_comercio_vencimiento=rif_comercio_vencimiento,
-            permiso_anterior=permiso_anterior,
-            registro_comercio=registro_comercio,
-            documento_propiedad=documento_propiedad,
-            documento_propiedad_vencimiento=documento_propiedad_vencimiento,
-            cedula_catastral=cedula_catastral,
-            cedula_catastral_vencimiento=cedula_catastral_vencimiento,
-            carta_autorizacion=carta_autorizacion,
-            plano_bomberil=plano_bomberil,
+        # Actualizar o crear requisitos asociados a la solicitud
+        Requisitos.objects.update_or_create(
+            id_solicitud=solicitud,
+            defaults={
+                "cedula_identidad": get_checkbox_value("cedula_identidad"),
+                "cedula_vencimiento": request.POST.get("cedula_vecimiento"),
+                "rif_representante": get_checkbox_value("rif_representante"),
+                "rif_representante_vencimiento": request.POST.get("rif_representante_vencimiento"),
+                "rif_comercio": get_checkbox_value("rif_comercio"),
+                "rif_comercio_vencimiento": request.POST.get("rif_comercio_vencimiento"),
+                "permiso_anterior": get_checkbox_value("permiso_anterior"),
+                "registro_comercio": get_checkbox_value("registro_comercio"),
+                "documento_propiedad": get_checkbox_value("documento_propiedad"),
+                "documento_propiedad_vencimiento": request.POST.get("documento_propiedad_vencimiento"),
+                "cedula_catastral": get_checkbox_value("cedula_catastral"),
+                "cedula_catastral_vencimiento": request.POST.get("cedula_catastral_vencimiento"),
+                "carta_autorizacion": get_checkbox_value("carta_autorizacion"),
+                "plano_bomberil": get_checkbox_value("plano_bomberil"),
+            },
         )
 
-        # Redirigir después de generar el documento
         return redirect("/certificadosprevencion/")
 
     return HttpResponse("Método no permitido", status=405)
+
 
 def doc_Guia(request, id):
     solicitud = get_object_or_404(Solicitudes, id=id)

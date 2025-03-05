@@ -14,7 +14,7 @@ function eliminarSolicitud() {
                 location.reload()
 
             } catch (error) {
-                console.error("❌ Error al descargar el archivo:", error);
+                console.error("❌ Error al Eliminar el archivo:", error);
             }
         }
     });
