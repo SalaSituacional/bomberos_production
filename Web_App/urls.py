@@ -60,7 +60,6 @@ urlpatterns = [
     path('unidades/', View_Unidades),
     path('formularioUnidades/', View_Form_unidades),
 
-    
     # Certificados Prevencion
     path('certificadosprevencion/', certificados_prevencion),
     path('formulariocertificados/', formulario_certificado_prevencion),
@@ -73,10 +72,8 @@ urlpatterns = [
     path("validar-cedula/", validar_cedula, name="validar_cedula"),
     path("validar-rif/", validar_rif, name="validar_rif"),
 
-    
     path('agregar_comercio/', agregar_comercio , name='agregar_comercio'),
     path('agregar_solicitud/', agregar_o_actualizar_solicitud , name='agregar_solicitud'),
-
 
     # Tablas
     path('tablageneral/', tabla_general),
@@ -110,16 +107,15 @@ urlpatterns = [
     path('editar_personal/', edit_personal, name='edit_personal'),
     path('api/procedimientos_tipo_detalles/', api_procedimientos_tipo_detalles, name='procedimientos_tipo_detalles'),
     path('instagram/', instagram_feed, name='instagram_feed'),
-
     path('api/obtener_informacion/<int:id>/', obtener_informacion_editar, name='obtener_informacion'),
     path('api/obtener_unidades/', api_unidades, name='obtener_unidades'),
     path('api/obtener_tipos_procedimientos/', api_tipos_procedimientos, name='obtener_tipos_procedimientos'),
     path('api/obtener_solicitante/', api_solicitantes, name='obtener_solicitante'),
-    
 
     # Descargas
     path('descargar-excel_personal/', generar_excel_personal, name='descargar_excel_personal'),
     path('descargar-base-datos/', descargar_base_datos, name='descargar_base_datos'),
+
     # divisiones exportacion excel
     path('descargar-excel-capacitacion/', generar_excel_capacitacion, name='descargar_excel_capacitacion'),
     path('descargar-excel-psicologia/', generar_excel_psicologia, name='descargar_excel_psicologia'),

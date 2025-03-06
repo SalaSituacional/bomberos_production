@@ -2095,7 +2095,8 @@ def generar_excel_solicitudes(request):
     # Crear DataFrame de pandas y ordenarlo por fecha de solicitud descendente
     df = pd.DataFrame(data).sort_values(by='ID Comercio', ascending=True)
 
-    # Mostrar DataFrame en consola
-    print(df)
-    
-    return df
+    # Convertir DataFrame a JSON
+    json_data = df.to_json(orient='records', date_format='iso')
+
+    # Devolver los datos como JSON
+    return JsonResponse(json.loads(json_data), safe=False)
