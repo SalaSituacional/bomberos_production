@@ -38,7 +38,6 @@ def logout(request):
     request.session.flush()  # Eliminar todos los datos de la sesión
     return redirect('/login/')
 
-
 def get_instagram_post_date(url):
     L = instaloader.Instaloader()
 
@@ -100,7 +99,10 @@ def Home(request):
                 "nombres": encargado.nombres,
                 "apellidos": encargado.apellidos,
             }
-            return redirect("/dashboard/")
+            if user.user == "Mecanica_01":
+                return redirect("/dashboard_mecanica/")
+            else:
+                return redirect("/dashboard/")
         except Usuarios.DoesNotExist:
             messages.error(request, 'Usuario o contraseña incorrectos')
             return render(request, 'index.html', {'error': True})
@@ -221,6 +223,20 @@ def Dashboard(request):
         return redirect('/')
     # Renderizar la página con los datos
     return render(request, "dashboard.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+@login_required
+def Dashboard_mecanica(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "mecanica/dashboard_mecanica.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
@@ -4757,7 +4773,32 @@ def View_Unidades(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
     })
+
 def View_Form_unidades(request):
+    user = request.session.get('user')
+    if not user:
+            return redirect('/')
+
+    return render(request, "unidades/unidades_form.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+def Registros_mecanica(request):
+    user = request.session.get('user')
+    if not user:
+            return redirect('/')
+
+    return render(request, "unidades/unidades_form.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+def Graficas_mecanica(request):
     user = request.session.get('user')
     if not user:
             return redirect('/')
