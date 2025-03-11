@@ -3614,6 +3614,12 @@ checkbox-styles {
 .bar-graphic {
   height: 100% !important;
 } 
+
+/* Estilos Area Unidades */
+.tabla-unidades{
+  width: 100%;
+}
+
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {

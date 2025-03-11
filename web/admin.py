@@ -30,6 +30,11 @@ admin.site.register(Tipos_Comision)
 admin.site.register(Comisiones)
 admin.site.register(RegistroPeticiones)
 
+admin.site.register(Unidades_Detalles)
+admin.site.register(Reportes_Unidades)
+admin.site.register(Servicios)
+
+
 # admin.site.register(InstagramPost)
 # admin.site.register(Divisiones)
 # admin.site.register(Municipios)
