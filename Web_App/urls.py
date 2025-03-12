@@ -63,6 +63,9 @@ urlpatterns = [
     # Unidades
     path('unidades/', View_Unidades),
     path('formularioUnidades/', View_Form_unidades),
+    path('agregar_reportes/', agregar_reportes, name="agregar_reportes"),
+    path('cambiar_estado/', cambiar_estado, name="cambiar_estado"),
+    path('reasignar_division/', reasignar_division, name="reasignar_division"),
 
     # Certificados Prevencion
     path('certificadosprevencion/', certificados_prevencion),

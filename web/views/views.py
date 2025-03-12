@@ -4766,12 +4766,37 @@ def View_Unidades(request):
     user = request.session.get('user')
     if not user:
             return redirect('/')
+    
+    datos = []
+
+    data = Unidades.objects.exclude(id__in=[26, 30, 27]).prefetch_related(
+        Prefetch("unidades_detalles_set", to_attr="data_unidad"),
+        Prefetch("id_division", to_attr="divisiones")  # Obtiene las divisiones asociadas
+    ).order_by("id")
+
+    for unidad in data:
+        datos.append({
+            "nombre_unidad": unidad.nombre_unidad,
+            "id_unidad": unidad.id,
+            "divisiones": [div.division for div in unidad.divisiones],  # Lista de nombres de divisiones
+            "detalles": [
+                {
+                    "estado": detalle.estado,  # Reemplaza con los campos reales
+                }
+                for detalle in unidad.data_unidad  # Accede a los detalles prefetchados
+            ]
+        })
+
 
     return render(request, "unidades/unidades_inicio.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
+        "datos": datos,
+        "form_reportes": Reportes(),
+        "form_estado": Cambiar_Estado(),
+        "form_division": Cambiar_Division(),
     })
 
 def View_Form_unidades(request):
@@ -4784,4 +4809,76 @@ def View_Form_unidades(request):
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
+        "agregar_unidades": Unidades_Informacion(),
     })
+
+def agregar_reportes(request):
+    if request.method == "POST":
+        unidad = request.POST.get("id_unidad")
+        servicio = request.POST.get("servicio")
+        fecha = request.POST.get("fecha")
+        hora = request.POST.get("hora")
+        responsable = request.POST.get("responsable")
+        descripcion = request.POST.get("descripcion")
+
+
+        unidad_instance = get_object_or_404(Unidades, id=unidad)
+        servicio_instance = get_object_or_404(Servicios, id=servicio)
+
+        print(unidad_instance, servicio_instance, fecha, hora, responsable, descripcion)
+
+        Reportes_Unidades.objects.create(
+            id_unidad = unidad_instance,
+            servicio = servicio_instance,
+            fecha = fecha,
+            hora = hora,
+            descripcion = descripcion,
+            persona_responsable = responsable
+        )
+
+        return redirect("/unidades/")
+        # return redirect(f"/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
+
+    return HttpResponse("Método no permitido", status=405)
+
+def cambiar_estado(request):
+    if request.method == "POST":
+        unidad = request.POST.get("id_unidad-status")
+    
+        unidad_instance = get_object_or_404(Unidades, id=unidad)
+        unidad_detalles = get_object_or_404(Unidades_Detalles, id_unidad=unidad_instance.id)
+
+        unidad_detalles.estado = request.POST.get("nuevo")
+        unidad_detalles.save()
+
+        return redirect("/unidades/")
+        # return redirect(f"/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
+
+    return HttpResponse("Método no permitido", status=405)
+
+def reasignar_division(request):
+    if request.method == "POST":
+        unidad = request.POST.get("id_unidad-division")
+        # nueva_division = request.POST.get("nuevo")
+    
+        # Obtener la unidad que queremos actualizar
+        unidad_instance = get_object_or_404(Unidades, id=unidad)
+
+        # Obtener la lista de divisiones seleccionadas en el formulario
+        divisiones_ids = request.POST.getlist("nuevo")  # Lista de IDs
+
+        # Obtener los objetos Divisiones basados en los IDs
+        nuevas_divisiones = Divisiones.objects.filter(id__in=divisiones_ids)
+
+        print(unidad_instance, divisiones_ids, nuevas_divisiones)
+
+        # Asignar las divisiones a la unidad
+        unidad_instance.id_division.set(nuevas_divisiones)  # Reemplaza las anteriores
+
+        # # Guardar la unidad con las nuevas divisiones asignadas
+        unidad_instance.save()
+
+        return redirect("/unidades/")
+        # return redirect(f"/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
+
+    return HttpResponse("Método no permitido", status=405)
