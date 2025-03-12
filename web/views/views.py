@@ -4785,27 +4785,3 @@ def View_Form_unidades(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
     })
-
-def Registros_mecanica(request):
-    user = request.session.get('user')
-    if not user:
-            return redirect('/')
-
-    return render(request, "unidades/unidades_form.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-    })
-
-def Graficas_mecanica(request):
-    user = request.session.get('user')
-    if not user:
-            return redirect('/')
-
-    return render(request, "unidades/unidades_form.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-    })

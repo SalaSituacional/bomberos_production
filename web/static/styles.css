@@ -209,6 +209,7 @@ body {
   overflow-x: hidden;
   background-color: #f3f3f3;
   color: var(--color-text);
+  scroll-behavior: smooth;
 }
 
 a {
@@ -1535,6 +1536,24 @@ checkbox-styles {
   justify-content: center;
   flex-wrap: wrap;
   height: auto;
+}
+.card-mecanic{
+  display: flex;
+  justify-content: center;
+  width: 15rem;
+  height: auto;
+  box-shadow: 1px 1px 10px rgb(146, 146, 146);
+  text-align: start;
+  margin: 1rem 2rem;
+  padding: 1rem;
+  font-family: var(--sofia-sans);
+  color: #FFF;
+  border-radius: 10px;
+  span{
+    font-size: 1.5rem;
+    margin: .4rem;
+  }
+
 }
 
 .card-parroquies {
@@ -3614,6 +3633,11 @@ checkbox-styles {
 .bar-graphic {
   height: 100% !important;
 } 
+
+
+
+
+
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {

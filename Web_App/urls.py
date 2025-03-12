@@ -57,9 +57,7 @@ urlpatterns = [
     path('antecedentes/', Antecedentes),
 
     # Mecanica
-    path('dashboard_mecanica/', Dashboard_mecanica,name='dashboard'),
-    path('graficas_mecanica/', Graficas_mecanica,name='dashboard'),
-    path('registros_mecanica/', Registros_mecanica,name='dashboard'),
+    path('dashboard_mecanica/', Dashboard_mecanica,name='dashboard_mecanica'),
 
 
     # Unidades
