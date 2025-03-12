@@ -1016,7 +1016,7 @@ class Unidades_Informacion(forms.Form):
     
     nombre_unidad = forms.CharField()
     division = forms.ChoiceField(label="Seleccionar División", choices=op, required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
-    tipo_vehiculo = forms.ChoiceField(label="Tipo de Vehiculo", choices=[("", "Seleccione una Opción"), ("", ""), ("", "")], required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
+    tipo_vehiculo = forms.ChoiceField(label="Tipo de Vehiculo", choices=[("", "Seleccione una Opción"), ("Moto", "Moto"), ("Camion", "Camion"), ("Carro", "Carro")], required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
     serial_carroceria = forms.CharField()
     serial_chasis = forms.CharField()
     marca = forms.CharField()
@@ -1032,7 +1032,7 @@ class Unidades_Informacion(forms.Form):
     capacidad_carga = forms.CharField()
     numero_ejes = forms.CharField()
     numero_puestos = forms.CharField()
-    tipo_combustible = forms.ChoiceField(label="Reasignar Division", choices=[
+    tipo_combustible = forms.ChoiceField(label="Tipo de Combustible", choices=[
         ("", "Seleccione una Opción"),
         ("Gasoil", "Gasoil"),
         ("Gasolina", "Gasolina"),
@@ -1040,11 +1040,11 @@ class Unidades_Informacion(forms.Form):
     tipo_aceite = forms.CharField()
     medida_neumaticos = forms.CharField()
     tipo_correa = forms.CharField()
-    estado = forms.ChoiceField(label="Reasignar Division", choices=[
+    estado = forms.ChoiceField(label="Estado", choices=[
         ("", "Seleccione una Opción"),
-        ("Fuera de Servicio", "Fuera de Servicio"),
-        ("Activo", "Activo"),
-        ("Mantenimiento", "Mantenimiento"),
+        ("🔴 Fuera de Servicio", "Fuera de Servicio"),
+        ("🟢 Activo", "Activo"),
+        ("🟡 Mantenimiento", "Mantenimiento"),
     ], required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
 
 class Reportes(forms.Form):

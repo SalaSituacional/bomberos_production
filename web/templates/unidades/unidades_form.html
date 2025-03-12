@@ -28,17 +28,25 @@
     </section>
   </div>
 </div>
-<div class="contain-unidades">
 
-  <form action="">
+<div class="contain-unidades">
+  <form action="{% url 'agregar_unidades' %}" method="POST">
     <h2>Agregar Unidad</h2>
+    {% csrf_token %}
     <div>{{ agregar_unidades }}</div>
+
+    <!-- Campo oculto para el ID de la unidad (solo se usará en edición) -->
+    <input type="hidden" name="id_unidad" id="id_unidad" value="{{ unidad.id|default:'' }}">
+
+    <button type="submit">Enviar!</button>
   </form>
 </div>
+
 <footer class="footer">
   <section class="text-reserved">
     <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
+<script src="../../static/js/unidades/llenar_valores_unidades.js"></script>
 <script src="../../static/js/loader-function.js"></script>
 {% endblock %}
