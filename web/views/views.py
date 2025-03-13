@@ -4775,6 +4775,8 @@ def View_Unidades(request):
         Prefetch("id_division", to_attr="divisiones")  # Obtiene las divisiones asociadas
     ).order_by("id")
 
+    conteo = data.count()
+
     for unidad in data:
         datos.append({
             "nombre_unidad": unidad.nombre_unidad,
@@ -4798,6 +4800,7 @@ def View_Unidades(request):
         "form_reportes": Reportes(),
         "form_estado": Cambiar_Estado(),
         "form_division": Cambiar_Division(),
+        "conteo": conteo,
     })
 
 def View_Form_unidades(request):
