@@ -1044,6 +1044,7 @@ checkbox-styles {
 .icons-accion {
   width: 18rem;
   padding: 0;
+
   button {
     margin: 1rem;
     width: 50px;
@@ -1058,6 +1059,7 @@ checkbox-styles {
 .icons-accion-two {
   width: 10rem;
   padding: 0;
+
   button {
     margin: 1rem;
     width: 50px;
@@ -1101,6 +1103,7 @@ checkbox-styles {
     margin: 0.5rem;
   }
 }
+
 .filter-search-prevention {
   display: flex;
   width: auto;
@@ -1553,7 +1556,8 @@ checkbox-styles {
   flex-wrap: wrap;
   height: auto;
 }
-.card-mecanic{
+
+.card-mecanic {
   display: flex;
   justify-content: center;
   width: 15rem;
@@ -1565,7 +1569,8 @@ checkbox-styles {
   font-family: var(--sofia-sans);
   color: #FFF;
   border-radius: 10px;
-  span{
+
+  span {
     font-size: 1.5rem;
     margin: .4rem;
   }
@@ -3496,6 +3501,7 @@ checkbox-styles {
 .carousel-inner img {
   object-fit: cover;
 }
+
 .name-fuction h3 {
   text-align: center;
 }
@@ -3516,6 +3522,7 @@ checkbox-styles {
 .title-blog p {
   text-align: center;
 }
+
 .text-inter {
   margin: 0;
 
@@ -3596,6 +3603,7 @@ checkbox-styles {
 .card-gallery {
   width: 30%;
 }
+
 .card-parroquies {
   height: 9rem;
   width: 15rem;
@@ -3627,7 +3635,8 @@ checkbox-styles {
 .table {
   width: 170%;
 }
-.table-modify{
+
+.table-modify {
   margin: 0 auto;
   width: 100%;
 }
@@ -3648,11 +3657,210 @@ checkbox-styles {
 
 .bar-graphic {
   height: 100% !important;
-} 
+}
 
 /* Estilos Area Unidades */
-.tabla-unidades{
+.tabla-unidades {
   width: 100%;
+}
+
+/******************** unidades ************************/
+#informacion_unidades {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.Info-Unidades {
+  margin: 2rem 0;
+  width: 90%;
+  border-radius: 3rem;
+  padding: 2rem;
+  text-align: center;
+  background-color: white;
+
+  div {
+    width: auto;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 2.5px solid rgb(138, 138, 138);
+
+    p {
+      margin: 1rem 0;
+      margin-right: 1rem;
+    }
+  }
+}
+#reportes{
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+#reporte_unidades{
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.reporte {
+  margin: 2rem 0;
+  width: 20rem;
+  border-radius: 3rem;
+  padding: 2rem;
+  text-align: center;
+  background-color: white;
+  div {
+    div {
+      width: 80%;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: 2.5px solid rgb(138, 138, 138);
+    }
+    p {
+      text-align: start;
+      margin: 1rem 0;
+      margin-right: 1.5rem;
+    }
+  }
+}
+
+.form-reportes,
+.form-estado {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+
+  div {
+    width: 90%;
+    margin: .5rem 0;
+
+    label {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    select {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    input {
+      width: 100%;
+      border-radius: 10px;
+    }
+  }
+}
+
+.form-division {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: .5rem;
+
+  div {
+    width: 90%;
+    margin: .5rem 0;
+
+    label {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    select {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    input {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    #id_nuevo {
+      width: 100%;
+
+      div {
+        width: 100%;
+      }
+    }
+  }
+}
+
+#id_nuevo {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 1rem;
+  width: 100%;
+}
+
+.buttons-reportes,
+.buttons-estados,
+.buttons-division {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  button {
+    margin: 1rem;
+  }
+}
+
+.height-auto {
+  height: auto;
+}
+
+.contain-unidades {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+
+  form {
+    background-color: white;
+    border-radius: 20px;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem;
+
+    div {
+      margin: 0 auto;
+      width: 100%;
+      font-size: 1.4rem;
+      margin: 1rem;
+    }
+  }
+}
+
+.buttons-form-unidades {
+  width: 20%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-evenly;
+
+  button {
+    width: 50%;
+    margin: 1rem;
+  }
 }
 
 /* ------------------------------- Media querys ------------------------------------------ */
@@ -3835,6 +4043,7 @@ checkbox-styles {
     margin: 0;
     width: 25%;
   }
+
   /* information */
   .to-information {
     background-repeat: no-repeat;
@@ -4086,6 +4295,7 @@ checkbox-styles {
 
   #stationInfo {
     padding: .1rem;
+
     #stationAddress {
       margin-top: .5rem;
       display: block;
@@ -4153,9 +4363,10 @@ checkbox-styles {
   .table {
     width: 220%;
   }
-  .table-modify{
+
+  .table-modify {
     margin: 0 auto;
-    width: 100%;  
+    width: 100%;
   }
 
   .filter-search {
@@ -4589,10 +4800,12 @@ checkbox-styles {
   .table {
     width: 260%;
   }
-  .table-modify{
+
+  .table-modify {
     margin: 0 auto;
     width: 100%;
   }
+
   .modal-xl {
     max-width: 100% !important;
   }
@@ -4664,7 +4877,8 @@ checkbox-styles {
   .table {
     width: 380%;
   }
-  .table-modify{
+
+  .table-modify {
     margin: 0 auto;
     width: 100%;
   }
@@ -5162,7 +5376,8 @@ checkbox-styles {
   .table {
     width: 520%;
   }
-  .table-modify{
+
+  .table-modify {
     margin: 0 auto;
     width: 100%;
   }
@@ -5292,10 +5507,12 @@ checkbox-styles {
   .table {
     width: 600%;
   }
-  .table-modify{
+
+  .table-modify {
     margin: 0 auto;
     width: 100%;
   }
+
   .barts {
     height: 320px;
   }
