@@ -70,6 +70,14 @@ urlpatterns = [
     path('obtener_info_unidad/<int:id>/', obtener_info_unidad, name="obtener_info_unidad"),
     path('mostrar_informacion/<int:id>/', mostrar_informacion, name="mostrar_informacion"),
 
+    path("api/conteo_unidades/", contar_estados_unidades, name="conteo_unidades"),
+    path("api/reportes_combustible/", contar_reportes_combustible, name="reportes_combustible"),
+    path("api/reportes_lubricantes/", contar_reporte_lubricantes, name="reportes_lubricantes"),
+    path("api/reportes_neumaticos/", contar_reporte_neumaticos, name="reportes_neumaticos"),
+    path("api/reportes_reparaciones/", contar_reporte_reparaciones, name="reportes_reparaciones"),
+    path("api/reportes_electricas/", contar_reporte_electricas, name="reportes_electricas"),
+    path("api/reportes_cambio_repuestos/", contar_reporte_cambio_repuestos, name="reportes_cambio_repuestos"),
+
     # Certificados Prevencion
     path('certificadosprevencion/', certificados_prevencion),
     path('formulariocertificados/', formulario_certificado_prevencion),

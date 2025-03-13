@@ -59,14 +59,16 @@
   </div>
   <div class="card-new">
     <div class="procediments-contain">
-      <h4 class="title-procediments">Equipada - Combustible</h4>
       <!-- <div class="position-end">
-          <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-            <button class="btn btn-outline-danger" id="btn-total-one" onclick="fetchProcedimientos('Total')">Total</button>
-            <button class="btn btn-outline-danger" id="btn-month-one" onclick="fetchProcedimientos('Mes')">Mes</button>
-            <button class="btn btn-outline-danger" id="btn-today-one" onclick="fetchProcedimientos('Hoy')">Hoy</button>
-          </div>
-        </div> -->
+        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+          <button class="btn btn-outline-danger" id="btn-total-one" onclick="fetchProcedimientos('Total')">Total</button>
+          <button class="btn btn-outline-danger" id="btn-month-one" onclick="fetchProcedimientos('Mes')">Mes</button>
+          <button class="btn btn-outline-danger" id="btn-today-one" onclick="fetchProcedimientos('Hoy')">Hoy</button>
+        </div>
+      </div> -->
+
+      <!-- Suministro de Combustible -->
+      <h4 class="title-procediments">Equipada - Combustible</h4>
       <br>
       <section class="items-cards">
         <article class="card-mecanic color-blue">
@@ -101,6 +103,199 @@
           </span>
         </article>
       </section>
+
+
+      <!-- Lubricantes -->
+      <h4 class="title-procediments">Cambio - Lubricantes</h4>
+      <br>
+      <section class="items-cards">
+        <article class="card-mecanic color-blue">
+          <span>Mensual: </span>
+          <span id="lubricantes-mensual">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-orange">
+          <span>Semanal: </span>
+          <span id="lubricantes-semanal">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-yellow">
+          <span>Diario: </span>
+          <span id="lubricantes-diario">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+      </section>
+
+      <!-- Neumaticos -->
+      <h4 class="title-procediments">Cambios - Neumaticos</h4>
+      <br>
+      <section class="items-cards">
+        <article class="card-mecanic color-blue">
+          <span>Mensual: </span>
+          <span id="neumaticos-mensual">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-orange">
+          <span>Semanal: </span>
+          <span id="neumaticos-semanal">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-yellow">
+          <span>Diario: </span>
+          <span id="neumaticos-diario">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+      </section>
+
+      
+      <!-- Reparaciones Mecanicas -->
+      <h4 class="title-procediments">Reparaciones - Mecanicas</h4>
+      <br>
+      <section class="items-cards">
+        <article class="card-mecanic color-blue">
+          <span>Mensual: </span>
+          <span id="reparaciones-mensual">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-orange">
+          <span>Semanal: </span>
+          <span id="reparaciones-semanal">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-yellow">
+          <span>Diario: </span>
+          <span id="reparaciones-diario">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+      </section>
+
+      <!-- Reparaciones Electricas -->
+      <h4 class="title-procediments">Reparaciones - Electricas</h4>
+      <br>
+      <section class="items-cards">
+        <article class="card-mecanic color-blue">
+          <span>Mensual: </span>
+          <span id="electricas-mensual">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-orange">
+          <span>Semanal: </span>
+          <span id="electricas-semanal">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-yellow">
+          <span>Diario: </span>
+          <span id="electricas-diario">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+      </section>
+      
+      <!-- Reparaciones Electricas -->
+      <h4 class="title-procediments">Cambio - Repuestos</h4>
+      <br>
+      <section class="items-cards">
+        <article class="card-mecanic color-blue">
+          <span>Mensual: </span>
+          <span id="cambio-repuestos-mensual">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-orange">
+          <span>Semanal: </span>
+          <span id="cambio-repuestos-semanal">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+
+        <article class="card-mecanic color-yellow">
+          <span>Diario: </span>
+          <span id="cambio-repuestos-diario">
+            <b>
+
+              0
+            </b>
+
+          </span>
+        </article>
+      </section>
+
     </div>
   </div>
 </div>
@@ -111,6 +306,8 @@
 </footer>
 
 <!-- fin resumen de procedimientos -->
-<script src="../static/js/animate.js"></script>
-<script src="../static/js/modal-dashboard.js"></script>
+<script src="../../static/js/animate.js"></script>
+<script src="../../static/js/modal-dashboard.js"></script>
+<script src="../../static/js/unidades/conteo_unidades.js"></script>
+<script src="../../static/js/unidades/conteo_reportes_combustible.js"></script>
 {% endblock %}

@@ -36,10 +36,10 @@ if (storedData) {
 
 window.addEventListener("beforeunload", () => {
   // Eliminar la clave del localStorage
-  localStorage.removeItem("fetchedData");
+  localStorage.removeItem("datosSolicitud");
 });
 
 window.addEventListener("popstate", () => {
   // Eliminar la clave del localStorage al retroceder
-  localStorage.removeItem("fetchedData");
+  localStorage.removeItem("datosSolicitud");
 });

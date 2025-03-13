@@ -4775,6 +4775,8 @@ def View_Unidades(request):
         Prefetch("id_division", to_attr="divisiones")  # Obtiene las divisiones asociadas
     ).order_by("id")
 
+    conteo = data.count()
+
     for unidad in data:
         datos.append({
             "nombre_unidad": unidad.nombre_unidad,
@@ -4798,6 +4800,7 @@ def View_Unidades(request):
         "form_reportes": Reportes(),
         "form_estado": Cambiar_Estado(),
         "form_division": Cambiar_Division(),
+        "conteo": conteo,
     })
 
 def View_Form_unidades(request):
@@ -4938,8 +4941,6 @@ def reasignar_division(request):
         # Obtener los objetos Divisiones basados en los IDs
         nuevas_divisiones = Divisiones.objects.filter(id__in=divisiones_ids)
 
-        print(unidad_instance, divisiones_ids, nuevas_divisiones)
-
         # Asignar las divisiones a la unidad
         unidad_instance.id_division.set(nuevas_divisiones)  # Reemplaza las anteriores
 
@@ -5043,7 +5044,5 @@ def mostrar_informacion(request, id):
         "estado": detalles.estado,
         "ultimos_reportes": reportes_finales  # Se agrega la lista de reportes al JSON final
     }
-
-    print(datos)
 
     return JsonResponse(datos, safe=False)
