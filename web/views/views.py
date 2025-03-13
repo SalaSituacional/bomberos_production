@@ -4938,8 +4938,6 @@ def reasignar_division(request):
         # Obtener los objetos Divisiones basados en los IDs
         nuevas_divisiones = Divisiones.objects.filter(id__in=divisiones_ids)
 
-        print(unidad_instance, divisiones_ids, nuevas_divisiones)
-
         # Asignar las divisiones a la unidad
         unidad_instance.id_division.set(nuevas_divisiones)  # Reemplaza las anteriores
 
@@ -5043,7 +5041,5 @@ def mostrar_informacion(request, id):
         "estado": detalles.estado,
         "ultimos_reportes": reportes_finales  # Se agrega la lista de reportes al JSON final
     }
-
-    print(datos)
 
     return JsonResponse(datos, safe=False)
