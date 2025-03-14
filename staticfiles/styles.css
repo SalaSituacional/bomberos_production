@@ -3701,6 +3701,14 @@ checkbox-styles {
   flex-direction: row;
   flex-wrap: wrap;
 }
+#reporte_unidades{
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
 .reporte {
   margin: 2rem 0;
   width: 20rem;
@@ -3708,9 +3716,7 @@ checkbox-styles {
   padding: 2rem;
   text-align: center;
   background-color: white;
-
   div {
-
     div {
       width: 80%;
       margin: 0 auto;
@@ -3718,8 +3724,8 @@ checkbox-styles {
       flex-wrap: wrap;
       border-bottom: 2.5px solid rgb(138, 138, 138);
     }
-
     p {
+      text-align: start;
       margin: 1rem 0;
       margin-right: 1.5rem;
     }

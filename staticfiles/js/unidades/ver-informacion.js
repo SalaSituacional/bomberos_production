@@ -82,9 +82,9 @@ function mostrarInformacion(data) {
   data.ultimos_reportes.forEach((reporte) => {
     // div.classList.add("reporte"); // Clase para estilos CSS
 
-    contenedor.innerHTML += `
+    document.getElementById("reporte_unidades").innerHTML += `
     <div class="reporte">
-    <h2>Reportes</h2>
+    <h2>Reporte</h2>
     <div>
     <p><strong>Servicio:</strong> ${reporte.servicio}</p>
     <p><strong>Fecha:</strong> ${reporte.fecha}</p>
