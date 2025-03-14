@@ -2068,3 +2068,35 @@ def generar_excel_personal(request):
     )
 
     return JsonResponse(personal_ordenado, safe=False)
+
+def generar_excel_solicitudes(request):
+    # Obtener todas las solicitudes con la información del comercio relacionada, ordenadas por fecha descendente
+    solicitudes = Solicitudes.objects.select_related('id_solicitud').order_by('-fecha_solicitud')
+    
+    # Crear un diccionario para almacenar la solicitud más reciente por comercio
+    comercio_dict = {}
+    
+    for solicitud in solicitudes:
+        comercio = solicitud.id_solicitud  # Comercio asociado a la solicitud
+        if comercio.id_comercio not in comercio_dict:
+            comercio_dict[comercio.id_comercio] = {
+                'ID Comercio': comercio.id_comercio,
+                'Nombre Comercio': comercio.nombre_comercio,
+                'RIF Comercio': comercio.rif_empresarial,
+                'Número de Teléfono': solicitud.numero_telefono,
+                'Nombre y Apellido del Solicitante': solicitud.solicitante_nombre_apellido,
+                'Fecha de Solicitud': solicitud.fecha_solicitud,
+                'Dirección': solicitud.direccion,
+            }
+    
+    # Convertir el diccionario en una lista de valores
+    data = list(comercio_dict.values())
+    
+    # Crear DataFrame de pandas y ordenarlo por fecha de solicitud descendente
+    df = pd.DataFrame(data).sort_values(by='ID Comercio', ascending=True)
+
+    # Convertir DataFrame a JSON
+    json_data = df.to_json(orient='records', date_format='iso')
+
+    # Devolver los datos como JSON
+    return JsonResponse(json.loads(json_data), safe=False)

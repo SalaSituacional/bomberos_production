@@ -11,9 +11,11 @@ import json
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from datetime import timedelta
+from django.utils.timezone import now, timedelta
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Case, When
- 
+from collections import Counter
+
 # Api para crear seccion de lista de procedimientos por cada division, por tipo y parroquia en la seccion de Estadistica
 def generar_resultados(request):
     try:
@@ -2822,3 +2824,235 @@ def validar_rif(request):
     existe = Comercio.objects.filter(rif_empresarial=rif).exists()
 
     return JsonResponse({"existe": existe})
+
+def contar_estados_unidades(request):
+    # Obtener todos los estados de las unidades
+    estados = Unidades_Detalles.objects.values_list("estado", flat=True)
+
+    # Contar cuántas unidades hay en cada estado
+    conteo_estados = Counter(estados)
+
+    # Crear la respuesta JSON
+    datos = {
+        "activa": conteo_estados.get("🟢 Activo", 0),
+        "fuera_de_servicio": conteo_estados.get("🔴 Fuera de Servicio", 0),
+        "en_mantenimiento": conteo_estados.get("🟡 Mantenimiento", 0),
+    }
+
+    return JsonResponse(datos)
+
+def contar_reportes_combustible(request):
+    # Obtener el servicio "Suministro de Combustible"
+    try:
+        servicio_combustible = Servicios.objects.get(nombre_servicio="Suministro de Combustible")
+    except Servicios.DoesNotExist:
+        return JsonResponse({"error": "El servicio no existe"}, status=404)
+
+    # Obtener fechas
+    hoy = now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de esta semana
+    inicio_mes = hoy.replace(day=1)  # Primer día del mes
+
+    # Contar reportes por día
+    reportes_hoy = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha=hoy
+    ).count()
+
+    # Contar reportes por semana
+    reportes_semana = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_semana, hoy]
+    ).count()
+
+    # Contar reportes por mes
+    reportes_mes = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_mes, hoy]
+    ).count()
+
+    # Crear respuesta JSON
+    datos = {
+        "reportes_hoy": reportes_hoy,
+        "reportes_semana": reportes_semana,
+        "reportes_mes": reportes_mes,
+    }
+
+    return JsonResponse(datos)
+
+def contar_reporte_lubricantes(request):
+    # Obtener el servicio "Suministro de Combustible"
+    try:
+        servicio_combustible = Servicios.objects.get(nombre_servicio="Suministro de Lubricantes")
+    except Servicios.DoesNotExist:
+        return JsonResponse({"error": "El servicio no existe"}, status=404)
+
+    # Obtener fechas
+    hoy = now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de esta semana
+    inicio_mes = hoy.replace(day=1)  # Primer día del mes
+
+    # Contar reportes por día
+    reportes_hoy = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha=hoy
+    ).count()
+
+    # Contar reportes por semana
+    reportes_semana = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_semana, hoy]
+    ).count()
+
+    # Contar reportes por mes
+    reportes_mes = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_mes, hoy]
+    ).count()
+
+    # Crear respuesta JSON
+    datos = {
+        "reportes_hoy": reportes_hoy,
+        "reportes_semana": reportes_semana,
+        "reportes_mes": reportes_mes,
+    }
+
+    return JsonResponse(datos)
+
+def contar_reporte_neumaticos(request):
+    # Obtener el servicio "Suministro de Combustible"
+    try:
+        servicio_combustible = Servicios.objects.get(nombre_servicio="Cambios de Neumáticos")
+    except Servicios.DoesNotExist:
+        return JsonResponse({"error": "El servicio no existe"}, status=404)
+
+    # Obtener fechas
+    hoy = now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de esta semana
+    inicio_mes = hoy.replace(day=1)  # Primer día del mes
+
+    # Contar reportes por día
+    reportes_hoy = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha=hoy
+    ).count()
+
+    # Contar reportes por semana
+    reportes_semana = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_semana, hoy]
+    ).count()
+
+    # Contar reportes por mes
+    reportes_mes = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_mes, hoy]
+    ).count()
+
+    # Crear respuesta JSON
+    datos = {
+        "reportes_hoy": reportes_hoy,
+        "reportes_semana": reportes_semana,
+        "reportes_mes": reportes_mes,
+    }
+
+    return JsonResponse(datos)
+
+def contar_reporte_reparaciones(request):
+    # Obtener el servicio "Suministro de Combustible"
+    try:
+        servicio_combustible = Servicios.objects.get(nombre_servicio="Reparaciones Mecánicas")
+    except Servicios.DoesNotExist:
+        return JsonResponse({"error": "El servicio no existe"}, status=404)
+
+    # Obtener fechas
+    hoy = now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de esta semana
+    inicio_mes = hoy.replace(day=1)  # Primer día del mes
+
+    # Contar reportes por día
+    reportes_hoy = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha=hoy
+    ).count()
+
+    # Contar reportes por semana
+    reportes_semana = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_semana, hoy]
+    ).count()
+
+    # Contar reportes por mes
+    reportes_mes = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_mes, hoy]
+    ).count()
+
+    # Crear respuesta JSON
+    datos = {
+        "reportes_hoy": reportes_hoy,
+        "reportes_semana": reportes_semana,
+        "reportes_mes": reportes_mes,
+    }
+
+    return JsonResponse(datos)
+
+def contar_reporte_electricas(request):
+    # Obtener el servicio "Suministro de Combustible"
+    try:
+        servicio_combustible = Servicios.objects.get(nombre_servicio="Reparaciones Eléctricas")
+    except Servicios.DoesNotExist:
+        return JsonResponse({"error": "El servicio no existe"}, status=404)
+
+    # Obtener fechas
+    hoy = now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de esta semana
+    inicio_mes = hoy.replace(day=1)  # Primer día del mes
+
+    # Contar reportes por día
+    reportes_hoy = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha=hoy
+    ).count()
+
+    # Contar reportes por semana
+    reportes_semana = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_semana, hoy]
+    ).count()
+
+    # Contar reportes por mes
+    reportes_mes = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_mes, hoy]
+    ).count()
+
+    # Crear respuesta JSON
+    datos = {
+        "reportes_hoy": reportes_hoy,
+        "reportes_semana": reportes_semana,
+        "reportes_mes": reportes_mes,
+    }
+
+    return JsonResponse(datos)
+
+def contar_reporte_cambio_repuestos(request):
+    # Obtener el servicio "Suministro de Combustible"
+    try:
+        servicio_combustible = Servicios.objects.get(nombre_servicio="Cambio de Repuestos")
+    except Servicios.DoesNotExist:
+        return JsonResponse({"error": "El servicio no existe"}, status=404)
+
+    # Obtener fechas
+    hoy = now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de esta semana
+    inicio_mes = hoy.replace(day=1)  # Primer día del mes
+
+    # Contar reportes por día
+    reportes_hoy = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha=hoy
+    ).count()
+
+    # Contar reportes por semana
+    reportes_semana = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_semana, hoy]
+    ).count()
+
+    # Contar reportes por mes
+    reportes_mes = Reportes_Unidades.objects.filter(
+        servicio=servicio_combustible, fecha__range=[inicio_mes, hoy]
+    ).count()
+
+    # Crear respuesta JSON
+    datos = {
+        "reportes_hoy": reportes_hoy,
+        "reportes_semana": reportes_semana,
+        "reportes_mes": reportes_mes,
+    }
+
+    return JsonResponse(datos)

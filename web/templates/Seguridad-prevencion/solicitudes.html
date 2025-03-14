@@ -201,8 +201,9 @@
 <div class="section-filter">
   <!-- buscar_cedula.html -->
   <form method="get" class="form-control">
-    <section class="filter-search">
-      <span class="input-group-text" id="basic-addon1"><b> Registros Totales: </b> <span>{{ conteo }}</span></span>
+    <section class="filter-search-prevention">
+      <span class="input-group-text" id="basic-addon1"><b> Registros Totales:</b></span>
+      <input class="form-control" type="search" name="numero_expediente" id="expediente" placeholder=" {{conteo}}" readonly/>
       <span class="input-group-text" id="basic-addon1"><b> Numero de Expediente: </b> </span>
       <input class="form-control" type="search" name="numero_expediente" id="expediente" value="{{ numero_expediente }}" />
       <span class="input-group-text" id="basic-addon1"><b> Rif Del Comercio: </b> </span>
@@ -264,7 +265,7 @@
   <h4 class="title-procediments">Registros                                                                                                                                                                                                                                       </h4>
   <br>
   <section class="buttons-items input-group mb-3 filter-search">
-    <button id="cargar_mas_btn" class="btn btn-danger">Cargar Registros</button>
+    <button id="exportarExcel" class="btn btn-danger">Exportar Excel</button>
   </section>
 </div>
 <!------------------------------ modal de informacion ------------------------------>
@@ -322,4 +323,7 @@
 <script src="../../static/js/prevencion-seguridad/api_eliminar_solicitud.js"></script>
 <script src="../../static/js/prevencion-seguridad/api_editar_solicitud.js"></script>
 <script src="../../static/js/loader-function.js"></script>
+<script src="../../static/js/prevencion-seguridad/export_excel_solicitudes.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
 {% endblock %}

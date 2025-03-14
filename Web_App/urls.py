@@ -55,7 +55,29 @@ urlpatterns = [
     path('prueba/', Prueba),
     path('registros/', ver_registros),
     path('antecedentes/', Antecedentes),
-    
+
+    # Mecanica
+    path('dashboard_mecanica/', Dashboard_mecanica,name='dashboard_mecanica'),
+
+
+    # Unidades
+    path('unidades/', View_Unidades),
+    path('formularioUnidades/', View_Form_unidades),
+    path('agregar_reportes/', agregar_reportes, name="agregar_reportes"),
+    path('agregar_unidades/', agregar_unidades, name="agregar_unidades"),
+    path('cambiar_estado/', cambiar_estado, name="cambiar_estado"),
+    path('reasignar_division/', reasignar_division, name="reasignar_division"),
+    path('obtener_info_unidad/<int:id>/', obtener_info_unidad, name="obtener_info_unidad"),
+    path('mostrar_informacion/<int:id>/', mostrar_informacion, name="mostrar_informacion"),
+
+    path("api/conteo_unidades/", contar_estados_unidades, name="conteo_unidades"),
+    path("api/reportes_combustible/", contar_reportes_combustible, name="reportes_combustible"),
+    path("api/reportes_lubricantes/", contar_reporte_lubricantes, name="reportes_lubricantes"),
+    path("api/reportes_neumaticos/", contar_reporte_neumaticos, name="reportes_neumaticos"),
+    path("api/reportes_reparaciones/", contar_reporte_reparaciones, name="reportes_reparaciones"),
+    path("api/reportes_electricas/", contar_reporte_electricas, name="reportes_electricas"),
+    path("api/reportes_cambio_repuestos/", contar_reporte_cambio_repuestos, name="reportes_cambio_repuestos"),
+
     # Certificados Prevencion
     path('certificadosprevencion/', certificados_prevencion),
     path('formulariocertificados/', formulario_certificado_prevencion),
@@ -68,10 +90,8 @@ urlpatterns = [
     path("validar-cedula/", validar_cedula, name="validar_cedula"),
     path("validar-rif/", validar_rif, name="validar_rif"),
 
-    
     path('agregar_comercio/', agregar_comercio , name='agregar_comercio'),
     path('agregar_solicitud/', agregar_o_actualizar_solicitud , name='agregar_solicitud'),
-
 
     # Tablas
     path('tablageneral/', tabla_general),
@@ -105,16 +125,15 @@ urlpatterns = [
     path('editar_personal/', edit_personal, name='edit_personal'),
     path('api/procedimientos_tipo_detalles/', api_procedimientos_tipo_detalles, name='procedimientos_tipo_detalles'),
     path('instagram/', instagram_feed, name='instagram_feed'),
-
     path('api/obtener_informacion/<int:id>/', obtener_informacion_editar, name='obtener_informacion'),
     path('api/obtener_unidades/', api_unidades, name='obtener_unidades'),
     path('api/obtener_tipos_procedimientos/', api_tipos_procedimientos, name='obtener_tipos_procedimientos'),
     path('api/obtener_solicitante/', api_solicitantes, name='obtener_solicitante'),
-    
 
     # Descargas
     path('descargar-excel_personal/', generar_excel_personal, name='descargar_excel_personal'),
     path('descargar-base-datos/', descargar_base_datos, name='descargar_base_datos'),
+
     # divisiones exportacion excel
     path('descargar-excel-capacitacion/', generar_excel_capacitacion, name='descargar_excel_capacitacion'),
     path('descargar-excel-psicologia/', generar_excel_psicologia, name='descargar_excel_psicologia'),
@@ -126,4 +145,5 @@ urlpatterns = [
     path('descargar-excel-prevencion/', generar_excel_prevencion, name='descargar_excel_prevencion'),
     path('descargar-excel-enfermeria/', generar_excel_enfermeria, name='descargar_excel_enfermeria'),
     path('descargar-excel-operacional/', generar_excel_operacional, name='descargar_excel_operacional'),
+    path('generar-excel-solicitudes/', generar_excel_solicitudes, name='generar_excel_solicitudes'),
 ]

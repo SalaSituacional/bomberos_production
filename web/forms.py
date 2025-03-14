@@ -170,6 +170,13 @@ def Asignar_Comercios():
        op.append((str(procedimiento.id_comercio), f"{procedimiento.id_comercio}: {procedimiento.nombre_comercio}"))
    return op
 
+def Asignar_Servicios():
+   procedimientos = Servicios.objects.all()
+   op = [("", "Seleccione Una Opcion")]
+   for procedimiento in procedimientos:
+       op.append((str(procedimiento.id), f"{procedimiento.nombre_servicio}"))
+   return op
+
 
 class FormularioBusquedaCedula(forms.Form):
     nacionalidad = forms.ChoiceField(choices=[("V", "V"),("E", "E") ], label="Nacionalidad")
@@ -990,3 +997,112 @@ class Formularia_Requisitos(forms.Form):
     carta_autorizacion = forms.BooleanField(required=False,label="Carta Autorizacion")
     plano_bomberil = forms.BooleanField(required=False,label="Plano de Uso Bomberil")
     registro_comercio = forms.BooleanField(required=False,label="Registro Comercio")
+
+# =======================================================================================
+
+class Unidades_Informacion(forms.Form):
+    op = [
+        ("", "Seleccione una Opción"),
+        ("1", "Rescate"),
+        ("2", "Operaciones"),
+        ("3", "Prevención"),
+        ("4", "GRUMAE"),
+        ("5", "Prehospitalaria"),
+        ("6", "Enfermería"),
+        ("7", "Servicios Médicos"),
+        ("8", "Psicología"),
+        ("9", "Capacitación"),
+    ]
+    
+    nombre_unidad = forms.CharField()
+    division = forms.ChoiceField(label="Seleccionar División", choices=op, required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
+    tipo_vehiculo = forms.ChoiceField(label="Tipo de Vehiculo", choices=[("", "Seleccione una Opción"), ("Moto", "Moto"), ("Camion", "Camion"), ("Carro", "Carro")], required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
+    serial_carroceria = forms.CharField()
+    serial_chasis = forms.CharField()
+    marca = forms.CharField()
+    año = forms.CharField()
+    modelo = forms.CharField()
+    placas = forms.CharField()
+    tipo_filtro_aceite = forms.CharField()
+    tipo_filtro_combustible = forms.CharField()
+    bateria = forms.CharField()
+    numero_tag = forms.CharField()
+    tipo_bujia = forms.CharField()
+    uso = forms.CharField()
+    capacidad_carga = forms.CharField()
+    numero_ejes = forms.CharField()
+    numero_puestos = forms.CharField()
+    tipo_combustible = forms.ChoiceField(label="Tipo de Combustible", choices=[
+        ("", "Seleccione una Opción"),
+        ("Gasoil", "Gasoil"),
+        ("Gasolina", "Gasolina"),
+    ], required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
+    tipo_aceite = forms.CharField()
+    medida_neumaticos = forms.CharField()
+    tipo_correa = forms.CharField()
+    estado = forms.ChoiceField(label="Estado", choices=[
+        ("", "Seleccione una Opción"),
+        ("🔴 Fuera de Servicio", "Fuera de Servicio"),
+        ("🟢 Activo", "Activo"),
+        ("🟡 Mantenimiento", "Mantenimiento"),
+    ], required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
+
+class Reportes(forms.Form):
+    
+    
+    id_unidad = forms.CharField(label="Unidad")
+    servicio = forms.ChoiceField(label="Seleccionar Tipo de Servicio", choices=Asignar_Servicios(), required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
+    fecha =  forms.DateField(
+        label="Fecha",
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    hora = forms.TimeField(
+        widget=forms.TimeInput(attrs={'type': 'time'}, format='%H:%M'))  # Especificar explícitamente el tipo de input
+
+    responsable = forms.CharField()
+    descripcion = forms.CharField()
+
+class Cambiar_Estado(forms.Form):
+    op = [
+        ("", "Seleccione una Opción"),
+        ("🔴 Fuera de Servicio", "Fuera de Servicio"),
+        ("🟢 Activo", "Activo"),
+        ("🟡 Mantenimiento", "Mantenimiento"),
+    ]
+    id_unidad_status = forms.CharField(
+        max_length=100,
+        label='Unidad',
+    )
+    actual = forms.CharField(
+        max_length=100,
+        label='Actual',
+    )
+    nuevo = forms.ChoiceField(label="Seleccionar Estado del Vehiculo", choices=op, required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))
+
+class Cambiar_Division(forms.Form):
+    op = [
+        ("", "Seleccione una Opción"),
+        ("1", "Rescate"),
+        ("2", "Operaciones"),
+        ("3", "Prevención"),
+        ("4", "GRUMAE"),
+        ("5", "Prehospitalaria"),
+        ("6", "Enfermería"),
+        ("7", "Servicios Médicos"),
+        ("8", "Psicología"),
+        ("9", "Capacitación"),
+    ]
+    
+    id_unidad_division = forms.CharField(
+        max_length=100,
+        label='Unidad',
+    )
+    actual_division = forms.CharField(
+        max_length=100,
+        label='Actual',
+    )
+    nuevo = forms.ModelMultipleChoiceField(
+        queryset=Divisiones.objects.all(), 
+        widget=forms.CheckboxSelectMultiple  # O SelectMultiple para un dropdown
+    )
+    # nuevo = forms.ChoiceField(label="Seleccionar División", choices=op, required=True, widget=forms.Select(attrs={"class": "disable-first-option"}))

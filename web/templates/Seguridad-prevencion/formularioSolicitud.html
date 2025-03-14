@@ -30,7 +30,8 @@
 </div>
 <!-- <aca va el formulario> -->
 <article class="content-form">
-  <form class="form-control border" id="formularioCrearSolicitudes" action="{% url 'agregar_solicitud' %}" method="POST">
+  <form class="form-control border" id="formularioCrearSolicitudes" action="{% url 'agregar_solicitud' %}"
+    method="POST">
     {% csrf_token %}
     <section class="parte-b">
       <article class="comerce-contain">
@@ -67,7 +68,9 @@
     </section>
     <div class="buttons-solicitud">
       <button type="submit" class="btn btn-danger registrar" disabled>Crear Solicitud</button>
-      <button type="button" class="btn btn-danger registrar">Cancelar solicitud</button>
+        <a href="/certificadosprevencion/" class="btn btn-danger registrar">
+          Cancelar
+        </a>
     </div>
   </form>
 </article>

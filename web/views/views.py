@@ -19,6 +19,7 @@ from django.db.models import Prefetch
 from datetime import date
 from django.shortcuts import get_object_or_404
 import fitz
+from django.db.models import Max
 
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
@@ -37,7 +38,6 @@ def login_required(view_func):
 def logout(request):
     request.session.flush()  # Eliminar todos los datos de la sesión
     return redirect('/login/')
-
 
 def get_instagram_post_date(url):
     L = instaloader.Instaloader()
@@ -100,7 +100,10 @@ def Home(request):
                 "nombres": encargado.nombres,
                 "apellidos": encargado.apellidos,
             }
-            return redirect("/dashboard/")
+            if user.user == "Mecanica_01":
+                return redirect("/dashboard_mecanica/")
+            else:
+                return redirect("/dashboard/")
         except Usuarios.DoesNotExist:
             messages.error(request, 'Usuario o contraseña incorrectos')
             return render(request, 'index.html', {'error': True})
@@ -221,6 +224,20 @@ def Dashboard(request):
         return redirect('/')
     # Renderizar la página con los datos
     return render(request, "dashboard.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+@login_required
+def Dashboard_mecanica(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "mecanica/dashboard_mecanica.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
@@ -4508,7 +4525,6 @@ def planilla_certificado(request):
         "apellidos": user["apellidos"],
     })
 
-# Vista de la seccion de Estadisticas
 def formulario_certificado_prevencion(request):
     user = request.session.get('user')
     if not user:
@@ -4620,7 +4636,6 @@ def agregar_o_actualizar_solicitud(request):
         return redirect("/certificadosprevencion/")
 
     return HttpResponse("Método no permitido", status=405)
-
 
 def doc_Guia(request, id):
     solicitud = get_object_or_404(Solicitudes, id=id)
@@ -4745,3 +4760,289 @@ def doc_Inspeccion(request, id):
 
 
     return response
+
+#---------------- unidades-----------------
+# Vista de la seccion de Estadisticas
+def View_Unidades(request):
+    user = request.session.get('user')
+    if not user:
+            return redirect('/')
+    
+    datos = []
+
+    data = Unidades.objects.exclude(id__in=[26, 30, 27]).prefetch_related(
+        Prefetch("unidades_detalles_set", to_attr="data_unidad"),
+        Prefetch("id_division", to_attr="divisiones")  # Obtiene las divisiones asociadas
+    ).order_by("id")
+
+    conteo = data.count()
+
+    for unidad in data:
+        datos.append({
+            "nombre_unidad": unidad.nombre_unidad,
+            "id_unidad": unidad.id,
+            "divisiones": [div.division for div in unidad.divisiones],  # Lista de nombres de divisiones
+            "detalles": [
+                {
+                    "estado": detalle.estado,  # Reemplaza con los campos reales
+                }
+                for detalle in unidad.data_unidad  # Accede a los detalles prefetchados
+            ]
+        })
+
+
+    return render(request, "unidades/unidades_inicio.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "datos": datos,
+        "form_reportes": Reportes(),
+        "form_estado": Cambiar_Estado(),
+        "form_division": Cambiar_Division(),
+        "conteo": conteo,
+    })
+
+def View_Form_unidades(request):
+    user = request.session.get('user')
+    if not user:
+            return redirect('/')
+
+    return render(request, "unidades/unidades_form.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "agregar_unidades": Unidades_Informacion(),
+    })
+
+def agregar_unidades(request):
+    if request.method == "POST":
+        unidad_id = request.POST.get("id_unidad")  # Si existe, se edita; si no, se crea
+        nombre_unidad = request.POST.get("nombre_unidad")
+        division_ids = request.POST.getlist("division")  # Obtener múltiples valores
+        tipo_vehiculo = request.POST.get("tipo_vehiculo")
+        serial_carroceria = request.POST.get("serial_carroceria")
+        serial_chasis = request.POST.get("serial_chasis")
+        marca = request.POST.get("marca")
+        año = request.POST.get("año")
+        modelo = request.POST.get("modelo")
+        placas = request.POST.get("placas")
+        tipo_filtro_aceite = request.POST.get("tipo_filtro_aceite")
+        tipo_filtro_combustible = request.POST.get("tipo_filtro_combustible")
+        bateria = request.POST.get("bateria")
+        numero_tag = request.POST.get("numero_tag")
+        tipo_bujia = request.POST.get("tipo_bujia")
+        uso = request.POST.get("uso")
+        capacidad_carga = request.POST.get("capacidad_carga")
+        numero_ejes = request.POST.get("numero_ejes")
+        numero_puestos = request.POST.get("numero_puestos")
+        tipo_combustible = request.POST.get("tipo_combustible")
+        tipo_aceite = request.POST.get("tipo_aceite")
+        medida_neumaticos = request.POST.get("medida_neumaticos")
+        tipo_correa = request.POST.get("tipo_correa")
+        estado = request.POST.get("estado")
+
+        # Si unidad_id existe, buscar la unidad para editarla; si no, crear una nueva
+        if unidad_id:
+            unidad = get_object_or_404(Unidades, id=unidad_id)
+            unidad.nombre_unidad = nombre_unidad
+            unidad.save()
+        else:
+            unidad = Unidades.objects.create(nombre_unidad=nombre_unidad)
+
+        # Asignar divisiones a la unidad
+        if division_ids:
+            divisiones_seleccionadas = Divisiones.objects.filter(id__in=division_ids)
+            unidad.id_division.set(divisiones_seleccionadas)
+
+        # Buscar si la unidad ya tiene detalles
+        detalles, created = Unidades_Detalles.objects.get_or_create(id_unidad=unidad)
+
+        # Actualizar o asignar detalles
+        detalles.tipo_vehiculo = tipo_vehiculo
+        detalles.serial_carroceria = serial_carroceria
+        detalles.serial_chasis = serial_chasis
+        detalles.marca = marca
+        detalles.año = año
+        detalles.modelo = modelo
+        detalles.placas = placas
+        detalles.tipo_filtro_aceite = tipo_filtro_aceite
+        detalles.tipo_filtro_combustible = tipo_filtro_combustible
+        detalles.bateria = bateria
+        detalles.numero_tag = numero_tag
+        detalles.tipo_bujia = tipo_bujia
+        detalles.uso = uso
+        detalles.capacidad_carga = capacidad_carga
+        detalles.numero_ejes = numero_ejes
+        detalles.numero_puestos = numero_puestos
+        detalles.tipo_combustible = tipo_combustible
+        detalles.tipo_aceite = tipo_aceite
+        detalles.medida_neumaticos = medida_neumaticos
+        detalles.tipo_correa = tipo_correa
+        detalles.estado = estado
+        detalles.save()
+
+        return redirect("/unidades/")
+
+def agregar_reportes(request):
+    if request.method == "POST":
+        unidad = request.POST.get("id_unidad")
+        servicio = request.POST.get("servicio")
+        fecha = request.POST.get("fecha")
+        hora = request.POST.get("hora")
+        responsable = request.POST.get("responsable")
+        descripcion = request.POST.get("descripcion")
+
+
+        unidad_instance = get_object_or_404(Unidades, id=unidad)
+        servicio_instance = get_object_or_404(Servicios, id=servicio)
+
+        Reportes_Unidades.objects.create(
+            id_unidad = unidad_instance,
+            servicio = servicio_instance,
+            fecha = fecha,
+            hora = hora,
+            descripcion = descripcion,
+            persona_responsable = responsable
+        )
+
+        return redirect("/unidades/")
+        # return redirect(f"/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
+
+    return HttpResponse("Método no permitido", status=405)
+
+def cambiar_estado(request):
+    if request.method == "POST":
+        unidad = request.POST.get("id_unidad-status")
+    
+        unidad_instance = get_object_or_404(Unidades, id=unidad)
+        unidad_detalles = get_object_or_404(Unidades_Detalles, id_unidad=unidad_instance.id)
+
+        unidad_detalles.estado = request.POST.get("nuevo")
+        unidad_detalles.save()
+
+        return redirect("/unidades/")
+        # return redirect(f"/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
+
+    return HttpResponse("Método no permitido", status=405)
+
+def reasignar_division(request):
+    if request.method == "POST":
+        unidad = request.POST.get("id_unidad-division")
+        # nueva_division = request.POST.get("nuevo")
+    
+        # Obtener la unidad que queremos actualizar
+        unidad_instance = get_object_or_404(Unidades, id=unidad)
+
+        # Obtener la lista de divisiones seleccionadas en el formulario
+        divisiones_ids = request.POST.getlist("nuevo")  # Lista de IDs
+
+        # Obtener los objetos Divisiones basados en los IDs
+        nuevas_divisiones = Divisiones.objects.filter(id__in=divisiones_ids)
+
+        # Asignar las divisiones a la unidad
+        unidad_instance.id_division.set(nuevas_divisiones)  # Reemplaza las anteriores
+
+        # # Guardar la unidad con las nuevas divisiones asignadas
+        unidad_instance.save()
+
+        return redirect("/unidades/")
+        # return redirect(f"/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
+
+    return HttpResponse("Método no permitido", status=405)
+
+def obtener_info_unidad(request, id):
+    unidad = get_object_or_404(Unidades, id=id)
+    detalles = Unidades_Detalles.objects.filter(id_unidad=unidad).first()  # Obtener detalles si existen
+
+    datos = {
+        "id": unidad.id,
+        "nombre_unidad": unidad.nombre_unidad,
+        "divisiones": list(unidad.id_division.values("id", "division")),
+        "tipo_vehiculo": detalles.tipo_vehiculo if detalles else "",
+        "serial_carroceria": detalles.serial_carroceria if detalles else "",
+        "serial_chasis": detalles.serial_chasis if detalles else "",
+        "marca": detalles.marca if detalles else "",
+        "año": detalles.año if detalles else "",
+        "modelo": detalles.modelo if detalles else "",
+        "placas": detalles.placas if detalles else "",
+        "tipo_filtro_aceite": detalles.tipo_filtro_aceite if detalles else "",
+        "tipo_filtro_combustible": detalles.tipo_filtro_combustible if detalles else "",
+        "bateria": detalles.bateria if detalles else "",
+        "numero_tag": detalles.numero_tag if detalles else "",
+        "tipo_bujia": detalles.tipo_bujia if detalles else "",
+        "uso": detalles.uso if detalles else "",
+        "capacidad_carga": detalles.capacidad_carga if detalles else "",
+        "numero_ejes": detalles.numero_ejes if detalles else "",
+        "numero_puestos": detalles.numero_puestos if detalles else "",
+        "tipo_combustible": detalles.tipo_combustible if detalles else "",
+        "tipo_aceite": detalles.tipo_aceite if detalles else "",
+        "medida_neumaticos": detalles.medida_neumaticos if detalles else "",
+        "tipo_correa": detalles.tipo_correa if detalles else "",
+        "estado": detalles.estado if detalles else "",
+    }
+
+    return JsonResponse(datos, safe=False)
+
+def mostrar_informacion(request, id):
+    # Obtener la unidad y sus detalles
+    unidad = get_object_or_404(Unidades, id=id)
+    detalles = get_object_or_404(Unidades_Detalles, id_unidad=unidad)
+
+    # Obtener los últimos reportes de cada servicio asociado a la unidad
+    ultimos_reportes = (
+        Reportes_Unidades.objects
+        .filter(id_unidad=unidad)
+        .values("servicio")  # Agrupamos por servicio
+        .annotate(ultima_fecha=Max("fecha"))  # Obtenemos la última fecha de cada servicio
+    )
+
+    # Ahora, obtenemos el reporte más reciente para cada servicio con la fecha obtenida
+    reportes_finales = []
+    for reporte in ultimos_reportes:
+        ultimo_reporte = Reportes_Unidades.objects.filter(
+            id_unidad=unidad,
+            servicio=reporte["servicio"],
+            fecha=reporte["ultima_fecha"]
+        ).order_by("-hora").first()  # Si hay más de uno en la misma fecha, toma el más reciente por hora
+
+        if ultimo_reporte:
+            reportes_finales.append({
+                "servicio": ultimo_reporte.servicio.nombre_servicio,
+                "fecha": ultimo_reporte.fecha.strftime("%Y-%m-%d"),
+                "hora": ultimo_reporte.hora.strftime("%H:%M"),
+                "descripcion": ultimo_reporte.descripcion,
+                "persona_responsable": ultimo_reporte.persona_responsable,
+            })
+
+    # Crear la estructura de datos para la respuesta JSON
+    datos = {
+        "id": unidad.id,
+        "nombre_unidad": unidad.nombre_unidad,
+        "divisiones": list(unidad.id_division.values("id", "division")),
+        "tipo_vehiculo": detalles.tipo_vehiculo,
+        "serial_carroceria": detalles.serial_carroceria,
+        "serial_chasis": detalles.serial_chasis,
+        "marca": detalles.marca,
+        "año": detalles.año,
+        "modelo": detalles.modelo,
+        "placas": detalles.placas,
+        "tipo_filtro_aceite": detalles.tipo_filtro_aceite,
+        "tipo_filtro_combustible": detalles.tipo_filtro_combustible,
+        "bateria": detalles.bateria,
+        "numero_tag": detalles.numero_tag,
+        "tipo_bujia": detalles.tipo_bujia,
+        "uso": detalles.uso,
+        "capacidad_carga": detalles.capacidad_carga,
+        "numero_ejes": detalles.numero_ejes,
+        "numero_puestos": detalles.numero_puestos,
+        "tipo_combustible": detalles.tipo_combustible,
+        "tipo_aceite": detalles.tipo_aceite,
+        "medida_neumaticos": detalles.medida_neumaticos,
+        "tipo_correa": detalles.tipo_correa,
+        "estado": detalles.estado,
+        "ultimos_reportes": reportes_finales  # Se agrega la lista de reportes al JSON final
+    }
+
+    return JsonResponse(datos, safe=False)

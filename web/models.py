@@ -1010,7 +1010,6 @@ class Solicitudes(models.Model):
   def __str__(self):
         return f"Solicitud {self.id_solicitud} - {self.tipo_servicio} - {self.solicitante_nombre_apellido}"
 
-
 class Requisitos(models.Model):
   id_solicitud = models.ForeignKey(Solicitudes, on_delete=models.CASCADE)
   cedula_identidad = models.BooleanField(default=False)
@@ -1037,5 +1036,48 @@ class Requisitos(models.Model):
   def __str__(self):
       return f"Requisitos para Solicitud {self.id_solicitud}"
 
+# ========================================= MODELOS PARA EL AREA DE CONTROL DE UNIDADES =============================================================================================
 
-  
+class Unidades_Detalles(models.Model):
+  id_unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
+  tipo_vehiculo = models.CharField()
+  serial_carroceria = models.CharField()
+  serial_chasis = models.CharField()
+  marca = models.CharField()
+  año = models.CharField()
+  modelo = models.CharField()
+  placas = models.CharField()
+  tipo_filtro_aceite = models.CharField()
+  tipo_filtro_combustible = models.CharField()
+  bateria = models.CharField()
+  numero_tag = models.CharField()
+  tipo_bujia = models.CharField()
+  uso = models.CharField()
+  capacidad_carga = models.CharField()
+  numero_ejes = models.CharField()
+  numero_puestos = models.CharField()
+  tipo_combustible = models.CharField()
+  tipo_aceite = models.CharField()
+  medida_neumaticos = models.CharField()
+  tipo_correa = models.CharField()
+  estado = models.CharField()
+
+  def __str__(self):
+        return f"{self.id_unidad.nombre_unidad} {self.tipo_vehiculo} {self.marca} {self.modelo} ({self.año})"
+
+class Servicios(models.Model):
+  nombre_servicio = models.CharField()
+
+  def __str__(self):
+    return f"{self.nombre_servicio}"
+
+class Reportes_Unidades(models.Model):
+  id_unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
+  servicio = models.ForeignKey(Servicios, on_delete=models.CASCADE)
+  fecha = models.DateField(default="1999-01-01")
+  hora = models.TimeField(default="00:00")
+  descripcion = models.CharField()
+  persona_responsable = models.CharField()
+
+  def __str__(self):
+        return f"{self.servicio} - {self.fecha} {self.hora} - {self.persona_responsable}"
