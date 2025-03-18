@@ -15,6 +15,7 @@ from django.utils.timezone import now, timedelta
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Case, When
 from collections import Counter
+from django.db.models import Exists, OuterRef
 
 # Api para crear seccion de lista de procedimientos por cada division, por tipo y parroquia en la seccion de Estadistica
 def generar_resultados(request):
@@ -2605,20 +2606,30 @@ def api_unidades(request):
     if not division_id:
         return JsonResponse({"error": "El parámetro 'division' es requerido"}, status=400)
 
-    if division_id == 0:
-        resultado = [("", "Seleccione Una Opcion")]
-        return JsonResponse(resultado, safe=False)
+    if division_id == "0":  # Asegurar que se maneje correctamente el "Seleccione una opción"
+        return JsonResponse([("", "Seleccione Una Opción")], safe=False)
 
     try:
         division = Divisiones.objects.get(id=division_id)  # Verificar si la división existe
     except Divisiones.DoesNotExist:
         return JsonResponse({"error": "La división no existe"}, status=404)
 
-    # Filtrar unidades que están asociadas con la división
-    unidades = Unidades.objects.filter(id_division=division)
+    # Subquery para verificar si existen detalles con estado "activo"
+    subquery = Unidades_Detalles.objects.filter(
+        id_unidad=OuterRef("id"),  # Referencia externa al modelo Unidades
+        estado="🟢 Activo"
+    )
+
+    # Filtrar unidades que están asociadas con la división y tienen al menos un detalle con estado "activo"
+    unidades = Unidades.objects.annotate(
+        tiene_detalles_activos=Exists(subquery)  # Agregar un booleano que indique si tiene detalles activos
+    ).filter(
+        id_division=division,
+        tiene_detalles_activos=True  # Solo incluir unidades con detalles activos
+    )
 
     # Construir la respuesta en formato JSON
-    resultado = [("", "Seleccione Una Opcion")]
+    resultado = [("", "Seleccione Una Opción")]
     for unidad in unidades:
         resultado.append((str(unidad.id), unidad.nombre_unidad))
 
