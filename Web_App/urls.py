@@ -146,4 +146,5 @@ urlpatterns = [
     path('descargar-excel-enfermeria/', generar_excel_enfermeria, name='descargar_excel_enfermeria'),
     path('descargar-excel-operacional/', generar_excel_operacional, name='descargar_excel_operacional'),
     path('generar-excel-solicitudes/', generar_excel_solicitudes, name='generar_excel_solicitudes'),
+    path('generar-excel-reportes-unidades/', generar_excel_reportes_unidades, name='generar_excel_reportes'),
 ]

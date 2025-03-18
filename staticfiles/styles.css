@@ -5421,6 +5421,25 @@ checkbox-styles {
       margin-bottom: 1rem;
     }
   }
+  .accion-personal{
+    flex-direction: column;
+    button{
+      svg{
+        width: 4rem;
+        height: auto;
+      }
+    }
+  }
+  .contain-unidades{
+    form{
+      width: auto;
+      font-size: 2.5rem;
+      h2{
+        font-size: 2rem;
+        text-align: center;
+      }
+    }
+  }
 }
 
 @media (max-width: 320px) {
@@ -5538,4 +5557,5 @@ checkbox-styles {
       margin-bottom: 1rem;
     }
   }
+  
 }
