@@ -2100,3 +2100,33 @@ def generar_excel_solicitudes(request):
 
     # Devolver los datos como JSON
     return JsonResponse(json.loads(json_data), safe=False)
+
+def generar_excel_reportes_unidades(request):
+    mes_str = request.GET.get('mes', None)
+
+    reportes = Reportes_Unidades.objects.select_related('id_unidad', 'servicio').order_by('-fecha', '-hora')
+
+    if mes_str:
+        try:
+            mes = int(mes_str.split('-')[1])
+            reportes = [reporte for reporte in reportes if reporte.fecha.month == mes]
+        except (ValueError, IndexError):
+            return JsonResponse({'error': 'Formato de mes incorrecto'}, status=400)
+
+    data = []
+
+    for reporte in reportes:
+        data.append({
+            'nombre unidad': reporte.id_unidad.nombre_unidad,
+            'servicio': reporte.servicio.nombre_servicio,
+            'fecha': reporte.fecha.isoformat(),
+            'hora': reporte.hora.isoformat(),
+            'descripcion': reporte.descripcion,
+            'persona responsable': reporte.persona_responsable,
+        })
+
+    df = pd.DataFrame(data).sort_values(by=['fecha'], ascending=[False])
+
+    json_data = df.to_json(orient='records', date_format='iso')
+
+    return JsonResponse(json.loads(json_data), safe=False)
