@@ -3695,13 +3695,15 @@ checkbox-styles {
     }
   }
 }
-#reportes{
+
+#reportes {
   width: 90%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 }
-#reporte_unidades{
+
+#reporte_unidades {
   width: 90%;
   margin: 0 auto;
   display: flex;
@@ -3709,6 +3711,7 @@ checkbox-styles {
   flex-wrap: wrap;
   justify-content: space-around;
 }
+
 .reporte {
   margin: 2rem 0;
   width: 20rem;
@@ -3716,6 +3719,7 @@ checkbox-styles {
   padding: 2rem;
   text-align: center;
   background-color: white;
+
   div {
     div {
       width: 80%;
@@ -3724,6 +3728,7 @@ checkbox-styles {
       flex-wrap: wrap;
       border-bottom: 2.5px solid rgb(138, 138, 138);
     }
+
     p {
       text-align: start;
       margin: 1rem 0;
@@ -4370,6 +4375,7 @@ checkbox-styles {
   }
 
   .filter-search {
+    margin: 0;
     width: 80%;
     justify-content: space-between;
   }
@@ -5296,7 +5302,7 @@ checkbox-styles {
   }
 
   .analitics-filters {
-    width: 100%;
+    width: 80%;
   }
 
   .tools-exit-help {
@@ -5366,10 +5372,21 @@ checkbox-styles {
   }
 
   .filter-search-prevention {
+    flex-direction: column;
 
     input,
     select {
       width: 10rem;
+    }
+
+    .filter-search-prevention {
+      span {
+        width: 100%;
+      }
+
+      input {
+        width: 100%;
+      }
     }
   }
 
@@ -5421,25 +5438,57 @@ checkbox-styles {
       margin-bottom: 1rem;
     }
   }
-  .accion-personal{
+
+  .accion-personal {
     flex-direction: column;
-    button{
-      svg{
+
+    button {
+      svg {
         width: 4rem;
         height: auto;
       }
     }
   }
-  .contain-unidades{
-    form{
+
+  .contain-unidades {
+    form {
       width: auto;
       font-size: 2.5rem;
-      h2{
+
+      h2 {
         font-size: 2rem;
         text-align: center;
       }
     }
   }
+
+  .div-analytics {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+  }
+
+  .progress-bar {
+    width: 80%;
+  }
+  .buttons-solicitud{
+    a{
+      width: 100%;
+    }
+  }
+  .section-filter{
+    justify-content:center;
+    align-items: center;
+    align-content: center;
+  }
+  
+  .filter-search {
+    margin: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
 }
 
 @media (max-width: 320px) {
@@ -5557,5 +5606,5 @@ checkbox-styles {
       margin-bottom: 1rem;
     }
   }
-  
+
 }
