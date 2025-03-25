@@ -102,6 +102,8 @@ def Home(request):
             }
             if user.user == "Mecanica_01":
                 return redirect("/dashboard_mecanica/")
+            if user.user == "Sarp_01":
+                return redirect("/dashboard_sarp/")
             else:
                 return redirect("/dashboard/")
         except Usuarios.DoesNotExist:
@@ -238,6 +240,33 @@ def Dashboard_mecanica(request):
         return redirect('/')
     # Renderizar la página con los datos
     return render(request, "mecanica/dashboard_mecanica.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+@login_required
+def Dashboard_sarp(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "sarp/dashboard_sarp.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+def Registros_sarp(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "sarp/registros_sarp.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],

@@ -59,6 +59,9 @@ urlpatterns = [
     # Mecanica
     path('dashboard_mecanica/', Dashboard_mecanica,name='dashboard_mecanica'),
 
+    # SARP
+    path('dashboard_sarp/', Dashboard_sarp,name='dashboard_sarp'),
+    path('registros_sarp/', Registros_sarp),
 
     # Unidades
     path('unidades/', View_Unidades),
