@@ -34,6 +34,10 @@ admin.site.register(Unidades_Detalles)
 admin.site.register(Reportes_Unidades)
 admin.site.register(Servicios)
 
+admin.site.register(Drones)
+
+
+
 
 # admin.site.register(InstagramPost)
 # admin.site.register(Divisiones)

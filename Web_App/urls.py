@@ -62,6 +62,8 @@ urlpatterns = [
     # SARP
     path('dashboard_sarp/', Dashboard_sarp,name='dashboard_sarp'),
     path('registros_sarp/', Registros_sarp),
+    path('formularios_sarp/', Formularios_sarp),
+    path('registrar_dron/', registrar_drones, name="registrar_dron"),
 
     # Unidades
     path('unidades/', View_Unidades),

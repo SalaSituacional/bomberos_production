@@ -271,6 +271,25 @@ def Registros_sarp(request):
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
+        "formularioDrones": DronesForm,
+    })
+
+def Formularios_sarp(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "sarp/formulario_sarp.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "formularioVuelos": RegistroVuelosForm,
+        "formularioEstadoDron": EstadoDronForm,
+        "formularioEstadoBaterias": EstadoBateriasForm,
+        "formularioEstadoControl": EstadoControlForm,
+        "formularioDetallesVuelo": DetallesVueloForm,
     })
 
 @login_required
