@@ -3867,6 +3867,25 @@ checkbox-styles {
     margin: 1rem;
   }
 }
+.formulario-sarp{
+  width: 50%;
+  display: flex;
+  margin: 0 auto;
+  form{
+    margin: 0 auto;
+    width: 100%;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 20px ;
+    h2{
+      text-align: center;
+    }
+    div{
+      padding: 1.5rem;
+    }
+  }
+}
+
 
 /* ------------------------------- Media querys ------------------------------------------ */
 

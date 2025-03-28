@@ -31,7 +31,6 @@
 <!-- contenido-->
 
 <div class="formulario-sarp">
-
   <form action="" id="formularioSarp">
     <h2>Datos del Vuelo</h2>
     {{formularioVuelos}}
@@ -60,13 +59,14 @@
 
   if (form) {
     // Seleccionar todas las divs dentro del formulario
-    const innerDivs = form.querySelectorAll("div > div");
+    const innerDivs = form.querySelectorAll("div");
 
     // Iterar sobre cada div y aplicar las clases a sus inputs y labels
     innerDivs.forEach(div => {
       const label = div.querySelector("label");
       const input = div.querySelector("input");
       const select = div.querySelector("select");
+      const textarea = div.querySelector("textarea");
 
       if (label) {
         label.classList.add("form-label");
@@ -78,6 +78,9 @@
 
       if (select) {
         select.classList.add("form-select");
+      }
+      if (textarea) {
+        textarea.classList.add("form-control");
       }
     });
   }
