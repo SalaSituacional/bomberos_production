@@ -1210,11 +1210,12 @@ class EstadoControlForm(forms.Form):
 # ---------------------- FORMULARIO PARA DETALLES DEL VUELO ----------------------
 class DetallesVueloForm(forms.Form):
     viento = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Normal", "Normal"), ("Fuerte", "Fuerte"), ("No Apto", "No Apto")], label="Viento")
-    nubosidad = forms.ChoiceField(label="Nubosidad")
-    riesgo_vuelo = forms.CharField(max_length=5, label="Riesgo del Vuelo")
-    zona_vuelo = forms.CharField(max_length=5, label="Zona de Vuelo")
+    nubosidad = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Despejado", "Despejado"), ("Nublado", "Nublado"), ("Muy Nublado", "Muy Nublado")], label="Nubosidad")
+    riesgo_vuelo = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Alto", "Alto"), ("Medio", "Medio"), ("Bajo", "Bajo")], label="Riesgo del Vuelo")
+    zona_vuelo = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Zona de Seguridad", "Zona de Seguridad"), ("Zona sin Seguridad", "Zona sin Seguridad")], label="Zona de Vuelo")
     numero_satelites = forms.CharField(max_length=5, label="Número de Satélites")
     distancia_recorrida = forms.CharField(max_length=5, label="Distancia Recorrida")
+    magnitud_distancia = forms.ChoiceField(choices=[("Km", "Km"), ("Mtrs", "Mtrs")], label="")
     altitud = forms.CharField(max_length=5, label="Altitud")
     duracion_vuelo = forms.CharField(max_length=5, label="Duración del Vuelo")
     observaciones = forms.CharField(label="Observaciones", widget=forms.Textarea)
