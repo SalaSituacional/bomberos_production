@@ -31,7 +31,8 @@
 <!-- contenido-->
 
 <div class="formulario-sarp">
-  <form action="" id="formularioSarp">
+  <form action="" method="post" id="formularioSarp">
+    {% csrf_token %}
     <h2>Datos del Vuelo</h2>
     {{formularioVuelos}}
     <h2>Estado del Dron</h2>
@@ -42,6 +43,9 @@
     {{formularioEstadoControl}}
     <h2>Detalles del Vuelo</h2>
     {{formularioDetallesVuelo}}
+
+    <button class="btn btn-danger" type="submit">Enviar</button>
+    <button class="btn btn-danger" type="">Cancelar</button>
   </form>
 
 </div>
