@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const filas = table.querySelectorAll("tbody tr");
 
     filas.forEach((fila) => {
-      const columnaJerarquia = fila.cells[3].textContent.toLowerCase();
-      const originalJerarquia = fila.cells[3].textContent;
+      const columnaJerarquia = fila.cells[14].textContent.toLowerCase();
+      const originalJerarquia = fila.cells[14].textContent;
 
       // Condición de coincidencia en jerarquía
       const coincideJerarquia =
@@ -50,20 +50,20 @@ document.addEventListener("DOMContentLoaded", function () {
       status === "1"
         ? "Activo"
         : status === "2"
-        ? "Jubilado"
-        : status === "3"
-        ? "Incapacitado"
-        : status === "4"
-        ? "Fallecido"
-        : status === "6"
-        ? "Comision de servicios"
-        : status === "5"
-        ? "Cese"
-        : "";
+          ? "Jubilado"
+          : status === "3"
+            ? "Incapacitado"
+            : status === "4"
+              ? "Fallecido"
+              : status === "5"
+                ? "Cese"
+                : status === "6"
+                  ? "Comision de servicios"
+                  : "";
 
     filas.forEach((fila) => {
-      const columnaStatus = fila.cells[8].textContent;
-      const originalStatus = fila.cells[8].textContent;
+      const columnaStatus = fila.cells[14].textContent;
+      const originalStatus = fila.cells[14].textContent;
 
       // Condición de coincidencia en estado
       const coincideStatus = status === "" || columnaStatus === statusText;
@@ -78,10 +78,10 @@ document.addEventListener("DOMContentLoaded", function () {
           regex,
           `<span class="highlight">$1</span>`
         );
-        fila.cells[8].innerHTML = highlightedText;
+        fila.cells[4].innerHTML = highlightedText;
       } else {
         // Si no hay coincidencia, muestra el texto original sin resaltar
-        fila.cells[8].textContent = originalStatus;
+        fila.cells[4].textContent = originalStatus;
       }
     });
   }

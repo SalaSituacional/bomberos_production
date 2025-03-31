@@ -3893,7 +3893,16 @@ checkbox-styles {
 .form-new-drones {
   width: ;
 } */
-
+.buttons-sarp-form{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  button{
+    width: 45%;
+  }
+}
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
