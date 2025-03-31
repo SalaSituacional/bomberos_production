@@ -3089,3 +3089,23 @@ def registrar_drones(request):
         return redirect("/registros_sarp/")
 
     return HttpResponse("Método no permitido", status=405)
+
+def api_vuelos(request):
+    vuelos = Registro_Vuelos.objects.all().values(
+        "id", 'id_vuelo', 'fecha', 'sitio', 'id_dron__nombre_dron', 
+        'tipo_mision', 'id_operador__jerarquia', "id_operador__nombres",
+        "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
+        "id_observador__apellidos"
+    )
+
+    vuelos_con_detalles = []
+    for vuelo in vuelos:
+        detalles = DetallesVuelo.objects.filter(id_vuelo=vuelo['id']).values( 
+            'numero_satelites', 'distancia_recorrida', 'duracion_vuelo'
+        ).first()
+        
+        vuelo['detalles'] = detalles if detalles else {}  # Agrega los detalles si existen
+
+        vuelos_con_detalles.append(vuelo)
+
+    return JsonResponse(vuelos_con_detalles, safe=False)
