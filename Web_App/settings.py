@@ -57,7 +57,7 @@ MIDDLEWARE = [
 LOGIN_URL = 'home'  # Cambia esto al nombre de tu URL de inicio de sesión
 LOGIN_REDIRECT_URL = '/dashboard/'  # Cambia esto a la vista a la que quieres redirigir después del inicio de sesión
 
-SESSION_COOKIE_AGE = 18000  # Tiempo en segundos (5 horas)
+SESSION_COOKIE_AGE = 18000  # Tiempo en segundos
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Cierra sesión al cerrar el navegador
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from ..models import *
+from ..forms import *
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 import json
@@ -3067,3 +3068,44 @@ def contar_reporte_cambio_repuestos(request):
     }
 
     return JsonResponse(datos)
+
+# =============================================================================== APIS PARA LA SECCION DE DRONES ====================================================================
+
+def registrar_drones(request):
+    if request.method == "POST":
+
+        nombre = request.POST.get("nombre_dron")
+        id_dron = request.POST.get("id_dron")
+        modelo_dron = request.POST.get("modelo_dron")
+
+        # print(nombre, id_dron, modelo_dron)
+
+        Drones.objects.create(
+            nombre_dron = nombre,
+            id_dron = id_dron,
+            modelo_dron = modelo_dron
+        )
+
+        return redirect("/registros_sarp/")
+
+    return HttpResponse("Método no permitido", status=405)
+
+def api_vuelos(request):
+    vuelos = Registro_Vuelos.objects.all().values(
+        "id", 'id_vuelo', 'fecha', 'sitio', 'id_dron__nombre_dron', 
+        'tipo_mision', 'id_operador__jerarquia', "id_operador__nombres",
+        "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
+        "id_observador__apellidos"
+    )
+
+    vuelos_con_detalles = []
+    for vuelo in vuelos:
+        detalles = DetallesVuelo.objects.filter(id_vuelo=vuelo['id']).values( 
+            'numero_satelites', 'distancia_recorrida', 'duracion_vuelo'
+        ).first()
+        
+        vuelo['detalles'] = detalles if detalles else {}  # Agrega los detalles si existen
+
+        vuelos_con_detalles.append(vuelo)
+
+    return JsonResponse(vuelos_con_detalles, safe=False)

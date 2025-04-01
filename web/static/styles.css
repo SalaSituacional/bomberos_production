@@ -3868,6 +3868,41 @@ checkbox-styles {
   }
 }
 
+.formulario-sarp {
+  width: 50%;
+  display: flex;
+  margin: 0 auto;
+
+  form {
+    margin: 0 auto;
+    width: 100%;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 20px;
+
+    h2 {
+      text-align: center;
+    }
+
+    div {
+      padding: 1.5rem;
+    }
+  }
+}
+/* 
+.form-new-drones {
+  width: ;
+} */
+.buttons-sarp-form{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  button{
+    width: 45%;
+  }
+}
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
@@ -4436,6 +4471,17 @@ checkbox-styles {
   .content-video {
     width: 100%;
   }
+
+  .accion-personal {
+    flex-direction: column;
+
+    button {
+      svg {
+        width: 4rem;
+        height: auto;
+      }
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -4786,6 +4832,15 @@ checkbox-styles {
 
   .tool-personal {
     flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+  }
+
+  .input-group {
+    align-items: center;
+    align-content: center;
+    justify-content: center;
   }
 
   .accion-filter {
@@ -4797,6 +4852,8 @@ checkbox-styles {
   .accion-personal {
     width: 80%;
     justify-content: space-between;
+    align-items: center;
+    align-content: center;
 
     button {
       margin-right: 0;
@@ -5472,17 +5529,19 @@ checkbox-styles {
   .progress-bar {
     width: 80%;
   }
-  .buttons-solicitud{
-    a{
+
+  .buttons-solicitud {
+    a {
       width: 100%;
     }
   }
-  .section-filter{
-    justify-content:center;
+
+  .section-filter {
+    justify-content: center;
     align-items: center;
     align-content: center;
   }
-  
+
   .filter-search {
     margin: 0;
     width: 100%;

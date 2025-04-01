@@ -102,6 +102,8 @@ def Home(request):
             }
             if user.user == "Mecanica_01":
                 return redirect("/dashboard_mecanica/")
+            if user.user == "Sarp_01":
+                return redirect("/dashboard_sarp/")
             else:
                 return redirect("/dashboard/")
         except Usuarios.DoesNotExist:
@@ -242,6 +244,147 @@ def Dashboard_mecanica(request):
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
+    })
+
+@login_required
+def Dashboard_sarp(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "sarp/dashboard_sarp.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+def Registros_sarp(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "sarp/registros_sarp.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "formularioDrones": DronesForm,
+    })
+
+def Formularios_sarp(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    
+    if request.method == "POST":
+        vuelo_form = RegistroVuelosForm(request.POST)
+        dron_form = EstadoDronForm(request.POST)
+        baterias_form = EstadoBateriasForm(request.POST)
+        control_form = EstadoControlForm(request.POST)
+        detalles_form = DetallesVueloForm(request.POST)
+
+        if (vuelo_form.is_valid() and dron_form.is_valid() and 
+            baterias_form.is_valid() and control_form.is_valid() and detalles_form.is_valid()):
+
+            dron = vuelo_form.cleaned_data["id_dron"]
+            operador = vuelo_form.cleaned_data["id_operador"]
+            observador = vuelo_form.cleaned_data["id_observador"]
+            
+            dron_instance = Drones.objects.get(id_dron=dron)
+            operador_instance = Personal.objects.get(id=operador)
+            observador_instance = Personal.objects.get(id=observador)
+
+
+            # Guardar el vuelo
+            vuelo = Registro_Vuelos.objects.create(
+                id_operador=operador_instance,
+                id_observador=observador_instance,
+                observador_externo=vuelo_form.cleaned_data["observador_externo"],
+                fecha=vuelo_form.cleaned_data["fecha"],
+                sitio=vuelo_form.cleaned_data["sitio"],
+                hora_despegue=vuelo_form.cleaned_data["hora_despegue"],
+                hora_aterrizaje=vuelo_form.cleaned_data["hora_aterrizaje"],
+                id_dron=dron_instance,
+                tipo_mision=vuelo_form.cleaned_data["tipo_mision"],
+                observaciones_vuelo=vuelo_form.cleaned_data["observaciones_vuelo"],
+                apoyo_realizado_a=vuelo_form.cleaned_data["apoyo_realizado_a"]
+            )
+
+            # Guardar el estado del dron
+            EstadoDron.objects.create(
+                id_vuelo=vuelo,
+                id_dron=vuelo.id_dron,
+                cuerpo=dron_form.cleaned_data["cuerpo"],
+                observacion_cuerpo=dron_form.cleaned_data["observacion_cuerpo"],
+                camara=dron_form.cleaned_data["camara"],
+                observacion_camara=dron_form.cleaned_data["observacion_camara"],
+                helices=dron_form.cleaned_data["helices"],
+                observacion_helices=dron_form.cleaned_data["observacion_helices"],
+                sensores=dron_form.cleaned_data["sensores"],
+                observacion_sensores=dron_form.cleaned_data["observacion_sensores"],
+                motores=dron_form.cleaned_data["motores"],
+                observacion_motores=dron_form.cleaned_data["observacion_motores"]
+            )
+
+            # Guardar estado de las baterías
+            EstadoBaterias.objects.create(
+                id_vuelo=vuelo,
+                id_dron=vuelo.id_dron,
+                bateria1=baterias_form.cleaned_data["bateria1"],
+                bateria2=baterias_form.cleaned_data["bateria2"],
+                bateria3=baterias_form.cleaned_data["bateria3"],
+                bateria4=baterias_form.cleaned_data["bateria4"]
+            )
+
+            # Guardar estado del control
+            EstadoControl.objects.create(
+                id_vuelo=vuelo,
+                id_dron=vuelo.id_dron,
+                cuerpo=control_form.cleaned_data["cuerpo"],
+                joysticks=control_form.cleaned_data["joysticks"],
+                pantalla=control_form.cleaned_data["pantalla"],
+                antenas=control_form.cleaned_data["antenas"],
+                bateria=control_form.cleaned_data["bateria"]
+            )
+
+            # Guardar detalles del vuelo
+            DetallesVuelo.objects.create(
+                id_vuelo=vuelo,
+                viento=detalles_form.cleaned_data["viento"],
+                nubosidad=detalles_form.cleaned_data["nubosidad"],
+                riesgo_vuelo=detalles_form.cleaned_data["riesgo_vuelo"],
+                zona_vuelo=detalles_form.cleaned_data["zona_vuelo"],
+                numero_satelites=detalles_form.cleaned_data["numero_satelites"],
+                distancia_recorrida=f"{detalles_form.cleaned_data['distancia_recorrida']} {detalles_form.cleaned_data['magnitud_distancia']}",
+                altitud=detalles_form.cleaned_data["altitud"],
+                duracion_vuelo=detalles_form.cleaned_data["duracion_vuelo"],
+                observaciones=detalles_form.cleaned_data["observaciones"]
+            )
+
+            return redirect("/registros_sarp/")
+
+    else:
+        vuelo_form = RegistroVuelosForm()
+        dron_form = EstadoDronForm()
+        baterias_form = EstadoBateriasForm()
+        control_form = EstadoControlForm()
+        detalles_form = DetallesVueloForm()
+
+    # Renderizar la página con los datos
+    return render(request, "sarp/formulario_sarp.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "formularioVuelos": RegistroVuelosForm,
+        "formularioEstadoDron": EstadoDronForm,
+        "formularioEstadoBaterias": EstadoBateriasForm,
+        "formularioEstadoControl": EstadoControlForm,
+        "formularioDetallesVuelo": DetallesVueloForm,
     })
 
 @login_required

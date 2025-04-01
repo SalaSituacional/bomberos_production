@@ -59,6 +59,12 @@ urlpatterns = [
     # Mecanica
     path('dashboard_mecanica/', Dashboard_mecanica,name='dashboard_mecanica'),
 
+    # SARP
+    path('dashboard_sarp/', Dashboard_sarp,name='dashboard_sarp'),
+    path('registros_sarp/', Registros_sarp),
+    path('formularios_sarp/', Formularios_sarp),
+    path('registrar_dron/', registrar_drones, name="registrar_dron"),
+    path('api/vuelos/', api_vuelos, name="api_vuelos"),  # API en formato JSON
 
     # Unidades
     path('unidades/', View_Unidades),
