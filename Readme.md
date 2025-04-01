@@ -19,3 +19,5 @@
 ### Recordar:
 
 "colectstatic" para los cambios en el frontend
+
+-2025-
