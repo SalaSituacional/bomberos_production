@@ -3092,8 +3092,8 @@ def registrar_drones(request):
 
 def api_vuelos(request):
     vuelos = Registro_Vuelos.objects.all().values(
-        "id", 'id_vuelo', 'fecha', 'sitio', 'id_dron__nombre_dron', 
-        'tipo_mision', 'id_operador__jerarquia', "id_operador__nombres",
+        "id", 'id_vuelo', "sitio", 'fecha', 'id_dron__nombre_dron', 
+        'id_operador__jerarquia', "id_operador__nombres",
         "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
         "id_observador__apellidos"
     )
@@ -3101,7 +3101,7 @@ def api_vuelos(request):
     vuelos_con_detalles = []
     for vuelo in vuelos:
         detalles = DetallesVuelo.objects.filter(id_vuelo=vuelo['id']).values( 
-            'numero_satelites', 'distancia_recorrida', 'duracion_vuelo'
+            'duracion_vuelo'
         ).first()
         
         vuelo['detalles'] = detalles if detalles else {}  # Agrega los detalles si existen
@@ -3109,3 +3109,67 @@ def api_vuelos(request):
         vuelos_con_detalles.append(vuelo)
 
     return JsonResponse(vuelos_con_detalles, safe=False)
+
+def obtener_reporte(request, id_vuelo):
+    vuelo = get_object_or_404(Registro_Vuelos, id_vuelo=id_vuelo)
+    
+    estado_dron = EstadoDron.objects.filter(id_vuelo=vuelo).first()
+    estado_baterias = EstadoBaterias.objects.filter(id_vuelo=vuelo).first()
+    estado_control = EstadoControl.objects.filter(id_vuelo=vuelo).first()
+    detalles_vuelo = DetallesVuelo.objects.filter(id_vuelo=vuelo).first()
+
+    data = {
+        "vuelo": {
+            "id_vuelo": vuelo.id_vuelo,
+            "id_operador": vuelo.id_operador.id if vuelo.id_operador else None,
+            "id_observador": vuelo.id_observador.id if vuelo.id_observador else None,
+            "fecha": str(vuelo.fecha),
+            "sitio": vuelo.sitio,
+            "hora_despegue": str(vuelo.hora_despegue),
+            "hora_aterrizaje": str(vuelo.hora_aterrizaje),
+            "id_dron": vuelo.id_dron.id,
+            "tipo_mision": vuelo.tipo_mision,
+            "observaciones_vuelo": vuelo.observaciones_vuelo,
+            "apoyo_realizado_a": vuelo.apoyo_realizado_a,
+        },
+        "estado_dron": {
+            "cuerpo": estado_dron.cuerpo,
+            "observacion_cuerpo": estado_dron.observacion_cuerpo,
+            "camara": estado_dron.camara,
+            "observacion_camara": estado_dron.observacion_camara,
+            "helices": estado_dron.helices,
+            "observacion_helices": estado_dron.observacion_helices,
+            "sensores": estado_dron.sensores,
+            "observacion_sensores": estado_dron.observacion_sensores,
+            "motores": estado_dron.motores,
+            "observacion_motores": estado_dron.observacion_motores,
+        } if estado_dron else None,
+        "estado_baterias": {
+            "bateria1": estado_baterias.bateria1,
+            "bateria2": estado_baterias.bateria2,
+            "bateria3": estado_baterias.bateria3,
+            "bateria4": estado_baterias.bateria4,
+        } if estado_baterias else None,
+        "estado_control": {
+            "cuerpo": estado_control.cuerpo,
+            "joysticks": estado_control.joysticks,
+            "pantalla": estado_control.pantalla,
+            "antenas": estado_control.antenas,
+            "bateria": estado_control.bateria,
+        } if estado_control else None,
+        "detalles_vuelo": {
+            "viento": detalles_vuelo.viento,
+            "nubosidad": detalles_vuelo.nubosidad,
+            "riesgo_vuelo": detalles_vuelo.riesgo_vuelo,
+            "zona_vuelo": detalles_vuelo.zona_vuelo,
+            "numero_satelites": detalles_vuelo.numero_satelites,
+            "distancia_recorrida": detalles_vuelo.distancia_recorrida,
+            "altitud": detalles_vuelo.altitud,
+            "duracion_vuelo": detalles_vuelo.duracion_vuelo,
+            "observaciones": detalles_vuelo.observaciones,
+        } if detalles_vuelo else None,
+    }
+
+    print(data)
+    return JsonResponse(data, safe=False)
+

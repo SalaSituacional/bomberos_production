@@ -1107,9 +1107,15 @@ class Registro_Vuelos(models.Model):
     observaciones_vuelo = models.CharField()
     apoyo_realizado_a = models.CharField()
 
+    def save(self, *args, **kwargs):
+        if not self.id_vuelo:
+            last_vuelo = Registro_Vuelos.objects.order_by('-id').first()
+            next_value = 1 if not last_vuelo else int(last_vuelo.id_vuelo.split('-')[1]) + 1
+            self.id_vuelo = f'UDBSC-{next_value:06d}'
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return f"Vuelo {self.id_vuelo} - {self.fecha} - {self.sitio} - Dron: {self.id_dron}"
-
 
 class EstadoDron(models.Model):
     id_vuelo = models.ForeignKey(Registro_Vuelos, on_delete=models.CASCADE)
@@ -1128,7 +1134,6 @@ class EstadoDron(models.Model):
     def __str__(self):
         return f"Estado Dron ({self.id_dron}) - Vuelo {self.id_vuelo}"
 
-
 class EstadoBaterias(models.Model):
     id_vuelo = models.ForeignKey(Registro_Vuelos, on_delete=models.CASCADE)
     id_dron = models.ForeignKey(Drones, on_delete=models.CASCADE)
@@ -1139,7 +1144,6 @@ class EstadoBaterias(models.Model):
 
     def __str__(self):
         return f"Baterías Dron ({self.id_dron}) - Vuelo {self.id_vuelo}"
-
 
 class EstadoControl(models.Model):
     id_vuelo = models.ForeignKey(Registro_Vuelos, on_delete=models.CASCADE)
@@ -1152,7 +1156,6 @@ class EstadoControl(models.Model):
 
     def __str__(self):
         return f"Estado Control ({self.id_dron}) - Vuelo {self.id_vuelo}"
-
 
 class DetallesVuelo(models.Model):
     id_vuelo = models.ForeignKey(Registro_Vuelos, on_delete=models.CASCADE)
