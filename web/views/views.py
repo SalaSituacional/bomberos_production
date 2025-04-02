@@ -279,90 +279,117 @@ def Formularios_sarp(request):
 
     if not user:
         return redirect('/')
-    
+
+    vuelo_instance = None
+
     if request.method == "POST":
+        vuelo_id = request.POST.get("id_vuelo")  # Verifica si hay un vuelo existente
+
+        # Cargar datos del formulario
         vuelo_form = RegistroVuelosForm(request.POST)
         dron_form = EstadoDronForm(request.POST)
         baterias_form = EstadoBateriasForm(request.POST)
         control_form = EstadoControlForm(request.POST)
         detalles_form = DetallesVueloForm(request.POST)
 
-        if (vuelo_form.is_valid() and dron_form.is_valid() and 
+        if (vuelo_form.is_valid() and dron_form.is_valid() and
             baterias_form.is_valid() and control_form.is_valid() and detalles_form.is_valid()):
 
             dron = vuelo_form.cleaned_data["id_dron"]
             operador = vuelo_form.cleaned_data["id_operador"]
             observador = vuelo_form.cleaned_data["id_observador"]
-            
+
             dron_instance = Drones.objects.get(id_dron=dron)
             operador_instance = Personal.objects.get(id=operador)
             observador_instance = Personal.objects.get(id=observador)
 
+            if vuelo_id:  # Si hay un ID de vuelo, actualizarlo
+                vuelo_instance = Registro_Vuelos.objects.get(id_vuelo=vuelo_id)
+                vuelo_instance.id_operador = operador_instance
+                vuelo_instance.id_observador = observador_instance
+                vuelo_instance.observador_externo = vuelo_form.cleaned_data["observador_externo"]
+                vuelo_instance.fecha = vuelo_form.cleaned_data["fecha"]
+                vuelo_instance.sitio = vuelo_form.cleaned_data["sitio"]
+                vuelo_instance.hora_despegue = vuelo_form.cleaned_data["hora_despegue"]
+                vuelo_instance.hora_aterrizaje = vuelo_form.cleaned_data["hora_aterrizaje"]
+                vuelo_instance.id_dron = dron_instance
+                vuelo_instance.tipo_mision = vuelo_form.cleaned_data["tipo_mision"]
+                vuelo_instance.observaciones_vuelo = vuelo_form.cleaned_data["observaciones_vuelo"]
+                vuelo_instance.apoyo_realizado_a = vuelo_form.cleaned_data["apoyo_realizado_a"]
+                vuelo_instance.save()  # Guardar los cambios
 
-            # Guardar el vuelo
-            vuelo = Registro_Vuelos.objects.create(
-                id_operador=operador_instance,
-                id_observador=observador_instance,
-                observador_externo=vuelo_form.cleaned_data["observador_externo"],
-                fecha=vuelo_form.cleaned_data["fecha"],
-                sitio=vuelo_form.cleaned_data["sitio"],
-                hora_despegue=vuelo_form.cleaned_data["hora_despegue"],
-                hora_aterrizaje=vuelo_form.cleaned_data["hora_aterrizaje"],
-                id_dron=dron_instance,
-                tipo_mision=vuelo_form.cleaned_data["tipo_mision"],
-                observaciones_vuelo=vuelo_form.cleaned_data["observaciones_vuelo"],
-                apoyo_realizado_a=vuelo_form.cleaned_data["apoyo_realizado_a"]
+            else:  # Si no hay ID, crear un nuevo vuelo
+                vuelo_instance = Registro_Vuelos.objects.create(
+                    id_operador=operador_instance,
+                    id_observador=observador_instance,
+                    observador_externo=vuelo_form.cleaned_data["observador_externo"],
+                    fecha=vuelo_form.cleaned_data["fecha"],
+                    sitio=vuelo_form.cleaned_data["sitio"],
+                    hora_despegue=vuelo_form.cleaned_data["hora_despegue"],
+                    hora_aterrizaje=vuelo_form.cleaned_data["hora_aterrizaje"],
+                    id_dron=dron_instance,
+                    tipo_mision=vuelo_form.cleaned_data["tipo_mision"],
+                    observaciones_vuelo=vuelo_form.cleaned_data["observaciones_vuelo"],
+                    apoyo_realizado_a=vuelo_form.cleaned_data["apoyo_realizado_a"]
+                )
+
+            # Actualizar o crear Estado del Dron
+            EstadoDron.objects.update_or_create(
+                id_vuelo=vuelo_instance,
+                id_dron=vuelo_instance.id_dron,
+                defaults={
+                    "cuerpo": dron_form.cleaned_data["cuerpo"],
+                    "observacion_cuerpo": dron_form.cleaned_data["observacion_cuerpo"],
+                    "camara": dron_form.cleaned_data["camara"],
+                    "observacion_camara": dron_form.cleaned_data["observacion_camara"],
+                    "helices": dron_form.cleaned_data["helices"],
+                    "observacion_helices": dron_form.cleaned_data["observacion_helices"],
+                    "sensores": dron_form.cleaned_data["sensores"],
+                    "observacion_sensores": dron_form.cleaned_data["observacion_sensores"],
+                    "motores": dron_form.cleaned_data["motores"],
+                    "observacion_motores": dron_form.cleaned_data["observacion_motores"],
+                }
             )
 
-            # Guardar el estado del dron
-            EstadoDron.objects.create(
-                id_vuelo=vuelo,
-                id_dron=vuelo.id_dron,
-                cuerpo=dron_form.cleaned_data["cuerpo"],
-                observacion_cuerpo=dron_form.cleaned_data["observacion_cuerpo"],
-                camara=dron_form.cleaned_data["camara"],
-                observacion_camara=dron_form.cleaned_data["observacion_camara"],
-                helices=dron_form.cleaned_data["helices"],
-                observacion_helices=dron_form.cleaned_data["observacion_helices"],
-                sensores=dron_form.cleaned_data["sensores"],
-                observacion_sensores=dron_form.cleaned_data["observacion_sensores"],
-                motores=dron_form.cleaned_data["motores"],
-                observacion_motores=dron_form.cleaned_data["observacion_motores"]
+            # Actualizar o crear Estado de las Baterías
+            EstadoBaterias.objects.update_or_create(
+                id_vuelo=vuelo_instance,
+                id_dron=vuelo_instance.id_dron,
+                defaults={
+                    "bateria1": baterias_form.cleaned_data["bateria1"],
+                    "bateria2": baterias_form.cleaned_data["bateria2"],
+                    "bateria3": baterias_form.cleaned_data["bateria3"],
+                    "bateria4": baterias_form.cleaned_data["bateria4"],
+                }
             )
 
-            # Guardar estado de las baterías
-            EstadoBaterias.objects.create(
-                id_vuelo=vuelo,
-                id_dron=vuelo.id_dron,
-                bateria1=baterias_form.cleaned_data["bateria1"],
-                bateria2=baterias_form.cleaned_data["bateria2"],
-                bateria3=baterias_form.cleaned_data["bateria3"],
-                bateria4=baterias_form.cleaned_data["bateria4"]
+            # Actualizar o crear Estado del Control
+            EstadoControl.objects.update_or_create(
+                id_vuelo=vuelo_instance,
+                id_dron=vuelo_instance.id_dron,
+                defaults={
+                    "cuerpo": control_form.cleaned_data["cuerpo_control"],
+                    "joysticks": control_form.cleaned_data["joysticks"],
+                    "pantalla": control_form.cleaned_data["pantalla"],
+                    "antenas": control_form.cleaned_data["antenas"],
+                    "bateria": control_form.cleaned_data["bateria"],
+                }
             )
 
-            # Guardar estado del control
-            EstadoControl.objects.create(
-                id_vuelo=vuelo,
-                id_dron=vuelo.id_dron,
-                cuerpo=control_form.cleaned_data["cuerpo"],
-                joysticks=control_form.cleaned_data["joysticks"],
-                pantalla=control_form.cleaned_data["pantalla"],
-                antenas=control_form.cleaned_data["antenas"],
-                bateria=control_form.cleaned_data["bateria"]
-            )
-
-            # Guardar detalles del vuelo
-            DetallesVuelo.objects.create(
-                id_vuelo=vuelo,
-                viento=detalles_form.cleaned_data["viento"],
-                nubosidad=detalles_form.cleaned_data["nubosidad"],
-                riesgo_vuelo=detalles_form.cleaned_data["riesgo_vuelo"],
-                zona_vuelo=detalles_form.cleaned_data["zona_vuelo"],
-                numero_satelites=detalles_form.cleaned_data["numero_satelites"],
-                distancia_recorrida=f"{detalles_form.cleaned_data['distancia_recorrida']} {detalles_form.cleaned_data['magnitud_distancia']}",
-                altitud=detalles_form.cleaned_data["altitud"],
-                duracion_vuelo=detalles_form.cleaned_data["duracion_vuelo"],
-                observaciones=detalles_form.cleaned_data["observaciones"]
+            # Actualizar o crear Detalles del Vuelo
+            DetallesVuelo.objects.update_or_create(
+                id_vuelo=vuelo_instance,
+                defaults={
+                    "viento": detalles_form.cleaned_data["viento"],
+                    "nubosidad": detalles_form.cleaned_data["nubosidad"],
+                    "riesgo_vuelo": detalles_form.cleaned_data["riesgo_vuelo"],
+                    "zona_vuelo": detalles_form.cleaned_data["zona_vuelo"],
+                    "numero_satelites": detalles_form.cleaned_data["numero_satelites"],
+                    "distancia_recorrida": f"{detalles_form.cleaned_data['distancia_recorrida']} {detalles_form.cleaned_data['magnitud_distancia']}",
+                    "altitud": detalles_form.cleaned_data["altitud"],
+                    "duracion_vuelo": detalles_form.cleaned_data["duracion_vuelo"],
+                    "observaciones": detalles_form.cleaned_data["observaciones"],
+                }
             )
 
             return redirect("/registros_sarp/")
@@ -374,17 +401,16 @@ def Formularios_sarp(request):
         control_form = EstadoControlForm()
         detalles_form = DetallesVueloForm()
 
-    # Renderizar la página con los datos
     return render(request, "sarp/formulario_sarp.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "formularioVuelos": RegistroVuelosForm,
-        "formularioEstadoDron": EstadoDronForm,
-        "formularioEstadoBaterias": EstadoBateriasForm,
-        "formularioEstadoControl": EstadoControlForm,
-        "formularioDetallesVuelo": DetallesVueloForm,
+        "formularioVuelos": vuelo_form,
+        "formularioEstadoDron": dron_form,
+        "formularioEstadoBaterias": baterias_form,
+        "formularioEstadoControl": control_form,
+        "formularioDetallesVuelo": detalles_form,
     })
 
 @login_required

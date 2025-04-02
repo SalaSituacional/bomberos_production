@@ -65,7 +65,8 @@ urlpatterns = [
     path('formularios_sarp/', Formularios_sarp),
     path('registrar_dron/', registrar_drones, name="registrar_dron"),
     path('api/vuelos/', api_vuelos, name="api_vuelos"),  # API en formato JSON
-    path('reporte/<str:id_vuelo>/', obtener_reporte, name='obtener_reporte'),
+    path('editar_reporte/<str:id_vuelo>/', editar_reporte, name='obtener_reporte'),
+    path("api/eliminar_vuelo/<str:id_vuelo>/", api_eliminar_vuelo, name="api_eliminar_vuelo"),
 
     # Unidades
     path('unidades/', View_Unidades),

@@ -3095,7 +3095,7 @@ def api_vuelos(request):
         "id", 'id_vuelo', "sitio", 'fecha', 'id_dron__nombre_dron', 
         'id_operador__jerarquia', "id_operador__nombres",
         "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
-        "id_observador__apellidos"
+        "id_observador__apellidos", "observador_externo"
     )
 
     vuelos_con_detalles = []
@@ -3110,7 +3110,7 @@ def api_vuelos(request):
 
     return JsonResponse(vuelos_con_detalles, safe=False)
 
-def obtener_reporte(request, id_vuelo):
+def editar_reporte(request, id_vuelo):
     vuelo = get_object_or_404(Registro_Vuelos, id_vuelo=id_vuelo)
     
     estado_dron = EstadoDron.objects.filter(id_vuelo=vuelo).first()
@@ -3122,12 +3122,16 @@ def obtener_reporte(request, id_vuelo):
         "vuelo": {
             "id_vuelo": vuelo.id_vuelo,
             "id_operador": vuelo.id_operador.id if vuelo.id_operador else None,
+            "operador": f'{vuelo.id_operador.jerarquia} {vuelo.id_operador.nombres} {vuelo.id_operador.apellidos}' if vuelo.id_observador else None,
             "id_observador": vuelo.id_observador.id if vuelo.id_observador else None,
+            "observador": f'{vuelo.id_observador.jerarquia} {vuelo.id_observador.nombres} {vuelo.id_observador.apellidos}' if vuelo.id_observador else None,
+            "observador_externo": vuelo.observador_externo,
             "fecha": str(vuelo.fecha),
             "sitio": vuelo.sitio,
             "hora_despegue": str(vuelo.hora_despegue),
             "hora_aterrizaje": str(vuelo.hora_aterrizaje),
-            "id_dron": vuelo.id_dron.id,
+            "id_dron": vuelo.id_dron.id_dron,
+            "dron": vuelo.id_dron.nombre_dron,
             "tipo_mision": vuelo.tipo_mision,
             "observaciones_vuelo": vuelo.observaciones_vuelo,
             "apoyo_realizado_a": vuelo.apoyo_realizado_a,
@@ -3170,6 +3174,14 @@ def obtener_reporte(request, id_vuelo):
         } if detalles_vuelo else None,
     }
 
-    print(data)
     return JsonResponse(data, safe=False)
 
+def api_eliminar_vuelo(request, id_vuelo):
+    if request.method == "DELETE":
+        vuelo = Registro_Vuelos.objects.filter(id_vuelo=id_vuelo).first()
+        if vuelo:
+            vuelo.delete()
+            return JsonResponse({"message": "Vuelo eliminado correctamente"}, status=200)
+        else:
+            return JsonResponse({"error": "Vuelo no encontrado"}, status=404)
+    return JsonResponse({"error": "Método no permitido"}, status=405)
