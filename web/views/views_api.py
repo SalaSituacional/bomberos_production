@@ -3097,7 +3097,7 @@ def api_vuelos(request):
         "id", 'id_vuelo', "sitio", 'fecha', 'id_dron__nombre_dron', 
         'id_operador__jerarquia', "id_operador__nombres",
         "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
-        "id_observador__apellidos"
+        "id_observador__apellidos", "observador_externo"
     )
 
     vuelos_con_detalles = []
@@ -3112,6 +3112,13 @@ def api_vuelos(request):
 
     return JsonResponse(vuelos_con_detalles, safe=False)
 
+def editar_reporte(request, id_vuelo):
+    vuelo = get_object_or_404(Registro_Vuelos, id_vuelo=id_vuelo)
+    
+    estado_dron = EstadoDron.objects.filter(id_vuelo=vuelo).first()
+    estado_baterias = EstadoBaterias.objects.filter(id_vuelo=vuelo).first()
+    estado_control = EstadoControl.objects.filter(id_vuelo=vuelo).first()
+    detalles_vuelo = DetallesVuelo.objects.filter(id_vuelo=vuelo).first()
 def obtener_reporte(request, id_vuelo):
     try:
         # Obtener los objetos relacionados

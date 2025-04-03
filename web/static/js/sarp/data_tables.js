@@ -11,11 +11,13 @@ async function cargarVuelos() {
               <td>${vuelo.sitio}</td>
               <td>${vuelo.id_dron__nombre_dron}</td>
               <td>${vuelo.id_operador__jerarquia} ${vuelo.id_operador__nombres} ${vuelo.id_operador__apellidos}</td>
-              <td>${vuelo.id_observador__jerarquia} ${vuelo.id_observador__nombres} ${vuelo.id_observador__apellidos}</td>
+              <td>
+                ${vuelo.observador_externo ? vuelo.observador_externo : `${vuelo.id_observador__jerarquia} ${vuelo.id_observador__nombres} ${vuelo.id_observador__apellidos}`}
+              </td>
               <td>${detalles.duracion_vuelo || "N/A"}</td>
               <td>
               
-                <button class="btn editar_unidad" data-unidad="${ vuelo.id_vuelo }">
+                <button class="btn editar_unidad" data-unidad="${vuelo.id_vuelo}">
                   <svg fill="#3688FF" height="35px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 217.855 217.855" xml:space="preserve" style="pointer-events: none;">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -28,7 +30,7 @@ async function cargarVuelos() {
                   </svg>
                 </button>
                   
-                <button class="btn generar-excel" data-unidad="${ vuelo.id_vuelo }">
+                <button class="btn generar-excel" data-unidad="${vuelo.id_vuelo}">
                   <svg width="35px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="pointer-events: none;">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -53,27 +55,15 @@ async function cargarVuelos() {
                   </svg>
                 </button>
 
-                <button class="btn eliminar-unidad" data-unidad="${ vuelo.id_vuelo }">
-                  <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"
-                   style="pointer-events: none;">
-                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                  <g
-                    id="SVGRepo_tracerCarrier"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></g>
-                  <g id="SVGRepo_iconCarrier">
-                    <path
-                      d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z"
-                      fill="#3688FF"
-                    ></path>
-                    <path
-                      d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z"
-                      fill="#5F6379"
-                    ></path>
-                  </g>
-                </svg>
+                <button onclick="eliminarVuelo('${vuelo.id_vuelo}')" style="border: none; background: none; cursor: pointer;">
+                    <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                        <g id="SVGRepo_iconCarrier">
+                            <path d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z" fill="#3688FF"></path>
+                            <path d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z" fill="#5F6379"></path>
+                        </g>
+                    </svg>
                 </button>
+
 
               </td>
             </tr>`;

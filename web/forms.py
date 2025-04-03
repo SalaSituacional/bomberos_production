@@ -1201,7 +1201,7 @@ class EstadoBateriasForm(forms.Form):
 
 # ---------------------- FORMULARIO PARA ESTADO DEL CONTROL ----------------------
 class EstadoControlForm(forms.Form):
-    cuerpo = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("EE", "EE"), ("RE", "RE"), ("ME", "ME")], label="Estado del Cuerpo")
+    cuerpo_control = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("EE", "EE"), ("RE", "RE"), ("ME", "ME")], label="Estado del Cuerpo")
     joysticks = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("EE", "EE"), ("RE", "RE"), ("ME", "ME")], label="Estado de los Joysticks")
     pantalla = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("EE", "EE"), ("RE", "RE"), ("ME", "ME")], label="Estado de la Pantalla")
     antenas = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("EE", "EE"), ("RE", "RE"), ("ME", "ME")], label="Estado de las Antenas")
