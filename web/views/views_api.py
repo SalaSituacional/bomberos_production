@@ -3112,13 +3112,6 @@ def api_vuelos(request):
 
     return JsonResponse(vuelos_con_detalles, safe=False)
 
-def editar_reporte(request, id_vuelo):
-    vuelo = get_object_or_404(Registro_Vuelos, id_vuelo=id_vuelo)
-    
-    estado_dron = EstadoDron.objects.filter(id_vuelo=vuelo).first()
-    estado_baterias = EstadoBaterias.objects.filter(id_vuelo=vuelo).first()
-    estado_control = EstadoControl.objects.filter(id_vuelo=vuelo).first()
-    detalles_vuelo = DetallesVuelo.objects.filter(id_vuelo=vuelo).first()
 def obtener_reporte(request, id_vuelo):
     try:
         # Obtener los objetos relacionados
@@ -3134,65 +3127,79 @@ def obtener_reporte(request, id_vuelo):
 
         # Datos a reemplazar en la plantilla
         data = {
-            "ID_Vuelo": str(vuelo.id_vuelo),
-            "Nombre_Operador": f"{vuelo.id_operador.nombres}" if vuelo.id_operador else "N/A",
-            "Apellido_Operador": f"{vuelo.id_operador.apellidos}" if vuelo.id_operador else "N/A",
-            "Nombre_Observador": f"{vuelo.id_observador.nombres} " if vuelo.id_observador else "N/A",
-            "Apellido_Observador": f"{vuelo.id_observador.apellidos}" if vuelo.id_observador else "N/A",
-            "Fecha": str(vuelo.fecha),
-            "Sitio": vuelo.sitio,
-            "Hora_Despegue": str(vuelo.hora_despegue),
-            "Hora_Atterrizaje": str(vuelo.hora_aterrizaje),
-            "ID_Dron": str(vuelo.id_dron.id),
-            "Modelo_Dron": f"{vuelo.id_dron.modelo_dron}" if vuelo.id_dron else "N/A",
-            "Tipo_Mision": vuelo.tipo_mision,
-            "Observaciones_Vuelos": vuelo.observaciones_vuelo,
-            "Apoyo_Realizado_A": vuelo.apoyo_realizado_a,
-            # Estado del dron
-            "Cuerpo_Dron": estado_dron.cuerpo if estado_dron else "N/A",
-            "Observacion_Cuerpo": estado_dron.observacion_cuerpo if estado_dron else "N/A",
-            "Camara": estado_dron.camara if estado_dron else "N/A",
-            "Observacion_Camara": estado_dron.observacion_camara if estado_dron else "N/A",
-            "Helices": estado_dron.helices if estado_dron else "N/A",
-            "Observacion_Helices": estado_dron.observacion_helices if estado_dron else "N/A",
-            "Sensores": estado_dron.sensores if estado_dron else "N/A",
-            "Observacion_Sensores": estado_dron.observacion_sensores if estado_dron else "N/A",
-            "Motores": estado_dron.motores if estado_dron else "N/A",
-            "Observacion_Motores": estado_dron.observacion_motores if estado_dron else "N/A",
-            # Estado de las baterías
-            "Bateria1": estado_baterias.bateria1 if estado_baterias else "N/A",
-            "Bateria2": estado_baterias.bateria2 if estado_baterias else "N/A",
-            "Bateria3": estado_baterias.bateria3 if estado_baterias else "N/A",
-            "Bateria4": estado_baterias.bateria4 if estado_baterias else "N/A",
-            # Estado del control
-            "Cuerpo_Control": estado_control.cuerpo if estado_control else "N/A",
-            "Joysticks": estado_control.joysticks if estado_control else "N/A",
-            "Pantalla": estado_control.pantalla if estado_control else "N/A",
-            "Antenas": estado_control.antenas if estado_control else "N/A",
-            "Bateria_Control": estado_control.bateria if estado_control else "N/A",
-            # Detalles del vuelo
-            "Viento": detalles_vuelo.viento if detalles_vuelo else "N/A",
-            "Nubosidad": detalles_vuelo.nubosidad if detalles_vuelo else "N/A",
-            "Riesgo_Vuelo": detalles_vuelo.riesgo_vuelo if detalles_vuelo else "N/A",
-            "Zona_Vuelo": detalles_vuelo.zona_vuelo if detalles_vuelo else "N/A",
-            "Numero_Satelites": detalles_vuelo.numero_satelites if detalles_vuelo else "N/A",
-            "Distancia_Recorrida": detalles_vuelo.distancia_recorrida if detalles_vuelo else "N/A",
-            "Altitud": detalles_vuelo.altitud if detalles_vuelo else "N/A",
-            "Duracion_Vuelo": detalles_vuelo.duracion_vuelo if detalles_vuelo else "N/A",
-            "Observaciones_Vuelo": detalles_vuelo.observaciones if detalles_vuelo else "N/A",
+            "vuelo": {
+            "id_vuelo": vuelo.id_vuelo,
+            "id_operador": vuelo.id_operador.id if vuelo.id_operador else None,
+            "nombre_operador": f'{vuelo.id_operador.jerarquia} {vuelo.id_operador.nombres}' if vuelo.id_operador else None,
+            "apellido_operador": f'{vuelo.id_operador.apellidos}' if vuelo.id_operador else None,
+            "id_observador": vuelo.id_observador.id if vuelo.id_observador else None,
+            "nombre_observador": f'{vuelo.id_observador.jerarquia} {vuelo.id_observador.nombres}' if vuelo.id_observador else vuelo.observador_externo,
+            "apellido_observador": f'{vuelo.id_observador.apellidos}' if vuelo.id_observador else vuelo.observador_externo,
+            "cedula_operador": f'{vuelo.id_operador.cedula}' if vuelo.id_operador else None,
+            "cedula_observador": f'{vuelo.id_observador.cedula}' if vuelo.id_observador else None,
+            "fecha": str(vuelo.fecha),
+            "sitio": vuelo.sitio,
+            "hora_despegue": str(vuelo.hora_despegue),
+            "hora_aterrizaje": str(vuelo.hora_aterrizaje),
+            "id_dron": vuelo.id_dron.id_dron,
+            "dron": vuelo.id_dron.nombre_dron,
+            "tipo_mision": vuelo.tipo_mision,
+            "observaciones": vuelo.observaciones_vuelo,
+            "apoyo_realizado_a": vuelo.apoyo_realizado_a,
+            },
+            "estado_dron": {
+            "cuerpo": estado_dron.cuerpo if estado_dron else None,
+            "observacion_cuerpo": estado_dron.observacion_cuerpo if estado_dron else None,
+            "camara": estado_dron.camara if estado_dron else None,
+            "observacion_camara": estado_dron.observacion_camara if estado_dron else None,
+            "helices": estado_dron.helices if estado_dron else None,
+            "observacion_helices": estado_dron.observacion_helices if estado_dron else None,
+            "sensores": estado_dron.sensores if estado_dron else None,
+            "observacion_sensores": estado_dron.observacion_sensores if estado_dron else None,
+            "motores": estado_dron.motores if estado_dron else None,
+            "observacion_motores": estado_dron.observacion_motores if estado_dron else None,
+            },
+            "estado_baterias": {
+            "bateria1": estado_baterias.bateria1 if estado_baterias else None,
+            "bateria2": estado_baterias.bateria2 if estado_baterias else None,
+            "bateria3": estado_baterias.bateria3 if estado_baterias else None,
+            "bateria4": estado_baterias.bateria4 if estado_baterias else None,
+            },
+            "estado_control": {
+            "cuerpo": estado_control.cuerpo if estado_control else None,
+            "joysticks": estado_control.joysticks if estado_control else None,
+            "pantalla": estado_control.pantalla if estado_control else None,
+            "antenas": estado_control.antenas if estado_control else None,
+            "bateria_control": estado_control.bateria if estado_control else None,
+            },
+            "detalles_vuelo": {
+            "viento": detalles_vuelo.viento if detalles_vuelo else None,
+            "nubosidad": detalles_vuelo.nubosidad if detalles_vuelo else None,
+            "riesgo_vuelo": detalles_vuelo.riesgo_vuelo if detalles_vuelo else None,
+            "zona_vuelo": detalles_vuelo.zona_vuelo if detalles_vuelo else None,
+            "numero_satelites": detalles_vuelo.numero_satelites if detalles_vuelo else None,
+            "distancia_recorrida": detalles_vuelo.distancia_recorrida if detalles_vuelo else None,
+            "altitud": detalles_vuelo.altitud if detalles_vuelo else None,
+            "duracion_vuelo": detalles_vuelo.duracion_vuelo if detalles_vuelo else None,
+            "observaciones_vuelo": detalles_vuelo.observaciones if detalles_vuelo else None,
+            },
         }
 
         # Rellenar la plantilla PDF
         for page in doc:
-            for campo, valor in data.items():
-                search_str = f"{{{{{campo}}}}}"
-                text_instances = page.search_for(search_str)
-                for inst in text_instances:
-                    x, y, x1, y1 = inst
-                    y_adjusted = y + 7.5
-                    rect = fitz.Rect(x, y, x1, y1)
-                    page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))
-                    page.insert_text((x, y_adjusted), valor, fontsize=6, color=(0, 0, 0))
+            for grupo, valores in data.items():
+                if isinstance(valores, dict):  # Manejar subdiccionarios
+                    for campo, valor in valores.items():
+                        if valor is None:  # Si el valor es None, usar una cadena vacía
+                            valor = ""
+                        search_str = f"{{{{{campo}}}}}"
+                        text_instances = page.search_for(search_str)
+                        for inst in text_instances:
+                            x, y, x1, y1 = inst
+                            rect = fitz.Rect(x, y, x1, y1)
+                            page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))
+                            y_adjusted = y + 7.8
+                            page.insert_text((x, y_adjusted), str(valor), fontsize=7, color=(0, 0, 0))
 
         # Guardar el PDF modificado en memoria
         buffer = io.BytesIO()
@@ -3207,4 +3214,82 @@ def obtener_reporte(request, id_vuelo):
         return response
     except Exception as e:
         print(f"Error al generar el reporte: {e}")
-        return HttpResponse("Hubo un error al generar el reporte", status=500)
+        return HttpResponse(f"Hubo un error al generar el reporte: {str(e)}", status=500)
+
+
+def editar_reporte(request, id_vuelo):
+    vuelo = get_object_or_404(Registro_Vuelos, id_vuelo=id_vuelo)
+    
+    estado_dron = EstadoDron.objects.filter(id_vuelo=vuelo).first()
+    estado_baterias = EstadoBaterias.objects.filter(id_vuelo=vuelo).first()
+    estado_control = EstadoControl.objects.filter(id_vuelo=vuelo).first()
+    detalles_vuelo = DetallesVuelo.objects.filter(id_vuelo=vuelo).first()
+
+    data = {
+        "vuelo": {
+            "id_vuelo": vuelo.id_vuelo,
+            "id_operador": vuelo.id_operador.id if vuelo.id_operador else None,
+            "operador": f'{vuelo.id_operador.jerarquia} {vuelo.id_operador.nombres} {vuelo.id_operador.apellidos}' if vuelo.id_observador else None,
+            "id_observador": vuelo.id_observador.id if vuelo.id_observador else None,
+            "observador": f'{vuelo.id_observador.jerarquia} {vuelo.id_observador.nombres} {vuelo.id_observador.apellidos}' if vuelo.id_observador else None,
+            "observador_externo": vuelo.observador_externo,
+            "fecha": str(vuelo.fecha),
+            "sitio": vuelo.sitio,
+            "hora_despegue": str(vuelo.hora_despegue),
+            "hora_aterrizaje": str(vuelo.hora_aterrizaje),
+            "id_dron": vuelo.id_dron.id_dron,
+            "dron": vuelo.id_dron.nombre_dron,
+            "tipo_mision": vuelo.tipo_mision,
+            "observaciones_vuelo": vuelo.observaciones_vuelo,
+            "apoyo_realizado_a": vuelo.apoyo_realizado_a,
+        },
+        "estado_dron": {
+            "cuerpo": estado_dron.cuerpo,
+            "observacion_cuerpo": estado_dron.observacion_cuerpo,
+            "camara": estado_dron.camara,
+            "observacion_camara": estado_dron.observacion_camara,
+            "helices": estado_dron.helices,
+            "observacion_helices": estado_dron.observacion_helices,
+            "sensores": estado_dron.sensores,
+            "observacion_sensores": estado_dron.observacion_sensores,
+            "motores": estado_dron.motores,
+            "observacion_motores": estado_dron.observacion_motores,
+        } if estado_dron else None,
+        "estado_baterias": {
+            "bateria1": estado_baterias.bateria1,
+            "bateria2": estado_baterias.bateria2,
+            "bateria3": estado_baterias.bateria3,
+            "bateria4": estado_baterias.bateria4,
+        } if estado_baterias else None,
+        "estado_control": {
+            "cuerpo": estado_control.cuerpo,
+            "joysticks": estado_control.joysticks,
+            "pantalla": estado_control.pantalla,
+            "antenas": estado_control.antenas,
+            "bateria": estado_control.bateria,
+        } if estado_control else None,
+        "detalles_vuelo": {
+            "viento": detalles_vuelo.viento,
+            "nubosidad": detalles_vuelo.nubosidad,
+            "riesgo_vuelo": detalles_vuelo.riesgo_vuelo,
+            "zona_vuelo": detalles_vuelo.zona_vuelo,
+            "numero_satelites": detalles_vuelo.numero_satelites,
+            "distancia_recorrida": detalles_vuelo.distancia_recorrida,
+            "altitud": detalles_vuelo.altitud,
+            "duracion_vuelo": detalles_vuelo.duracion_vuelo,
+            "observaciones": detalles_vuelo.observaciones,
+        } if detalles_vuelo else None,
+    }
+
+    return JsonResponse(data, safe=False)
+
+
+def api_eliminar_vuelo(request, id_vuelo):
+    if request.method == "DELETE":
+        vuelo = Registro_Vuelos.objects.filter(id_vuelo=id_vuelo).first()
+        if vuelo:
+            vuelo.delete()
+            return JsonResponse({"message": "Vuelo eliminado correctamente"}, status=200)
+        else:
+            return JsonResponse({"error": "Vuelo no encontrado"}, status=404)
+    return JsonResponse({"error": "Método no permitido"},status=405)
