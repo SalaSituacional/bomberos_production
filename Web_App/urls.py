@@ -51,6 +51,7 @@ urlpatterns = [
     # SISTEMA
     path('login/', Home, name="home"),
     path('dashboard/', Dashboard,name='dashboard'),
+    path('api/ultimo_procedimiento/', ultimo_procedimiento),
     path('personal/', View_personal) ,
     path('prueba/', Prueba),
     path('registros/', ver_registros),
@@ -65,6 +66,11 @@ urlpatterns = [
     path('formularios_sarp/', Formularios_sarp),
     path('registrar_dron/', registrar_drones, name="registrar_dron"),
     path('api/vuelos/', api_vuelos, name="api_vuelos"),  # API en formato JSON
+    path('reporte/<str:id_vuelo>/', obtener_reporte, name='reporte'),
+    path('editar_reporte/<str:id_vuelo>/', editar_reporte, name='obtener_reporte'),
+    path("api/eliminar_vuelo/<str:id_vuelo>/", api_eliminar_vuelo, name="api_eliminar_vuelo"),
+    path('api/estadisticas-misiones/', obtener_estadisticas_misiones, name="estadisticas-misiones"),
+    path('api/ultimo_reporte/', obtener_ultimo_reporte),
 
     # Unidades
     path('unidades/', View_Unidades),
@@ -153,4 +159,5 @@ urlpatterns = [
     path('descargar-excel-operacional/', generar_excel_operacional, name='descargar_excel_operacional'),
     path('generar-excel-solicitudes/', generar_excel_solicitudes, name='generar_excel_solicitudes'),
     path('generar-excel-reportes-unidades/', generar_excel_reportes_unidades, name='generar_excel_reportes'),
+    path('generar-excel-reportes-sarp/', generar_excel_reportes_sarp, name='generar_excel_sarp'),
 ]
