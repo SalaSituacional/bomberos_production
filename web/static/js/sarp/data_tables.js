@@ -1,5 +1,5 @@
 let paginaActual = 1;
-const vuelosPorPagina = 5; // Número de registros por página
+const vuelosPorPagina = 15; // Número de registros por página
 
 async function cargarVuelos(pagina = 1) {
   let response = await fetchWithLoader(`/api/vuelos/?page=${pagina}&limit=5`);  // Establecer limit=5

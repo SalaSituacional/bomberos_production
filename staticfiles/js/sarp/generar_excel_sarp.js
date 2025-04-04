@@ -2,22 +2,19 @@ let mesExcel = "";
 
 // Función para descargar el archivo Excel con los datos de vuelo
 function descargarExcelVuelos(mes) {
-  fetch(`/generar-excel-reportes-sarp/?mes=${mes}`)
+  fetchWithLoader2(`/generar-excel-reportes-sarp/?mes=${mes}`)
     .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
+      return response;
     })
     .then((data) => {
       const wb = XLSX.utils.book_new();
       const sheetData = [];
       const encabezados = [
-        'Fecha',
-        'Hora',
-        'Encargado',
-        'Descripción',
-        'Tipo de Misión'
+        "Fecha",
+        "Hora",
+        "Encargado",
+        "Descripción",
+        "Tipo de Misión",
       ];
 
       // Agregar encabezados al arreglo de datos de la hoja
@@ -26,11 +23,11 @@ function descargarExcelVuelos(mes) {
       // Procesar los datos recibidos para agregar cada fila a la hoja
       data.forEach((vuelo) => {
         sheetData.push([
-          vuelo['fecha'],
-          vuelo['hora'],
-          vuelo['encargado'],
-          vuelo['descripcion'],
-          vuelo['tipo_mision'],
+          vuelo["fecha"],
+          vuelo["hora"],
+          vuelo["encargado"],
+          vuelo["descripcion"],
+          vuelo["tipo_mision"],
         ]);
       });
 
@@ -60,7 +57,9 @@ function descargarExcelVuelos(mes) {
     })
     .catch((error) => {
       console.error("Error al obtener los datos:", error);
-      alert("Ocurrió un error al obtener los datos. Por favor, inténtalo de nuevo.");
+      alert(
+        "Ocurrió un error al obtener los datos. Por favor, inténtalo de nuevo."
+      );
     });
 }
 
@@ -80,3 +79,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+async function fetchWithLoader2(url, options = {}) {
+  activeRequests++;
+  showLoader();
+
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(
+        `Error en la solicitud: ${response.status} ${response.statusText}`
+      );
+    }
+
+    return await response.blob(); // ⬅️ Convertir la respuesta en un Blob
+  } catch (error) {
+    console.error("Error al consumir la API:", error);
+    throw error;
+  } finally {
+    activeRequests--;
+    hideLoader();
+  }
+}

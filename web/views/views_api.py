@@ -3111,7 +3111,7 @@ def registrar_drones(request):
 def api_vuelos(request):
     # Obtener parámetros de paginación de la URL (?page=1&limit=5)
     page = int(request.GET.get('page', 1))
-    limit = int(request.GET.get('limit', 5))  # Cambiar de 20 a 5
+    limit = int(request.GET.get('limit', 15))  # Cambiar de 20 a 5
 
     # Obtener todos los registros
     vuelos = Registro_Vuelos.objects.all().order_by('id_vuelo').values(
