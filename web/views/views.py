@@ -249,11 +249,14 @@ def Dashboard_mecanica(request):
 @login_required
 def Dashboard_sarp(request):
     user = request.session.get('user')
-
+    drones_disponibles = Drones.objects.all().count()
+    operadores_totales = Personal.objects.filter(id__in=[44, 5,53,73]).exclude(id=4).count()
     if not user:
         return redirect('/')
     # Renderizar la página con los datos
     return render(request, "sarp/dashboard_sarp.html", {
+        "drones_disponibles" : drones_disponibles,
+        "operadores_totales" : operadores_totales,
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],

@@ -20,7 +20,7 @@ def Asignar_ops_Operadores():
     
     # Obtener personal con los filtros adecuados
     personal = Personal.objects.filter(
-        id__in=[0, 44, 5]
+        id__in=[0,44,5,53,73]
     ).exclude(id=4)
 
     # # Ordenar según jerarquía

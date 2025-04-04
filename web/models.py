@@ -29,7 +29,7 @@ class Psicologa(models.Model):
     return self.psicologa
 
 # Tabla personal cuerpo de bomberos
-class Personal(models.Model):
+class   Personal(models.Model):
   nombres = models.TextField()
   apellidos = models.TextField()
   jerarquia = models.TextField()
@@ -1084,7 +1084,7 @@ class Reportes_Unidades(models.Model):
 
 # ========================================= MODELOS PARA EL AREA DE CONTROL DE VUELOS =============================================================================================
 
-class Drones(models.Model):
+class Drones(models.Model): 
     nombre_dron = models.CharField(max_length=100)
     id_dron = models.CharField(max_length=50, unique=True)
     modelo_dron = models.CharField(max_length=100)
