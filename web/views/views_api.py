@@ -19,6 +19,7 @@ from collections import Counter
 from django.db.models import Exists, OuterRef
 import io
 import fitz  # PyMuPDF
+from django.core.paginator import Paginator
 
 # Api para crear seccion de lista de procedimientos por cada division, por tipo y parroquia en la seccion de Estadistica
 def generar_resultados(request):
@@ -1786,6 +1787,21 @@ def obtener_procedimiento(request, id):
         
     return JsonResponse(data)
 
+def ultimo_procedimiento(request):
+    procedimiento = Procedimientos.objects.order_by('-id').first()
+
+    if procedimiento:
+        data = {
+            "division": procedimiento.id_division.division,
+            "ubicacion": f"{procedimiento.id_municipio.municipio}, {procedimiento.id_parroquia.parroquia}",
+            "fecha": str(procedimiento.fecha),
+            "direccion": procedimiento.direccion,
+            "tipo_procedimiento": procedimiento.id_tipo_procedimiento.tipo_procedimiento
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({"error": "No hay procedimientos registrados"}, status=404)
+
 # ===================================================================
 
 def obtener_informacion_editar(request, id):
@@ -3093,24 +3109,37 @@ def registrar_drones(request):
     return HttpResponse("Método no permitido", status=405)
 
 def api_vuelos(request):
-    vuelos = Registro_Vuelos.objects.all().values(
+    # Obtener parámetros de paginación de la URL (?page=1&limit=5)
+    page = int(request.GET.get('page', 1))
+    limit = int(request.GET.get('limit', 5))  # Cambiar de 20 a 5
+
+    # Obtener todos los registros
+    vuelos = Registro_Vuelos.objects.all().order_by('id_vuelo').values(
         "id", 'id_vuelo', "sitio", 'fecha', 'id_dron__nombre_dron', 
         'id_operador__jerarquia', "id_operador__nombres",
         "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
         "id_observador__apellidos", "observador_externo"
     )
 
-    vuelos_con_detalles = []
-    for vuelo in vuelos:
-        detalles = DetallesVuelo.objects.filter(id_vuelo=vuelo['id']).values( 
-            'duracion_vuelo'
-        ).first()
-        
-        vuelo['detalles'] = detalles if detalles else {}  # Agrega los detalles si existen
+    # Aplicar paginación
+    paginator = Paginator(vuelos, limit)  # Cambia el valor de limit a 5
+    vuelos_paginados = paginator.get_page(page)  # Obtener la página actual
 
+    # Procesar detalles de vuelo
+    vuelos_con_detalles = []
+    for vuelo in vuelos_paginados:
+        detalles = DetallesVuelo.objects.filter(id_vuelo=vuelo['id']).values('duracion_vuelo').first()
+        vuelo['detalles'] = detalles if detalles else {}  
         vuelos_con_detalles.append(vuelo)
 
-    return JsonResponse(vuelos_con_detalles, safe=False)
+    # Retornar datos con metadatos de paginación
+    return JsonResponse({
+        "total_paginas": paginator.num_pages,
+        "pagina_actual": page,
+        "tiene_anterior": vuelos_paginados.has_previous(),
+        "tiene_siguiente": vuelos_paginados.has_next(),
+        "vuelos": vuelos_con_detalles
+    }, safe=False)
 
 def obtener_reporte(request, id_vuelo):
     try:
@@ -3216,7 +3245,6 @@ def obtener_reporte(request, id_vuelo):
         print(f"Error al generar el reporte: {e}")
         return HttpResponse(f"Hubo un error al generar el reporte: {str(e)}", status=500)
 
-
 def editar_reporte(request, id_vuelo):
     vuelo = get_object_or_404(Registro_Vuelos, id_vuelo=id_vuelo)
     
@@ -3283,7 +3311,6 @@ def editar_reporte(request, id_vuelo):
 
     return JsonResponse(data, safe=False)
 
-
 def api_eliminar_vuelo(request, id_vuelo):
     if request.method == "DELETE":
         vuelo = Registro_Vuelos.objects.filter(id_vuelo=id_vuelo).first()
@@ -3293,3 +3320,38 @@ def api_eliminar_vuelo(request, id_vuelo):
         else:
             return JsonResponse({"error": "Vuelo no encontrado"}, status=404)
     return JsonResponse({"error": "Método no permitido"},status=405)
+
+def obtener_estadisticas_misiones(request):
+    """
+    API que devuelve la cantidad de misiones diarias, semanales y mensuales.
+    """
+    hoy = now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de la semana actual
+    inicio_mes = hoy.replace(day=1)  # Primer día del mes actual
+
+    misiones_diarias = Registro_Vuelos.objects.filter(fecha=hoy).count()
+    misiones_semanales = Registro_Vuelos.objects.filter(fecha__gte=inicio_semana).count()
+    misiones_mensuales = Registro_Vuelos.objects.filter(fecha__gte=inicio_mes).count()
+
+    return JsonResponse({
+        "mision_diario": misiones_diarias,
+        "mision_semanal": misiones_semanales,
+        "mision_mensual": misiones_mensuales
+    })
+
+def obtener_ultimo_reporte(request):
+    """
+    API que devuelve la información del último vuelo registrado.
+    """
+    ultimo_vuelo = Registro_Vuelos.objects.order_by('-fecha', '-id').first()
+
+    if not ultimo_vuelo:
+        return JsonResponse({"error": "No hay reportes disponibles"}, status=404)
+
+    return JsonResponse({
+        "id_vuelo": ultimo_vuelo.id_vuelo,
+        "fecha": str(ultimo_vuelo.fecha),
+        "sitio": ultimo_vuelo.sitio,
+        "dron": ultimo_vuelo.id_dron.nombre_dron,
+        "tipo_mision": ultimo_vuelo.tipo_mision
+    })

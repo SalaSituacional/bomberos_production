@@ -107,7 +107,22 @@
             </section>
         </div>
     </div>
+
+    <!-- Tarjeta de Notificación de Reporte -->
+    <section id="ultimo-reporte-card" class="oculto">
+        <button id="cerrar-reporte">&times;</button>
+        <h3>📋 Último Reporte</h3>
+        <p>🔖 <strong>ID:</strong> <span id="reporte-id">-</span></p>
+        <p>📅 <strong>Fecha:</strong> <span id="reporte-fecha">-</span></p>
+        <p>📍 <strong>Sitio:</strong> <span id="reporte-sitio">-</span></p>
+        <p>🚁 <strong>Dron:</strong> <span id="reporte-dron">-</span></p>
+        <p>🎯 <strong>Misión:</strong> <span id="reporte-mision">-</span></p>
+    </section>
+
+    
 </div>
+
+
 <footer class="footer">
     <section class="text-reserved">
         <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
@@ -117,4 +132,5 @@
 <!-- fin resumen de procedimientos -->
 <script src="../../static/js/animate.js"></script>
 <script src="../../static/js/modal-dashboard.js"></script>
+<script src="../../static/js/sarp/cargar_misiones.js"></script>
 {% endblock %}

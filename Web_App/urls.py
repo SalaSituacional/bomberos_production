@@ -51,6 +51,7 @@ urlpatterns = [
     # SISTEMA
     path('login/', Home, name="home"),
     path('dashboard/', Dashboard,name='dashboard'),
+    path('api/ultimo_procedimiento/', ultimo_procedimiento),
     path('personal/', View_personal) ,
     path('prueba/', Prueba),
     path('registros/', ver_registros),
@@ -68,6 +69,8 @@ urlpatterns = [
     path('reporte/<str:id_vuelo>/', obtener_reporte, name='reporte'),
     path('editar_reporte/<str:id_vuelo>/', editar_reporte, name='obtener_reporte'),
     path("api/eliminar_vuelo/<str:id_vuelo>/", api_eliminar_vuelo, name="api_eliminar_vuelo"),
+    path('api/estadisticas-misiones/', obtener_estadisticas_misiones, name="estadisticas-misiones"),
+    path('api/ultimo_reporte/', obtener_ultimo_reporte),
 
     # Unidades
     path('unidades/', View_Unidades),
