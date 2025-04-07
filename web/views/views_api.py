@@ -3157,78 +3157,81 @@ def obtener_reporte(request, id_vuelo):
         # Datos a reemplazar en la plantilla
         data = {
             "vuelo": {
-            "id_vuelo": vuelo.id_vuelo,
-            "id_operador": vuelo.id_operador.id if vuelo.id_operador else None,
-            "nombre_operador": f'{vuelo.id_operador.jerarquia} {vuelo.id_operador.nombres}' if vuelo.id_operador else None,
-            "apellido_operador": f'{vuelo.id_operador.apellidos}' if vuelo.id_operador else None,
-            "id_observador": vuelo.id_observador.id if vuelo.id_observador else None,
-            "nombre_observador": f'{vuelo.id_observador.jerarquia} {vuelo.id_observador.nombres}' if vuelo.id_observador else vuelo.observador_externo,
-            "apellido_observador": f'{vuelo.id_observador.apellidos}' if vuelo.id_observador else vuelo.observador_externo,
-            "cedula_operador": f'{vuelo.id_operador.cedula}' if vuelo.id_operador else None,
-            "cedula_observador": f'{vuelo.id_observador.cedula}' if vuelo.id_observador else None,
-            "fecha": str(vuelo.fecha),
-            "sitio": vuelo.sitio,
-            "hora_despegue": str(vuelo.hora_despegue),
-            "hora_aterrizaje": str(vuelo.hora_aterrizaje),
-            "id_dron": vuelo.id_dron.id_dron,
-            "dron": vuelo.id_dron.nombre_dron,
-            "tipo_mision": vuelo.tipo_mision,
-            "observaciones": vuelo.observaciones_vuelo,
-            "apoyo_realizado_a": vuelo.apoyo_realizado_a,
+                "id_vuelo": vuelo.id_vuelo,
+                "id_operador": vuelo.id_operador.id if vuelo.id_operador else None,
+                "operador": f"{vuelo.id_operador.jerarquia} {vuelo.id_operador.nombres} {vuelo.id_operador.apellidos}" if vuelo.id_operador else None,
+                "cedula_operador": f"{vuelo.id_operador.cedula}" if vuelo.id_operador else None,
+                "id_observador": vuelo.id_observador.id if vuelo.id_observador else None,
+                "observador": f"{vuelo.id_observador.jerarquia} {vuelo.id_observador.nombres} {vuelo.id_observador.apellidos}" if vuelo.id_observador else vuelo.observador_externo,
+                "cedula_observador": f"{vuelo.id_observador.cedula}" if vuelo.id_observador else None,
+                "fecha": str(vuelo.fecha),
+                "sitio": vuelo.sitio,
+                "hora_despegue": str(vuelo.hora_despegue),
+                "hora_aterrizaje": str(vuelo.hora_aterrizaje),
+                "id_dron": vuelo.id_dron.id_dron,
+                "dron": vuelo.id_dron.nombre_dron,
+                "tipo_mision": vuelo.tipo_mision,
+                "observaciones": vuelo.observaciones_vuelo,
+                "apoyo_realizado_a": vuelo.apoyo_realizado_a,
             },
             "estado_dron": {
-            "cuerpo": estado_dron.cuerpo if estado_dron else None,
-            "observacion_cuerpo": estado_dron.observacion_cuerpo if estado_dron else None,
-            "camara": estado_dron.camara if estado_dron else None,
-            "observacion_camara": estado_dron.observacion_camara if estado_dron else None,
-            "helices": estado_dron.helices if estado_dron else None,
-            "observacion_helices": estado_dron.observacion_helices if estado_dron else None,
-            "sensores": estado_dron.sensores if estado_dron else None,
-            "observacion_sensores": estado_dron.observacion_sensores if estado_dron else None,
-            "motores": estado_dron.motores if estado_dron else None,
-            "observacion_motores": estado_dron.observacion_motores if estado_dron else None,
+                "cuerpo": estado_dron.cuerpo if estado_dron else None,
+                "observacion_cuerpo": estado_dron.observacion_cuerpo if estado_dron else None,
+                "camara": estado_dron.camara if estado_dron else None,
+                "observacion_camara": estado_dron.observacion_camara if estado_dron else None,
+                "helices": estado_dron.helices if estado_dron else None,
+                "observacion_helices": estado_dron.observacion_helices if estado_dron else None,
+                "sensores": estado_dron.sensores if estado_dron else None,
+                "observacion_sensores": estado_dron.observacion_sensores if estado_dron else None,
+                "motores": estado_dron.motores if estado_dron else None,
+                "observacion_motores": estado_dron.observacion_motores if estado_dron else None,
             },
             "estado_baterias": {
-            "bateria1": estado_baterias.bateria1 if estado_baterias else None,
-            "bateria2": estado_baterias.bateria2 if estado_baterias else None,
-            "bateria3": estado_baterias.bateria3 if estado_baterias else None,
-            "bateria4": estado_baterias.bateria4 if estado_baterias else None,
+                "bateria1": estado_baterias.bateria1 if estado_baterias else None,
+                "bateria2": estado_baterias.bateria2 if estado_baterias else None,
+                "bateria3": estado_baterias.bateria3 if estado_baterias else None,
+                "bateria4": estado_baterias.bateria4 if estado_baterias else None,
             },
             "estado_control": {
-            "cuerpo": estado_control.cuerpo if estado_control else None,
-            "joysticks": estado_control.joysticks if estado_control else None,
-            "pantalla": estado_control.pantalla if estado_control else None,
-            "antenas": estado_control.antenas if estado_control else None,
-            "bateria_control": estado_control.bateria if estado_control else None,
+                "cuerpo": estado_control.cuerpo if estado_control else None,
+                "joysticks": estado_control.joysticks if estado_control else None,
+                "pantalla": estado_control.pantalla if estado_control else None,
+                "antenas": estado_control.antenas if estado_control else None,
+                "bateria_control": estado_control.bateria if estado_control else None,
             },
             "detalles_vuelo": {
-            "viento": detalles_vuelo.viento if detalles_vuelo else None,
-            "nubosidad": detalles_vuelo.nubosidad if detalles_vuelo else None,
-            "riesgo_vuelo": detalles_vuelo.riesgo_vuelo if detalles_vuelo else None,
-            "zona_vuelo": detalles_vuelo.zona_vuelo if detalles_vuelo else None,
-            "numero_satelites": detalles_vuelo.numero_satelites if detalles_vuelo else None,
-            "distancia_recorrida": detalles_vuelo.distancia_recorrida if detalles_vuelo else None,
-            "altitud": detalles_vuelo.altitud if detalles_vuelo else None,
-            "duracion_vuelo": detalles_vuelo.duracion_vuelo if detalles_vuelo else None,
-            "observaciones_vuelo": detalles_vuelo.observaciones if detalles_vuelo else None,
+                "viento": detalles_vuelo.viento if detalles_vuelo else None,
+                "nubosidad": detalles_vuelo.nubosidad if detalles_vuelo else None,
+                "riesgo_vuelo": detalles_vuelo.riesgo_vuelo if detalles_vuelo else None,
+                "zona_vuelo": detalles_vuelo.zona_vuelo if detalles_vuelo else None,
+                "numero_satelites": detalles_vuelo.numero_satelites if detalles_vuelo else None,
+                "distancia_recorrida": detalles_vuelo.distancia_recorrida if detalles_vuelo else None,
+                "altitud": detalles_vuelo.altitud if detalles_vuelo else None,
+                "duracion_vuelo": detalles_vuelo.duracion_vuelo if detalles_vuelo else None,
+                "observaciones_vuelo": detalles_vuelo.observaciones if detalles_vuelo else None,
             },
         }
 
-        # Rellenar la plantilla PDF
+        # Parámetro para ajustar el tamaño de la fuente
+        manual_font_size = 8  # Cambia este valor para ajustar el tamaño de fuente
+
         for page in doc:
             for grupo, valores in data.items():
                 if isinstance(valores, dict):  # Manejar subdiccionarios
                     for campo, valor in valores.items():
-                        if valor is None:  # Si el valor es None, usar una cadena vacía
-                            valor = ""
+                        if valor is None:
+                            valor = ""  # Usar cadena vacía si el valor es None
                         search_str = f"{{{{{campo}}}}}"
                         text_instances = page.search_for(search_str)
                         for inst in text_instances:
-                            x, y, x1, y1 = inst
+                            x, y, x1, y1 = inst  # Extraemos las dimensiones exactas de la variable del PDF
+
+                            # Crear el rectángulo blanco usando las dimensiones exactas del texto original
                             rect = fitz.Rect(x, y, x1, y1)
-                            page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))
-                            y_adjusted = y + 7.8
-                            page.insert_text((x, y_adjusted), str(valor), fontsize=7, color=(0, 0, 0))
+                            page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))  # Limpia el área con el parche
+
+                            # Inserta el texto en la posición centrada dentro del área original
+                            page.insert_text((x, y), str(valor), fontsize=manual_font_size, color=(0, 0, 0))
 
         # Guardar el PDF modificado en memoria
         buffer = io.BytesIO()
