@@ -1,32 +1,46 @@
-let paginaActual = 1;
-const vuelosPorPagina = 15; // Número de registros por página
+document
+  .getElementById("filterJerarquia")
+  .addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      const valor = this.value.trim();
+      if (valor === "") {
+        cargarVuelos(1); // Si se borra el texto, recarga todo
+      } else {
+        buscarVueloPorId(valor);
+      }
+    }
+  });
 
-async function cargarVuelos(pagina = 1) {
-  let response = await fetchWithLoader(`/api/vuelos/?page=${pagina}&limit=5`); // Establecer limit=5
-  let data = await response;
 
-  let tabla = document.getElementById("tabla-vuelos");
-  tabla.innerHTML = ""; // Limpiar la tabla antes de agregar nuevos registros
+async function buscarVueloPorId(id) {
+  try {
+    let response = await fetchWithLoader(`/api/buscar_vuelo/${id}`); // Asume endpoint tipo /api/vuelos/123
+    let vuelo = await response[0];  
 
-  data.vuelos.forEach((vuelo) => {
+    if (!vuelo || !vuelo.id_vuelo) {
+      document.getElementById("tabla-vuelos").innerHTML =
+        "<tr><td colspan='8'>Vuelo no encontrado.</td></tr>";
+      return;
+    }
+
     let detalles = vuelo.detalles || {};
     let fila = `<tr>
-          <td>${vuelo.id_vuelo}</td>
-          <td>${vuelo.fecha}</td>
-          <td>${vuelo.sitio}</td>
-          <td>${vuelo.id_dron__nombre_dron}</td>
-          <td>${vuelo.id_operador__jerarquia} ${vuelo.id_operador__nombres} ${
+            <td>${vuelo.id_vuelo}</td>
+            <td>${vuelo.fecha}</td>
+            <td>${vuelo.sitio}</td>
+            <td>${vuelo.id_dron__nombre_dron}</td>
+            <td>${vuelo.id_operador__jerarquia} ${vuelo.id_operador__nombres} ${
       vuelo.id_operador__apellidos
     }</td>
-          <td>
-              ${
-                vuelo.observador_externo
-                  ? vuelo.observador_externo
-                  : `${vuelo.id_observador__jerarquia} ${vuelo.id_observador__nombres} ${vuelo.id_observador__apellidos}`
-              }
-          </td>
-          <td>${detalles.duracion_vuelo || "N/A"}</td>
-          <td>
+            <td>
+                ${
+                  vuelo.observador_externo
+                    ? vuelo.observador_externo
+                    : `${vuelo.id_observador__jerarquia} ${vuelo.id_observador__nombres} ${vuelo.id_observador__apellidos}`
+                }
+            </td>
+            <td>${detalles.duracion_vuelo || "N/A"}</td>
+            <td>
               <button class="btn editar_unidad" data-unidad="${vuelo.id_vuelo}">
                    <svg fill="#3688FF" height="35px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                      xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 217.855 217.855" xml:space="preserve" style="pointer-events: none;">
@@ -76,28 +90,12 @@ async function cargarVuelos(pagina = 1) {
                      </svg>
               </button>
           </td>
-      </tr>`;
-    tabla.innerHTML += fila;
-  });
+        </tr>`;
 
-  // Actualizar botones de paginación
-  document.getElementById("pagina-actual").textContent = pagina;
-  document.getElementById("anterior").disabled = !data.tiene_anterior;
-  document.getElementById("siguiente").disabled = !data.tiene_siguiente;
-}
-
-// Eventos para paginación
-document.getElementById("anterior").addEventListener("click", () => {
-  if (paginaActual > 1) {
-    paginaActual--;
-    cargarVuelos(paginaActual);
+    document.getElementById("tabla-vuelos").innerHTML = fila;
+  } catch (error) {
+    console.error("Error al buscar vuelo:", error);
+    document.getElementById("tabla-vuelos").innerHTML =
+      "<tr><td colspan='8'>Error al buscar vuelo.</td></tr>";
   }
-});
-
-document.getElementById("siguiente").addEventListener("click", () => {
-  paginaActual++;
-  cargarVuelos(paginaActual);
-});
-
-// Cargar la primera página al iniciar
-window.onload = () => cargarVuelos(1);
+}

@@ -1802,6 +1802,31 @@ def ultimo_procedimiento(request):
     else:
         return JsonResponse({"error": "No hay procedimientos registrados"}, status=404)
 
+def ultimo_personal(request):
+    personal = Personal.objects.order_by('-id').first()
+    if personal:
+        data = {
+            "nombres": personal.nombres,
+            "apellidos": personal.apellidos,
+            "jerarquia": personal.jerarquia,
+            "cargo": personal.cargo,
+            "cedula": personal.cedula,
+            "rol": personal.rol,
+            "status": personal.status
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({"error": "No hay personal registrado"}, status=404)
+
+def personal_primer_comandante(request):
+    personal = Personal.objects.filter(cargo="Primer Comandante").values(
+        "nombres", "apellidos", "jerarquia", "cedula", "rol", "status"
+    )
+    if personal.exists():
+        return JsonResponse(list(personal), safe=False)
+    else:
+        return JsonResponse({"message": "No hay personal con el cargo de Primer Comandante"}, status=404)
+
 # ===================================================================
 
 def obtener_informacion_editar(request, id):
@@ -2855,6 +2880,24 @@ def validar_rif(request):
 
     return JsonResponse({"existe": existe})
 
+def obtener_ultimo_reporte_solicitudes(request):
+    ultimo = Solicitudes.objects.select_related('id_solicitud').order_by('-id').first()
+
+    if not ultimo:
+        return JsonResponse({'error': 'No existen reportes aún'}, status=404)
+
+    data = {
+        'id': ultimo.id,
+        'fecha_solicitud': ultimo.fecha_solicitud,
+        'hora_solicitud': ultimo.hora_solicitud,
+        'tipo_servicio': ultimo.tipo_servicio,
+        'solicitante': ultimo.solicitante_nombre_apellido,
+        'comercio': ultimo.id_solicitud.nombre_comercio,
+        'id_comercio': ultimo.id_solicitud.id_comercio,
+    }
+
+    return JsonResponse(data)
+
 def contar_estados_unidades(request):
     # Obtener todos los estados de las unidades
     estados = Unidades_Detalles.objects.values_list("estado", flat=True)
@@ -3355,3 +3398,24 @@ def obtener_ultimo_reporte(request):
         "dron": ultimo_vuelo.id_dron.nombre_dron,
         "tipo_mision": ultimo_vuelo.tipo_mision
     })
+
+def buscar_vuelo_por_id(request, vuelo_id):
+    # Verifica si existe el vuelo
+    if not Registro_Vuelos.objects.filter(id_vuelo=vuelo_id).exists():
+        return JsonResponse({'error': 'No existe ningún vuelo con ese ID'}, status=200)
+
+    vuelo_buscador = Registro_Vuelos.objects.filter(id_vuelo=vuelo_id).values(
+        "id", 'id_vuelo', "sitio", 'fecha', 'id_dron__nombre_dron', 
+        'id_operador__jerarquia', "id_operador__nombres",
+        "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
+        "id_observador__apellidos", "observador_externo"
+    )
+
+    # Procesar detalles de vuelo
+    vuelos_con_detalles = []
+    for vuelo in vuelo_buscador:
+        detalles = DetallesVuelo.objects.filter(id_vuelo=vuelo['id']).values('duracion_vuelo').first()
+        vuelo['detalles'] = detalles if detalles else {}  
+        vuelos_con_detalles.append(vuelo)
+
+    return JsonResponse(vuelos_con_detalles, safe=False)

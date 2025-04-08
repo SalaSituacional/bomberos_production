@@ -29,7 +29,7 @@ class Psicologa(models.Model):
     return self.psicologa
 
 # Tabla personal cuerpo de bomberos
-class   Personal(models.Model):
+class Personal(models.Model):
   nombres = models.TextField()
   apellidos = models.TextField()
   jerarquia = models.TextField()
