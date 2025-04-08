@@ -72,6 +72,11 @@ urlpatterns = [
     path('api/estadisticas-misiones/', obtener_estadisticas_misiones, name="estadisticas-misiones"),
     path('api/ultimo_reporte/', obtener_ultimo_reporte),
 
+    # Bienes Municipales
+    path('dashboard_bienes/', Dashboard_bienes,name='dashboard_bienes'),
+    path('inventario_bienes/', Inventario_bienes,name='inventario_bienes'),
+    path('registro_bienes/', Registros_bienes,name='registro_inventario'),
+
     # Unidades
     path('unidades/', View_Unidades),
     path('formularioUnidades/', View_Form_unidades),
