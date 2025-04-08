@@ -104,6 +104,8 @@ def Home(request):
                 return redirect("/dashboard_mecanica/")
             if user.user == "Sarp_01":
                 return redirect("/dashboard_sarp/")
+            if user.user == "Bienes_00":
+                return redirect("/dashboard_bienes/")
             else:
                 return redirect("/dashboard/")
         except Usuarios.DoesNotExist:
@@ -219,6 +221,20 @@ def View_personal(request):
     })
 
 @login_required
+def Dashboard_bienes(request):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "bienes_municipales/dashboard_bienes.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
+
+
+@login_required
 def Dashboard(request):
     user = request.session.get('user')
 
@@ -275,6 +291,32 @@ def Registros_sarp(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         "formularioDrones": DronesForm,
+    })
+
+def Registros_bienes(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "bienes_municipales/registro_inventario.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"]
+        })
+
+def Inventario_bienes(request):
+    user = request.session.get('user')
+
+    if not user:
+        return redirect('/')
+    # Renderizar la página con los datos
+    return render(request, "bienes_municipales/inventario_bienes.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"]
     })
 
 def Formularios_sarp(request):

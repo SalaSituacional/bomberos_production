@@ -75,6 +75,11 @@ urlpatterns = [
     path('api/ultimo_reporte/', obtener_ultimo_reporte),
     path('api/buscar_vuelo/<str:vuelo_id>/', buscar_vuelo_por_id, name='buscar_vuelo_por_id'),
 
+    # Bienes Municipales
+    path('dashboard_bienes/', Dashboard_bienes,name='dashboard_bienes'),
+    path('inventario_bienes/', Inventario_bienes,name='inventario_bienes'),
+    path('registro_bienes/', Registros_bienes,name='registro_inventario'),
+
     # Unidades
     path('unidades/', View_Unidades),
     path('formularioUnidades/', View_Form_unidades),
