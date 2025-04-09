@@ -136,21 +136,23 @@
 </div>
 
 <!-- Modal Confirmar Eliminación -->
-<div class="modal fade" id="modalEliminarBien" tabindex="-1" aria-labelledby="modalEliminarBienLabel" aria-hidden="true">
+<div class="modal fade" id="modalEliminarBien" tabindex="-1" aria-labelledby="modalEliminarBienLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form method="POST" action="{% url 'eliminar_bien' %}">
+      <div class="modal-header config-modal-delete">
+        <h2 class="modal-title fs-5" id="staticBackdropLabel">
+          Eliminar Item
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form method="POST" action="{% url 'eliminar_bien' %}" class="formularioeliminarinmueble">
         {% csrf_token %}
         <input type="hidden" name="bien_id" id="inputEliminarBienId">
-
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalEliminarBienLabel">¿Confirmar eliminación?</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
         <div class="modal-body">
-          <p>¿Estás seguro de que deseas eliminar este bien?</p>
+          <h4>¿Seguro que quieres eliminar el item?</h4>
         </div>
-        <div class="modal-footer">
+        <div class="buttons-inmuebles-form">
           <button type="submit" class="btn btn-danger">Sí, eliminar</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         </div>
@@ -160,23 +162,29 @@
 </div>
 
 <!-- Modal Mostar Información -->
-<div class="modal fade" id="modalHistorialBien" tabindex="-1" aria-labelledby="modalHistorialBienLabel" aria-hidden="true">
+<div class="modal fade" id="modalHistorialBien" tabindex="-1" aria-labelledby="modalHistorialBienLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Historial del Bien</h5>
-        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button> -->
+    <div class="modal-content modal-content-information-bienes">
+      <div class="modal-header config-modal-delete">
+        <h2 class="modal-title fs-5" id="staticBackdropLabel">
+          Historial del Item
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body contain-inputs-data">
         <div id="bien-info">
-          <h3>Información del Bien</h3>
-          <div id="bienDetalle">Cargando...</div>
+          <h3>Información</h3>
+          <div id="bienDetalle" class="contain-detalle-bienes">Cargando...</div>
         </div>
         <hr>
-        <div id="movimientos-info">
+        <div id="movimientos-info" class="contain-info-movimientos">
           <h3>Últimos Movimientos</h3>
           <ul id="listaMovimientos" class="list-group"></ul>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>

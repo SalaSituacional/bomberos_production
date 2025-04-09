@@ -15,15 +15,13 @@ async function cargarVuelos(pagina = 1) {
           <td>${vuelo.fecha}</td>
           <td>${vuelo.sitio}</td>
           <td>${vuelo.id_dron__nombre_dron}</td>
-          <td>${vuelo.id_operador__jerarquia} ${vuelo.id_operador__nombres} ${
-      vuelo.id_operador__apellidos
-    }</td>
+          <td>${vuelo.id_operador__jerarquia} ${vuelo.id_operador__nombres} ${vuelo.id_operador__apellidos
+      }</td>
           <td>
-              ${
-                vuelo.observador_externo
-                  ? vuelo.observador_externo
-                  : `${vuelo.id_observador__jerarquia} ${vuelo.id_observador__nombres} ${vuelo.id_observador__apellidos}`
-              }
+              ${vuelo.observador_externo
+        ? vuelo.observador_externo
+        : `${vuelo.id_observador__jerarquia} ${vuelo.id_observador__nombres} ${vuelo.id_observador__apellidos}`
+      }
           </td>
           <td>${detalles.duracion_vuelo || "N/A"}</td>
           <td>
@@ -41,33 +39,11 @@ async function cargarVuelos(pagina = 1) {
               </button>
 
               <button class="btn generar-excel" data-unidad="${vuelo.id_vuelo}">
-                   <svg width="35px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="pointer-events: none;">
-                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                     <g id="SVGRepo_iconCarrier">
-                       <path fill-rule="evenodd" clip-rule="evenodd"
-                         d="M9 6C9 4.34315 7.65685 3 6 3H4C2.34315 3 1 4.34315 1 6V8C1 9.65685 2.34315 11 4 11H6C7.65685 11 9 9.65685 9 8V6ZM7 6C7 5.44772 6.55228 5 6 5H4C3.44772 5 3 5.44772 3 6V8C3 8.55228 3.44772 9 4 9H6C6.55228 9 7 8.55228 7 8V6Z"
-                         fill="#3688FF">
-                       </path>
-                       <path fill-rule="evenodd" clip-rule="evenodd"
-                         d="M9 16C9 14.3431 7.65685 13 6 13H4C2.34315 13 1 14.3431 1 16V18C1 19.6569 2.34315 21 4 21H6C7.65685 21 9 19.6569 9 18V16ZM7 16C7 15.4477 6.55228 15 6 15H4C3.44772 15 3 15.4477 3 16V18C3 18.5523 3.44772 19 4 19H6C6.55228 19 7 18.5523 7 18V16Z"
-                         fill="#3688FF">
-                       </path>
-                       <path
-                         d="M11 7C11 6.44772 11.4477 6 12 6H22C22.5523 6 23 6.44772 23 7C23 7.55228 22.5523 8 22 8H12C11.4477 8 11 7.55228 11 7Z"
-                         fill="#5F6379">
-                       </path>
-                       <path
-                         d="M11 17C11 16.4477 11.4477 16 12 16H22C22.5523 16 23 16.4477 23 17C23 17.5523 22.5523 18 22 18H12C11.4477 18 11 17.5523 11 17Z"
-                         fill="#5F6379">
-                       </path>
-                     </g>
-                   </svg>
+                   <svg width="35px" height="40px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M809.3 1024H214.7c-71.3 0-129.4-58-129.4-129.4V129.4C85.3 58 143.4 0 214.7 0h594.6c71.3 0 129.4 58 129.4 129.4v765.3c0 71.3-58.1 129.3-129.4 129.3zM214.7 85.3c-24.3 0-44 19.8-44 44v765.3c0 24.3 19.8 44 44 44h594.6c24.3 0 44-19.8 44-44V129.4c0-24.3-19.8-44-44-44H214.7z" fill="#3688FF"></path><path d="M426.7 1024H213.3c-70.6 0-128-57.4-128-128V682.7h213.4c70.6 0 128 57.4 128 128V1024z m-256-256v128c0 23.5 19.1 42.6 42.6 42.6h128v-128c0-23.5-19.1-42.6-42.6-42.6h-128zM810.7 1024H597.3V810.6c0-70.6 57.4-128 128-128h213.4V896c0 70.6-57.4 128-128 128z m-128-85.3h128c23.5 0 42.6-19.1 42.6-42.6V768h-128c-23.5 0-42.6 19.1-42.6 42.6v128.1zM448 355.6H277.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7H448c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7zM661.3 533.3h-384c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h384c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7z" fill="#5F6379"></path></g></svg>
                 </button>
 
-              <button onclick="eliminarVuelo('${
-                vuelo.id_vuelo
-              }')" style="border: none; background: none; cursor: pointer;">
+              <button onclick="eliminarVuelo('${vuelo.id_vuelo
+      }')" style="border: none; background: none; cursor: pointer;">
                      <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" xmlns="http://www.w3.org/2000/svg" fill="#000000">
                          <g id="SVGRepo_iconCarrier">
                              <path d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z" fill="#3688FF"></path>
