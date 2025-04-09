@@ -79,6 +79,8 @@ urlpatterns = [
     path('dashboard_bienes/', Dashboard_bienes,name='dashboard_bienes'),
     path('inventario_bienes/', Inventario_bienes,name='inventario_bienes'),
     path('registro_bienes/', Registros_bienes,name='registro_inventario'),
+    path('api/bienes/', listar_bienes, name='api_bienes'),
+    path('reasignar-bien/', reasignar_bien, name='reasignar_bien'),
 
     # Unidades
     path('unidades/', View_Unidades),

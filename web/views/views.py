@@ -299,12 +299,37 @@ def Registros_bienes(request):
     if not user:
         return redirect('/')
     # Renderizar la página con los datos
-    return render(request, "bienes_municipales/registro_inventario.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"]
-        })
+
+    if request.method == "POST":
+        form = BienMunicipalForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            responsable_id = data['responsable']
+            responsable_obj = Personal.objects.get(id=responsable_id)
+
+            bien = BienMunicipal.objects.create(
+                identificador=data['identificador'],
+                descripcion=data['descripcion'],
+                cantidad=data['cantidad'],
+                dependencia=data['dependencia'],
+                departamento=data['departamento'],
+                responsable=responsable_obj,
+                fecha_registro=data['fecha_registro'],
+                estado_actual=data['estado_actual']
+            )
+            return redirect("/inventario_bienes/")
+        else:
+            return JsonResponse({"errores": form.errors}, status=400)
+    
+    else:
+        form = BienMunicipalForm()
+        return render(request, "bienes_municipales/registro_inventario.html", {
+            "user": user,
+            "jerarquia": user["jerarquia"],
+            "nombres": user["nombres"],
+            "apellidos": user["apellidos"],
+            "form_bienes": BienMunicipalForm()
+            })
 
 def Inventario_bienes(request):
     user = request.session.get('user')
@@ -316,7 +341,8 @@ def Inventario_bienes(request):
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
-        "apellidos": user["apellidos"]
+        "apellidos": user["apellidos"],
+        "form_movimientos": MovimientoBienForm(),
     })
 
 def Formularios_sarp(request):

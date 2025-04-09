@@ -3422,3 +3422,53 @@ def buscar_vuelo_por_id(request, vuelo_id):
         vuelos_con_detalles.append(vuelo)
 
     return JsonResponse(vuelos_con_detalles, safe=False)
+
+def listar_bienes(request):
+    bienes = BienMunicipal.objects.select_related('dependencia', 'responsable').all()
+
+    data = []
+    for bien in bienes:
+        data.append({
+            "identificador": bien.identificador,
+            "cantidad": bien.cantidad,
+            "descripcion": bien.descripcion,
+            "dependencia": bien.dependencia.nombre,
+            "departamento": bien.departamento,
+            "responsable": f"{bien.responsable.nombres} {bien.responsable.apellidos}",
+            "fecha_registro": bien.fecha_registro.strftime('%d/%m/%Y'),
+            "estado_actual": bien.estado_actual,
+        })
+
+    return JsonResponse(data, safe=False)
+
+def reasignar_bien(request):
+    if request.method == 'POST':
+        form = MovimientoBienForm(request.POST)
+        if form.is_valid():
+            bien_id = form.cleaned_data['bien']
+            bien = get_object_or_404(BienMunicipal, identificador=bien_id)
+
+            nueva_dependencia = form.cleaned_data['nueva_dependencia']
+            nuevo_departamento = form.cleaned_data['nuevo_departamento']
+            ordenado_por = form.cleaned_data['ordenado_por']
+            fecha_orden = form.cleaned_data['fecha_orden']
+
+            # Guardar el movimiento
+            movimiento = MovimientoBien.objects.create(
+                bien=bien,
+                nueva_dependencia=nueva_dependencia,
+                nuevo_departamento=nuevo_departamento,
+                ordenado_por=ordenado_por,
+                fecha_orden=fecha_orden
+            )
+
+            # Actualizar el bien
+            bien.dependencia = nueva_dependencia
+            bien.departamento = nuevo_departamento
+            bien.save()
+
+            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+
+    else:
+        form = MovimientoBienForm()
+    return render(request, 'reasignar_form.html', {'form': form})

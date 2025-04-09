@@ -1219,3 +1219,24 @@ class DetallesVueloForm(forms.Form):
     altitud = forms.CharField(max_length=10, label="Altitud")
     duracion_vuelo = forms.CharField(max_length=10, label="Duración del Vuelo")
     observaciones = forms.CharField(label="Observaciones", widget=forms.Textarea)
+
+
+# ================================================================================ Formularios para el Area de Bienes e Inmuebles ================================================
+
+class BienMunicipalForm(forms.Form):
+    identificador = forms.CharField(max_length=20)
+    descripcion = forms.CharField(widget=forms.Textarea)
+    cantidad = forms.IntegerField(min_value=0)
+    dependencia = forms.ModelChoiceField(queryset=Dependencia.objects.all())
+    departamento = forms.CharField(max_length=100)
+    responsable = forms.ChoiceField(choices=Asignar_ops_Personal(), label="Responsable", widget=forms.Select(attrs={"class": "disable-first-option"}))
+    fecha_registro = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    estado_actual = forms.ChoiceField(choices=EstadoBien.choices)
+
+
+class MovimientoBienForm(forms.Form):
+    bien = forms.CharField()
+    nueva_dependencia = forms.ModelChoiceField(queryset=Dependencia.objects.all())
+    nuevo_departamento = forms.CharField(max_length=100)
+    ordenado_por = forms.ChoiceField(choices=Asignar_ops_Personal(), label="Ordenado Por", widget=forms.Select(attrs={"class": "disable-first-option"}))
+    fecha_orden = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))

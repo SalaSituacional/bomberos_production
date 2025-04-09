@@ -69,20 +69,22 @@
 <div class="contain-unidades">
   <!-- tabla -->
   <div class="table-responsive-sm">
-    <table class="table table-hover tabla-unidades">
+    <table class="table table-hover tabla-unidades" id="tablaBienes">
       <thead>
         <tr>
           <th scope="col">#</th>
           <th scope="col">Identificador</th>
+          <th scope="col">Descripcion</th>
           <th scope="col">Cantidad</th>
           <th scope="col">Dependencia</th>
           <th scope="col">Departamento</th>
           <th scope="col">Responsable</th>
           <th scope="col">Fecha</th>
+          <th scope="col">Estado</th>
           <th scope="col">Acciones</th>
         </tr>
       </thead>
-      <tbody class="table-group-divider" id="tabla-vuelos">
+      <tbody class="table-group-divider">
       </tbody>
     </table>
   </div>
@@ -107,35 +109,27 @@
 </div>
 
 
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  aria-labelledby="staticBackdropLabel" aria-hidden="">
-  <div class="modal-dialog modal-dialog-center">
+<!-- Modal para Reasignación -->
+<div class="modal fade" id="modalReasignarBien" tabindex="-1" aria-labelledby="modalReasignarBienLabel" aria-hidden="true">
+  <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header config-modal-delete">
-        <h2 class="modal-title fs-5" id="staticBackdropLabel">
-          Agregar Reporte
-        </h2>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body modal-body-two">
-        <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
-          <form action="{% url 'registrar_dron' %}" method="POST" id="form-new-drones">
-            {% csrf_token %}
-            {{ formularioDrones }}
-            <div class="buttons-reportes">
-              <button type="submit" class="btn btn-danger" id="confirmarEliminar">
-                Agregar
-              </button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                Cerrar
-              </button>
-            </div>
-          </form>
+      <h2>Transferir Bien</h2>
+      <form method="POST" action="{% url 'reasignar_bien' %}">
+        {% csrf_token %}
+        <input type="hidden" name="bien" id="inputBienId">
+        {{ form_movimientos }}
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Guardar Reasignación</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </div>
+
+
+
+
 
 <!-- fin contenido -->
 <footer class="footer">
@@ -178,8 +172,10 @@
   }
 
 </script>
-<!-- <script src="../../static/js/sarp/data_tables.js"></script>
-<script src="../../static/js/sarp/obtener_info_excel.js"></script>
+<script src="../../static/js/bienes_inmuebles/tabla_bienes.js"></script>
+<script src="../../static/js/bienes_inmuebles/reasignar_bien.js"></script>
+
+<!-- <script src="../../static/js/sarp/obtener_info_excel.js"></script>
 <script src="../../static/js/sarp/editar_reporte.js"></script>
 <script src="../../static/js/sarp/eliminar_reporte.js"></script>
 <script src="../../static/js/sarp/generar_excel_sarp.js"></script> -->

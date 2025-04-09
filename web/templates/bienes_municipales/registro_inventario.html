@@ -31,8 +31,13 @@
 <!-- contenido-->
 
 <div class="formulario-sarp">
-  
-
+  <form method="POST">
+    <h2>Registrar Bien Inmueble</h2>
+    {% csrf_token %}
+    {{ form_bienes }}
+    <button type="submit" class="btn btn-danger">Registrar</button>
+    <button type="reset" class="btn btn-danger">Limpiar</button>
+  </form>
 </div>
  
 <!-- fin contenido -->

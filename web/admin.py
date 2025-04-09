@@ -41,6 +41,9 @@ admin.site.register(EstadoBaterias)
 admin.site.register(EstadoControl)
 admin.site.register(DetallesVuelo)
 
+admin.site.register(Dependencia)
+admin.site.register(BienMunicipal)
+admin.site.register(MovimientoBien)
 
 
 
