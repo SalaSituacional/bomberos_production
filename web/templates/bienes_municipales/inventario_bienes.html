@@ -39,7 +39,7 @@
   </section>
   <section class="accion-personal">
     <label class="form-label">
-      Registrar Bienes: 
+      Registrar Bienes:
     </label>
     <button type="button" class="btn">
       <a href="/registro_bienes/">
@@ -93,16 +93,16 @@
     <button class="btn btn-danger" id="anterior" disabled>Anterior</button>
     <span style="margin: 0 10px;">Página <span id="pagina-actual">1</span></span>
     <button class="btn btn-danger" id="siguiente">Siguiente</button>
-</div>
+  </div>
 
 
   <div class="contain-dates">
     <h4 class="title-procediments">Exportar Reportes</h4>
     <br>
     <section class="buttons-items input-group mb-3 filter-search">
-      <span class="input-group-text"><b> Seleccionar Mes:</b></span>
-      <input type="month" class="form-control fecha_manual" name="" id="mes_excel">
-      <button id="exportarExcel" class="btn btn-danger download-link" disabled>Exportar .xls</button>
+      <!-- <span class="input-group-text"><b> Seleccionar Mes:</b></span>
+      <input type="month" class="form-control fecha_manual" name="" id="mes_excel"> -->
+      <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
     </section>
   </div>
 
@@ -110,17 +110,25 @@
 
 
 <!-- Modal para Reasignación -->
-<div class="modal fade" id="modalReasignarBien" tabindex="-1" aria-labelledby="modalReasignarBienLabel" aria-hidden="true">
+<div class="modal fade" id="modalReasignarBien" tabindex="-1" aria-labelledby="modalReasignarBienLabel"
+  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <h2>Transferir Bien</h2>
-      <form method="POST" action="{% url 'reasignar_bien' %}">
+      <div class="modal-header config-modal-delete">
+        <h2 class="modal-title fs-5" id="staticBackdropLabel">
+          Transferir Inmueble
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" class="formReasignacion" id="formReasignacion" action="{% url 'reasignar_bien' %}">
         {% csrf_token %}
         <input type="hidden" name="bien" id="inputBienId">
         {{ form_movimientos }}
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Guardar Reasignación</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <div class="buttons-inmuebles-form">
+            <button type="submit" class="btn btn-danger">Reasignar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          </div>
         </div>
       </form>
     </div>
@@ -187,7 +195,7 @@
 <script src="../../static/js/loader-function.js"></script>
 <script>
   // Obtener el formulario por su ID
-  const form = document.getElementById("form-new-drones");
+  const form = document.getElementById("formReasignacion");
 
   if (form) {
     // Seleccionar todas las divs dentro del formulario
@@ -222,11 +230,8 @@
 <script src="../../static/js/bienes_inmuebles/reasignar_bien.js"></script>
 <script src="../../static/js/bienes_inmuebles/eliminar_bienes.js"></script>
 <script src="../../static/js/bienes_inmuebles/mostrar_bien.js"></script>
+<script src="../../static/js/bienes_inmuebles/generar_excel_bienes.js"></script>
 
 
-<!-- <script src="../../static/js/sarp/obtener_info_excel.js"></script>
-<script src="../../static/js/sarp/editar_reporte.js"></script>
-<script src="../../static/js/sarp/eliminar_reporte.js"></script>
-<script src="../../static/js/sarp/generar_excel_sarp.js"></script> -->
 
 {% endblock %}

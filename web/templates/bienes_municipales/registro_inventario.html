@@ -30,16 +30,18 @@
 </div>
 <!-- contenido-->
 
-<div class="formulario-sarp">
-  <form method="POST">
-    <h2>Registrar Bien Inmueble</h2>
+<div class="formulario-bienes">
+  <form method="POST" id="formulario_bienes">
+    <h2>Registrar Inmueble</h2>
     {% csrf_token %}
     {{ form_bienes }}
-    <button type="submit" class="btn btn-danger">Registrar</button>
-    <button type="reset" class="btn btn-danger">Limpiar</button>
+    <div class="buttons-sarp-form">
+      <button type="submit" class="btn btn-danger">Registrar</button>
+      <button type="reset" class="btn btn-danger"><a href="/inventario_bienes/">Cancelar</a></button>
+    </div>
   </form>
 </div>
- 
+
 <!-- fin contenido -->
 <footer class="footer">
   <section class="text-reserved">
@@ -48,7 +50,7 @@
 </footer>
 <script>
   // Obtener el formulario por su ID
-  const form = document.getElementById("");
+  const form = document.getElementById("formulario_bienes");
 
   if (form) {
     // Seleccionar todas las divs dentro del formulario

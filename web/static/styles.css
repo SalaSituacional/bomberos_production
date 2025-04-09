@@ -3969,6 +3969,28 @@ checkbox-styles {
     }
   }
 }
+
+.formulario-bienes {
+  width: 50%;
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  form {
+    margin: 0 auto;
+    width: 90%;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 20px;
+
+    h2 {
+      text-align: center;
+    }
+
+    div {
+      padding: 1.5rem;
+    }
+  }
+}
 /* 
 .form-new-drones {
   width: ;
@@ -3982,6 +4004,22 @@ checkbox-styles {
   button{
     width: 45%;
   }
+}
+.buttons-inmuebles-form{
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  button{
+    margin-top: .5rem;
+    width: 40%;
+  }
+}
+.formReasignacion{
+  padding: 1rem;
+  margin: 1rem 0;
 }
 
 /* Estilos de la tarjeta */
