@@ -3424,11 +3424,21 @@ def buscar_vuelo_por_id(request, vuelo_id):
     return JsonResponse(vuelos_con_detalles, safe=False)
 
 def listar_bienes(request):
-    bienes = BienMunicipal.objects.select_related('dependencia', 'responsable').all()
+    page = int(request.GET.get("page", 1))  # Página actual
+    per_page = 15  # Bienes por página
 
-    data = []
+    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').all().order_by("id")
+    paginator = Paginator(bienes_queryset, per_page)
+    bienes = paginator.get_page(page)
+
+    data = {
+        "total_pages": paginator.num_pages,
+        "current_page": bienes.number,
+        "bienes": []
+    }
+
     for bien in bienes:
-        data.append({
+        data["bienes"].append({
             "identificador": bien.identificador,
             "cantidad": bien.cantidad,
             "descripcion": bien.descripcion,
@@ -3439,7 +3449,7 @@ def listar_bienes(request):
             "estado_actual": bien.estado_actual,
         })
 
-    return JsonResponse(data, safe=False)
+    return JsonResponse(data)
 
 def reasignar_bien(request):
     if request.method == 'POST':
@@ -3472,3 +3482,41 @@ def reasignar_bien(request):
     else:
         form = MovimientoBienForm()
     return render(request, 'reasignar_form.html', {'form': form})
+
+def eliminar_bien(request):
+    bien_id = request.POST.get('bien_id')
+    bien = get_object_or_404(BienMunicipal, identificador=bien_id)
+    bien.delete()
+    return redirect('/inventario_bienes/')  # Cambia a la vista que quieras recargar
+
+def historial_bien_api(request, bien_id):
+    bien = BienMunicipal.objects.get(identificador=bien_id)
+    movimientos = MovimientoBien.objects.filter(bien=bien).order_by('-fecha_orden')[:3]
+
+    data = {
+        'bien': {
+            'identificador': bien.identificador,
+            'descripcion': bien.descripcion,
+            'cantidad': bien.cantidad,
+            'dependencia': bien.dependencia.nombre,
+            'departamento': bien.departamento,
+            'responsable': str(bien.responsable.jerarquia) + " " + str(bien.responsable.nombres) + " " + str(bien.responsable.apellidos),
+            'estado_actual': bien.estado_actual,
+        },
+        'movimientos': [
+            {
+                'fecha_orden': m.fecha_orden.strftime('%d-%m-%Y'),
+                'nueva_dependencia': m.nueva_dependencia.nombre,
+                'nuevo_departamento': m.nuevo_departamento,
+                'ordenado_por': m.ordenado_por,
+            } for m in movimientos
+        ]
+    }
+
+    return JsonResponse(data)
+
+def verificar_identificador(request):
+    identificador = request.GET.get("identificador", "")
+    existe = BienMunicipal.objects.filter(identificador=identificador).exists()
+    return JsonResponse({"existe": existe})
+

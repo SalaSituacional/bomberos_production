@@ -127,6 +127,52 @@
   </div>
 </div>
 
+<!-- Modal Confirmar Eliminación -->
+<div class="modal fade" id="modalEliminarBien" tabindex="-1" aria-labelledby="modalEliminarBienLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'eliminar_bien' %}">
+        {% csrf_token %}
+        <input type="hidden" name="bien_id" id="inputEliminarBienId">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEliminarBienLabel">¿Confirmar eliminación?</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que deseas eliminar este bien?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Mostar Información -->
+<div class="modal fade" id="modalHistorialBien" tabindex="-1" aria-labelledby="modalHistorialBienLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Historial del Bien</h5>
+        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button> -->
+      </div>
+      <div class="modal-body">
+        <div id="bien-info">
+          <h3>Información del Bien</h3>
+          <div id="bienDetalle">Cargando...</div>
+        </div>
+        <hr>
+        <div id="movimientos-info">
+          <h3>Últimos Movimientos</h3>
+          <ul id="listaMovimientos" class="list-group"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -174,6 +220,9 @@
 </script>
 <script src="../../static/js/bienes_inmuebles/tabla_bienes.js"></script>
 <script src="../../static/js/bienes_inmuebles/reasignar_bien.js"></script>
+<script src="../../static/js/bienes_inmuebles/eliminar_bienes.js"></script>
+<script src="../../static/js/bienes_inmuebles/mostrar_bien.js"></script>
+
 
 <!-- <script src="../../static/js/sarp/obtener_info_excel.js"></script>
 <script src="../../static/js/sarp/editar_reporte.js"></script>

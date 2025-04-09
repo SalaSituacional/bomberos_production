@@ -4123,6 +4123,10 @@ checkbox-styles {
   margin: 6px 0;
 }
 
+.is-invalid {
+  border-color: red;
+}
+
 .cerrar-noti {
   background: transparent;
   border: none;
