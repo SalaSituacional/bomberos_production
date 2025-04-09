@@ -171,4 +171,6 @@ urlpatterns = [
     path('generar-excel-solicitudes/', generar_excel_solicitudes, name='generar_excel_solicitudes'),
     path('generar-excel-reportes-unidades/', generar_excel_reportes_unidades, name='generar_excel_reportes'),
     path('generar-excel-reportes-sarp/', generar_excel_reportes_sarp, name='generar_excel_sarp'),
+    path('generar-excel-bienesmunicipales/', generar_excel_bienes_municipales, name='generar_excel_sarp'),
+
 ]

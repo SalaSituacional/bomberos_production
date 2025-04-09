@@ -2160,3 +2160,26 @@ def generar_excel_reportes_sarp(request):
     # Convertir a JSON y responder
     json_data = json.dumps(data, ensure_ascii=False)
     return JsonResponse(json.loads(json_data), safe=False)
+
+def generar_excel_bienes_municipales(request):
+    # Obtener todos los bienes municipales, ordenados por fecha de registro
+    bienes = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by('-fecha_registro')
+
+    # Construir los datos necesarios para enviar al frontend
+    data = []
+
+    for bien in bienes:
+        data.append({
+            'identificador': bien.identificador,
+            'descripcion': bien.descripcion,
+            'cantidad': bien.cantidad,
+            'dependencia': bien.dependencia.nombre,
+            'departamento': bien.departamento,
+            'responsable': str(bien.responsable) if bien.responsable else "Sin asignar",
+            'fecha_registro': bien.fecha_registro.isoformat(),
+            'estado_actual': bien.estado_actual,
+        })
+
+    # Convertir los datos a JSON y responder al frontend
+    json_data = json.dumps(data, ensure_ascii=False)
+    return JsonResponse(json.loads(json_data), safe=False)
