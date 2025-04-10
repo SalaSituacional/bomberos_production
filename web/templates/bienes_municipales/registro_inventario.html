@@ -4,13 +4,13 @@
 {% include "layouts/panel_sala_situacional.html" %}
 {% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
 {% include "layouts/panel_comandancia.html" %}
-{% elif user.user == "Sarp_01"%}
-{% include "layouts/panel_sarp.html" %}
+{% elif user.user == "Bienes_00"%}
+{% include "layouts/panel_bienes.html" %}
 {% endif %}
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
-    <h3 class="division-title">Agregar Reporte De Vuelo</h3>
+    <h3 class="division-title">Formulario de Bienes</h3>
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -30,31 +30,16 @@
 </div>
 <!-- contenido-->
 
-<div class="formulario-sarp">
-  <form action="" method="post" id="formularioSarp">
+<div class="formulario-bienes">
+  <form method="POST" id="formulario_bienes">
+    <h2>Registrar Inmueble</h2>
     {% csrf_token %}
-    <input type="hidden" id="id_vuelo" name="id_vuelo">
-    <input type="hidden" id="hidden_id_dron" name="id_dron">
-    <h2>Datos del Vuelo</h2>
-    {{formularioVuelos}}
-    <h2>Estado del Dron</h2>
-    {{formularioEstadoDron}}
-    <h2>Estado de la Bateria</h2>
-    {{formularioEstadoBaterias}}
-    <h2>Estado del Control</h2>
-    {{formularioEstadoControl}}
-    <h2>Detalles del Vuelo</h2>
-    {{formularioDetallesVuelo}}
-    <div class="buttons-inmuebles-form">
-      <button class="btn btn-danger" type="submit">Enviar</button>
-      <button class="btn btn-danger" type="button">
-        <a href="/registros_sarp/">
-          Cancelar
-        </a>
-      </button>
+    {{ form_bienes }}
+    <div class="buttons-sarp-form">
+      <button type="submit" class="btn btn-danger">Registrar</button>
+      <button type="reset" class="btn btn-danger"><a href="/inventario_bienes/">Cancelar</a></button>
     </div>
   </form>
-
 </div>
 
 <!-- fin contenido -->
@@ -65,7 +50,7 @@
 </footer>
 <script>
   // Obtener el formulario por su ID
-  const form = document.getElementById("formularioSarp");
+  const form = document.getElementById("formulario_bienes");
 
   if (form) {
     // Seleccionar todas las divs dentro del formulario
@@ -97,6 +82,5 @@
 
 </script>
 <script src="../../static/js/loader-function.js"></script>
-<script src="../../static/js/sarp/sarp_forms.js"></script>
-<script src="../../static/js/sarp/rellenar_valores.js"></script>
+<script src="../../static/js/bienes_inmuebles/verificar_identificador.js"></script>
 {% endblock %}

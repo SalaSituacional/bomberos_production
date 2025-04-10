@@ -2160,3 +2160,39 @@ def generar_excel_reportes_sarp(request):
     # Convertir a JSON y responder
     json_data = json.dumps(data, ensure_ascii=False)
     return JsonResponse(json.loads(json_data), safe=False)
+
+def generar_excel_bienes_municipales(request):
+    # Obtener todos los bienes municipales, ordenados por fecha de registro
+    bienes = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by('-fecha_registro')
+
+    # Construir los datos necesarios para enviar al frontend
+    data = []
+
+    for bien in bienes:
+        # Obtener movimientos relacionados con cada bien
+        movimientos = MovimientoBien.objects.filter(bien=bien).order_by('-fecha_orden')
+        movimientos_data = [
+            {
+                'nueva_dependencia': movimiento.nueva_dependencia.nombre,
+                'nuevo_departamento': movimiento.nuevo_departamento,
+                'ordenado_por': movimiento.ordenado_por,
+                'fecha_orden': movimiento.fecha_orden.isoformat(),
+            }
+            for movimiento in movimientos
+        ]
+
+        data.append({
+            'identificador': bien.identificador,
+            'descripcion': bien.descripcion,
+            'cantidad': bien.cantidad,
+            'dependencia': bien.dependencia.nombre,
+            'departamento': bien.departamento,
+            'responsable': str(bien.responsable) if bien.responsable else "Sin asignar",
+            'fecha_registro': bien.fecha_registro.isoformat(),
+            'estado_actual': bien.estado_actual,
+            'movimientos': movimientos_data,  # Agregar los movimientos relacionados
+        })
+
+    # Convertir los datos a JSON y responder al frontend
+    json_data = json.dumps(data, ensure_ascii=False)
+    return JsonResponse(json.loads(json_data), safe=False)

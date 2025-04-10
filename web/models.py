@@ -29,7 +29,7 @@ class Psicologa(models.Model):
     return self.psicologa
 
 # Tabla personal cuerpo de bomberos
-class   Personal(models.Model):
+class Personal(models.Model):
   nombres = models.TextField()
   apellidos = models.TextField()
   jerarquia = models.TextField()
@@ -1172,3 +1172,40 @@ class DetallesVuelo(models.Model):
     def __str__(self):
         return f"Detalles Vuelo {self.id_vuelo} - {self.viento}, {self.nubosidad}, {self.riesgo_vuelo}"
 
+# ========================================== MODELOS PARA EL AREA DE BIENES E INMUEBLES ===============================================================================================
+
+class Dependencia(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+class EstadoBien(models.TextChoices):
+    BUENO = 'Bueno', 'Bueno'
+    REGULAR = 'Regular', 'Regular'
+    DEFECTUOSO = 'Defectuoso', 'Defectuoso'
+    DANIADO = 'Dañado', 'Dañado'
+
+
+class BienMunicipal(models.Model):
+    identificador = models.CharField(max_length=20, unique=True)
+    descripcion = models.TextField()
+    cantidad = models.IntegerField(default=0)
+    dependencia = models.ForeignKey(Dependencia, on_delete=models.CASCADE)  # Ej: Cuartel Central
+    departamento = models.CharField(max_length=100)  # Ej: Sala Situación
+    responsable = models.ForeignKey(Personal, on_delete=models.CASCADE)  # Ej: 1er Tte Daniel Alarcón
+    fecha_registro = models.DateField()
+    estado_actual = models.CharField(max_length=20, choices=EstadoBien.choices)
+
+    def __str__(self):
+        return f"{self.identificador} - {self.descripcion}"
+
+class MovimientoBien(models.Model):
+    bien = models.ForeignKey(BienMunicipal, on_delete=models.CASCADE)
+    nueva_dependencia = models.ForeignKey(Dependencia, on_delete=models.CASCADE)
+    nuevo_departamento = models.CharField(max_length=20)
+    ordenado_por = models.ForeignKey(Personal, on_delete=models.CASCADE)
+    fecha_orden = models.DateField()
+
+    def __str__(self):
+        return f"Movimiento de {self.bien.identificador} en {self.fecha_orden}"

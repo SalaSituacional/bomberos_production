@@ -1802,6 +1802,31 @@ def ultimo_procedimiento(request):
     else:
         return JsonResponse({"error": "No hay procedimientos registrados"}, status=404)
 
+def ultimo_personal(request):
+    personal = Personal.objects.order_by('-id').first()
+    if personal:
+        data = {
+            "nombres": personal.nombres,
+            "apellidos": personal.apellidos,
+            "jerarquia": personal.jerarquia,
+            "cargo": personal.cargo,
+            "cedula": personal.cedula,
+            "rol": personal.rol,
+            "status": personal.status
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({"error": "No hay personal registrado"}, status=404)
+
+def personal_primer_comandante(request):
+    personal = Personal.objects.filter(cargo="Primer Comandante").values(
+        "nombres", "apellidos", "jerarquia", "cedula", "rol", "status"
+    )
+    if personal.exists():
+        return JsonResponse(list(personal), safe=False)
+    else:
+        return JsonResponse({"message": "No hay personal con el cargo de Primer Comandante"}, status=404)
+
 # ===================================================================
 
 def obtener_informacion_editar(request, id):
@@ -2855,6 +2880,24 @@ def validar_rif(request):
 
     return JsonResponse({"existe": existe})
 
+def obtener_ultimo_reporte_solicitudes(request):
+    ultimo = Solicitudes.objects.select_related('id_solicitud').order_by('-id').first()
+
+    if not ultimo:
+        return JsonResponse({'error': 'No existen reportes aún'}, status=404)
+
+    data = {
+        'id': ultimo.id,
+        'fecha_solicitud': ultimo.fecha_solicitud,
+        'hora_solicitud': ultimo.hora_solicitud,
+        'tipo_servicio': ultimo.tipo_servicio,
+        'solicitante': ultimo.solicitante_nombre_apellido,
+        'comercio': ultimo.id_solicitud.nombre_comercio,
+        'id_comercio': ultimo.id_solicitud.id_comercio,
+    }
+
+    return JsonResponse(data)
+
 def contar_estados_unidades(request):
     # Obtener todos los estados de las unidades
     estados = Unidades_Detalles.objects.values_list("estado", flat=True)
@@ -3358,3 +3401,122 @@ def obtener_ultimo_reporte(request):
         "dron": ultimo_vuelo.id_dron.nombre_dron,
         "tipo_mision": ultimo_vuelo.tipo_mision
     })
+
+def buscar_vuelo_por_id(request, vuelo_id):
+    # Verifica si existe el vuelo
+    if not Registro_Vuelos.objects.filter(id_vuelo=vuelo_id).exists():
+        return JsonResponse({'error': 'No existe ningún vuelo con ese ID'}, status=200)
+
+    vuelo_buscador = Registro_Vuelos.objects.filter(id_vuelo=vuelo_id).values(
+        "id", 'id_vuelo', "sitio", 'fecha', 'id_dron__nombre_dron', 
+        'id_operador__jerarquia', "id_operador__nombres",
+        "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
+        "id_observador__apellidos", "observador_externo"
+    )
+
+    # Procesar detalles de vuelo
+    vuelos_con_detalles = []
+    for vuelo in vuelo_buscador:
+        detalles = DetallesVuelo.objects.filter(id_vuelo=vuelo['id']).values('duracion_vuelo').first()
+        vuelo['detalles'] = detalles if detalles else {}  
+        vuelos_con_detalles.append(vuelo)
+
+    return JsonResponse(vuelos_con_detalles, safe=False)
+
+def listar_bienes(request):
+    page = int(request.GET.get("page", 1))  # Página actual
+    per_page = 15  # Bienes por página
+
+    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').all().order_by("id")
+    paginator = Paginator(bienes_queryset, per_page)
+    bienes = paginator.get_page(page)
+
+    data = {
+        "total_pages": paginator.num_pages,
+        "current_page": bienes.number,
+        "bienes": []
+    }
+
+    for bien in bienes:
+        data["bienes"].append({
+            "identificador": bien.identificador,
+            "cantidad": bien.cantidad,
+            "descripcion": bien.descripcion,
+            "dependencia": bien.dependencia.nombre,
+            "departamento": bien.departamento,
+            "responsable": f"{bien.responsable.nombres} {bien.responsable.apellidos}",
+            "fecha_registro": bien.fecha_registro.strftime('%d/%m/%Y'),
+            "estado_actual": bien.estado_actual,
+        })
+
+    return JsonResponse(data)
+
+def reasignar_bien(request):
+    if request.method == 'POST':
+        form = MovimientoBienForm(request.POST)
+        if form.is_valid():
+            bien_id = form.cleaned_data['bien']
+            bien = get_object_or_404(BienMunicipal, identificador=bien_id)
+
+            nueva_dependencia = form.cleaned_data['nueva_dependencia']
+            nuevo_departamento = form.cleaned_data['nuevo_departamento']
+            ordenado_por = form.cleaned_data['ordenado_por']
+            fecha_orden = form.cleaned_data['fecha_orden']
+
+            # Guardar el movimiento
+            movimiento = MovimientoBien.objects.create(
+                bien=bien,
+                nueva_dependencia=nueva_dependencia,
+                nuevo_departamento=nuevo_departamento,
+                ordenado_por=ordenado_por,
+                fecha_orden=fecha_orden
+            )
+
+            # Actualizar el bien
+            bien.dependencia = nueva_dependencia
+            bien.departamento = nuevo_departamento
+            bien.save()
+
+            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+
+    else:
+        form = MovimientoBienForm()
+    return render(request, 'reasignar_form.html', {'form': form})
+
+def eliminar_bien(request):
+    bien_id = request.POST.get('bien_id')
+    bien = get_object_or_404(BienMunicipal, identificador=bien_id)
+    bien.delete()
+    return redirect('/inventario_bienes/')  # Cambia a la vista que quieras recargar
+
+def historial_bien_api(request, bien_id):
+    bien = BienMunicipal.objects.get(identificador=bien_id)
+    movimientos = MovimientoBien.objects.filter(bien=bien).order_by('-fecha_orden')[:3]
+
+    data = {
+        'bien': {
+            'identificador': bien.identificador,
+            'descripcion': bien.descripcion,
+            'cantidad': bien.cantidad,
+            'dependencia': bien.dependencia.nombre,
+            'departamento': bien.departamento,
+            'responsable': str(bien.responsable.jerarquia) + " " + str(bien.responsable.nombres) + " " + str(bien.responsable.apellidos),
+            'estado_actual': bien.estado_actual,
+        },
+        'movimientos': [
+            {
+                'fecha_orden': m.fecha_orden.strftime('%d-%m-%Y'),
+                'nueva_dependencia': m.nueva_dependencia.nombre,
+                'nuevo_departamento': m.nuevo_departamento,
+                'ordenado_por': f"{m.ordenado_por.jerarquia} {m.ordenado_por.nombres} {m.ordenado_por.apellidos}",
+            } for m in movimientos
+        ]
+    }
+
+    return JsonResponse(data)
+
+def verificar_identificador(request):
+    identificador = request.GET.get("identificador", "")
+    existe = BienMunicipal.objects.filter(identificador=identificador).exists()
+    return JsonResponse({"existe": existe})
+

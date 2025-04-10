@@ -53,6 +53,8 @@ urlpatterns = [
     path('dashboard/', Dashboard,name='dashboard'),
     path('api/ultimo_procedimiento/', ultimo_procedimiento),
     path('personal/', View_personal) ,
+    path("api/ultimo_personal/", ultimo_personal, name="ultimo_personal"),
+    path('api/personal_comandante/', personal_primer_comandante, name='personal_comandante'),
     path('prueba/', Prueba),
     path('registros/', ver_registros),
     path('antecedentes/', Antecedentes),
@@ -71,6 +73,17 @@ urlpatterns = [
     path("api/eliminar_vuelo/<str:id_vuelo>/", api_eliminar_vuelo, name="api_eliminar_vuelo"),
     path('api/estadisticas-misiones/', obtener_estadisticas_misiones, name="estadisticas-misiones"),
     path('api/ultimo_reporte/', obtener_ultimo_reporte),
+    path('api/buscar_vuelo/<str:vuelo_id>/', buscar_vuelo_por_id, name='buscar_vuelo_por_id'),
+
+    # Bienes Municipales
+    path('dashboard_bienes/', Dashboard_bienes,name='dashboard_bienes'),
+    path('inventario_bienes/', Inventario_bienes,name='inventario_bienes'),
+    path('registro_bienes/', Registros_bienes,name='registro_inventario'),
+    path('api/bienes/', listar_bienes, name='api_bienes'),
+    path('reasignar-bien/', reasignar_bien, name='reasignar_bien'),
+    path('eliminar-bien/', eliminar_bien, name='eliminar_bien'),
+    path('api/historial-bien/<int:bien_id>/', historial_bien_api, name='historial_bien_api'),
+    path('api/verificar-identificador/', verificar_identificador, name='verificar_identificador'),
 
     # Unidades
     path('unidades/', View_Unidades),
@@ -94,6 +107,7 @@ urlpatterns = [
     path('certificadosprevencion/', certificados_prevencion),
     path('formulariocertificados/', formulario_certificado_prevencion),
     path('planillacertificado/', planilla_certificado),
+    path('api/ultimo_reporte_solicitudes/', obtener_ultimo_reporte_solicitudes),
     path('api/get_solicitudes/<str:referencia>/', api_get_solicitudes, name='get_solicitudes'),
     path('generar_documento_guia/<int:id>/', doc_Guia, name='generar_documento_guia'),
     path('api/eliminar_solicitudes/<int:id>/', api_eliminar_solicitudes, name='api_eliminar_solicitudes'),
@@ -160,4 +174,6 @@ urlpatterns = [
     path('generar-excel-solicitudes/', generar_excel_solicitudes, name='generar_excel_solicitudes'),
     path('generar-excel-reportes-unidades/', generar_excel_reportes_unidades, name='generar_excel_reportes'),
     path('generar-excel-reportes-sarp/', generar_excel_reportes_sarp, name='generar_excel_sarp'),
+    path('generar-excel-bienesmunicipales/', generar_excel_bienes_municipales, name='generar_excel_sarp'),
+
 ]

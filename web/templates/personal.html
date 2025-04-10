@@ -347,6 +347,27 @@
   </div>
 </div>
 
+<!-- Notificación Personal -->
+<div id="notificacionPersonal" class="noti-container hidden" style="z-index: 2;">
+  <span id="noti-emoji-p"></span>
+  <div>
+    <strong id="noti-titulo-p">Último Personal Registrado</strong><br>
+    <span id="noti-mensaje-p">Cargando...</span>
+  </div>
+</div>
+
+<!-- Notificación General Estilizada -->
+<div id="notificacionGeneral" class="noti-container-comandante hidden" style="z-index: 2;">
+  <div class="noti-content">
+    <strong id="noti-titulo-g">🎖️ Primer Comandante</strong>
+    <div id="noti-mensaje-g" class="noti-info">
+      <p><em>Buscando datos...</em></p>
+    </div>
+  </div>
+  <button onclick="cerrarNotificacion()" class="cerrar-noti">✖</button>
+</div>
+
+
 
 <footer class="footer">
   <section class="text-reserved">
@@ -357,6 +378,7 @@
 
 <script src="../static/js/modificar_personal.js"></script>
 <script src="../static/js/export_excel/excel_personal.js"></script>
+<script src="../static/js/notificacion_personal.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 {% endblock %}
 
