@@ -12,7 +12,7 @@ function cargarBienes(pagina = 1) {
 
       data.bienes.forEach((bien) => {
         const fila = `
-          <tr data-identificador="${bien.identificador}">
+          <tr data-identificador="${bien.identificador}" data-departamento="${bien.departamento}">
             <td>${i}</td>
             <td>${bien.identificador}</td>
             <td>${bien.descripcion}</td>
@@ -22,7 +22,7 @@ function cargarBienes(pagina = 1) {
             <td>${bien.responsable}</td>
             <td>${bien.fecha_registro}</td>
             <td>${bien.estado_actual}</td>
-                <td>
+              <td>
               <button class="btn" data-bien-id="${bien.identificador}" data-bs-toggle="modal" data-bs-target="#modalReasignarBien">
               <svg width="35px" height="40px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M810.7 938.7H213.3c-17.3 0-34-3.4-49.9-10.1-15.2-6.4-29-15.7-40.7-27.5-11.7-11.7-21-25.4-27.4-40.7-6.7-15.8-10.1-32.6-10.1-49.8V213.3c0-17.2 3.4-34 10.1-49.8 6.4-15.2 15.7-29 27.5-40.7 11.7-11.7 25.4-20.9 40.7-27.4 15.8-6.7 32.5-10.1 49.8-10.1h597.3c17.3 0 34 3.4 49.9 10.1 15.2 6.4 29 15.7 40.7 27.5 11.7 11.7 21 25.4 27.4 40.7 6.7 15.8 10.1 32.6 10.1 49.8V320c0 23.6-19.1 42.7-42.7 42.7s-42.7-19.1-42.7-42.7V213.3c0-5.8-1.1-11.4-3.4-16.6-2.1-5.1-5.2-9.6-9.1-13.5-4-4-8.5-7-13.6-9.2-5.2-2.2-10.8-3.3-16.6-3.3H213.3c-5.8 0-11.4 1.1-16.6 3.3-5.1 2.2-9.7 5.2-13.6 9.1-4 4-7.1 8.5-9.2 13.6-2.2 5.3-3.4 10.9-3.4 16.6v597.3c0 5.8 1.1 11.4 3.4 16.6 2.1 5.1 5.2 9.6 9.1 13.5 4 4 8.5 7 13.6 9.2 5.2 2.2 10.8 3.3 16.6 3.3h597.3c5.8 0 11.4-1.1 16.6-3.3 5.1-2.2 9.7-5.2 13.6-9.1 4-4 7.1-8.5 9.2-13.6 2.2-5.3 3.4-10.9 3.4-16.6V704c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v106.7c0 17.2-3.4 34-10.1 49.8-6.4 15.2-15.7 29-27.5 40.7-11.7 11.7-25.4 20.9-40.7 27.4-15.7 6.7-32.5 10.1-49.7 10.1z" fill="#3688FF"></path><path d="M768 682.7c-10.9 0-21.8-4.2-30.2-12.5-16.7-16.7-16.7-43.7 0-60.3l97.8-97.8-97.8-97.8c-16.7-16.7-16.7-43.7 0-60.3 16.7-16.7 43.7-16.7 60.3 0l128 128c16.7 16.7 16.7 43.7 0 60.3l-128 128c-8.3 8.2-19.2 12.4-30.1 12.4z" fill="#5F6379"></path><path d="M896 554.7H512c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h384c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7z" fill="#5F6379"></path></g></svg>
               </button>
@@ -73,23 +73,28 @@ function cargarBienes(pagina = 1) {
     });
 }
 
-// Función para filtrar bienes por identificador
-function filtrarPorIdentificador() {
-  const filtro = document.getElementById("filterJerarquia").value.trim().toLowerCase();
+// Función para filtrar bienes
+function filtrarBienes() {
+  const filtroIdentificador = document.getElementById("filterid").value.trim().toLowerCase();
+  const filtroDepartamento = document.getElementById("filterDepartamento").value.trim().toLowerCase();
   const filas = document.querySelectorAll("#tablaBienes tbody tr");
 
   filas.forEach((fila) => {
     const identificador = fila.getAttribute("data-identificador").toLowerCase();
-    if (identificador.includes(filtro)) {
-      fila.style.display = ""; // Mostrar la fila si coincide
+    const departamento = fila.getAttribute("data-departamento").toLowerCase();
+
+    // Mostrar u ocultar la fila si coinciden ambos filtros
+    if (identificador.includes(filtroIdentificador) && departamento.includes(filtroDepartamento)) {
+      fila.style.display = ""; // Mostrar la fila
     } else {
-      fila.style.display = "none"; // Ocultar la fila si no coincide
+      fila.style.display = "none"; // Ocultar la fila
     }
   });
 }
 
-// Agregar evento al buscador
-document.getElementById("filterJerarquia").addEventListener("input", filtrarPorIdentificador);
+// Agregar eventos a los buscadores
+document.getElementById("filterid").addEventListener("input", filtrarBienes);
+document.getElementById("filterDepartamento").addEventListener("input", filtrarBienes);
 
 // Eventos para botones de paginación
 document.getElementById("anterior").addEventListener("click", function () {

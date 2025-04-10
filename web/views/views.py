@@ -20,6 +20,8 @@ from datetime import date
 from django.shortcuts import get_object_or_404
 import fitz
 from django.db.models import Max
+from django.db.models import Count
+
 
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
@@ -221,18 +223,41 @@ def View_personal(request):
     })
 
 @login_required
+# Vista para el Dashboard
 def Dashboard_bienes(request):
+    # Filtrar bienes por estado y contar el total de cada uno
+    bienes_buenos = BienMunicipal.objects.filter(estado_actual="Bueno").count()
+    bienes_regulares = BienMunicipal.objects.filter(estado_actual="Regular").count()
+    bienes_defectuosos = BienMunicipal.objects.filter(estado_actual="Defectuoso").count()
+    bienes_dañados = BienMunicipal.objects.filter(estado_actual="Dañado").count()  # Corregido para contar correctamente
+
+     # Contar bienes por dependencia
+    cuartelcentral = BienMunicipal.objects.filter(dependencia__nombre="Cuartel Central").count()
+    estacion01 = BienMunicipal.objects.filter(dependencia__nombre="Estacion 01").count()
+    estacion02 = BienMunicipal.objects.filter(dependencia__nombre="Estacion 02").count()
+    estacion03 = BienMunicipal.objects.filter(dependencia__nombre="Estacion 03").count()
+
+
+    # Verificar si hay un usuario autenticado en la sesión
     user = request.session.get('user')
     if not user:
         return redirect('/')
+
     # Renderizar la página con los datos
     return render(request, "bienes_municipales/dashboard_bienes.html", {
         "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
+        "jerarquia": user.get("jerarquia", ""),  # Agregado un valor predeterminado
+        "nombres": user.get("nombres", ""),
+        "apellidos": user.get("apellidos", ""),
+        "bienes_buenos": bienes_buenos,
+        "bienes_regulares": bienes_regulares,
+        "bienes_defectuosos": bienes_defectuosos,
+        "bienes_dañados": bienes_dañados,
+        "count_cuartelcentral": cuartelcentral,
+        "count_estacion01": estacion01,
+        "count_estacion02": estacion02,
+        "count_estacion03": estacion03,
     })
-
 
 @login_required
 def Dashboard(request):
@@ -333,6 +358,7 @@ def Registros_bienes(request):
 
 def Inventario_bienes(request):
     user = request.session.get('user')
+    total_bienes = BienMunicipal.objects.all().count()
 
     if not user:
         return redirect('/')
@@ -343,6 +369,7 @@ def Inventario_bienes(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         "form_movimientos": MovimientoBienForm(),
+        "total_bienes": total_bienes,
     })
 
 def Formularios_sarp(request):
