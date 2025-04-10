@@ -3508,7 +3508,7 @@ def historial_bien_api(request, bien_id):
                 'fecha_orden': m.fecha_orden.strftime('%d-%m-%Y'),
                 'nueva_dependencia': m.nueva_dependencia.nombre,
                 'nuevo_departamento': m.nuevo_departamento,
-                'ordenado_por': m.ordenado_por,
+                'ordenado_por': f"{m.ordenado_por.jerarquia} {m.ordenado_por.nombres} {m.ordenado_por.apellidos}",
             } for m in movimientos
         ]
     }

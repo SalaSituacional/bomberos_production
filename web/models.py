@@ -1204,7 +1204,7 @@ class MovimientoBien(models.Model):
     bien = models.ForeignKey(BienMunicipal, on_delete=models.CASCADE)
     nueva_dependencia = models.ForeignKey(Dependencia, on_delete=models.CASCADE)
     nuevo_departamento = models.CharField(max_length=20)
-    ordenado_por = models.CharField(max_length=200)
+    ordenado_por = models.ForeignKey(Personal, on_delete=models.CASCADE)
     fecha_orden = models.DateField()
 
     def __str__(self):
