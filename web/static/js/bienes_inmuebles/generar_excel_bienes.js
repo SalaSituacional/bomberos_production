@@ -66,7 +66,7 @@ function descargarExcelBienes() {
       XLSX.utils.book_append_sheet(wb, ws, "Bienes Inmuebles");
 
       // Descargar el archivo Excel
-      XLSX.writeFile(wb, "BienesInmueblesConMovimientos.xlsx");
+      XLSX.writeFile(wb, "Bienes_inmuebles.xlsx");
     })
     .catch((error) => {
       console.error("Error al obtener los datos:", error);
