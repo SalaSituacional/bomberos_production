@@ -135,6 +135,32 @@
   </div>
 </div>
 
+<!-- Modal para Reasignación -->
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalReasignarBienLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header config-modal-delete">
+        <h2 class="modal-title fs-5" id="staticBackdropLabel">
+          Cambiar Estado
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" class="formReasignacion" id="formReasignacion" action="{% url 'cambiar_estado_bien' %}">
+        {% csrf_token %}
+        <input type="hidden" name="bien" id="inputBienId">
+        {{ form_estado }}
+        <div class="modal-footer">
+          <div class="buttons-inmuebles-form">
+            <button type="submit" class="btn btn-danger">Reasignar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- Modal Confirmar Eliminación -->
 <div class="modal fade" id="modalEliminarBien" tabindex="-1" aria-labelledby="modalEliminarBienLabel"
   aria-hidden="true">
@@ -236,6 +262,7 @@
 </script>
 <script src="../../static/js/bienes_inmuebles/tabla_bienes.js"></script>
 <script src="../../static/js/bienes_inmuebles/reasignar_bien.js"></script>
+<script src="../../static/js/bienes_inmuebles/cambiar_estado.js"></script>
 <script src="../../static/js/bienes_inmuebles/eliminar_bienes.js"></script>
 <script src="../../static/js/bienes_inmuebles/mostrar_bien.js"></script>
 <script src="../../static/js/bienes_inmuebles/generar_excel_bienes.js"></script>

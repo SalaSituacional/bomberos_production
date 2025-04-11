@@ -1209,3 +1209,11 @@ class MovimientoBien(models.Model):
 
     def __str__(self):
         return f"Movimiento de {self.bien.identificador} en {self.fecha_orden}"
+    
+class CambiarEstadoBien(models.Model):
+    bien = models.ForeignKey(BienMunicipal, on_delete=models.CASCADE)
+    nuevo_estado = models.CharField(max_length=20, choices=EstadoBien.choices)
+    fecha_orden = models.DateField()
+
+    def __str__(self):
+        return f"Cambio de Estado de {self.bien.identificador} a {self.nuevo_estado} en {self.fecha_orden}"

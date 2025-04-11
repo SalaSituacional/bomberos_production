@@ -3457,8 +3457,6 @@ def listar_bienes(request):
 
     return JsonResponse(data)
 
-
-
 def reasignar_bien(request):
     if request.method == 'POST':
         form = MovimientoBienForm(request.POST)
@@ -3489,6 +3487,33 @@ def reasignar_bien(request):
 
     else:
         form = MovimientoBienForm()
+    return render(request, 'reasignar_form.html', {'form': form})
+
+def cambiar_estado_bienes(request):
+    if request.method == 'POST':
+        form = CambiarEstadoBienForm(request.POST)
+        if form.is_valid():
+            bien_id = form.cleaned_data['bien_cambiar_estado']
+            bien = get_object_or_404(BienMunicipal, identificador=bien_id)
+
+            nuevo_estado = form.cleaned_data['nuevo_estado']
+            fecha_orden = form.cleaned_data['fecha_orden']
+
+            # Guardar el movimiento
+            movimiento = CambiarEstadoBien.objects.create(
+                bien=bien,
+                nuevo_estado=nuevo_estado,
+                fecha_orden=fecha_orden
+            )
+
+            # Actualizar el bien
+            bien.estado_actual = nuevo_estado
+            bien.save()
+
+            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+
+    else:
+        form = CambiarEstadoBienForm()
     return render(request, 'reasignar_form.html', {'form': form})
 
 def eliminar_bien(request):

@@ -343,6 +343,7 @@ def Inventario_bienes(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         "form_movimientos": MovimientoBienForm(),
+        "form_estado": CambiarEstadoBienForm(),
     })
 
 def Formularios_sarp(request):
