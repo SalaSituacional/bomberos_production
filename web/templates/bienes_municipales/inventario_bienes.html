@@ -37,10 +37,6 @@
       <input type="text" class="form-control" placeholder="Buscar" id="filterid">
     </div>
     <div class="input-group mb-3">
-      <span class="input-group-text" id="basic-addon1">Departamento: </span>
-      <input type="text" class="form-control" placeholder="Buscar" id="filterDepartamento">
-    </div>
-    <div class="input-group mb-3">
       <span class="input-group-text" id="basic-addon1">Bienes Totales: {{ total_bienes }} </span>
     </div>
   </section>
@@ -131,12 +127,35 @@
         {% csrf_token %}
         <input type="hidden" name="bien" id="inputBienId">
         {{ form_movimientos }}
-        <div class="modal-footer">
           <div class="buttons-inmuebles-form">
-            <button type="submit" class="btn btn-danger">Reasignar</button>
+            <button type="submit" class="btn btn-danger">Aceptar</button>
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
           </div>
-        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Reasignación -->
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalReasignarBienLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header config-modal-delete">
+        <h2 class="modal-title fs-5" id="staticBackdropLabel">
+          Cambiar Estado
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" class="formReasignacion" id="formReasignacionEstado" action="{% url 'cambiar_estado_bien' %}">
+        {% csrf_token %}
+        <input type="hidden" name="bien" id="inputBienId">
+        {{ form_estado }}
+        
+          <div class="buttons-inmuebles-form">
+            <button type="submit" class="btn btn-danger">Aceptar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          </div>
       </form>
     </div>
   </div>
@@ -209,40 +228,49 @@
 
 <script src="../../static/js/loader-function.js"></script>
 <script>
-  // Obtener el formulario por su ID
-  const form = document.getElementById("formReasignacion");
+  // Obtener los formularios por sus IDs
+  const formReasignacion = document.getElementById("formReasignacion");
+  const formReasignacionEstado = document.getElementById("formReasignacionEstado");
 
-  if (form) {
-    // Seleccionar todas las divs dentro del formulario
-    const innerDivs = form.querySelectorAll("div");
+  // Función para aplicar clases a los elementos dentro de un formulario
+  function applyClassesToFormElements(form) {
+    if (form) {
+      // Seleccionar todas las divs dentro del formulario
+      const innerDivs = form.querySelectorAll("div");
 
-    // Iterar sobre cada div y aplicar las clases a sus inputs y labels
-    innerDivs.forEach(div => {
-      const label = div.querySelector("label");
-      const input = div.querySelector("input");
-      const select = div.querySelector("select");
-      const textarea = div.querySelector("textarea");
+      // Iterar sobre cada div y aplicar las clases a sus inputs, labels, selects y textareas
+      innerDivs.forEach(div => {
+        const label = div.querySelector("label");
+        const input = div.querySelector("input");
+        const select = div.querySelector("select");
+        const textarea = div.querySelector("textarea");
 
-      if (label) {
-        label.classList.add("form-label");
-      }
+        if (label) {
+          label.classList.add("form-label");
+        }
 
-      if (input) {
-        input.classList.add("form-control");
-      }
+        if (input) {
+          input.classList.add("form-control");
+        }
 
-      if (select) {
-        select.classList.add("form-select");
-      }
-      if (textarea) {
-        textarea.classList.add("form-control");
-      }
-    });
+        if (select) {
+          select.classList.add("form-select");
+        }
+
+        if (textarea) {
+          textarea.classList.add("form-control");
+        }
+      });
+    }
   }
 
+  // Aplicar las clases a los formularios si existen
+  applyClassesToFormElements(formReasignacion);
+  applyClassesToFormElements(formReasignacionEstado);
 </script>
 <script src="../../static/js/bienes_inmuebles/tabla_bienes.js"></script>
 <script src="../../static/js/bienes_inmuebles/reasignar_bien.js"></script>
+<script src="../../static/js/bienes_inmuebles/cambiar_estado.js"></script>
 <script src="../../static/js/bienes_inmuebles/eliminar_bienes.js"></script>
 <script src="../../static/js/bienes_inmuebles/mostrar_bien.js"></script>
 <script src="../../static/js/bienes_inmuebles/generar_excel_bienes.js"></script>

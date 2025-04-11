@@ -3424,11 +3424,18 @@ def buscar_vuelo_por_id(request, vuelo_id):
     return JsonResponse(vuelos_con_detalles, safe=False)
 
 def listar_bienes(request):
-    page = int(request.GET.get("page", 1))  # Página actual
-    per_page = 15  # Bienes por página
+    identificador = request.GET.get("identificador")
+    page = int(request.GET.get("page", 1))
+    per_page = 15
 
-    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').all().order_by("id")
-    paginator = Paginator(bienes_queryset, per_page)
+    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by("id")
+
+    if identificador:
+        bienes_queryset = bienes_queryset.filter(identificador__icontains=identificador)
+        if not bienes_queryset.exists():
+            return JsonResponse({"error": "No se encontraron bienes con ese identificador."}, status=404)
+
+    paginator = Paginator(bienes_queryset, per_page if not identificador else bienes_queryset.count())
     bienes = paginator.get_page(page)
 
     data = {
@@ -3437,8 +3444,9 @@ def listar_bienes(request):
         "bienes": []
     }
 
-    for bien in bienes:
+    for index, bien in enumerate(bienes, start=bienes.start_index()):
         data["bienes"].append({
+            "numero": index,
             "identificador": bien.identificador,
             "cantidad": bien.cantidad,
             "descripcion": bien.descripcion,
@@ -3450,6 +3458,7 @@ def listar_bienes(request):
         })
 
     return JsonResponse(data)
+
 
 def reasignar_bien(request):
     if request.method == 'POST':
@@ -3481,6 +3490,33 @@ def reasignar_bien(request):
 
     else:
         form = MovimientoBienForm()
+    return render(request, 'reasignar_form.html', {'form': form})
+
+def cambiar_estado_bienes(request):
+    if request.method == 'POST':
+        form = CambiarEstadoBienForm(request.POST)
+        if form.is_valid():
+            bien_id = form.cleaned_data['bien_cambiar_estado']
+            bien = get_object_or_404(BienMunicipal, identificador=bien_id)
+
+            nuevo_estado = form.cleaned_data['nuevo_estado']
+            fecha_orden = form.cleaned_data['fecha_orden']
+
+            # Guardar el movimiento
+            movimiento = CambiarEstadoBien.objects.create(
+                bien=bien,
+                nuevo_estado=nuevo_estado,
+                fecha_orden=fecha_orden
+            )
+
+            # Actualizar el bien
+            bien.estado_actual = nuevo_estado
+            bien.save()
+
+            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+
+    else:
+        form = CambiarEstadoBienForm()
     return render(request, 'reasignar_form.html', {'form': form})
 
 def eliminar_bien(request):

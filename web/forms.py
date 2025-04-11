@@ -1240,3 +1240,9 @@ class MovimientoBienForm(forms.Form):
     nuevo_departamento = forms.CharField(max_length=100)
     ordenado_por = forms.ChoiceField(choices=Asignar_ops_Personal(), label="Ordenado Por", widget=forms.Select(attrs={"class": "disable-first-option"}))
     fecha_orden = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+
+class CambiarEstadoBienForm(forms.Form):
+    bien_cambiar_estado = forms.CharField()
+    estado_actual = forms.CharField(max_length=100)
+    nuevo_estado = forms.ChoiceField(choices=EstadoBien.choices)
+    fecha_orden = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))

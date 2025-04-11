@@ -2072,6 +2072,9 @@ checkbox-styles {
   flex-wrap: wrap;
   font-size: 1.2rem;
 }
+.margin-span{
+  margin: 0 .5rem;
+}
 
 .accion-filter {
   width: 50%;

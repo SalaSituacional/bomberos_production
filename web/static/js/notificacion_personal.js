@@ -38,7 +38,7 @@ function lanzarNotiPersonal(titulo, mensaje, esError = false) {
       mostrarNotificacionGeneral(),
       500
     );
-  }, 10000);
+  }, 7000);
 }
 
 function mostrarNotificacionGeneral() {
@@ -74,6 +74,13 @@ function mostrarNotificacionGeneral() {
       noti.classList.remove("hidden");
       setTimeout(() => noti.classList.add("show"), 100);
     });
+}
+
+function cerrarNotificacion() {
+  const notificacion = document.getElementById('notificacionGeneral');
+  if (notificacion) {
+    notificacion.classList.add('hidden');
+  }
 }
 
 
