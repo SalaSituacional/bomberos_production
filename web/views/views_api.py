@@ -3424,11 +3424,16 @@ def buscar_vuelo_por_id(request, vuelo_id):
     return JsonResponse(vuelos_con_detalles, safe=False)
 
 def listar_bienes(request):
-    page = int(request.GET.get("page", 1))  # Página actual
-    per_page = 15  # Bienes por página
+    identificador = request.GET.get("identificador")
+    page = int(request.GET.get("page", 1))
+    per_page = 15
 
-    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').all().order_by("id")
-    paginator = Paginator(bienes_queryset, per_page)
+    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by("id")
+
+    if identificador:
+        bienes_queryset = bienes_queryset.filter(identificador__icontains=identificador)
+
+    paginator = Paginator(bienes_queryset, per_page if not identificador else bienes_queryset.count())
     bienes = paginator.get_page(page)
 
     data = {
@@ -3437,8 +3442,9 @@ def listar_bienes(request):
         "bienes": []
     }
 
-    for bien in bienes:
+    for index, bien in enumerate(bienes, start=(bienes.start_index())):
         data["bienes"].append({
+            "numero": index,  # 👈 este es el número real
             "identificador": bien.identificador,
             "cantidad": bien.cantidad,
             "descripcion": bien.descripcion,
@@ -3450,6 +3456,8 @@ def listar_bienes(request):
         })
 
     return JsonResponse(data)
+
+
 
 def reasignar_bien(request):
     if request.method == 'POST':
