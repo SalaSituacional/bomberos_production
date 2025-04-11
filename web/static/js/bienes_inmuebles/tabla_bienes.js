@@ -1,31 +1,6 @@
 let paginaActual = 1;
 const porPagina = 15;
 
-// Mostrar loader (opcional)
-function mostrarLoader() {
-  // document.getElementById("loader").style.display = "block";
-}
-
-// Ocultar loader (opcional)
-function ocultarLoader() {
-  // document.getElementById("loader").style.display = "none";
-}
-
-// Fetch con manejo de errores y loader
-function fetchConLoader(url, opciones = {}) {
-  mostrarLoader();
-  return fetch(url, opciones)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-      return response.json();
-    })
-    .finally(() => {
-      ocultarLoader();
-    });
-}
-
 // Cargar bienes y actualizar tabla
 function cargarBienes(pagina = 1) {
   const filtro = document.getElementById("filterid")?.value.trim();
@@ -33,14 +8,17 @@ function cargarBienes(pagina = 1) {
     ? `/api/bienes/?identificador=${encodeURIComponent(filtro)}`
     : `/api/bienes/?page=${pagina}`;
 
-  fetchConLoader(url)
+  fetchWithLoader(url)
     .then((data) => {
       if (!data || !Array.isArray(data.bienes)) {
         throw new Error("Respuesta inesperada del servidor.");
       }
 
+      
       const tbody = document.querySelector("#tablaBienes tbody");
       tbody.innerHTML = "";
+      
+      
 
       data.bienes.forEach((bien) => {
         const fila = `
@@ -105,7 +83,13 @@ function cargarBienes(pagina = 1) {
     })
     .catch((error) => {
       console.error("Error al cargar bienes:", error);
-      alert("No se pudieron cargar los datos. Revisa la consola para más información.");
+
+      const tbody = document.querySelector("#tablaBienes tbody");
+      tbody.innerHTML = "";
+
+      const fila = "<tr><td colspan='10'>No Existen Bienes Asociados A Este Identificador</td></tr>"
+
+      tbody.insertAdjacentHTML("beforeend", fila);
     });
 }
 
@@ -115,11 +99,15 @@ function actualizarPaginacion(paginaActual, totalPaginas) {
   if (!paginacion) return;
 
   paginacion.innerHTML = `
-    <button class="btn btn-danger" ${paginaActual <= 1 ? "disabled" : ""} onclick="paginaActual--; cargarBienes(paginaActual);">
+    <button class="btn btn-danger" ${
+      paginaActual <= 1 ? "disabled" : ""
+    } onclick="paginaActual--; cargarBienes(paginaActual);">
       ← Anterior
     </button>
     <span class="margin-span">Página ${paginaActual} de ${totalPaginas}</span>
-    <button class="btn btn-danger" ${paginaActual >= totalPaginas ? "disabled" : ""} onclick="paginaActual++; cargarBienes(paginaActual);">
+    <button class="btn btn-danger" ${
+      paginaActual >= totalPaginas ? "disabled" : ""
+    } onclick="paginaActual++; cargarBienes(paginaActual);">
       Siguiente →
     </button>
   `;
@@ -131,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const filtroInput = document.getElementById("filterid");
   if (filtroInput) {
-    filtroInput.addEventListener("input", () => {
+    filtroInput.addEventListener("blur", () => {
       paginaActual = 1;
       cargarBienes(paginaActual);
     });

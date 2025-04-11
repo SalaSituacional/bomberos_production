@@ -3432,6 +3432,8 @@ def listar_bienes(request):
 
     if identificador:
         bienes_queryset = bienes_queryset.filter(identificador__icontains=identificador)
+        if not bienes_queryset.exists():
+            return JsonResponse({"error": "No se encontraron bienes con ese identificador."}, status=404)
 
     paginator = Paginator(bienes_queryset, per_page if not identificador else bienes_queryset.count())
     bienes = paginator.get_page(page)
@@ -3442,9 +3444,9 @@ def listar_bienes(request):
         "bienes": []
     }
 
-    for index, bien in enumerate(bienes, start=(bienes.start_index())):
+    for index, bien in enumerate(bienes, start=bienes.start_index()):
         data["bienes"].append({
-            "numero": index,  # 👈 este es el número real
+            "numero": index,
             "identificador": bien.identificador,
             "cantidad": bien.cantidad,
             "descripcion": bien.descripcion,
@@ -3456,6 +3458,7 @@ def listar_bienes(request):
         })
 
     return JsonResponse(data)
+
 
 def reasignar_bien(request):
     if request.method == 'POST':
