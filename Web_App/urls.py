@@ -88,6 +88,8 @@ urlpatterns = [
 
     # Unidades
     path('unidades/', View_Unidades),
+    path('unidades_inventario/', inventario_unidades, name='inventario_unidades'),
+    path('conductores/', conductores, name='conductores'),
     path('formularioUnidades/', View_Form_unidades),
     path('agregar_reportes/', agregar_reportes, name="agregar_reportes"),
     path('agregar_unidades/', agregar_unidades, name="agregar_unidades"),
