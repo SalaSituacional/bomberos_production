@@ -103,6 +103,7 @@ urlpatterns = [
     path("api/reportes_reparaciones/", contar_reporte_reparaciones, name="reportes_reparaciones"),
     path("api/reportes_electricas/", contar_reporte_electricas, name="reportes_electricas"),
     path("api/reportes_cambio_repuestos/", contar_reporte_cambio_repuestos, name="reportes_cambio_repuestos"),
+    path("api/reportes_colisiones_daños/", contar_reporte_colisiones_danos, name="reportes_colisiones_daños"),
 
     # Certificados Prevencion
     path('certificadosprevencion/', certificados_prevencion),
