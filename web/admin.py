@@ -47,6 +47,9 @@ admin.site.register(MovimientoBien)
 admin.site.register(CambiarEstadoBien)
 
 
+admin.site.register(LicenciaConductor)
+admin.site.register(CertificadoMedico)
+admin.site.register(Conductor)
 
 
 # admin.site.register(InstagramPost)
