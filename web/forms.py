@@ -2,6 +2,8 @@ from django import forms
 from.models import *
 from django.db.models import Q
 from django.db.models import Case, When, Value, IntegerField
+from django.forms import inlineformset_factory
+from django.forms import BaseInlineFormSet
 
 def Asignar_ops_Personal(): 
     jerarquias = [ "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
@@ -261,7 +263,108 @@ class FormularioRegistroPersonal(forms.Form):
     talla_zapato = forms.CharField()
     grupo_sanguineo = forms.CharField()
 
+# ============================================
 
+class LicenciaConductorForm(forms.ModelForm):
+    class Meta:
+        model = LicenciaConductor
+        fields = ['tipo_licencia', 'numero_licencia', 'fecha_emision', 
+                 'fecha_vencimiento', 'organismo_emisor', 'restricciones', 
+                 'observaciones']
+        widgets = {
+            'tipo_licencia': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'numero_licencia': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+            'fecha_emision': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'fecha_vencimiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'organismo_emisor': forms.TextInput(attrs={'class': 'form-control'}),
+            'restricciones': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'observaciones': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+        }
+
+
+class CertificadoMedicoForm(forms.ModelForm):
+    class Meta:
+        model = CertificadoMedico
+        fields = ['fecha_emision', 'fecha_vencimiento', 'centro_medico', 
+                'medico', 'observaciones']
+        widgets = {
+            'centro_medico': forms.TextInput(attrs={'class': 'form-control'}),
+            'medico': forms.TextInput(attrs={'class': 'form-control'}),
+            'fecha_emision': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'fecha_vencimiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'observaciones': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+        }
+
+class ConductorForm(forms.ModelForm):
+    class Meta:
+        model = Conductor
+        fields = ['personal', 'fecha_vencimiento', 'observaciones_generales']
+        widgets = {
+            'personal': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'fecha_vencimiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'observaciones_generales': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'})
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        jerarquias = [ "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+        
+        # Filtramos el personal y personalizamos cómo se muestra
+        self.fields['personal'].queryset = Personal.objects.exclude(id__in=[0, 4]).filter(status="Activo").filter(rol="Bombero").order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) )
+        
+        # Personalizar cómo se muestran las opciones en el select
+        self.fields['personal'].label_from_instance = lambda obj: f"{obj.nombres} {obj.apellidos} {obj.cedula} ({obj.jerarquia})"
+
+class LicenciaConductorFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        for form in self.forms:
+            if not form.has_changed() and form.instance.pk:
+                continue  # Saltar validación para no modificados
+            
+            if form.cleaned_data.get('DELETE'):
+                continue  # No validar los que se eliminarán
+            
+            # Solo validar para nuevas licencias o modificadas
+            if not form.instance.pk or form.has_changed():
+                numero_licencia = form.cleaned_data.get('numero_licencia')
+                tipo_licencia = form.cleaned_data.get('tipo_licencia')
+                
+                if numero_licencia and tipo_licencia:
+                    qs = LicenciaConductor.objects.filter(
+                        numero_licencia=numero_licencia,
+                        tipo_licencia=tipo_licencia
+                    )
+                    if form.instance.pk:
+                        qs = qs.exclude(pk=form.instance.pk)
+                    if qs.exists():
+                        form.add_error(None, 'Esta combinación de número y tipo de licencia ya existe')
+
+# Actualiza tu LicenciaFormSet
+LicenciaFormSet = inlineformset_factory(
+    Conductor,
+    LicenciaConductor,
+    form=LicenciaConductorForm,
+    formset=LicenciaConductorFormSet,
+    extra=1,
+    can_delete=True
+)
+CertificadoMedicoFormSet = inlineformset_factory(
+    Conductor, 
+    CertificadoMedico,
+    form=CertificadoMedicoForm,
+    extra=1,  # Solo un formulario extra vacío
+    max_num=1,  # Máximo un certificado
+    can_delete=True,
+    validate_max=True  # Validar que no se exceda el máximo
+)
 
 # Form1
 class SelectorDivision(forms.Form):

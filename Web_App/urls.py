@@ -89,7 +89,15 @@ urlpatterns = [
     # Unidades
     path('unidades/', View_Unidades),
     path('unidades_inventario/', inventario_unidades, name='inventario_unidades'),
+
     path('conductores/', conductores, name='conductores'),
+    path('agregar_conductores/', agregar_conductor, name='agregar_conductor'),
+    path('conductores/<int:id>/editar/', editar_conductor, name='editar_conductor'),
+
+    # API Endpoints
+    path('api/conductores/', api_conductores, name='api_conductores'),
+    path('api/conductores/<int:id>/', api_eliminar_conductor, name='api_eliminar_conductor'),
+
     path('formularioUnidades/', View_Form_unidades),
     path('agregar_reportes/', agregar_reportes, name="agregar_reportes"),
     path('agregar_unidades/', agregar_unidades, name="agregar_unidades"),

@@ -21,6 +21,9 @@ from django.shortcuts import get_object_or_404
 import fitz
 from django.db.models import Max
 from django.db.models import Count
+from django.utils.timezone import localdate
+from django.forms.models import model_to_dict
+from django.views.decorators.http import require_http_methods
 
 
 # Vista Personalizada para el error 404
@@ -332,19 +335,231 @@ def inventario_unidades(request):
         "apellidos": user["apellidos"],
     })
 
+# ========================
+
 @login_required
 def conductores(request):
     user = request.session.get('user')
-
     if not user:
         return redirect('/')
-    # Renderizar la página con los datos
+    
+    hoy = localdate()
+    conductores = Conductor.objects.select_related('personal').prefetch_related(
+        'licencias', 'certificados_medicos'
+    ).all()
+    
     return render(request, "mecanica/conductores.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
+        "conductores": conductores,
+        "hoy": hoy
     })
+
+@login_required
+def agregar_conductor(request):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+    
+    if request.method == 'POST':
+        form = ConductorForm(request.POST, request.FILES)
+        licencia_formset = LicenciaFormSet(request.POST, request.FILES, prefix='licencias')
+        certificado_formset = CertificadoMedicoFormSet(
+            request.POST, 
+            request.FILES, 
+            instance=form.instance if form.is_valid() else None,
+            prefix='certificados'
+        )
+        
+        if form.is_valid() and licencia_formset.is_valid() and certificado_formset.is_valid():
+            conductor = form.save()
+            
+            # Guardar licencias
+            licencias = licencia_formset.save(commit=False)
+            for licencia in licencias:
+                licencia.conductor = conductor
+                licencia.save()
+            
+            # Guardar certificados
+            certificados = certificado_formset.save(commit=False)
+            for certificado in certificados:
+                certificado.conductor = conductor
+                certificado.save()
+            
+            messages.success(request, 'Conductor registrado exitosamente!')
+            return redirect('conductores')
+    else:
+        form = ConductorForm()
+        licencia_formset = LicenciaFormSet(prefix='licencias')
+        certificado_formset = CertificadoMedicoFormSet(
+            prefix='certificados',
+            instance=None  # Para nuevo conductor
+        )
+    
+    return render(request, "mecanica/agregar_conductor.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "form": form,
+        "licencia_formset": licencia_formset,
+        "certificado_formset": certificado_formset,
+    })
+
+@login_required
+def editar_conductor(request, id):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+    
+    conductor = get_object_or_404(Conductor, id=id)
+    
+    if request.method == 'POST':
+        form = ConductorForm(request.POST, request.FILES, instance=conductor)
+        licencia_formset = LicenciaFormSet(request.POST, request.FILES, instance=conductor, prefix='licencias')
+        certificado_formset = CertificadoMedicoFormSet(request.POST, request.FILES, instance=conductor, prefix='certificados')
+        
+        # Validación mejorada
+        if form.is_valid():
+            conductor = form.save()
+            saved = True
+            
+            # Procesar licencias
+            if licencia_formset.is_valid():
+                for licencia_form in licencia_formset:
+                    if licencia_form.has_changed():
+                        if licencia_form.cleaned_data.get('DELETE'):
+                            if licencia_form.instance.pk:
+                                licencia_form.instance.delete()
+                        else:
+                            licencia = licencia_form.save(commit=False)
+                            licencia.conductor = conductor
+                            # Validación manual para evitar duplicados
+                            if not licencia.pk:  # Solo para nuevas licencias
+                                if LicenciaConductor.objects.filter(
+                                    numero_licencia=licencia.numero_licencia,
+                                    tipo_licencia=licencia.tipo_licencia
+                                ).exists():
+                                    messages.error(request, f'La licencia {licencia.numero_licencia} ya existe')
+                                    saved = False
+                                    break
+                            licencia.save()
+            else:
+                saved = False
+                for error in licencia_formset.errors:
+                    if '__all__' in error:
+                        messages.error(request, error['__all__'])
+            
+            # Procesar certificados
+            if saved and certificado_formset.is_valid():
+                for certificado_form in certificado_formset:
+                    if certificado_form.has_changed():
+                        if certificado_form.cleaned_data.get('DELETE'):
+                            if certificado_form.instance.pk:
+                                certificado_form.instance.delete()
+                        else:
+                            certificado = certificado_form.save(commit=False)
+                            certificado.conductor = conductor
+                            certificado.save()
+            elif saved:
+                saved = False
+                messages.error(request, 'Error en los certificados médicos')
+            
+            if saved:
+                messages.success(request, 'Conductor actualizado exitosamente!')
+                return redirect('conductores')
+        else:
+            messages.error(request, 'Error en el formulario principal')
+    
+    else:
+        form = ConductorForm(instance=conductor)
+        licencia_formset = LicenciaFormSet(instance=conductor, prefix='licencias')
+        certificado_formset = CertificadoMedicoFormSet(instance=conductor, prefix='certificados')
+    
+    context = {
+        "user": user,
+        "form": form,
+        "licencia_formset": licencia_formset,
+        "certificado_formset": certificado_formset,
+        "conductor": conductor,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    }
+    return render(request, "mecanica/editar_conductor.html", context)
+
+# def eliminar_conductor(request, id):
+#     user = request.session.get('user')
+#     if not user:
+#         return redirect('/')
+    
+#     conductor = get_object_or_404(Conductor, id=id)
+#     if request.method == 'POST':
+#         conductor.delete()
+#         return redirect('conductores')
+    
+#     return render(request, "mecanica/confirmar_eliminar.html", {
+#         "user": user,
+#         "conductor": conductor,
+#     })
+
+
+def api_conductores(request):
+    hoy = date.today().isoformat()
+    conductores = Conductor.objects.select_related('personal').prefetch_related(
+        'licencias', 'certificados_medicos'
+    ).all()
+    
+    data = []
+    for conductor in conductores:
+        conductor_dict = {
+            'id': conductor.id,
+            'activo': conductor.activo,
+            'observaciones_generales': conductor.observaciones_generales,
+            'personal': model_to_dict(conductor.personal),
+            'licencias': [],
+            'certificados_medicos': []
+        }
+        
+        for licencia in conductor.licencias.all():
+            conductor_dict['licencias'].append({
+                'id': licencia.id,
+                'tipo_licencia_display': licencia.get_tipo_licencia_display(),
+                'numero_licencia': licencia.numero_licencia,
+                'fecha_emision': licencia.fecha_emision.isoformat(),
+                'fecha_vencimiento': licencia.fecha_vencimiento.isoformat(),
+                'organismo_emisor': licencia.organismo_emisor,
+                'activa': licencia.activa
+            })
+        
+        for certificado in conductor.certificados_medicos.all():
+            conductor_dict['certificados_medicos'].append({
+                'id': certificado.id,
+                'fecha_emision': certificado.fecha_emision.isoformat(),
+                'fecha_vencimiento': certificado.fecha_vencimiento.isoformat(),
+                'centro_medico': certificado.centro_medico,
+                'medico': certificado.medico,
+                'activo': certificado.activo
+            })
+        
+        data.append(conductor_dict)
+    
+    return JsonResponse(data, safe=False)
+
+@require_http_methods(["DELETE"])
+def api_eliminar_conductor(request, id):
+    try:
+        conductor = Conductor.objects.get(id=id)
+        conductor.delete()
+        return JsonResponse({'success': True})
+    except Conductor.DoesNotExist:
+        return JsonResponse({'error': 'Conductor no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+# ==========================
 
 @login_required
 def Registros_bienes(request):
