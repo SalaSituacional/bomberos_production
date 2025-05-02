@@ -803,7 +803,8 @@ checkbox-styles {
   bottom: 20px;
   left: 20px;
   width: 320px;
-  background: linear-gradient(135deg, #b6243a, #d66e7e); /* Degradado azul */
+  background: linear-gradient(135deg, #b6243a, #d66e7e);
+  /* Degradado azul */
   color: white;
   padding: 20px;
   border-radius: 12px;
@@ -852,12 +853,13 @@ checkbox-styles {
 /* Animación de entrada */
 @keyframes fadeInUp {
   from {
-      opacity: 0;
-      transform: translateY(50px);
+    opacity: 0;
+    transform: translateY(50px);
   }
+
   to {
-      opacity: 1;
-      transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -1290,6 +1292,18 @@ checkbox-styles {
   justify-content: space-around;
 }
 
+.modal-header-info {
+  justify-content: center;
+  background-color: var(--color-header-dashboard);
+  width: 100%;
+  color: #FFF;
+  padding: 1.2rem;
+}
+
+.body-information {
+  padding: 1rem !important;
+}
+
 .header-dashboard-two {
   width: 100%;
   height: 4.5rem;
@@ -1432,6 +1446,14 @@ checkbox-styles {
   width: 100%;
   background-color: var(--color-button);
   color: #fff;
+}
+
+.modal-delete {
+  width: 100% !important;
+}
+
+.body-delete {
+  padding: 1rem;
 }
 
 .size-nav {
@@ -2072,7 +2094,8 @@ checkbox-styles {
   flex-wrap: wrap;
   font-size: 1.2rem;
 }
-.margin-span{
+
+.margin-span {
   margin: 0 .5rem;
 }
 
@@ -3978,6 +4001,7 @@ checkbox-styles {
   display: flex;
   margin: 0 auto;
   align-items: center;
+
   form {
     margin: 0 auto;
     width: 90%;
@@ -3994,60 +4018,72 @@ checkbox-styles {
     }
   }
 }
-.formularioeliminarinmueble{
-  margin: 1rem 0 ;
+
+.formularioeliminarinmueble {
+  margin: 1rem 0;
 }
-.contain-detalle-bienes{
+
+.contain-detalle-bienes {
   width: 80%;
   display: flex;
   flex-direction: column;
   text-align: start;
   margin: 0 auto;
 }
-#bien-info{
+
+#bien-info {
   width: 100%;
-  div{
+
+  div {
     width: 100%;
-    input{
+
+    input {
       width: 100%;
       margin: 0 auto;
     }
   }
 }
-.contain-inputs-data{
+
+.contain-inputs-data {
   width: 80%;
 }
-.contain-info-movimientos{
+
+.contain-info-movimientos {
   margin-bottom: 1rem;
   margin-top: 1rem;
 }
+
 /* 
 .form-new-drones {
   width: ;
 } */
-.buttons-sarp-form{
+.buttons-sarp-form {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  button{
+
+  button {
     width: 45%;
   }
 }
-.buttons-inmuebles-form{
+
+.buttons-inmuebles-form {
   width: 100%;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  button{
+
+  button {
     margin-top: .5rem;
     width: 40%;
   }
 }
-.formReasignacion{
+
+.formReasignacion {
   padding: 1rem;
   margin: 1rem 0;
 }
@@ -4058,7 +4094,8 @@ checkbox-styles {
   bottom: 20px;
   left: 20px;
   width: 320px;
-  background: linear-gradient(135deg, #b6243a, #d66e7e); /* Degradado azul */
+  background: linear-gradient(135deg, #b6243a, #d66e7e);
+  /* Degradado azul */
   color: white;
   padding: 20px;
   border-radius: 12px;
@@ -4106,7 +4143,7 @@ checkbox-styles {
   color: #333;
   padding: 12px 16px;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -4203,6 +4240,7 @@ checkbox-styles {
   cursor: pointer;
   margin-left: auto;
 }
+
 .cerrar-noti:hover {
   color: #f00;
 }
@@ -4218,12 +4256,13 @@ checkbox-styles {
 /* Animación de entrada */
 @keyframes fadeInUp {
   from {
-      opacity: 0;
-      transform: translateY(50px);
+    opacity: 0;
+    transform: translateY(50px);
   }
+
   to {
-      opacity: 1;
-      transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -4241,8 +4280,65 @@ checkbox-styles {
   max-width: 100%;
 }
 
+.size-font {
+  font-size: .9rem;
+}
 
+.modal-conductores-modify {
+  width: 100% !important;
+}
 
+.card-conductores-modify {
+  width: 80% !important;
+}
+
+.card-body-modify {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: flex-start;
+}
+
+.dsp-flex {
+  display: flex;
+}
+
+.expand-card {
+  width: 82%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card-header-modify {
+  font-size: 1.5rem;
+}
+
+.form-conductores {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  border-radius: 10px;
+  margin: 0 auto;
+  width: 50%;
+  border-radius: 2rem;
+  background-color: #FFF;
+  padding-bottom: 2rem;
+  div { 
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    width: 90%;
+    height: auto;
+    label{
+      margin: .8rem 0;
+    }
+  }
+  h3 {
+    text-align: center;
+  }
+}
 
 /* ------------------------------- Media querys ------------------------------------------ */
 
