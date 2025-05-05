@@ -35,259 +35,73 @@
 <br>
 
 <div class="container-fluid">
-
-  <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+  <form method="post" enctype="multipart/form-data" class="form-conductores">
     {% csrf_token %}
 
-    <input type="hidden" value="{{conductor.id}}"> 
+    <h3>Datos Personales</h3>
+    <div>
+      <label for="{{ form.personal.id_for_label }}">Personal:</label>
+      {{ form.personal }}
+      <label for="{{ form.fecha_vencimiento.id_for_label }}">Fecha Vencimiento (Cédula):</label>
+      {{ form.fecha_vencimiento }}
+    </div>
 
-    <!-- Sección Datos Personales -->
-    <div class="card mb-4 shadow-sm">
-      <div class="card-header bg-primary text-white">
-        <h4 class="mb-0"><i class="fas fa-id-card mr-2"></i>Datos Personales</h4>
+    <h3>Licencias de Conducir</h3>
+    {{ licencia_formset.management_form }}
+    <div id="licencias-container">
+      {% for form in licencia_formset %}
+      <div class="licencia-form">
+        <label for="{{ form.tipo_licencia.id_for_label }}">Tipo:</label>
+        {{ form.tipo_licencia }}
+        <label for="{{ form.numero_licencia.id_for_label }}">Número:</label>
+        {{ form.numero_licencia }}
+        <label for="{{ form.fecha_emision.id_for_label }}">Fecha Emisión:</label>
+        {{ form.fecha_emision }}
+        <label for="{{ form.fecha_vencimiento.id_for_label }}">Fecha Vencimiento:</label>
+        {{ form.fecha_vencimiento }}
+        <label for="{{ form.organismo_emisor.id_for_label }}">Organismo Emisor:</label>
+        {{ form.organismo_emisor }}
       </div>
-      <div class="card-body">
-        <div class="row">
-          <!-- Columna Izquierda -->
-          <div class="col-md-6">
-            <div class="form-group">
-              <label for="{{ form.personal.id_for_label }}" class="font-weight-bold">Personal:</label>
-              {{ form.personal }}
-              <small class="form-text text-muted">Seleccione el miembro del personal</small>
-            </div>
-          </div>
-          
-          <!-- Columna Derecha -->
-          <div class="col-md-6">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="{{ form.fecha_ingreso.id_for_label }}" class="font-weight-bold">Fecha Vencimiento (Cedula):</label>
-                {{ form.fecha_vencimiento }}
-              </div>
-            </div>
-      
-          </div>
-        </div>
-        
-      </div>
+      {% endfor %}
     </div>
-    
-    <!-- Sección Licencias -->
-    <div class="card mb-4 shadow-sm">
-      <div class="card-header bg-primary text-white">
-        <h4 class="mb-0"><i class="fas fa-id-card-alt mr-2"></i>Licencias de Conducir</h4>
-      </div>
-      <div class="card-body">
-        {{ licencia_formset.management_form }}
-        <div id="licencias-container">
-          {% for form in licencia_formset %}
-          <div class="licencia-form card mb-3">
-            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">Licencia #{{ forloop.counter }}</h5>
-              {% if form.instance.pk %}
-              <div class="custom-control custom-checkbox">
-                {{ form.DELETE }}
-                <label for="{{ form.DELETE.id_for_label }}" class="custom-control-label text-danger">Eliminar</label>
-              </div>
-              {% endif %}
-              {% if form.instance.pk %}
-                <input type="hidden" name="{{ form.prefix }}-id" value="{{ form.instance.id }}">
-              {% endif %}
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="{{ form.tipo_licencia.id_for_label }}" class="font-weight-bold">Tipo:</label>
-                    {{ form.tipo_licencia }}
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="{{ form.numero_licencia.id_for_label }}" class="font-weight-bold">Número:</label>
-                    {{ form.numero_licencia }}
-                  </div>
-                </div>
-              </div>
-              
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="{{ form.fecha_emision.id_for_label }}" class="font-weight-bold">Fecha Emisión:</label>
-                    {{ form.fecha_emision }}
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="{{ form.fecha_vencimiento.id_for_label }}" class="font-weight-bold">Fecha Vencimiento:</label>
-                    {{ form.fecha_vencimiento }}
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="{{ form.organismo_emisor.id_for_label }}" class="font-weight-bold">Organismo Emisor:</label>
-                    {{ form.organismo_emisor }}
-                  </div>
-                </div>
-              </div>
-              
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="{{ form.restricciones.id_for_label }}" class="font-weight-bold">Restricciones:</label>
-                    {{ form.restricciones }}
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="{{ form.observaciones.id_for_label }}" class="font-weight-bold">Observaciones:</label>
-                    {{ form.observaciones }}
-                  </div>
-                </div>
-              </div>
-              
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-        
-        <button type="button" class="btn btn-outline-primary mt-2" id="add-licencia">
-          <i class="fas fa-plus-circle mr-2"></i>Agregar otra licencia
-        </button>
-      </div>
-    </div>
-    
-    <!-- Sección Certificados Médicos -->
-    <div class="card mb-4 shadow-sm">
-      <div class="card-header bg-primary text-white">
-        <h4 class="mb-0"><i class="fas fa-file-medical mr-2"></i>Certificados Médicos</h4>
-      </div>
-      <div class="card-body">
-        {{ certificado_formset.management_form }}
-        <div id="certificados-container">
-          {% for form in certificado_formset %}
-          <div class="certificado-form card mb-3">
-            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-              <h5 class="mb-0">Certificado #{{ forloop.counter }}</h5>
-              {% if form.instance.pk %}
-                <div class="custom-control custom-checkbox">
-                  {{ form.DELETE }}
-                  <label for="{{ form.DELETE.id_for_label }}" class="custom-control-label text-danger">Eliminar</label>
-                </div>
-              {% endif %}
+    <button class="btn btn-danger" type="button" id="add-licencia">Agregar otra licencia</button>
 
-              {% if form.instance.pk %}
-                <input type="hidden" name="{{ form.prefix }}-id" value="{{ form.instance.id }}">
-              {% endif %}
-            </div>
-            <div class="card-body">
-              <div class="row d-flex justify-content-center">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="{{ form.fecha_emision.id_for_label }}" class="font-weight-bold">Fecha Emisión:</label>
-                    {{ form.fecha_emision }}
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="{{ form.fecha_vencimiento.id_for_label }}" class="font-weight-bold">Fecha Vencimiento:</label>
-                    {{ form.fecha_vencimiento }}
-                  </div>
-                </div>
-              </div>
-              
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="{{ form.centro_medico.id_for_label }}" class="font-weight-bold">Centro Médico:</label>
-                    {{ form.centro_medico }}
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="{{ form.medico.id_for_label }}" class="font-weight-bold">Médico:</label>
-                    {{ form.medico }}
-                  </div>
-                </div>
-              </div>
-              
-              <div class="form-group">
-                <label for="{{ form.observaciones.id_for_label }}" class="font-weight-bold">Observaciones:</label>
-                {{ form.observaciones }}
-              </div>
-              
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-        
-      </div>
-    </div>
-    
-    <!-- Observaciones Generales -->
-    <div class="card mb-4 shadow-sm">
-      <div class="card-header bg-light">
-        <h4 class="mb-0"><i class="fas fa-clipboard-list mr-2"></i>Observaciones Generales</h4>
-      </div>
-      <div class="card-body">
-        <div class="form-group">
-          {{ form.observaciones_generales }}
-        </div>
-      </div>
-    </div>
-    
-    <!-- Añade esto a tu plantilla para manejar mejor los errores -->
-    {% if licencia_formset.non_form_errors %}
-    <div class="alert alert-danger">
-        {% for error in licencia_formset.non_form_errors %}
-            {{ error }}
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    {% for form in licencia_formset %}
-        {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-            {% for error in form.non_field_errors %}
-                {{ error }}
-            {% endfor %}
-        </div>
+    <h3>Certificados Médicos</h3>
+    {{ certificado_formset.management_form }}
+    <div id="certificados-container">
+      {% for form in certificado_formset %}
+      <div>
+        <h5>Certificado #{{ forloop.counter }}</h5>
+        {% if form.instance.pk %}
+        {{ form.DELETE }}
+        <label for="{{ form.DELETE.id_for_label }}">Eliminar</label>
         {% endif %}
-    {% endfor %}
-
-    <!-- Botones de Acción -->
-    <div class="row mb-5">
-      <div class="col-12 text-right">
-        <a href="{% url 'conductores' %}" class="btn btn-lg btn-outline-secondary mr-2">
-          <i class="fas fa-times-circle mr-2"></i>Cancelar
-        </a>
-        <button type="submit" class="btn btn-lg btn-primary">
-          <i class="fas fa-save mr-2"></i>Guardar Conductor
-        </button>
+        <label for="{{ form.fecha_emision.id_for_label }}">Fecha Emisión:</label>
+        {{ form.fecha_emision }}
+        <label for="{{ form.fecha_vencimiento.id_for_label }}">Fecha Vencimiento:</label>
+        {{ form.fecha_vencimiento }}
+        <label for="{{ form.centro_medico.id_for_label }}">Centro Médico:</label>
+        {{ form.centro_medico }}
+        <label for="{{ form.medico.id_for_label }}">Médico:</label>
+        {{ form.medico }}
+        <label for="{{ form.observaciones.id_for_label }}">Observaciones:</label>
+        {{ form.observaciones }}
       </div>
+      {% endfor %}
     </div>
+
+    <h3>Observaciones Generales</h3>
+    <div class="">
+      {{ form.observaciones_generales }}
+    </div>
+
+    <section class="buttons">
+      <a href="{% url 'conductores' %}" class="btn btn-danger">Cancelar</a>
+      <button class="btn btn-danger" type="submit">Guardar Conductor</button>
+    </section>
   </form>
 </div>
 
-<style>
-  .card-header {
-    border-radius: 0.25rem 0.25rem 0 0 !important;
-  }
-  .custom-switch .custom-control-label::after {
-    background-color: #fff;
-  }
-  .custom-control-input:checked~.custom-control-label::before {
-    border-color: #007bff;
-    background-color: #007bff;
-  }
-  textarea {
-    min-height: 100px;
-    resize: vertical;
-  }
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-</style>
 
 <footer class="footer">
   <section class="text-reserved">
@@ -326,34 +140,51 @@
 </script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     // Funcionalidad para agregar más licencias
-    document.getElementById('add-licencia').addEventListener('click', function() {
-        const totalForms = document.getElementById('id_licencias-TOTAL_FORMS');
-        const formNum = parseInt(totalForms.value);
-        const newForm = document.querySelector('.licencia-form').cloneNode(true);
-        
-        // Actualizar todos los atributos name/id con el nuevo índice
-        const regex = new RegExp('licencias-' + (formNum - 1) + '-', 'g');
-        newForm.innerHTML = newForm.innerHTML.replace(regex, 'licencias-' + formNum + '-');
-        
-        // Limpiar valores
-        const inputs = newForm.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => {
-            if (input.type !== 'hidden' && input.name.indexOf('DELETE') === -1) {
-                if (input.type === 'checkbox' || input.type === 'radio') {
-                    input.checked = false;
-                } else {
-                    input.value = '';
-                }
-            }
-        });
-        
-        // Insertar antes del botón
-        document.querySelector('#add-licencia').before(newForm);
-        totalForms.value = formNum + 1;
+    document.getElementById('add-licencia').addEventListener('click', function () {
+      const totalForms = document.querySelector('input[name="licencias-TOTAL_FORMS"]');
+      const formNum = parseInt(totalForms.value);
+      const licenciaContainer = document.getElementById('licencias-container');
+      const newForm = licenciaContainer.firstElementChild.cloneNode(true); // Clona el primer div dentro del contenedor
+
+      // Actualizar todos los atributos name/id con el nuevo índice
+      const oldPrefix = 'licencias-0-'; // Asumimos que el primer formulario tiene índice 0
+      const newPrefix = `licencias-${formNum}-`;
+      const regex = new RegExp(oldPrefix.replace('-', '\\-'), 'g');
+
+      function updateAttributes(element) {
+        if (element.hasAttribute('name')) {
+          element.setAttribute('name', element.getAttribute('name').replace(regex, newPrefix));
+        }
+        if (element.hasAttribute('id')) {
+          element.setAttribute('id', element.getAttribute('id').replace(/id_licencias-\d+-(.+)/, `id_licencias-${formNum}-$1`));
+        }
+        if (element.hasAttribute('for')) {
+          element.setAttribute('for', element.getAttribute('for').replace(/id_licencias-\d+-(.+)/, `id_licencias-${formNum}-$1`));
+        }
+      }
+
+      const inputsAndLabels = newForm.querySelectorAll('input, select, textarea, label');
+      inputsAndLabels.forEach(updateAttributes);
+
+      // Limpiar valores
+      const inputs = newForm.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        if (input.type !== 'hidden' && !input.name.includes('DELETE')) {
+          if (input.type === 'checkbox' || input.type === 'radio') {
+            input.checked = false;
+          } else {
+            input.value = '';
+          }
+        }
+      });
+
+      // Insertar al final del contenedor
+      licenciaContainer.appendChild(newForm);
+      totalForms.value = formNum + 1;
     });
   });
-  </script>
+</script>
 
 {% endblock %}
