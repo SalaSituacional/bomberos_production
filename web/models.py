@@ -260,6 +260,8 @@ class Unidades(models.Model):
   def __str__(self):
     return self.nombre_unidad
 
+# ===================================================
+
 class Tipo_Incendio(models.Model):
   tipo_incendio = models.CharField(max_length=70)
 
@@ -1290,3 +1292,91 @@ class CambiarEstadoBien(models.Model):
 
     def __str__(self):
         return f"Cambio de Estado de {self.bien.identificador} a {self.nuevo_estado} en {self.fecha_orden}"
+
+
+
+
+
+
+
+
+# ===================================================================================================================================================================================
+
+# from django.db import models
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+
+class CategoriaHerramienta(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
+    descripcion = models.TextField(blank=True)
+    
+    def __str__(self):
+        return self.nombre
+
+class Herramienta(models.Model):
+    ESTADOS = [
+        ('B', 'Bueno'),
+        ('R', 'Regular'),
+        ('M', 'Malo'),
+        ('P', 'En reparación'),
+    ]
+    
+    categoria = models.ForeignKey(CategoriaHerramienta, on_delete=models.PROTECT)
+    nombre = models.CharField(max_length=100)
+    cantidad_total = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    modelo = models.CharField(max_length=50, blank=True)
+    marca = models.CharField(max_length=50, blank=True)
+    numero_serie = models.CharField(max_length=50, blank=True, unique=True, null=True)
+    fecha_adquisicion = models.DateField(null=True, blank=True)
+    estado = models.CharField(max_length=1, choices=ESTADOS, default='B')
+    activo = models.BooleanField(default=True)
+    
+    @property
+    def cantidad_disponible(self):
+        asignadas = self.asignacionherramienta_set.filter(fecha_devolucion__isnull=True).count()
+        return self.cantidad_total - asignadas
+    
+    def __str__(self):
+        return f"{self.nombre} ({self.cantidad_total})"
+
+class AsignacionHerramienta(models.Model):
+    herramienta = models.ForeignKey(Herramienta, on_delete=models.CASCADE)
+    unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
+    fecha_asignacion = models.DateField(auto_now_add=True)
+    fecha_devolucion = models.DateField(null=True, blank=True)
+    responsable = models.ForeignKey(Personal, on_delete=models.CASCADE)
+    observaciones = models.TextField(blank=True)
+    
+    class Meta:
+        unique_together = ('herramienta', 'unidad', 'fecha_devolucion')
+        verbose_name_plural = "Asignaciones de herramientas"
+    
+    def clean(self):
+        # Validar que no se exceda la cantidad disponible
+        if not self.fecha_devolucion and self.herramienta.cantidad_disponible <= 0:
+            raise ValidationError("No hay suficientes unidades disponibles de esta herramienta")
+    
+    def __str__(self):
+        return f"{self.herramienta} → {self.unidad}"
+
+class InventarioUnidad(models.Model):
+    unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
+    fecha_revision = models.DateField(auto_now_add=True)
+    realizado_por = models.ForeignKey(Personal, on_delete=models.CASCADE)
+    observaciones = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"Inventario {self.unidad} - {self.fecha_revision}"
+
+class DetalleInventario(models.Model):
+    inventario = models.ForeignKey(InventarioUnidad, on_delete=models.CASCADE)
+    herramienta = models.ForeignKey(Herramienta, on_delete=models.PROTECT)
+    presente = models.BooleanField(default=True)
+    estado = models.CharField(max_length=1, choices=Herramienta.ESTADOS)
+    observaciones = models.TextField(blank=True)
+    
+    class Meta:
+        unique_together = ('inventario', 'herramienta')
+    
+    def __str__(self):
+        return f"{self.herramienta} en {self.inventario}"

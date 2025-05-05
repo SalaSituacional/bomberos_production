@@ -7,10 +7,11 @@
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
 {% endif %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
-    <h3 class="division-title">Inventario de unidades</h3>
+    <h3 class="division-title">Herramientas</h3>
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,7 +29,52 @@
     </section>
   </div>
 </div>
-<div class="">
+
+<div class="container-fluid">
+  
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item"><a class="nav-link" href="{% url 'inventario-list' %}">Inventario</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'asignacion-list' %}">Asignaciones</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'reporte-inventario' %}">Reportes</a></li>
+            </ul>
+        </div>
+    </div> 
+  </nav>
+
+<br>
+
+<a href="{% url 'herramienta-create' %}" class="btn btn-primary mb-3">Nueva Herramienta</a>
+
+<table class="table table-hover" style="width: 100%;">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Cantidad Total</th>
+            <th>Disponibles</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for herramienta in herramientas %}
+        <tr>
+            <td>{{ herramienta.nombre }}</td>
+            <td>{{ herramienta.categoria }}</td>
+            <td>{{ herramienta.cantidad_total }}</td>
+            <td>{{ herramienta.cantidad_disponible }}</td>
+            <td>{{ herramienta.get_estado_display }}</td>
+            <td>
+                <a href="{% url 'herramienta-update' herramienta.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{% url 'asignacion-create' %}?herramienta={{ herramienta.pk }}" class="btn btn-sm btn-success">Asignar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 </div>
 
 <footer class="footer">
@@ -36,6 +82,7 @@
     <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
+
 <script>
   // Obtener el formulario por su ID
   const form = document.getElementById("");
@@ -65,5 +112,6 @@
   }
 
 </script>
+
 <script src="../../static/js/loader-function.js"></script>
 {% endblock %}

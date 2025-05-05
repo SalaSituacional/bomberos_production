@@ -88,7 +88,6 @@ urlpatterns = [
 
     # Unidades
     path('unidades/', View_Unidades),
-    path('unidades_inventario/', inventario_unidades, name='inventario_unidades'),
 
     path('conductores/', conductores, name='conductores'),
     path('agregar_conductores/', agregar_conductor, name='agregar_conductor'),
@@ -188,4 +187,25 @@ urlpatterns = [
     path('generar-excel-reportes-sarp/', generar_excel_reportes_sarp, name='generar_excel_sarp'),
     path('generar-excel-bienesmunicipales/', generar_excel_bienes_municipales, name='generar_excel_sarp'),
 
+
+    # Urls Para el Area de Invenario de Unidades
+    # Herramientas
+    path('unidades_inventario/', herramienta_list, name='inventario_unidades'),
+    path('herramientas/nueva/', herramienta_create, name='herramienta-create'),
+    path('herramientas/<int:pk>/editar/', herramienta_update, name='herramienta-update'),
+    
+    # Asignaciones
+    path('asignaciones/', asignacion_list, name='asignacion-list'),
+    path('asignaciones/nueva/', asignacion_create, name='asignacion-create'),
+    path('asignaciones/<int:pk>/devolver/', asignacion_devolver, name='asignacion-devolver'),
+    
+    # Inventarios
+    path('inventarios/nuevo/', inventario_create, name='inventario-create'),
+    path('inventarios/<int:pk>/', inventario_detail, name='inventario-detalle'),
+    
+    path('inventarios/', inventario_list, name='inventario-list'),
+    path('inventarios/ajax/<int:pk>/', inventario_detail_ajax, name='inventario-detail-ajax'),
+
+    # Reportes
+    path('reportes/', reporte_inventario, name='reporte-inventario'),
 ]

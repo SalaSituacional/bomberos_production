@@ -1349,3 +1349,122 @@ class CambiarEstadoBienForm(forms.Form):
     estado_actual = forms.CharField(max_length=100)
     nuevo_estado = forms.ChoiceField(choices=EstadoBien.choices)
     fecha_orden = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+
+
+
+# =============================================================================== Formularios Para el Area de Inventarios Unidades ===============================================
+
+
+
+class HerramientaForm(forms.ModelForm):
+    class Meta:
+        model = Herramienta
+        fields = '__all__'
+        widgets = {
+            'fecha_adquisicion': forms.DateInput(attrs={'type': 'date'}),
+            'descripcion': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class AsignacionForm(forms.ModelForm):
+    class Meta:
+        model = AsignacionHerramienta
+        fields = '__all__'
+        widgets = {
+            'fecha_asignacion': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_devolucion': forms.DateInput(attrs={'type': 'date'}),
+            'observaciones': forms.Textarea(attrs={'rows': 3}),
+        }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        herramienta = cleaned_data.get('herramienta')
+        fecha_devolucion = cleaned_data.get('fecha_devolucion')
+        
+        if not fecha_devolucion:
+            if herramienta and herramienta.cantidad_disponible <= 0:
+                raise ValidationError(f"No hay unidades disponibles de {herramienta}. Cantidad total: {herramienta.cantidad_total}, Asignadas: {herramienta.cantidad_total - herramienta.cantidad_disponible}")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Filtrar herramientas disponibles
+        if 'herramienta' in self.fields:
+            self.fields['herramienta'].queryset = self.fields['herramienta'].queryset.filter(
+                activo=True,
+                cantidad_total__gt=0
+            )
+            
+        if 'responsable' in self.fields:
+            jerarquias = [ "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+
+            # Excluir ciertos IDs primero
+            self.fields['responsable'].queryset = self.fields['responsable'].queryset.exclude(id__in=[0, 4]).filter(status="Activo").filter(rol="Bombero").order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) )
+            # Luego personalizar la visualización
+            self.fields['responsable'].label_from_instance = lambda obj: f"{obj.jerarquia} {obj.nombres} {obj.apellidos}"
+
+        if 'unidad' in self.fields:
+            # Excluir ciertos IDs primero
+            self.fields['unidad'].queryset = self.fields['unidad'].queryset.exclude(id__in=[26, 30, 27]).order_by("id")
+
+class DevolucionHerramientaForm(forms.ModelForm):
+    class Meta:
+        model = AsignacionHerramienta
+        fields = ['fecha_devolucion', 'observaciones']
+        widgets = {
+            'fecha_devolucion': forms.DateInput(attrs={'type': 'date'}),
+            'observaciones': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class InventarioForm(forms.ModelForm):
+    class Meta:
+        model = InventarioUnidad
+        fields = '__all__'
+        widgets = {
+            'fecha_revision': forms.DateInput(attrs={'type': 'date'}),
+            'observaciones': forms.Textarea(attrs={'rows': 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if 'realizado_por' in self.fields:
+            jerarquias = [ "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+
+            # Excluir ciertos IDs primero
+            self.fields['realizado_por'].queryset = self.fields['realizado_por'].queryset.exclude(id__in=[0, 4]).filter(status="Activo").filter(rol="Bombero").order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) )
+            # Luego personalizar la visualización
+            self.fields['realizado_por'].label_from_instance = lambda obj: f"{obj.jerarquia} {obj.nombres} {obj.apellidos}"
+
+        if 'unidad' in self.fields:
+            # Excluir ciertos IDs primero
+            self.fields['unidad'].queryset = self.fields['unidad'].queryset.exclude(id__in=[26, 30, 27]).order_by("id")
+
+class DetalleInventarioForm(forms.ModelForm):
+    class Meta:
+        model = DetalleInventario
+        fields = '__all__'
+        widgets = {
+            'observaciones': forms.Textarea(attrs={'rows': 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Filtrar herramientas disponibles
+        if 'herramienta' in self.fields:
+            self.fields['herramienta'].queryset = self.fields['herramienta'].queryset.filter(
+                activo=True,
+                cantidad_total__gt=0
+            )
+            
+        if 'responsable' in self.fields:
+            jerarquias = [ "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+
+            # Excluir ciertos IDs primero
+            self.fields['responsable'].queryset = self.fields['responsable'].queryset.exclude(id__in=[0, 4]).filter(status="Activo").filter(rol="Bombero").order_by( Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)]) )
+            # Luego personalizar la visualización
+            self.fields['responsable'].label_from_instance = lambda obj: f"{obj.jerarquia} {obj.nombres} {obj.apellidos}"
+
+        if 'unidad' in self.fields:
+            # Excluir ciertos IDs primero
+            self.fields['unidad'].queryset = self.fields['unidad'].queryset.exclude(id__in=[26, 30, 27]).order_by("id")
