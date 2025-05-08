@@ -4339,7 +4339,97 @@ checkbox-styles {
     text-align: center;
   }
 }
-
+.nav-inventario{
+  margin-top: 2rem;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
+.border-radius-modify{
+  position: absolute;
+  margin: 0 auto;
+  width: 80%;
+  border-radius: 20px;
+  margin: 0;
+  padding: 0;
+}
+.container-filter-inventario{
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+  background-color: #FFF;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  padding: 1rem !important;
+  flex-wrap: wrap;
+  i{
+    margin-left: .5rem;
+    font-size: 2rem;
+  }
+}
+.inventario-filter{
+  width: 40%;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+.container-modify{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.form-nueva-herramienta{
+  margin: 0 auto;
+  width: 70%;
+  background-color: #FFF;
+  padding: 3rem;
+  border-radius: 20px;
+  h2{
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 1rem;
+  }
+  div{
+    margin: 0 auto;
+    width: 80%;
+    padding: 1rem;  
+  }
+}
+.buttons-footer-tools{
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  button{
+    width: 80%;
+    margin-bottom: 1rem;
+  }
+}
+.container-info-tool{
+  width: 100%;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  justify-content: baseline;
+}
+.modal-body-modify{
+  width: 100% !important;
+}
+.div-responsive-table{
+  width:100%;
+  overflow: scroll;
+}
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
@@ -6101,6 +6191,22 @@ checkbox-styles {
     button {
       margin-bottom: 1rem;
     }
+  }
+  .nav-tabs {
+    flex-direction: column;
+    margin: 0 auto;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    position: relative;
+    ul{
+      text-align: center;
+    }
+  }
+  .container-filter-inventario{
+    flex-direction: column;
   }
 
 }

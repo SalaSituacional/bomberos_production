@@ -69,3 +69,15 @@ function conteoReportesCambioRepuestos(data) {
     data.reportes_semana;
   document.getElementById("cambio-repuestos-diario").innerHTML = data.reportes_hoy;
 }
+
+fetchWithLoader("/api/reportes_colisiones_daños/")
+  .then((response) => response)
+  .then((data) => conteoReportesColisionesDaños(data))
+  .catch((error) => console.error("Error al obtener los datos", error));
+
+function conteoReportesColisionesDaños(data) {
+  document.getElementById("reportes-colisiones-mensual").innerHTML = data.reportes_mes;
+  document.getElementById("reportes-colisiones-semanal").innerHTML =
+    data.reportes_semana;
+  document.getElementById("reportes-colisiones-diario").innerHTML = data.reportes_hoy;
+}
