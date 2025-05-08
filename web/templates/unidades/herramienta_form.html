@@ -99,21 +99,20 @@
             {% endif %}
         </div>
         <div>
-
             {{ form.vida_util.label_tag }}
             {{ form.vida_util }}
-            <span class="input-group-text">meses</span>
             {% if form.vida_util.errors %}
             <p class="text-danger">{{ form.vida_util.errors }}</p>
             {% endif %}
         </div>
-        <div class="form-check">
-            <label for="id_activo" class="form-check-label">{{ form.activo.label }}</label>
-            
-            {{ form.activo }}
-            {% if form.activo.errors %}
-            <p class="text-danger">{{ form.activo.errors }}</p>
-            {% endif %}
+        <div class="">
+            <label for="id_activo" class="form-control form-check-label">Activo:</label>
+            <div class="form-check">
+                {{ form.activo }}
+                {% if form.activo.errors %}
+                <p class="text-danger">{{ form.activo.errors }}</p>
+                {% endif %}
+            </div>
         </div>
 
         <div class="buttons-footer-tools">
