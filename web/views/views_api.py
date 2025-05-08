@@ -3130,6 +3130,42 @@ def contar_reporte_cambio_repuestos(request):
 
     return JsonResponse(datos)
 
+def contar_reporte_colisiones_danos(request):
+    # Obtener el servicio "Colisiones o Daños"
+    try:
+        servicio_colisiones = Servicios.objects.get(nombre_servicio="Colisiones o Daños")
+    except Servicios.DoesNotExist:
+        return JsonResponse({"error": "El servicio no existe"}, status=404)
+
+    # Obtener fechas
+    hoy = now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de esta semana
+    inicio_mes = hoy.replace(day=1)  # Primer día del mes
+
+    # Contar reportes por día
+    reportes_hoy = Reportes_Unidades.objects.filter(
+        servicio=servicio_colisiones, fecha=hoy
+    ).count()
+
+    # Contar reportes por semana
+    reportes_semana = Reportes_Unidades.objects.filter(
+        servicio=servicio_colisiones, fecha__range=[inicio_semana, hoy]
+    ).count()
+
+    # Contar reportes por mes
+    reportes_mes = Reportes_Unidades.objects.filter(
+        servicio=servicio_colisiones, fecha__range=[inicio_mes, hoy]
+    ).count()
+
+    # Crear respuesta JSON
+    datos = {
+        "reportes_hoy": reportes_hoy,
+        "reportes_semana": reportes_semana,
+        "reportes_mes": reportes_mes,
+    }
+
+    return JsonResponse(datos)
+
 # =============================================================================== APIS PARA LA SECCION DE DRONES ====================================================================
 
 def registrar_drones(request):

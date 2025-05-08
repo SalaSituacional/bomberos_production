@@ -53,7 +53,80 @@ class Detalles_Personal(models.Model):
 
   def __str__(self):
     return self.personal.nombres + " -- " + str(self.fecha_nacimiento) + " -- " + self.talla_camisa + " -- " + self.talla_pantalon + " -- " + self.talla_zapato + " -- " + self.grupo_sanguineo + " -- " + str(self.fecha_ingreso)
-  
+
+class LicenciaConductor(models.Model):
+    TIPO_LICENCIA_CHOICES = [
+        ('2', '2° Segundo Grado'),
+        ('3', '3° Tercer Grado'),
+        ('4', '4° Cuarto Grado'),
+        ('5', '5° Quinto Grado'),
+    ]
+    
+    conductor = models.ForeignKey('Conductor', on_delete=models.CASCADE, related_name='licencias')
+    tipo_licencia = models.CharField(max_length=1, choices=TIPO_LICENCIA_CHOICES)
+    numero_licencia = models.CharField(max_length=50)
+    fecha_emision = models.DateField()
+    fecha_vencimiento = models.DateField()
+    organismo_emisor = models.CharField(max_length=100)
+    restricciones = models.TextField(blank=True, null=True)
+    observaciones = models.TextField(blank=True, null=True)
+    activa = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return f"{self.get_tipo_licencia_display()} - {self.numero_licencia} (Vence: {self.fecha_vencimiento})"
+
+    class Meta:
+        verbose_name = "Licencia de Conductor"
+        verbose_name_plural = "Licencias de Conductores"
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['numero_licencia', 'tipo_licencia'],
+                name='unique_licencia_numero_tipo'
+            )
+        ]
+
+class CertificadoMedico(models.Model):
+    conductor = models.ForeignKey('Conductor', on_delete=models.CASCADE, related_name='certificados_medicos')
+    fecha_emision = models.DateField()
+    fecha_vencimiento = models.DateField()
+    centro_medico = models.CharField(max_length=200)
+    medico = models.CharField(max_length=200)
+    observaciones = models.TextField(blank=True, null=True)
+    activo = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return f"Certificado médico - {self.centro_medico} (Vence: {self.fecha_vencimiento})"
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['conductor'],
+                name='unique_certificado_por_conductor'
+            )
+        ]
+
+class Conductor(models.Model):
+    personal = models.OneToOneField(Personal, on_delete=models.CASCADE, related_name='conductor')
+    fecha_vencimiento = models.DateField(blank=True, null=True)
+    activo = models.BooleanField(default=True)
+    observaciones_generales = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.personal.nombres} {self.personal.apellidos} - C.I.: {self.personal.cedula or 'N/D'}"
+    
+    @property
+    def licencia_activa(self):
+        return self.licencias.filter(activa=True).first()
+    
+    @property
+    def certificado_medico_activo(self):
+        return self.certificados_medicos.filter(activo=True).first()
+    
+    class Meta:
+        verbose_name = "Conductor"
+        verbose_name_plural = "Conductores"
+
 # Tabla de usuarios que pueden entrar a la pagina
 class Usuarios(models.Model):
     user = models.CharField(max_length=20)
@@ -186,6 +259,8 @@ class Unidades(models.Model):
   
   def __str__(self):
     return self.nombre_unidad
+
+# ===================================================
 
 class Tipo_Incendio(models.Model):
   tipo_incendio = models.CharField(max_length=70)
@@ -1217,3 +1292,91 @@ class CambiarEstadoBien(models.Model):
 
     def __str__(self):
         return f"Cambio de Estado de {self.bien.identificador} a {self.nuevo_estado} en {self.fecha_orden}"
+
+
+
+
+
+
+
+
+# ===================================================================================================================================================================================
+
+# from django.db import models
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+
+class CategoriaHerramienta(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
+    descripcion = models.TextField(blank=True)
+    
+    def __str__(self):
+        return self.nombre
+
+class Herramienta(models.Model):
+    ESTADOS = [
+        ('B', 'Bueno'),
+        ('R', 'Regular'),
+        ('M', 'Malo'),
+        ('P', 'En reparación'),
+    ]
+    
+    categoria = models.ForeignKey(CategoriaHerramienta, on_delete=models.PROTECT)
+    nombre = models.CharField(max_length=100)
+    cantidad_total = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
+    modelo = models.CharField(max_length=50, blank=True)
+    marca = models.CharField(max_length=50, blank=True)
+    numero_serie = models.CharField(max_length=50, blank=True, unique=True, null=True)
+    fecha_adquisicion = models.DateField(null=True, blank=True)
+    estado = models.CharField(max_length=1, choices=ESTADOS, default='B')
+    activo = models.BooleanField(default=True)
+    
+    @property
+    def cantidad_disponible(self):
+        asignadas = self.asignacionherramienta_set.filter(fecha_devolucion__isnull=True).count()
+        return self.cantidad_total - asignadas
+    
+    def __str__(self):
+        return f"{self.nombre} ({self.cantidad_total})"
+
+class AsignacionHerramienta(models.Model):
+    herramienta = models.ForeignKey(Herramienta, on_delete=models.CASCADE)
+    unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
+    fecha_asignacion = models.DateField(auto_now_add=True)
+    fecha_devolucion = models.DateField(null=True, blank=True)
+    responsable = models.ForeignKey(Personal, on_delete=models.CASCADE)
+    observaciones = models.TextField(blank=True)
+    
+    class Meta:
+        unique_together = ('herramienta', 'unidad', 'fecha_devolucion')
+        verbose_name_plural = "Asignaciones de herramientas"
+    
+    def clean(self):
+        # Validar que no se exceda la cantidad disponible
+        if not self.fecha_devolucion and self.herramienta.cantidad_disponible <= 0:
+            raise ValidationError("No hay suficientes unidades disponibles de esta herramienta")
+    
+    def __str__(self):
+        return f"{self.herramienta} → {self.unidad}"
+
+class InventarioUnidad(models.Model):
+    unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
+    fecha_revision = models.DateField(auto_now_add=True)
+    realizado_por = models.ForeignKey(Personal, on_delete=models.CASCADE)
+    observaciones = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"Inventario {self.unidad} - {self.fecha_revision}"
+
+class DetalleInventario(models.Model):
+    inventario = models.ForeignKey(InventarioUnidad, on_delete=models.CASCADE)
+    herramienta = models.ForeignKey(Herramienta, on_delete=models.PROTECT)
+    presente = models.BooleanField(default=True)
+    estado = models.CharField(max_length=1, choices=Herramienta.ESTADOS)
+    observaciones = models.TextField(blank=True)
+    
+    class Meta:
+        unique_together = ('inventario', 'herramienta')
+    
+    def __str__(self):
+        return f"{self.herramienta} en {self.inventario}"

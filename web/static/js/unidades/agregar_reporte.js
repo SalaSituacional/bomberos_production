@@ -5,8 +5,6 @@ botones.forEach((boton) => {
     let id_unidad = this.getAttribute("data-unidad"); // ID de la unidad
     let unidad = this.getAttribute("data-unidad-nombre"); // Nombre de la unidad
 
-    console.log(id_unidad, unidad);
-
     // Obtener el elemento input original
     let input = document.getElementById("id_id_unidad");
 

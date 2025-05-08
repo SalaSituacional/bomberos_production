@@ -88,6 +88,15 @@ urlpatterns = [
 
     # Unidades
     path('unidades/', View_Unidades),
+
+    path('conductores/', conductores, name='conductores'),
+    path('agregar_conductores/', agregar_conductor, name='agregar_conductor'),
+    path('conductores/<int:id>/editar/', editar_conductor, name='editar_conductor'),
+
+    # API Endpoints
+    path('api/conductores/', api_conductores, name='api_conductores'),
+    path('api/conductores/<int:id>/', api_eliminar_conductor, name='api_eliminar_conductor'),
+
     path('formularioUnidades/', View_Form_unidades),
     path('agregar_reportes/', agregar_reportes, name="agregar_reportes"),
     path('agregar_unidades/', agregar_unidades, name="agregar_unidades"),
@@ -103,6 +112,7 @@ urlpatterns = [
     path("api/reportes_reparaciones/", contar_reporte_reparaciones, name="reportes_reparaciones"),
     path("api/reportes_electricas/", contar_reporte_electricas, name="reportes_electricas"),
     path("api/reportes_cambio_repuestos/", contar_reporte_cambio_repuestos, name="reportes_cambio_repuestos"),
+    path("api/reportes_colisiones_daños/", contar_reporte_colisiones_danos, name="reportes_colisiones_daños"),
 
     # Certificados Prevencion
     path('certificadosprevencion/', certificados_prevencion),
@@ -177,4 +187,25 @@ urlpatterns = [
     path('generar-excel-reportes-sarp/', generar_excel_reportes_sarp, name='generar_excel_sarp'),
     path('generar-excel-bienesmunicipales/', generar_excel_bienes_municipales, name='generar_excel_sarp'),
 
+
+    # Urls Para el Area de Invenario de Unidades
+    # Herramientas
+    path('unidades_inventario/', herramienta_list, name='inventario_unidades'),
+    path('herramientas/nueva/', herramienta_create, name='herramienta-create'),
+    path('herramientas/<int:pk>/editar/', herramienta_update, name='herramienta-update'),
+    
+    # Asignaciones
+    path('asignaciones/', asignacion_list, name='asignacion-list'),
+    path('asignaciones/nueva/', asignacion_create, name='asignacion-create'),
+    path('asignaciones/<int:pk>/devolver/', asignacion_devolver, name='asignacion-devolver'),
+    
+    # Inventarios
+    path('inventarios/nuevo/', inventario_create, name='inventario-create'),
+    path('inventarios/<int:pk>/', inventario_detail, name='inventario-detalle'),
+    
+    path('inventarios/', inventario_list, name='inventario-list'),
+    path('inventarios/ajax/<int:pk>/', inventario_detail_ajax, name='inventario-detail-ajax'),
+
+    # Reportes
+    path('reportes/', reporte_inventario, name='reporte-inventario'),
 ]
