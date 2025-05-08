@@ -31,7 +31,7 @@
         </section>
     </div>
 </div>
-< class="container-fluid">
+<div class="container-fluid">
     <nav class="navbar navbar-expand-lg nav-inventario">
         <ul class="nav nav-tabs border-radius-modify">
             <li class="nav-item"><a class="nav-link" href="{% url 'inventario_unidades' %}">Herramientas</a></li>
@@ -56,39 +56,40 @@
     </div>
     <div class="div-responsive-table responsive-table">
 
-    <table class="table table-bordered" id="dataTable" cellspacing="0" style="width: 100%;">
-        <thead class="thead-dark">
-            <tr>
-                <th>Fecha</th>
-                <th>Unidad</th>
-                <th>Realizado por</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for inventario in inventarios %}
-            <tr>
-                <td>{{ inventario.fecha_revision|date:"d/m/Y" }}</td>
-                <td>{{ inventario.unidad.nombre_unidad }}</td>
-                <td> {{ inventario.realizado_por.jerarquia }} {{ inventario.realizado_por.nombres }}
-                    {{inventario.realizado_por.apellidos }}</td>
-                <td>
-                    <button class="btn btn-danger btn-sm ver-detalle" data-toggle="modal" data-target="#detalleModal"
-                        data-id="{{ inventario.pk }}">
-                        Ver Informacion
-                    </button>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" class="text-center">No hay inventarios registrados</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+        <table class="table table-bordered" id="dataTable" cellspacing="0" style="width: 100%;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Unidad</th>
+                    <th>Realizado por</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inventario in inventarios %}
+                <tr>
+                    <td>{{ inventario.fecha_revision|date:"d/m/Y" }}</td>
+                    <td>{{ inventario.unidad.nombre_unidad }}</td>
+                    <td> {{ inventario.realizado_por.jerarquia }} {{ inventario.realizado_por.nombres }}
+                        {{inventario.realizado_por.apellidos }}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm ver-detalle" data-toggle="modal"
+                            data-target="#detalleModal" data-id="{{ inventario.pk }}">
+                            Ver Informacion
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No hay inventarios registrados</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 </div>
+
 <!-- Modal -->
 <div class="modal fade" id="detalleModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">

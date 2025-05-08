@@ -68,14 +68,6 @@
             {% endif %}
         </div>
         <div>
-                {{ form.activo.label_tag }}
-                {{ form.activo }}
-                {% if form.activo.errors %}
-                <p class="text-danger">{{ form.activo.errors }}</p>
-                {% endif %}
-        </div>
-        <div>
-
             {{ form.marca.label_tag }}
             {{ form.marca }}
             {% if form.marca.errors %}
@@ -107,14 +99,22 @@
             {% endif %}
         </div>
         <div>
-
             {{ form.vida_util.label_tag }}
             {{ form.vida_util }}
-            <span class="input-group-text">meses</span>
             {% if form.vida_util.errors %}
             <p class="text-danger">{{ form.vida_util.errors }}</p>
             {% endif %}
         </div>
+        <div class="">
+            <label for="id_activo" class="form-control form-check-label">Activo:</label>
+            <div class="form-check">
+                {{ form.activo }}
+                {% if form.activo.errors %}
+                <p class="text-danger">{{ form.activo.errors }}</p>
+                {% endif %}
+            </div>
+        </div>
+
         <div class="buttons-footer-tools">
             <button type="submit" class="btn btn-danger">Guardar</button>
             <button class="btn btn-danger" type="reset">
@@ -139,6 +139,7 @@
             const checkbox = div.querySelector("checkbox");
             const select = div.querySelector("select");
             const textarea = div.querySelector("textarea");
+            
 
             if (label) {
                 label.classList.add("form-label");
@@ -147,17 +148,20 @@
             if (input) {
                 input.classList.add("form-control");
             }
-
             if (select) {
                 select.classList.add("form-select");
-            }
-            if (textarea) {
-                textarea.classList.add("form-control");
             }
             if (checkbox) {
                 checkbox.classList.add("form-check-input");
             }
+            
         });
+
+        const inputEspecial = document.getElementById("id_activo");
+
+        if (inputEspecial) {
+                inputEspecial.classList.remove("form-control");
+            }
     }
 
 </script>

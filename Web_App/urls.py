@@ -83,7 +83,7 @@ urlpatterns = [
     path('reasignar-bien/', reasignar_bien, name='reasignar_bien'),
     path('cambiar-bien/', cambiar_estado_bienes, name='cambiar_estado_bien'),
     path('eliminar-bien/', eliminar_bien, name='eliminar_bien'),
-    path('api/historial-bien/<int:bien_id>/', historial_bien_api, name='historial_bien_api'),
+    path('api/historial-bien/<str:bien_id>/', historial_bien_api, name='historial_bien_api'),
     path('api/verificar-identificador/', verificar_identificador, name='verificar_identificador'),
 
     # Unidades

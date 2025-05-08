@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.db.models import Case, When, Value, IntegerField
 from django.forms import inlineformset_factory
 from django.forms import BaseInlineFormSet
+from django.utils.safestring import mark_safe
 
 def Asignar_ops_Personal(): 
     jerarquias = [ "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
@@ -1357,12 +1358,16 @@ class CambiarEstadoBienForm(forms.Form):
 
 
 class HerramientaForm(forms.ModelForm):
-    class Meta:
+     class Meta:
         model = Herramienta
         fields = '__all__'
         widgets = {
+            'activo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'fecha_adquisicion': forms.DateInput(attrs={'type': 'date'}),
             'descripcion': forms.Textarea(attrs={'rows': 3}),
+        }
+        labels = {
+            'activo': 'Activo?',  # Cambia el texto del label
         }
 
 class AsignacionForm(forms.ModelForm):
