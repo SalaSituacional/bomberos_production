@@ -9,7 +9,7 @@
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
 {% endif %}
-
+{% load static %}
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
@@ -43,41 +43,42 @@
     </ul>
   </nav>
   <br>
+
   <div class="container-filter-inventario">
     <div class="inventario-filter">
-      <span class="input-group-text">Nombre del Item:</span>
+      <span class="input-group-text">Nombre de la unidad:</span>
       <input class="form-control" type="text" placeholder="Nombre">
     </div>
   </div>
   <div class="div-responsive-table responsive-table">
 
-  <table class="table table-hover" style="max-width: 100%;">
-    <thead>
-      <tr>
-        <th>Unidad</th>
-        {% for categoria in categorias %}
-        <th>{{ categoria.nombre }}</th>
+    <table class="table table-hover" style="max-width: 100%;">
+      <thead>
+        <tr>
+          <th>Unidad</th>
+          {% for categoria in categorias %}
+          <th>{{ categoria.nombre }}</th>
+          {% endfor %}
+          <th>Total Asignado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in data %}
+        <tr>
+          <td>{{ item.unidad.nombre_unidad }}</td>
+          {% for datos in item.categorias_lista %}
+          <td class="{% if datos.asignadas == 0 %}table-danger{% endif %}">
+            {{ datos.asignadas }} / {{ datos.total }}
+          </td>
+          {% endfor %}
+          <td>{{ item.total_asignadas }}</td>
+        </tr>
         {% endfor %}
-        <th>Total Asignado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in data %}
-      <tr>
-        <td>{{ item.unidad.nombre_unidad }}</td>
-        {% for datos in item.categorias_lista %}
-        <td class="{% if datos.asignadas == 0 %}table-danger{% endif %}">
-          {{ datos.asignadas }} / {{ datos.total }}
-        </td>
-        {% endfor %}
-        <td>{{ item.total_asignadas }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
+
 </div>
 
-</div>
-
-
+<script src="{% static 'js/unidades/filters/reportes.js' %}"></script>
 {% endblock %}
