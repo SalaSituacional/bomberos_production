@@ -7,6 +7,8 @@
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
 {% endif %}
+{% load static %}
+
 
 {% block content %}
 <div class="general-dashboard">
@@ -43,9 +45,15 @@
   <br>
 
   <div class="container-filter-inventario">
-    <div class="inventario-filter">
-      <span class="input-group-text">Nombre del Item:</span>
-      <input class="form-control" type="text" placeholder="Nombre">
+    <div class="filter-asignacion">
+      <div class="inventario-filter ">
+        <span class="input-group-text">Filtrar por Herramienta:</span>
+        <input class="form-control filter-herramienta" type="text" placeholder="Nombre herramienta">
+      </div>
+      <div class="inventario-filter">
+        <span class="input-group-text">Filtrar por Responsable:</span>
+        <input class="form-control filter-responsable" type="text" placeholder="Nombre responsable">
+      </div>
     </div>
     <div class="inventario-filter">
       <span>
@@ -83,5 +91,6 @@
       </tbody>
     </table>
   </div>
+  <script src="{% static 'js/unidades/filters/unidades_asignaciones.js' %}"></script>
 </div>
 {% endblock %}

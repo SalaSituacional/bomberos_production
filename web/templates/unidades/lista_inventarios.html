@@ -7,43 +7,44 @@
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
 {% endif %}
+{% load static %}
 
 
 {% block content %}
 
 <style>
     /* Estilos para los filtros */
-.container-filter-inventario {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
+    .container-filter-inventario {
+        background-color: #FFF;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
 
-.inventario-filter {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+    .inventario-filter {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+    }
 
-/* Estilos para la paginación */
-.pagination {
-    margin-top: 20px;
-}
+    /* Estilos para la paginación */
+    .pagination {
+        margin-top: 20px;
+    }
 
-.page-link {
-    color: #dc3545;
-}
+    .page-link {
+        color: #dc3545;
+    }
 
-.page-item.active .page-link {
-    background-color: #dc3545;
-    border-color: #dc3545;
-}
+    .page-item.active .page-link {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
 
-.page-link:hover {
-    color: #a71d2a;
-}
-
+    .page-link:hover {
+        color: #a71d2a;
+    }
 </style>
 
 <div class="general-dashboard">
@@ -75,7 +76,7 @@
         </ul>
     </nav>
     <br>
-    
+
     <!-- Filtros y controles -->
     <div class="container-filter-inventario">
         <form method="get" class="row g-3 align-items-center">
@@ -85,27 +86,29 @@
                     <select name="filtro" id="id_unidad" class="form-select">
                         <option value="" {% if not filtro %}selected{% endif %}>Todas las unidades</option>
                         {% for unidad in unidades %}
-                            <option value="{{ unidad }}" {% if filtro == unidad %}selected{% endif %}>{{ unidad }}</option>
+                        <option value="{{ unidad }}" {% if filtro == unidad %}selected{% endif %}>{{ unidad }}</option>
                         {% endfor %}
                     </select>
                 </div>
             </div>
-            
+
             <div class="col-md-4">
                 <div class="input-group inventario-filter">
                     <span class="input-group-text">Mostrar:</span>
                     <select class="form-select" name="mostrar">
-                        <option value="ultimos" {% if mostrar == 'ultimos' %}selected{% endif %}>Últimos por unidad</option>
-                        <option value="todos" {% if mostrar == 'todos' %}selected{% endif %}>Todos los inventarios</option>
+                        <option value="ultimos" {% if mostrar == 'ultimos' %}selected{% endif %}>Últimos por unidad
+                        </option>
+                        <option value="todos" {% if mostrar == 'todos' %}selected{% endif %}>Todos los inventarios
+                        </option>
                     </select>
                 </div>
             </div>
-            
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary">Filtrar</button>
-                <a href="{% url 'inventario-list' %}" class="btn btn-secondary">Limpiar</a>
+
+            <div class="col-md-2 buttons-row">
+                <button type="submit" class="btn btn-danger">Filtrar</button>
+                <a href="{% url 'inventario-list' %}" class="btn btn-danger">Limpiar</a>
             </div>
-            
+
             <div class="col-md-2 text-end">
                 <div class="inventario-filter">
                     <span>Nuevo Inventario</span>
@@ -116,7 +119,7 @@
             </div>
         </form>
     </div>
-    
+
     <!-- Tabla de inventarios -->
     <div class="div-responsive-table responsive-table">
         <table class="table table-bordered" id="dataTable" cellspacing="0" style="width: 100%;">
@@ -150,34 +153,40 @@
             </tbody>
         </table>
     </div>
-    
+
     <!-- Paginación -->
     <div class="pagination justify-content-center">
-    <ul class="pagination">
-        {% if page_obj.has_previous %}
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page=1{% if filtro %}&filtro={{ filtro }}{% endif %}{% if mostrar %}&mostrar={{ mostrar }}{% endif %}">&laquo; Primera</a>
+                <a class="page-link"
+                    href="?page=1{% if filtro %}&filtro={{ filtro }}{% endif %}{% if mostrar %}&mostrar={{ mostrar }}{% endif %}">&laquo;
+                    Primera</a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if filtro %}&filtro={{ filtro }}{% endif %}{% if mostrar %}&mostrar={{ mostrar }}{% endif %}">Anterior</a>
+                <a class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}{% if filtro %}&filtro={{ filtro }}{% endif %}{% if mostrar %}&mostrar={{ mostrar }}{% endif %}">Anterior</a>
             </li>
-        {% endif %}
-        
-        <li class="page-item disabled">
-            <span class="page-link">
-                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-            </span>
-        </li>
-        
-        {% if page_obj.has_next %}
+            {% endif %}
+
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if filtro %}&filtro={{ filtro }}{% endif %}{% if mostrar %}&mostrar={{ mostrar }}{% endif %}">Siguiente</a>
+                <a class="page-link"
+                    href="?page={{ page_obj.next_page_number }}{% if filtro %}&filtro={{ filtro }}{% endif %}{% if mostrar %}&mostrar={{ mostrar }}{% endif %}">Siguiente</a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if filtro %}&filtro={{ filtro }}{% endif %}{% if mostrar %}&mostrar={{ mostrar }}{% endif %}">Última &raquo;</a>
+                <a class="page-link"
+                    href="?page={{ page_obj.paginator.num_pages }}{% if filtro %}&filtro={{ filtro }}{% endif %}{% if mostrar %}&mostrar={{ mostrar }}{% endif %}">Última
+                    &raquo;</a>
             </li>
-        {% endif %}
-    </ul>
+            {% endif %}
+        </ul>
     </div>
 </div>
 
@@ -204,114 +213,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const botonesDetalle = document.querySelectorAll('.ver-detalle');
-        const detalleModal = new bootstrap.Modal(document.getElementById('detalleModal'));
-        const modalContent = document.getElementById('modal-body-content');
-
-        // Función para mostrar el loader
-        function showLoader() {
-            modalContent.innerHTML = `
-                <div class="text-center py-4">
-                    <div class="text-primary" role="status">
-                        <span class="visually-hidden">Cargando...</span>
-                    </div>
-                    <p class="mt-2">Cargando detalles del inventario...</p>
-                </div>
-            `;
-        }
-
-        botonesDetalle.forEach(boton => {
-            boton.addEventListener('click', async function () {
-                const id = this.dataset.id;
-
-                // Mostrar el loader inmediatamente
-                showLoader();
-                
-                // Mostrar el modal
-                detalleModal.show();
-
-                try {
-                    const response = await fetchWithLoader(`/inventarios/ajax/${id}/`);
-                    const data = await response;
-
-                    // Construir HTML con los datos
-                    let html = `
-                        <div class="container-fluid container-info-tools">
-                            <div>
-                                <div class="">
-                                    <p><strong>Unidad:</strong> ${data.inventario.unidad}</p>
-                                    <p><strong>Fecha:</strong> ${data.inventario.fecha}</p>
-                                </div>
-                                <div class="">
-                                    <p><strong>Realizado por:</strong> ${data.inventario.realizado_por.nombre_completo || data.inventario.realizado_por}</p>
-                                    ${data.inventario.observaciones ? `<p><strong>Observaciones:</strong> ${data.inventario.observaciones}</p>` : ''}
-                                </div>
-                            </div>
-                            <div class="table-responsive edit-table-tools">
-                                <table class="table table-hover align-middle table-modify">
-                                    <thead>
-                                        <tr>
-                                            <th>Herramienta</th>
-                                            <th>Presente</th>
-                                            <th>Estado</th>
-                                            <th>Observaciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${data.detalles.map(detalle => `
-                                            <tr class="${detalle.presente ? '' : 'table-danger'}">
-                                                <td>${detalle.herramienta}</td>
-                                                <td class="text-center">
-                                                    ${detalle.presente ?
-                            '<span class="text-success">Presente</span>' :
-                            '<span class="text-danger">No Presente</span>'}
-                                                </td>
-                                                <td>
-                                                    <span class="badge ${getEstadoBadgeClass(detalle.estado)}">
-                                                        ${detalle.estado}
-                                                    </span>
-                                                </td>
-                                                <td>${detalle.observaciones}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    `;
-
-                    modalContent.innerHTML = html;
-
-                } catch (error) {
-                    console.error('Error al cargar el detalle:', error);
-                    modalContent.innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-triangle mr-2"></i>
-                            Error al cargar los detalles: ${error.message}
-                        </div>
-                    `;
-                }
-            });
-        });
-
-        // Función auxiliar para clases de badges según estado
-        function getEstadoBadgeClass(estado) {
-            const estadosClasses = {
-                'Bueno': 'bg-success',
-                'Regular': 'bg-warning',
-                'Malo': 'bg-danger',
-                'En reparación': 'bg-secondary'
-            };
-            return estadosClasses[estado] || 'bg-primary';
-        }
-
-        // Resetear el modal cuando se cierre
-        detalleModal._element.addEventListener('hidden.bs.modal', function () {
-            showLoader();
-        });
-    });
-</script>
+<script src="{%static 'js/unidades/lista_inventarios.js' %}"></script>
 {% endblock %}
