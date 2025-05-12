@@ -5549,6 +5549,7 @@ def mostrar_informacion(request, id):
 # ========================================================================================= Vistas Para el Area de Inventario de Unidades =====================================================
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 # Vistas para Herramientas
 @login_required
@@ -5697,10 +5698,47 @@ def inventario_list(request):
     if not user:
         return redirect('/')
     
+    # Obtener parámetros de filtro
+    filtro_unidad = request.GET.get('filtro', '')
+    mostrar = request.GET.get('mostrar', 'ultimos')  # 'ultimos' o 'todos'
+    
+    # Consulta base
     inventarios = InventarioUnidad.objects.all().order_by('-fecha_revision')
     
+    # Aplicar filtro por unidad si existe
+    if filtro_unidad:
+        inventarios = inventarios.filter(unidad__nombre_unidad=filtro_unidad)
+
+    # Filtrar solo los últimos inventarios por unidad si se solicita
+    if mostrar == 'ultimos':
+        # Primero obtenemos los IDs de los últimos inventarios por unidad
+        if filtro_unidad:
+            # Si hay filtro por unidad, solo necesitamos el último de esa unidad específica
+            ultimo_id = inventarios.filter(unidad__nombre_unidad=filtro_unidad) \
+                                .order_by('-fecha_revision') \
+                                .values_list('id', flat=True) \
+                                .first()
+            inventarios = inventarios.filter(id=ultimo_id) if ultimo_id else inventarios.none()
+        else:
+            # Para todas las unidades, obtenemos los últimos IDs por unidad
+            subquery = inventarios.order_by('unidad', '-fecha_revision') \
+                                .distinct('unidad') \
+                                .values_list('id', flat=True)
+            inventarios = inventarios.filter(id__in=subquery)
+    
+    # Paginación (10 elementos por página)
+    paginator = Paginator(inventarios, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Obtener lista de unidades para el select
+    unidades = InventarioUnidad.objects.values_list('unidad__nombre_unidad', flat=True).distinct().order_by('unidad__nombre_unidad')
+    
     context = {
-        'inventarios': inventarios,
+        'page_obj': page_obj,
+        'filtro': filtro_unidad,
+        'mostrar': mostrar,
+        'unidades': unidades,
         'user': user,
         'jerarquia': user.get('jerarquia', ''),
         'nombres': user.get('nombres', ''),
