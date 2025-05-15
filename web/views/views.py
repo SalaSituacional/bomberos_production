@@ -111,6 +111,8 @@ def Home(request):
                 return redirect("/dashboard_sarp/")
             if user.user == "Bienes_00":
                 return redirect("/dashboard_bienes/")
+            if user.user == "Ven_911":
+                return redirect("/ven911/home/")
             else:
                 return redirect("/dashboard/")
         except Usuarios.DoesNotExist:

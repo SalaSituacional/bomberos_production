@@ -1,5 +1,8 @@
 from django.db import models
 from django.utils import timezone
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+
 # from sequences import get_next_value
 
 # Modelos Para Agregar Datos Aparte
@@ -1293,18 +1296,7 @@ class CambiarEstadoBien(models.Model):
     def __str__(self):
         return f"Cambio de Estado de {self.bien.identificador} a {self.nuevo_estado} en {self.fecha_orden}"
 
-
-
-
-
-
-
-
 # ===================================================================================================================================================================================
-
-# from django.db import models
-from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
 
 class CategoriaHerramienta(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
