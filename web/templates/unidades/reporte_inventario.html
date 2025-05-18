@@ -8,6 +8,12 @@
 {% include "layouts/panel_comandancia.html" %}
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
+{% elif user.user == "Rescate03"%}
+{% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Grumae02"%}
+{% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Operaciones01"%}
+{% include "layouts/panel_operaciones.html" %}
 {% endif %}
 {% load static %}
 {% block content %}
