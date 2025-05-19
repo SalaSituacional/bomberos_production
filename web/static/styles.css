@@ -4516,9 +4516,12 @@ checkbox-styles {
   width: 100%;
   display: flex;
   margin: 0 auto;
+  justify-content: center;
+  flex-direction: column;
   button{
-    width: 50%;
-    margin: .5rems;
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
   }
 }
 /* ------------------------------- Media querys ------------------------------------------ */
