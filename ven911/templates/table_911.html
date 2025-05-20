@@ -5,6 +5,7 @@
 {% elif user.user == "Ven_911" %}
 {% include "layouts/panel_ven911.html" %}
 {% endif %}
+{% load static %}
 {% block content %}
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
@@ -26,31 +27,69 @@
         </section>
 
     </div>
-    <div class="contain-ven911-forms">
-        <form action="{% url 'form_services' %}" method="POST" class="form-911">
-            <h2>Registrar Servicio</h2>
-            {% csrf_token %}
-            {{ formulario_servicios }}
-            {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                {% endfor %}
-            </div>
-            {% endif %}
-            <div class="ven911-buttons">
-                <button type="submit" class="btn btn-danger">Enviar</button>
-                <button type="reset" class="btn btn-danger"><a href="{% url 'home_911' %}">Cancelar</a></button>
-            </div>
-        </form>
+    <div class="contain-ven911">
+        <h2></h2>
+        <div class="tool-personal">
+            <section class="accion-filter">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">filtrado: </span>
+                    <input type="text" class="form-control" placeholder="Buscar" id="filterid">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">Registros Totales: {{ registros_totales }}</span>
+                </div>
+            </section>
+            <section class="accion-personal">
+            </section>
+        </div>
+
+        <!-- tabla -->
+        <div class="table-responsive-sm">
+            <table class="table table-hover" id="tablaven911">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Operador De Guardia</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Lugar</th>
+                        <th scope="col">Municipio</th>
+                        <th scope="col">Parroquia</th>
+                        <th scope="col">Tipo Servicio</th>
+                        <th scope="col">Unidad</th>
+                        <th scope="col">Jefe De Comision</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    <!-- Los elementos se generan dinamicamente con js -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="contain-dates">
+            <h4 class="title-procediments">Exportar Reportes</h4>
+            <br>
+            <section class="buttons-items input-group mb-3 filter-search">
+                <span class="input-group-text"><b> Seleccionar Mes:</b></span>
+                <input type="month" class="form-control fecha_manual" name="" id="mes_excel">
+                <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
+            </section>
+        </div>
+
     </div>
+</div>
 </div>
 <footer class="footer">
     <section class="text-reserved">
         <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
     </section>
 </footer>
+<script>
+    const api_table_911 = "{% url 'obtener_servicios_json' %}"
+    const URL_ELIMINAR = "{% url 'eliminar_servicio' 0 %}".replace('0', '__id__');
+</script>
 
 <script src="../../static/js/animate.js"></script>
-
+<script src="{% static 'js/ven911/Tabla_servicios.js' %}"></script>
+<script src="{% static 'js/ven911/eliminar_servicio.js' %}"></script>
 {% endblock %}

@@ -20,7 +20,16 @@ from Web_App.urls import *
 from .views import *
 
 urlpatterns = [
+    # vistas
     path('home/', ven911, name='home_911'),
+    path('table_911/', view_table_911, name='table_911'),
+    
+    # formulario con vistas
     path('servicios_form/', form_services, name='form_services'),
 
+    # apis envio de datos al frontend
+    path('api/servicios_ven911/', obtener_servicios_json, name='obtener_servicios_json'),
+    
+    # api para eliminar
+    path('servicios-eliminar/<int:id>/',eliminar_servicio, name='eliminar_servicio'),
 ]
