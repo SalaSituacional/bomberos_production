@@ -5058,8 +5058,10 @@ def agregar_comercio(request):
 
 def agregar_o_actualizar_solicitud(request):
     if request.method == "POST":
-        id_solicitud = request.POST.get("id_solicitud")
-
+        # Obtener el ID de la solicitud (si existe, para actualización)
+        id_solicitud = request.POST.get("id_solicitud")  # ID de la tabla Solicitudes (no de Comercio)
+        
+        # Datos del formulario de Solicitud
         comercio_id = request.POST.get("comercio")
         fecha_solicitud = request.POST.get("fecha_solicitud")
         hora_solicitud = request.POST.get("hora_solicitud")
@@ -5079,7 +5081,7 @@ def agregar_o_actualizar_solicitud(request):
         metodo_pago = request.POST.get("metodo_pago")
         referencia = request.POST.get("referencia") or "SIN REFERENCIA"
 
-        # Convertir valores de checkboxes
+        # Función auxiliar para checkboxes
         def get_checkbox_value(field_name):
             return request.POST.get(field_name) == "on"
 
@@ -5088,30 +5090,55 @@ def agregar_o_actualizar_solicitud(request):
         municipio_instance = get_object_or_404(Municipios, id=municipio_id)
         parroquia_instance = get_object_or_404(Parroquias, id=parroquia_id)
 
-        # Buscar si la solicitud ya existe
-        solicitud, created = Solicitudes.objects.update_or_create(
-            id=id_solicitud,
-            defaults={
-                "fecha_solicitud": fecha_solicitud,
-                "hora_solicitud": hora_solicitud,
-                "tipo_servicio": tipo_servicio,
-                "solicitante_nombre_apellido": solicitante,
-                "solicitante_cedula": f"{nacionalidad}-{solicitante_cedula}",
-                "tipo_representante": tipo_representante,
-                "rif_representante_legal": rif_representante,
-                "direccion": direccion,
-                "estado": estado,
-                "municipio": municipio_instance,
-                "parroquia": parroquia_instance,
-                "numero_telefono": numero_telefono,
-                "correo_electronico": correo,
-                "pago_tasa": pago,
-                "referencia": referencia,
-                "metodo_pago": metodo_pago,
-            },
-        )
+        # ===== CREAR O ACTUALIZAR SOLICITUD =====
+        if id_solicitud:  # ACTUALIZAR solicitud existente
+            solicitud = get_object_or_404(Solicitudes, id=id_solicitud)
+            solicitud.id_solicitud = comercio_instance  # ✅ Campo correcto
+           
+            solicitud.fecha_solicitud = fecha_solicitud
+            solicitud.hora_solicitud = hora_solicitud
+            solicitud.tipo_servicio = tipo_servicio
+            solicitud.solicitante_nombre_apellido = solicitante
+            solicitud.solicitante_cedula = f"{nacionalidad}-{solicitante_cedula}"
+            solicitud.tipo_representante = tipo_representante
+            solicitud.rif_representante_legal = rif_representante
+            solicitud.direccion = direccion
+            solicitud.estado = estado
+            solicitud.municipio = municipio_instance
+            solicitud.parroquia = parroquia_instance
+            solicitud.numero_telefono = numero_telefono
+            solicitud.correo_electronico = correo
+            solicitud.pago_tasa = pago
+            solicitud.metodo_pago = metodo_pago
+            solicitud.referencia = referencia
+            
+            solicitud.save()
+            
+            created = False
+        else:  # CREAR nueva solicitud
+            solicitud = Solicitudes.objects.create(
+                id_solicitud=comercio_instance,  # ✅ Campo correcto
+                fecha_solicitud=request.POST.get("fecha_solicitud"),
+                hora_solicitud=hora_solicitud,
+                tipo_servicio=tipo_servicio,
+                solicitante_nombre_apellido=solicitante,
+                solicitante_cedula=f"{nacionalidad}-{solicitante_cedula}",
+                tipo_representante=tipo_representante,
+                rif_representante_legal=rif_representante,
+                direccion=direccion,
+                estado=estado,
+                municipio=municipio_instance,
+                parroquia=parroquia_instance,
+                numero_telefono=numero_telefono,
+                correo_electronico=correo,
+                pago_tasa=pago,
+                metodo_pago=metodo_pago,
+                referencia=referencia
+            )
+            
+            created = True
 
-        # Actualizar o crear requisitos asociados a la solicitud
+        # ===== ACTUALIZAR O CREAR REQUISITOS =====
         Requisitos.objects.update_or_create(
             id_solicitud=solicitud,
             defaults={
@@ -5129,7 +5156,7 @@ def agregar_o_actualizar_solicitud(request):
                 "cedula_catastral_vencimiento": request.POST.get("cedula_catastral_vencimiento"),
                 "carta_autorizacion": get_checkbox_value("carta_autorizacion"),
                 "plano_bomberil": get_checkbox_value("plano_bomberil"),
-            },
+            }
         )
 
         return redirect("/certificadosprevencion/")
