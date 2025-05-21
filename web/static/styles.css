@@ -4485,45 +4485,70 @@ checkbox-styles {
   /* Amarillo brillante */
   transition: background-color 0.3s ease;
 }
-.contain-ven911-forms{
+
+.contain-ven911-forms {
   width: 100%;
   margin: 0 auto;
   display: flex;
   justify-content: center;
   flex-direction: column;
 }
-.form-911{
+
+.form-911 {
   border-radius: 20px;
   background-color: #FFF;
   margin: 0 auto;
   width: 50%;
   padding: 2rem;
-  h2{
+
+  h2 {
     width: 50%;
     margin: 0 auto;
     text-align: center;
     margin-bottom: 2rem;
     padding: 1rem;
   }
-  label{
+
+  label {
     font-weight: 400;
   }
-  div{
+
+  div {
     margin-bottom: 2rem;
   }
 }
-.ven911-buttons{
+
+.ven911-buttons {
   width: 100%;
   display: flex;
   margin: 0 auto;
   justify-content: center;
   flex-direction: column;
-  button{
+
+  button {
     width: 80%;
     margin: 0 auto;
     margin-bottom: 1rem;
   }
 }
+
+.contain-ven911-dashboard {
+  width: 95%;
+  padding: 1rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.contain-cards-acordion{
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.acordion-card {
+  width: 100%;
+}
+
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
