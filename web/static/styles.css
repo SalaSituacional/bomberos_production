@@ -4548,7 +4548,21 @@ checkbox-styles {
 .acordion-card {
   width: 100%;
 }
-
+.contain-bar-pie-ven911{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #FFF;
+  padding: 1rem;
+  border-radius: 40px;
+}
+.chart-pie-ven911{
+  width: 80%;
+  height: auto;
+}
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
