@@ -13,6 +13,7 @@ from django.db.models import Count
 from django.utils.timezone import localdate
 from django.forms.models import model_to_dict
 from django.views.decorators.http import require_http_methods
+from django.db.models import Count, Q
 from .urls import *
 from .forms import *
 import json
@@ -150,3 +151,111 @@ def eliminar_servicio(request, id):
         except Servicio.DoesNotExist:
             return JsonResponse({"error": "Servicio no encontrado"}, status=404)
     return JsonResponse({"error": "Método no permitido"}, status=405)
+
+
+# api para el conteo de servicios
+
+# def api_conteo_servicios(request):
+#     # Obtener parámetro de semana si existe
+#     week_param = request.GET.get('week')
+    
+#     # Inicializar el filtro como Q() que no filtra nada
+#     filtro_servicios = Q()
+    
+#     # Aplicar filtro de semana solo si se proporciona
+#     if week_param:
+#         try:
+#             # Parsear el valor de entrada type="week" (formato YYYY-WWW)
+#             year, week = map(int, week_param.split('-W'))
+#             start_date = timezone.datetime.strptime(f'{year}-{week}-1', "%Y-%W-%w").date()
+#             end_date = start_date + timezone.timedelta(days=6)
+            
+#             # Crear filtro para el rango de fechas
+#             filtro_servicios = Q(servicio__fecha__gte=start_date) & Q(servicio__fecha__lte=end_date)
+#         except (ValueError, AttributeError):
+#             # Si hay error en el formato, ignorar el filtro (mostrar todo)
+#             pass
+    
+#     # Consulta que funciona tanto con filtro como sin filtro
+#     datos = TipoServicio.objects \
+#         .filter(filtro_servicios) \
+#         .order_by('nombre') \
+#         .annotate(total=Count('servicio')) \
+#         .values('nombre', 'total')
+    
+#     conteo = {item['nombre']: item['total'] for item in datos}
+#     return JsonResponse(conteo)
+
+
+def api_conteo_servicios(request):
+    # Consulta base para tipos de servicio
+    tipos_servicio = TipoServicio.objects.all().order_by('nombre')
+    
+    # Inicializamos sin filtro (mostrará todos los servicios)
+    filtro_servicios = Q()
+    
+    # Verificamos si hay filtro por semana (solo aplicamos filtro si existe y es válido)
+    if 'week' in request.GET and request.GET['week']:
+        try:
+            year, week = map(int, request.GET['week'].split('-W'))
+            start_date = timezone.datetime.strptime(f'{year}-{week}-1', "%Y-%W-%w").date()
+            end_date = start_date + timezone.timedelta(days=6)
+            
+            # Creamos el filtro para el rango de fechas seleccionado
+            filtro_servicios = Q(servicio__fecha__range=(start_date, end_date))
+        except:
+            # Si hay error en el formato, mantenemos sin filtro (muestra todo)
+            pass
+    
+    # Aplicamos el conteo condicional
+    datos = tipos_servicio.annotate(
+        total=Count('servicio', filter=filtro_servicios)
+    ).values('nombre', 'total')
+    
+    # Convertimos a diccionario
+    conteo = {item['nombre']: item['total'] for item in datos}
+    
+    return JsonResponse(conteo)
+
+# api servicios de grafica
+def api_servicios_grafico(request):
+    # Obtener parámetro de mes
+    month_filter = request.GET.get('month')
+    
+    # Filtrar servicios basados en el mes si se proporciona
+    servicios_query = Servicio.objects.all()
+    
+    if month_filter:
+        try:
+            # Convertir string 'YYYY-MM' a objeto date
+            filter_date = datetime.strptime(month_filter, '%Y-%m').date()
+            year, month = filter_date.year, filter_date.month
+            
+            # Filtrar servicios por año y mes
+            servicios_query = servicios_query.filter(
+                fecha__year=year,
+                fecha__month=month
+            )
+        except (ValueError, TypeError):
+            # Manejar error si el formato de fecha es incorrecto
+            pass
+    
+    # Anotar y contar los tipos de servicio
+    datos = TipoServicio.objects.filter(
+        servicio__in=servicios_query
+    ).annotate(
+        total=Count('servicio')
+    ).filter(total__gte=1).order_by('-total').values_list('nombre', 'total')
+
+    # Preparar datos para la respuesta
+    labels = []
+    valores = []
+    for nombre, total in datos:
+        labels.append(nombre)
+        valores.append(total)
+
+    return JsonResponse({
+        'labels': labels,
+        'data': valores,
+        'count': len(labels)
+    })

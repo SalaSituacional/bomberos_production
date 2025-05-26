@@ -30,31 +30,38 @@
     <div class="contain-ven911-dashboard">
         <div class="contain-bar-pie-ven911">
             <div class="chart-pie-ven911">
-                <h2>Servicios</h2>
-                <canvas id="pie-chart-911"></canvas>
+                <h2>Panel De Servicios 911</h2>
+                <canvas id="bar-chart-911"></canvas>
+            </div>
+            <br>
+            <div class="filter-control-ven911">
+                <label for="month" class="input-form">Mes:</label>
+                <input type="month" id="month" name="month" class="form-control">
+                <button type="submit" class="btn btn-danger" onclick="filterByMonth()">Filtrar</button>
             </div>
         </div>
+        <h3 class="title-ven-911">Agrupacion De Servicios</h3>
         <div class="contain-cards-acordion">
             <div class="accordion accordion-flush acordion-card" id="accordionFlushExample">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                            Hechos Viales
+                            Hechos Viales - <span id="hechosvialestotal"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseOne" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Colisiones</li>
-                                <li>Volcamientos</li>
-                                <li>Colision De Motos</li>
-                                <li>Atenciones Paramedicas</li>
-                                <li>Accidentes De Transito</li>
-                                <li>Colision De VEH De Carga</li>
-                                <li>Vehiculo Que Cae Al Vacio</li>
-                                <li>Colision Entre heviculo y moto</li>
+                                <li>Colisiones - <span id="colisiones"></span></li>
+                                <li>Volcamientos - <span id="volvamientos"></span></li>
+                                <li>Colision De Motos - <span id="colisiondemotos"></span></li>
+                                <li>Atenciones Paramedicas - <span id="atencionesparamedicas"></span></li>
+                                <li>Accidentes De Transito - <span id="accidentesdetransito"></span></li>
+                                <li>Colision De VEH De Carga - <span id="colisiondevehdecarga"></span></li>
+                                <li>Vehiculo Que Cae Al Vacio - <span id="vehiculoqueacealvacio"></span></li>
+                                <li>Colision Entre vehiculo y moto - <span id="colisionentrevechiculoymoto"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -63,14 +70,14 @@
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                            Consultas Medicas
+                            Consultas Medicas - <span id="consultasmedicastotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseTwo" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Otros Servicios No Señalados</li>
+                                <li>Otros Servicios No Señalados - <span id="otrosserviciosnoespecificados"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -80,17 +87,18 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseThree" aria-expanded="false"
                             aria-controls="flush-collapseThree">
-                            Operaciones, Comunicaciones, Puestos De Avanzada
+                            Operaciones, Comunicaciones, Puestos De Avanzada - <span
+                                id="operacionescomunicacionespuestosdeavanzadatotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseThree" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Falsa Alarma</li>
-                                <li>Apoyo Institucional</li>
-                                <li>Atendido No Efectuado</li>
-                                <li>Apoyo Con Planta Electrica</li>
+                                <li>Falsa Alarma - <span id="falsaalarma"></span></li>
+                                <li>Apoyo Institucional - <span id="apoyoinstitucional"></span></li>
+                                <li>Atendido No Efectuado - <span id="atendidonoefectuado"></span></li>
+                                <li>Apoyo Con Planta Electrica - <span id="apoyoconplantaelectrica"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -100,21 +108,21 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseTen" aria-expanded="false"
                             aria-controls="flush-collapseThree">
-                            Rescate (Personas, Animales)
+                            Rescate (Personas, Animales) - <span id="rescatestotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseTen" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Rescate En Montaña</li>
-                                <li>Persona Extraviada</li>
-                                <li>Rescate De Persona</li>
-                                <li>Rescate De Animales</li>
-                                <li>Rescate En El Metro</li>
-                                <li>Rescate En Ascensores</li>
-                                <li>Rescate En Estructuras</li>
-                                <li>Rescate Paciente Psiquiatrico</li>
+                                <li>Rescate En Montaña - <span id="rescateenmonta"></span> </li>
+                                <li>Persona Extraviada - <span id="personaextraviada"></span></li>
+                                <li>Rescate De Persona - <span id="rescatedepersona"></span></li>
+                                <li>Rescate De Animales - <span id="rescatedeanimales"></span></li>
+                                <li>Rescate En El Metro - <span id="rescateenelmetro"></span></li>
+                                <li>Rescate En Ascensores - <span id="rescateenascensores"></span></li>
+                                <li>Rescate En Estructuras - <span id="rescateenestructuras"></span></li>
+                                <li>Rescate Paciente Psiquiatrico - <span id="rescatepacientepsiquiatrico"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -124,15 +132,15 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseSeventin" aria-expanded="false"
                             aria-controls="flush-collapseThree">
-                            Himenopteros (Abejas/Avipas)
+                            Himenopteros (Abejas/Avipas) - <span id="heminopterostotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseSeventin" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Inspeccion</li>
-                                <li>Exterminio De Abejas</li>
+                                <li>Inspeccion - <span id="inspeccionesheminopteros"></span></li>
+                                <li>Exterminio De Abejas - <span id="exterminioabejas"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -144,17 +152,18 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseFour" aria-expanded="false"
                             aria-controls="flush-collapseOne">
-                            Abordajes A Comunidades Traslados Con Ambulacia
+                            Abordajes A Comunidades Traslados Con Ambulacia - <span
+                                id="abordajescomunidadestrasladosambulancia"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseFour" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Traslado De Gestante</li>
-                                <li>Preparacion Comunitaria</li>
-                                <li>Traslados En Ambulancia</li>
-                                <li>Traslados Interhospitalario</li>
+                                <li>Traslado De Gestante - <span id="trasladogestante"></span></li>
+                                <li>Preparacion Comunitaria - <span id="preparacioncomunitaria"></span></li>
+                                <li>Traslados En Ambulancia - <span id="trasladosenambulancia"></span></li>
+                                <li>Traslados Interhospitalario - <span id="trasladosinterhospitalario"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -164,25 +173,27 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseFive" aria-expanded="false"
                             aria-controls="flush-collapseTwo">
-                            Atenciones Prehospitalarias - Verificacion De Signos Vitales
+                            Atenciones Prehospitalarias - Verificacion De Signos Vitales - <span
+                                id="atencionesprehospitalariasverificaciondesignostotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseFive" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Persona Herida</li>
-                                <li>Nebulizaciones</li>
-                                <li>Toma De Tension</li>
-                                <li>Atenciones Paramedicas</li>
-                                <li>Mordedura De Serpiente</li>
-                                <li>Soporte Basico De Vida</li>
-                                <li>Fallecido Por Inmersion</li>
-                                <li>Fallecido Por Arma Blanca</li>
-                                <li>Fallecido Por Arma De Fuego</li>
-                                <li>Fallecido En Accidente Aereo</li>
-                                <li>Inspeccion A Persona Fallecida</li>
-                                <li>Fallecido En Accidente De Transito</li>
+                                <li>Persona Herida - <span id="personaherida"></span></li>
+                                <li>Nebulizaciones - <span id="nebulizaciones"></span></li>
+                                <li>Toma De Tension - <span id="tomadetension"></span></li>
+                                <li>Atenciones Paramedicas - <span id="atencionesparamedicas"></span></li>
+                                <li>Mordedura De Serpiente - <span id="mordeduradeserpiente"></span></li>
+                                <li>Soporte Basico De Vida - <span id="soportebasicodevida"></span></li>
+                                <li>Fallecido Por Inmersion - <span id="fallecidoporinmersion"></span></li>
+                                <li>Fallecido Por Arma Blanca - <span id="fallecidoporarmablanca"></span></li>
+                                <li>Fallecido Por Arma De Fuego - <span id="fallecidoporarmadefuego"></span></li>
+                                <li>Fallecido En Accidente Aereo - <span id="fallecidoenaccidenteaereo"></span></li>
+                                <li>Inspeccion A Persona Fallecida - <span id="inspeccionapersonafallecida"></span></li>
+                                <li>Fallecido En Accidente De Transito - <span
+                                        id="fallecidoenaccidentedetransito"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -192,19 +203,21 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseSix" aria-expanded="false"
                             aria-controls="flush-collapseThree">
-                            Servicios Especiales (Suministros, Apoyo Inst)
+                            Servicios Especiales (Suministros, Apoyo Inst) - <span
+                                id="serviciosespecialestotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseSix" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Achicamiento</li>
-                                <li>Servicio Especial</li>
-                                <li>Apoyo Institucional</li>
-                                <li>Abastecimiento De Agua</li>
-                                <li>Dispersion De Particulas</li>
-                                <li>Desinfeccion Biologica Por Covid-19</li>
+                                <li>Achicamiento - <span id="achicamiento"></span></li>
+                                <li>Servicio Especial - <span id="servicioespecial"></span></li>
+                                <li>Apoyo Institucional - <span id="apoyoInstitucional"></span></li>
+                                <li>Abastecimiento De Agua - <span id="abastecimientoagua"></span></li>
+                                <li>Dispersion De Particulas - <span id="dispersiondeparticulas"></span></li>
+                                <li>Desinfeccion Biologica Por Covid-19 - <span
+                                        id="desinfeccionbiologicaporcovid"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -214,16 +227,17 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseIleven" aria-expanded="false"
                             aria-controls="flush-collapseThree">
-                            Pov-Apostamientos
+                            Pov-Apostamientos - <span id="pov-apostamientostotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseIleven" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Puesto De Avanzadas</li>
-                                <li>Guardias De Prevencion</li>
-                                <li>Puestos De Atencion En Templos Religiosos</li>
+                                <li>Puesto De Avanzadas - <span id="puestodeavanzadas"></span></li>
+                                <li>Guardias De Prevencion - <span id="guardiasdeprevencion"></span></li>
+                                <li>Puestos De Atencion En Templos Religiosos - <span
+                                        id="puestosdeatencionreligiosos"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -235,15 +249,16 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseSeven" aria-expanded="false"
                             aria-controls="flush-collapseOne">
-                            Inspecciones A Establecimientos Comerciales - Investigacion
+                            Inspecciones A Establecimientos Comerciales - Investigacion - <span
+                                id="insepccionesestablecimientoscomercialestotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseSeven" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Prevencion Y Seguridad</li>
-                                <li>Investigacion De Servicios</li>
+                                <li>Prevencion Y Seguridad - <span id="prevencionyseguridad"></span></li>
+                                <li>Investigacion De Servicios - <span id="investigaciondeServicios"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -253,18 +268,18 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseEight" aria-expanded="false"
                             aria-controls="flush-collapseTwo">
-                            Inspecciones A Zonas De Riesgo
+                            Inspecciones A Zonas De Riesgo - <span id="inspeccionesazonasderiesgototales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseEight" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Desalojo</li>
-                                <li>Derrumbes</li>
-                                <li>Deslizamiento</li>
-                                <li>Evaluacion De Riesgo</li>
-                                <li>Inspeccion Tala De Arbol</li>
+                                <li>Desalojo - <span id="desalojos"></span></li>
+                                <li>Derrumbes - <span id="derrumbes"></span></li>
+                                <li>Deslizamiento - <span id="deslizamiento"></span></li>
+                                <li>Evaluacion De Riesgo - <span id="evaluacionderiesgo"></span></li>
+                                <li>Inspeccion Tala De Arbol - <span id="inpecciontalaarbol"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -275,25 +290,29 @@
                             data-bs-target="#flush-collapseNine" aria-expanded="false"
                             aria-controls="flush-collapseThree">
                             Incendios (Estructurales, Forestales, Desechos, Vegetacion, GLP, Derrame De Combustible)
+                            <span id="incendiosestructuralesglpvegetaciontotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseNine" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Reignicion</li>
-                                <li>Explosiones</li>
-                                <li>Escape De Gas</li>
-                                <li>Conato De Incendio</li>
-                                <li>Incendios De Basura</li>
-                                <li>Incendios Forestales</li>
-                                <li>Incendios En Vehiculos</li>
-                                <li>Derrame De Combustible</li>
-                                <li>Incendios En Estructuras</li>
-                                <li>Incendios En Embarcacion</li>
-                                <li>Incendios En Equipos Electricos</li>
-                                <li>Incendios En Vertederos De Basura</li>
-                                <li>Incendios Por Artificios Pirotecnicos</li>
+                                <li>Reignicion - <span id="reignicion"></span></li>
+                                <li>Explosiones - <span id="explosiones"></span></li>
+                                <li>Escape De Gas - <span id="escapedegas"></span></li>
+                                <li>Conato De Incendio - <span id="conatodeincendio"></span></li>
+                                <li>Incendios De Basura - <span id="incendiosdebasura"></span></li>
+                                <li>Incendios Forestales - <span id="incendiosforestales"></span></li>
+                                <li>Incendios En Vehiculos - <span id="incendiosdevehiculos"></span></li>
+                                <li>Derrame De Combustible - <span id="derramedecombustible"></span></li>
+                                <li>Incendios En Estructuras - <span id="incesdiosenestructuras"></span></li>
+                                <li>Incendios De Embarcacion - <span id="incendiosdeembarcacion"></span></li>
+                                <li>Incendios En Equipos Electricos - <span id="incendiosenequiposelectricos"></span>
+                                </li>
+                                <li>Incendios En Vertederos De Basura - <span id="incendiosenvertederosdebasura"></span>
+                                </li>
+                                <li>Incendios Por Artificios Pirotecnicos - <span
+                                        id="incendiosporartificiospirotecnicos"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -303,14 +322,14 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseFortin" aria-expanded="false"
                             aria-controls="flush-collapseThree">
-                            Talas, Podas
+                            Talas, Podas - <span id="talaspodastotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseFortin" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Tala De Arbol</li>
+                                <li>Tala De Arbol - <span id="taladearbol"></span></li>
                             </ol>
                         </div>
                     </div>
@@ -320,27 +339,42 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target="#flush-collapseFittin" aria-expanded="false"
                             aria-controls="flush-collapseThree">
-                            Capacitacion Practica Bomberil
+                            Capacitacion Practica Bomberil - <span id="capacitacionpracticabomberiltotales"></span>
                         </button>
                     </h2>
                     <div id="flush-collapseFittin" class="accordion-collapse collapse"
                         data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
                             <ol>
-                                <li>Practica Bomberil</li>
+                                <li>Practica Bomberil - <span id="practicabomberil"></span></li>
                             </ol>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="filter-cards-acordion">
+            <h3>Filtrar Por Semana</h3>
+            <section>
+                <input class="form-control" type="week" name="week" id="date-acordion">
+            </section>
+            <button type="submit" class="btn btn-danger" onclick="obtenerServicios()">Filtrar</button>
+        </div>
+
     </div>
     <footer class="footer">
         <section class="text-reserved">
             <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
         </section>
     </footer>
+    <script>
+        api_servicios_tipo = "{% url 'obtener_total_servicios' %}";
+        api_servicios_grafica = "{% url 'obtener_servicios_grafica' %}";
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../../static/js/animate.js"></script>
+    <script src="{% static 'js/animate.js' %}"></script>
+    <script src="{% static 'js/loader-function.js' %}"></script>
     <script src="{% static 'js/ven911/dashboard_chart.js' %}"></script>
+    <script src="{% static 'js/ven911/obtener_servicios.js' %}"></script>
     {% endblock %}

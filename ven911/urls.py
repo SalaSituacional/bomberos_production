@@ -32,4 +32,10 @@ urlpatterns = [
     
     # api para eliminar
     path('servicios-eliminar/<int:id>/',eliminar_servicio, name='eliminar_servicio'),
+
+    # api para total de servicios
+    path('total_servicios/', api_conteo_servicios, name='obtener_total_servicios'),
+    
+    # api para la grafica 
+    path('servicios_grafica/', api_servicios_grafico, name='obtener_servicios_grafica'),
 ]
