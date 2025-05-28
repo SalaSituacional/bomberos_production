@@ -5,19 +5,29 @@ document.addEventListener('DOMContentLoaded', function () {
 // Función para obtener los servicios y actualizar el DOM
 async function obtenerServicios() {
     try {
-        // Obtener el valor del input de semana
-        const weekInput = document.getElementById('date-acordion');
-        const selectedWeek = weekInput.value;
+        const fechaInicio = document.getElementById('fecha-inicio').value;
+        const fechaFin = document.getElementById('fecha-fin').value;
 
-        // Construir la URL con el parámetro de semana si existe
-        let url = api_servicios_tipo;
-        if (selectedWeek) {
-            url += `?week=${selectedWeek}`;
+        // Validación básica
+        if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
+            alert('La fecha de inicio no puede ser mayor a la fecha final');
+            return;
         }
+
+
+         let url = api_servicios_tipo;
+        const params = new URLSearchParams();
+        
+        if (fechaInicio) params.append('fecha_inicio', fechaInicio);
+        if (fechaFin) params.append('fecha_fin', fechaFin);
+        
+        if (params.toString()) url += `?${params.toString()}`;
+        // Si no hay fechas, se obtienen todos los registros
+        console.log('URL de la API:', url); // Para depuración
 
         const response = await fetchWithLoader(url);
         const data = await response;
-
+        console.log('Datos obtenidos:', data);
         const mapeoIds = {
             // Hechos Viales
             'colisiones': 'Colisiones',
@@ -124,7 +134,9 @@ async function obtenerServicios() {
             const elemento = document.getElementById(id);
             const nombreServicio = mapeoIds[id];
             if (elemento && data[nombreServicio] !== undefined) {
-                elemento.textContent = `(${data[nombreServicio]})`;
+                elemento.textContent = `(${data[nombreServicio]})`; // Muestra la suma directa
+            } else if (elemento) {
+                elemento.textContent = "(0)"; // Valor por defecto si no existe
             }
         });
 
@@ -321,10 +333,11 @@ async function obtenerServicios() {
 
     }
 }
-// Función para limpiar filtro
+
 function limpiarFiltro() {
-    document.getElementById('date-acordion').value = '';
-    obtenerServicios(); // Esto cargará todos los registros
+    document.getElementById('fecha-inicio').value = '';
+    document.getElementById('fecha-fin').value = '';
+    obtenerServicios();
 }
 
 // Función auxiliar para obtener número de semana (ISO)

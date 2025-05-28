@@ -354,11 +354,17 @@
             </div>
         </div>
         <div class="filter-cards-acordion">
-            <h3>Filtrar Por Semana</h3>
+            <h3>Filtrar Por Rango de Fechas</h3>
             <section>
-                <input class="form-control" type="week" name="week" id="date-acordion">
+                <label for="fecha-inicio">Fecha Inicio:</label>
+                <input class="form-control" type="date" id="fecha-inicio" name="fecha-inicio">
+
+                <label for="fecha-fin">Fecha Fin:</label>
+                <input class="form-control" type="date" id="fecha-fin" name="fecha-fin">
             </section>
-            <button type="submit" class="btn btn-danger" onclick="obtenerServicios()">Filtrar</button>
+            <button type="button" class="btn btn-danger" onclick="obtenerServicios()">Filtrar</button>
+            <br>
+            <button type="button" class="btn btn-danger" onclick="limpiarFiltro()">Limpiar</button>
         </div>
 
     </div>
