@@ -15,12 +15,12 @@ async function obtenerServicios() {
         }
 
 
-         let url = api_servicios_tipo;
+        let url = api_servicios_tipo;
         const params = new URLSearchParams();
-        
+
         if (fechaInicio) params.append('fecha_inicio', fechaInicio);
         if (fechaFin) params.append('fecha_fin', fechaFin);
-        
+
         if (params.toString()) url += `?${params.toString()}`;
         // Si no hay fechas, se obtienen todos los registros
         console.log('URL de la API:', url); // Para depuración
@@ -322,10 +322,25 @@ async function obtenerServicios() {
         document.getElementById('capacitacionpracticabomberiltotales').textContent = `(${totalcapacitacionpracticabomberiltotales})`;
 
 
+        // Calcular suma total de todos los servicios
+        const totalGeneral =
+            totalHechosViales +
+            totalConsultasMedicas +
+            totalOperacionesComunicaciones +
+            totalRescates +
+            totalHimenopteros +
+            totalabordajescomunidadestrasladosconambulancia +
+            totalatencionesprehospitalariasverificaciondesignosvitales +
+            totalserviciosespecialestotales +
+            totalpovapostamientostotales +
+            totalinsepccionesestablecimientoscomercialestotales +
+            totalinspeccionesazonasderiesgototales +
+            totalincendiosestructuralesglpvegetaciontotales +
+            totaltalaspodastotales +
+            totalcapacitacionpracticabomberiltotales;
 
-
-
-
+        // Actualizar el elemento con la suma total
+        document.getElementById('resultadostotales').textContent = `(${totalGeneral})`;
 
         // ==============
         // // fin script

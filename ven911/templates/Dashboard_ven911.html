@@ -40,7 +40,7 @@
                 <button type="submit" class="btn btn-danger" onclick="filterByMonth()">Filtrar</button>
             </div>
         </div>
-        <h3 class="title-ven-911">Agrupacion De Servicios</h3>
+        <h3 class="title-ven-911">Agrupacion De Servicios - Total: <span id="resultadostotales"></span></h3>
         <div class="contain-cards-acordion">
             <div class="accordion accordion-flush acordion-card" id="accordionFlushExample">
                 <div class="accordion-item">
@@ -364,6 +364,8 @@
             </section>
             <button type="button" class="btn btn-danger" onclick="obtenerServicios()">Filtrar</button>
             <br>
+            <button type="button" class="btn btn-danger" onclick="remplazarVariablesPDF()">Exportar .pptx</button>
+            <br>
             <button type="button" class="btn btn-danger" onclick="limpiarFiltro()">Limpiar</button>
         </div>
 
@@ -376,11 +378,18 @@
     <script>
         api_servicios_tipo = "{% url 'obtener_total_servicios' %}";
         api_servicios_grafica = "{% url 'obtener_servicios_grafica' %}";
+        var planilla_pdf = "{% static 'assets/reporte_diarias_alcalde.pdf' %}";
     </script>
+    <!-- cdn para los pdf -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+    <!-- cdn para graficas -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- area de scripts locales -->
     <script src="{% static 'js/animate.js' %}"></script>
     <script src="{% static 'js/loader-function.js' %}"></script>
     <script src="{% static 'js/ven911/dashboard_chart.js' %}"></script>
     <script src="{% static 'js/ven911/obtener_servicios.js' %}"></script>
+    <script src="{% static 'js/ven911/pdf_planilla.js' %}"></script>
     {% endblock %}
