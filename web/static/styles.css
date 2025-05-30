@@ -4539,14 +4539,84 @@ checkbox-styles {
   display: flex;
   flex-direction: column;
 }
-.contain-cards-acordion{
+
+.contain-cards-acordion {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
+
 .acordion-card {
   width: 100%;
+}
+
+.contain-bar-pie-ven911 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #FFF;
+  padding: 1rem;
+  border-radius: 40px;
+}
+
+.chart-pie-ven911 {
+  width: 80%;
+  height: 40rem;
+  margin-bottom: 5rem;
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
+.filter-control-ven911 {
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 2rem;
+
+  input {
+    margin-bottom: 1rem;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 1rem;
+    margin-top: .5rem;
+  }
+}
+
+.filter-cards-acordion {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #FFF;
+  border-radius: 20px;
+  margin-top: 2rem;
+  padding: 2rem;
+
+  section {
+    width: 100%;
+    margin-bottom: .5rem;
+    padding: 1rem;
+  }
+
+  h3 {
+    text-align: center;
+  }
+}
+.title-ven-911{
+  width: 100%;
+  background-color: #FFF;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 20px;
 }
 
 /* ------------------------------- Media querys ------------------------------------------ */

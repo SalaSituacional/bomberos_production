@@ -5,6 +5,7 @@
 {% elif user.user == "Ven_911" %}
 {% include "layouts/panel_ven911.html" %}
 {% endif %}
+{% load static %}
 {% block content %}
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
@@ -31,13 +32,6 @@
             <h2>Registrar Servicio</h2>
             {% csrf_token %}
             {{ formulario_servicios }}
-            {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                {% endfor %}
-            </div>
-            {% endif %}
             <div class="ven911-buttons">
                 <button type="submit" class="btn btn-danger">Enviar</button>
                 <button type="reset" class="btn btn-danger"><a href="{% url 'home_911' %}">Cancelar</a></button>
@@ -51,6 +45,6 @@
     </section>
 </footer>
 
-<script src="../../static/js/animate.js"></script>
+<script src="{% static 'js/animate.js' %}"></script>
 
 {% endblock %}
