@@ -2127,12 +2127,14 @@ checkbox-styles {
     margin-right: 2rem;
     transform: scale(0.8);
   }
+
   a,
   button:hover {
     transform: scale(0.9);
     transition: 0.1s ease-in-out all;
   }
-  a{
+
+  a {
     font-size: 2rem;
   }
 }
@@ -4534,6 +4536,7 @@ checkbox-styles {
     margin: 0 auto;
     margin-bottom: 1rem;
   }
+
   a {
     width: 80%;
     margin: 0 auto;
@@ -4620,7 +4623,8 @@ checkbox-styles {
     text-align: center;
   }
 }
-.title-ven-911{
+
+.title-ven-911 {
   width: 100%;
   background-color: #FFF;
   text-align: center;
@@ -5808,6 +5812,13 @@ checkbox-styles {
     padding: 1rem;
     margin: 0 auto;
   }
+
+  .contain-cards-acordion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
 }
 
 @media (max-width: 375px) {
@@ -6321,6 +6332,12 @@ checkbox-styles {
     justify-content: center;
   }
 
+  .contain-cards-acordion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
 }
 
 @media (max-width: 320px) {
@@ -6462,5 +6479,17 @@ checkbox-styles {
     width: 100%;
     padding: 1rem;
     margin: 0 auto;
+  }
+
+  .contain-cards-acordion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
+  .bar-chart-911 {
+    width: 100%;
+    height: 100px;
   }
 }

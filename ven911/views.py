@@ -14,6 +14,7 @@ from django.utils.timezone import localdate
 from django.forms.models import model_to_dict
 from django.views.decorators.http import require_http_methods
 from django.db.models import Count, Q, Sum
+from datetime import time
 from .urls import *
 from .forms import *
 from django.db.models import Prefetch
@@ -149,30 +150,63 @@ def eliminar_servicio(request, id):
             return JsonResponse({"error": "Servicio no encontrado"}, status=404)
     return JsonResponse({"error": "Método no permitido"}, status=405)
 
+# api conteo de servicios para dashboard y exportacion de pdf
+
 def api_conteo_servicios(request):
+    # Primero obtenemos todos los tipos de servicio
     tipos_servicio = TipoServicio.objects.all().order_by('nombre')
+    
+    # Inicializamos el filtro vacío
     filtro_servicios = Q()
     
-    # Filtro por rango de fechas
+    # Obtenemos los parámetros de fecha
     fecha_inicio = request.GET.get('fecha_inicio')
     fecha_fin = request.GET.get('fecha_fin')
     
     if fecha_inicio and fecha_fin:
         try:
+            # Convertimos las fechas de string a objetos date
             start_date = timezone.datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
             end_date = timezone.datetime.strptime(fecha_fin, "%Y-%m-%d").date()
             
-            # Validar que la fecha inicio <= fecha fin
+            # Validamos que la fecha inicio <= fecha fin
             if start_date <= end_date:
-                filtro_servicios &= Q(servicio__fecha__range=(start_date, end_date))
+                # Construimos los filtros para los servicios
+                
+                # Caso 1: Rango de múltiples días (días completos intermedios)
+                filtro_intermedio = Q(servicio__fecha__gt=start_date, 
+                                    servicio__fecha__lt=end_date)
+                
+                # Caso 2: Día inicial (solo horas >= 8:00 AM)
+                filtro_dia_inicio = Q(servicio__fecha=start_date, 
+                                    servicio__hora__gte=time(8, 0))
+                
+                # Caso 3: Día final (solo horas < 8:00 AM)
+                filtro_dia_fin = Q(servicio__fecha=end_date, 
+                                 servicio__hora__lt=time(8, 0))
+                
+                # Caso especial: Si es el mismo día (24 horas desde 8:00 AM a 8:00 AM del día siguiente)
+                if start_date == end_date:
+                    filtro_servicios = (
+                        Q(servicio__fecha=start_date, servicio__hora__gte=time(8, 0)) |
+                        Q(servicio__fecha=start_date + timezone.timedelta(days=1), 
+                         servicio__hora__lt=time(8, 0))
+                    )
+                else:
+                    # Combinamos todos los casos para rangos de múltiples días
+                    filtro_servicios = (filtro_intermedio | filtro_dia_inicio | filtro_dia_fin)
         except ValueError:
             pass  # Si hay error en el formato, ignoramos el filtro
     
+    # Anotamos cada tipo de servicio con la suma de las cantidades de servicios que cumplen el filtro
     datos = tipos_servicio.annotate(
-        total=Sum('servicio__cantidad_tipo_servicio', filter=filtro_servicios)
+        total=Sum('servicio__cantidad_tipo_servicio', 
+                filter=filtro_servicios)
     ).values('nombre', 'total')
     
+    # Convertimos a un diccionario {nombre_tipo: total}
     conteo = {item['nombre']: item['total'] or 0 for item in datos}
+    
     return JsonResponse(conteo)
 
 # api servicios de grafica
