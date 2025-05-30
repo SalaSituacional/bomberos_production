@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -7,7 +9,8 @@
   <meta name="description" content="Panel de Comandancia">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="../static/styles.css" />
+  <link rel="shortcut icon" href="{% static 'assets/logo bomberos 2.ico' %}" type="image/x-icon" />
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
   <title>Panel Principal</title>
 </head>
 
@@ -35,15 +38,15 @@
           </svg>
         </span>
       </button>
-      <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
+      <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo de bomberos" />
       <h1>Cuerpo de Bomberos</h1>
     </section>
     <section class="tools-exit-help">
       <a href="#">
-        <img src="../static/assets/help.svg" alt="help" />
+        <img src="{% static 'assets/help.svg' %}" alt="help" />
       </a>
-      <a href="/logout/">
-        <img src="../static/assets/salir.svg" alt="exit" />
+      <a href="{% url 'logout' %}">
+        <img src="{% static 'assets/salir.svg' %}" alt="exit" />
       </a>
     </section>
   </header>
@@ -60,7 +63,7 @@
         <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/dashboard/">
+              <a class="nav-link" aria-current="page" href="{% url 'dashboard' %}">
                 <svg width="28px" height="28px" viewBox="-102.4 -102.4 1228.80 1228.80" class="icon" version="1.1"
                   xmlns="http://www.w3.org/2000/svg" fill="#000000" transform="rotate(0)matrix(1, 0, 0, 1, 0, 0)">
                   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -115,7 +118,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" aria-current="page" href="/dashboard_sarp/">
+                  <a class="dropdown-item" aria-current="page" href="{% url 'dashboard_sarp' %}">
                     <svg fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                       xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 496 496" xml:space="preserve" width="25px"
                       height="25px">
@@ -156,7 +159,7 @@
                     Dashboard</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/registros_sarp/">
+                  <a class="dropdown-item" href="{% url 'registros_sarp' %}">
                     <svg fill="#000000" width="25px" height="25px" viewBox="0 0 32 32" id="icon"
                       xmlns="http://www.w3.org/2000/svg">
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -216,7 +219,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/dashboard_mecanica/">
+                  <a class="dropdown-item" href="{% url 'dashboard_mecanica' %}/">
                     <svg fill="#000000" height="25px" width="25px" version="1.1" id="Layer_1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 306.833 306.833" xml:space="preserve">
@@ -235,7 +238,7 @@
                     Dashboard</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" aria-current="page" href="/unidades_inventario/">
+                  <a class="dropdown-item" aria-current="page" href="{% url 'inventario_unidades' %}">
                     <svg fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                       xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="28px"
                       height="28px">
@@ -322,7 +325,7 @@
                     Inventario</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/unidades/">
+                  <a class="dropdown-item" href="{% url 'unidades' %}">
                     <svg fill="#000000" height="28px" width="28px" version="1.1" id="Layer_1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 512 512" xml:space="preserve">
@@ -358,7 +361,7 @@
                     Unidades</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/conductores/">
+                  <a class="dropdown-item" href="{% url 'conductores' %}">
                     <svg fill="#000000" height="28px" width="28px" version="1.1" id="Layer_1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 512 512" xml:space="preserve">
@@ -418,31 +421,31 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/rescate/">• Rescate</a>
+                  <a class="dropdown-item" href="{% url 'view_rescate' %}">• Rescate</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/operaciones/">• Operaciones</a>
+                  <a class="dropdown-item" href="{% url 'view_operaciones' %}">• Operaciones</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/prevencion/">• Prevencion</a>
+                  <a class="dropdown-item" href="{% url 'view_prevencion' %}">• Prevencion</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/prehospitalaria/">• PreHospitalaria</a>
+                  <a class="dropdown-item" href="{% url 'view_prehospitalaria' %}">• PreHospitalaria</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/enfermeria/">• Enfermeria</a>
+                  <a class="dropdown-item" href="{% url 'view_enfermeria' %}">• Enfermeria</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/serviciosmedicos/">• Servicios Medicos</a>
+                  <a class="dropdown-item" href="{% url 'view_serviciosmedicos' %}">• Servicios Medicos</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/psicologia/">• Psicologia</a>
+                  <a class="dropdown-item" href="{% url 'view_psicologia' %}">• Psicologia</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/capacitacion/">• Capacitacion</a>
+                  <a class="dropdown-item" href="{% url 'view_capacitacion' %}">• Capacitacion</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/grumae/">• Grumae</a>
+                  <a class="dropdown-item" href="{% url 'view_grumae' %}">• Grumae</a>
                 </li>
               </ul>
             </li>
@@ -501,7 +504,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" aria-current="page" href="/dashboard_bienes/">
+                  <a class="dropdown-item" aria-current="page" href="{% url 'dashboard_bienes' %}">
                     <svg fill="#000000" height="25px" width="25px" version="1.2" baseProfile="tiny" id="inventory"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 256 219.3" xml:space="preserve">
@@ -516,7 +519,7 @@
                     Dashboard</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/inventario_bienes/">
+                  <a class="dropdown-item" href="{% url 'inventario_bienes' %}">
                     <svg width="25px" height="25px" viewBox="-2.4 -2.4 28.80 28.80" fill="none"
                       xmlns="http://www.w3.org/2000/svg" stroke="#000000" stroke-width="0.00024000000000000003">
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -567,7 +570,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/personal/">
+                  <a class="dropdown-item" href="{% url 'personal' %}">
                     <svg width="25px" height="25px" viewBox="0 0 1024 1024" class="icon" version="1.1"
                       xmlns="http://www.w3.org/2000/svg" fill="#000000">
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -581,7 +584,7 @@
                     Personal</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/procedimientos/">
+                  <a class="dropdown-item" href="{% url 'view_procedimiento' %}">
                     <svg fill="#000000" height="25px" width="25px" version="1.1" id="Layer_1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 512.00 512.00" xml:space="preserve" stroke="#000000"
@@ -612,7 +615,7 @@
                     Procedimientos</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/tablageneral/">
+                  <a class="dropdown-item" href="{% url 'tabla_general' %}">
                     <svg width="27px" height="27px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg"
                       xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -715,7 +718,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/certificadosprevencion/">
+                  <a class="dropdown-item" href="{% url 'certificados_prevencion' %}">
                     <svg fill="#000000" height="25px" width="25px" version="1.1" xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink"
                       enable-background="new 0 0 512 512">
@@ -747,7 +750,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/estadisticas/">
+              <a class="nav-link" href="{% url 'view_estadisticas' %}">
                 <svg fill="#000000" width="28px" height="28px" version="1.1" id="Capa_1"
                   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                   viewBox="0 0 282.772 282.772" xml:space="preserve">
@@ -777,7 +780,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/antecedentes/">
+              <a class="nav-link" href="{% url 'antecedentes' %}">
                 <svg fill="#000000" height="28px" width="28px" version="1.1" id="Layer_1"
                   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
                   xml:space="preserve">
@@ -861,7 +864,7 @@
 
 
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="{% url 'inicio' %}">
                 <svg fill="#000000" width="28px" height="28px" viewBox="0 0 1024 1024"
                   xmlns="http://www.w3.org/2000/svg">
                   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -887,7 +890,7 @@
     </div>
   </div>
 
-  <script src="../../static/js/loader-function.js"></script>
+  <script src="{% static 'js/loader-function.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
     integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
     crossorigin="anonymous"></script>
@@ -898,22 +901,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>
-  <script src="../../static/js/off.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Ocultar botones de eliminación
-      const btnDelete = document.querySelectorAll(".button_delete");
-      btnDelete.forEach((button) => {
-        button.style.display = "none";
-      });
-      // ocultar boton de editar
-      const btnedit = document.querySelectorAll(".btn-editar");
-      btnedit.forEach((button) => {
-        button.style.display = "none";
-      });
-      
-    });
-  </script>
+  <script src="{% static 'js/off.js' %}"></script>
  
   {% block content %} {% endblock %}
 </body>

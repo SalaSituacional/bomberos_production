@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -6,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Panel de Prehospitalaria">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="../static/styles.css" />
+  <link rel="shortcut icon" href="{% static 'assets/logo bomberos 2.ico' %}" type="image/x-icon" />
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
   <title>Panel Principal</title>
 </head>
 
@@ -34,15 +37,15 @@
           </svg>
         </span>
       </button>
-      <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
+      <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo de bomberos" />
       <h1>Cuerpo de Bomberos</h1>
     </section>
     <section class="tools-exit-help">
       <a href="#">
-        <img src="../static/assets/help.svg" alt="help" />
+        <img src="{% static 'assets/help.svg' %}" alt="help" />
       </a>
-      <a href="/logout/">
-        <img src="../static/assets/salir.svg" alt="exit" />
+      <a href="{% url 'logout' %}">
+        <img src="{% static 'assets/salir.svg' %}" alt="exit" />
       </a>
     </section>
   </header>
@@ -59,7 +62,7 @@
         <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/dashboard/">
+              <a class="nav-link active" aria-current="page" href="{% url 'dashboard' %}">
                 <svg width="30px" height="30px" viewBox="-102.4 -102.4 1228.80 1228.80" class="icon" version="1.1"
                   xmlns="http://www.w3.org/2000/svg" fill="#000000" transform="rotate(0)matrix(1, 0, 0, 1, 0, 0)">
                   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -77,7 +80,7 @@
                 Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/procedimientos/">
+              <a class="nav-link" href="{% url 'view_procedimiento' %}">
                 <svg fill="#000000" height="30px" width="30px" version="1.1" id="Layer_1"
                   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                   viewBox="0 0 511.999 511.999" xml:space="preserve">
@@ -117,12 +120,12 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/prehospitalaria/">• PreHospitalaria</a>
+                  <a class="dropdown-item" href="{% url 'view_prehospitalaria' %}">• PreHospitalaria</a>
                 </li>
               </ul>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="{% url 'inicio' %}">
                 <svg fill="#000000" width="25px" height="30px" viewBox="0 0 1024 1024"
                   xmlns="http://www.w3.org/2000/svg">
                   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -148,7 +151,7 @@
     </div>
   </div>
 
-  <script src="../../static/js/loader-function.js"></script>
+  <script src="{% static 'js/loader-function.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
     integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
     crossorigin="anonymous"></script>
@@ -159,130 +162,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>
-  <script src="../../static/js/setdayfilter.js"></script>
-  <script src="../../static/js/off.js"></script>
+  <script src="{% static 'js/setdayfilter.js' %}"></script>
+  <script src="{% static 'js/off.js' %}"></script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Seleccionar todos los elementos <li>
-      const items = document.querySelectorAll(".items-row li");
-      const filters = document.querySelectorAll(".filter-search");
-      const selectOptions = document.querySelectorAll(
-        "#id_form1-opciones option"
-      );
-
-      filters.forEach((filter) => {
-        filter.style.display = "none";
-      });
-
-      // Iterar sobre cada <li>
-      items.forEach((item) => {
-        if (item.getAttribute("data-division") !== "prehospitalaria") {
-          item.remove(); // Elimina el elemento del DOM
-        }
-      });
-
-      // Ocultar opciones del select excepto la opción con value '7' (Capacitación)
-      selectOptions.forEach((option) => {
-        if (option.value !== "5" && option.value !== "") {
-          option.remove(); // Elimina la opción del select
-        }
-      });
-
-      // Ocultar botones "Total" y "Mes"
-      const btnTotalTwo = document.getElementById("btn-total-one");
-      const btnMonthTwo = document.getElementById("btn-month-one");
-      const btnTotal = document.getElementById("btn-total");
-      const btnMonth = document.getElementById("btn-month");
-
-      if (btnTotalTwo) {
-        btnTotalTwo.style.display = "none";
-      }
-
-      if (btnMonthTwo) {
-        btnMonthTwo.style.display = "none";
-      }
-      if (btnTotal) {
-        btnTotal.style.display = "none";
-      }
-      if (btnMonth) {
-        btnMonth.style.display = "none";
-      }
-
-      // Eliminar los contenedores con ID colum-1 y colum-2
-      const colum1 = document.getElementById("colum-1");
-      const colum2 = document.getElementById("colum-2");
-
-      if (colum1) {
-        colum1.remove(); // Elimina el contenedor del DOM
-      }
-
-      if (colum2) {
-        colum2.remove(); // Elimina el contenedor del DOM
-      }
-      // Eliminar los contenedores con ID de porcentajes
-      const row1 = document.getElementById("operaciones");
-      const row2 = document.getElementById("grumae");
-      const row3 = document.getElementById("prevencion");
-      const row4 = document.getElementById("rescate2");
-      const row5 = document.getElementById("serviciosmedicos");
-
-      if (row1) {
-        row1.remove(); // Elimina el contenedor del DOM
-      }
-
-      if (row2) {
-        row2.remove(); // Elimina el contenedor del DOM
-      }
-
-      if (row3) {
-        row3.remove(); // Elimina el contenedor del DOM
-      }
-
-      if (row4) {
-        row4.remove(); // Elimina el contenedor del DOM
-      }
-
-      if (row5) {
-        row5.remove(); // Elimina el contenedor del DOM
-      }
-
-      // Ocultar botones de eliminación
-      const btnDelete = document.querySelectorAll(".button_delete");
-      btnDelete.forEach((button) => {
-        button.style.display = "none";
-      });
-
-
-      // ocultar boton de editar
-      const btnedit = document.querySelectorAll(".btn-editar");
-      btnedit.forEach((button) => {
-        button.style.display = "none";
-      });
-
-
-      // Mantener solo la sección de "Servicios médicos" y ocultar el resto
-      const analyticsSections = document.querySelectorAll(
-        ".div-analytics .progress-bar"
-      );
-      analyticsSections.forEach((section) => {
-        if (section.id !== "prehospitalaria") {
-          section.querySelectorAll("p, .progress").forEach((child) => {
-            child.style.display = "none"; // Oculta el contenido de los otros elementos
-          });
-        }
-      });
-    });
-  </script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var contains = document.getElementsByClassName("contain-dates");
-      while (contains.length > 0) {
-        contains[0].remove();
-      }
-    });
-  </script>
-
+  
   {% block content %} {% endblock %}
 </body>
 

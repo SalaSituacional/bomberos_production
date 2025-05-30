@@ -7,12 +7,15 @@
 {% elif user.user == "Bienes_00"%}
 {% include "layouts/panel_bienes.html" %}
 {% endif %}
+
+{% load static %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Bienes Municipales</h3>
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -45,7 +48,7 @@
       Registrar Bienes:
     </label>
     <button type="button" class="btn">
-      <a href="/registro_bienes/">
+      <a href="{% url 'registro_inventario' %}">
         <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
           fill="#000000">
@@ -226,8 +229,7 @@
   </section>
 </footer>
 
-<script src="../../static/js/loader-function.js"></script>
-<script>
+<!-- <script>
   // Obtener los formularios por sus IDs
   const formReasignacion = document.getElementById("formReasignacion");
   const formReasignacionEstado = document.getElementById("formReasignacionEstado");
@@ -267,13 +269,13 @@
   // Aplicar las clases a los formularios si existen
   applyClassesToFormElements(formReasignacion);
   applyClassesToFormElements(formReasignacionEstado);
-</script>
-<script src="../../static/js/bienes_inmuebles/tabla_bienes.js"></script>
-<script src="../../static/js/bienes_inmuebles/reasignar_bien.js"></script>
-<script src="../../static/js/bienes_inmuebles/cambiar_estado.js"></script>
-<script src="../../static/js/bienes_inmuebles/eliminar_bienes.js"></script>
-<script src="../../static/js/bienes_inmuebles/mostrar_bien.js"></script>
-<script src="../../static/js/bienes_inmuebles/generar_excel_bienes.js"></script>
+</script> -->
+<script src="{% static 'js/bienes_inmuebles/tabla_bienes.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/reasignar_bien.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/cambiar_estado.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/eliminar_bienes.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/mostrar_bien.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/generar_excel_bienes.js' %}"></script>
 
 
 

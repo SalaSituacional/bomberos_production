@@ -6,14 +6,22 @@
 {% include "layouts/panel_comandancia.html" %}
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
+{% elif user.user == "Rescate03"%}
+{% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Grumae02"%}
+{% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Operaciones01"%}
+{% include "layouts/panel_operaciones.html" %}
 {% endif %}
+
+{% load static %}
 
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Herramientas</h3>
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -91,7 +99,7 @@
     <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
-
+<!-- 
 <script>
   // Obtener el formulario por su ID
   const form = document.getElementById("");
@@ -120,9 +128,7 @@
     });
   }
 
-</script>
+</script> -->
 
-<script src="../../static/js/loader-function.js"></script>
-{% load static %}
 <script src="{% static 'js/unidades/filters/unidades_inventario.js'%}"></script>
 {% endblock %}

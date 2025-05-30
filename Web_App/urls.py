@@ -24,9 +24,15 @@ from web.views.views_descargas import *
 from web.views.views_tables import *
 from django.views.generic import TemplateView
 handler404 = custom_404_view
+from ven911.urls import *
+from seguridad_prevencion.urls import *
 
 #Se crean las rutas que se podran visitar en la aplicacion web.
 urlpatterns = [
+    # includes
+    path('ven911/', include('ven911.urls')),
+    path('seguridad_prevencion/', include('seguridad_prevencion.urls')),
+
     # Admin
     path('alpha04/', admin.site.urls),
     path('logout/', logout, name='logout'),
@@ -52,20 +58,20 @@ urlpatterns = [
     path('login/', Home, name="home"),
     path('dashboard/', Dashboard,name='dashboard'),
     path('api/ultimo_procedimiento/', ultimo_procedimiento),
-    path('personal/', View_personal) ,
+    path('personal/', View_personal, name='personal'),
     path("api/ultimo_personal/", ultimo_personal, name="ultimo_personal"),
     path('api/personal_comandante/', personal_primer_comandante, name='personal_comandante'),
     path('prueba/', Prueba),
-    path('registros/', ver_registros),
-    path('antecedentes/', Antecedentes),
+    path('registros/', ver_registros, name='registros'),
+    path('antecedentes/', Antecedentes, name='antecedentes'),
 
     # Mecanica
     path('dashboard_mecanica/', Dashboard_mecanica,name='dashboard_mecanica'),
 
     # SARP
     path('dashboard_sarp/', Dashboard_sarp,name='dashboard_sarp'),
-    path('registros_sarp/', Registros_sarp),
-    path('formularios_sarp/', Formularios_sarp),
+    path('registros_sarp/', Registros_sarp, name='registros_sarp'),
+    path('formularios_sarp/', Formularios_sarp, name='formularios_sarp'),
     path('registrar_dron/', registrar_drones, name="registrar_dron"),
     path('api/vuelos/', api_vuelos, name="api_vuelos"),  # API en formato JSON
     path('reporte/<str:id_vuelo>/', obtener_reporte, name='reporte'),
@@ -87,7 +93,7 @@ urlpatterns = [
     path('api/verificar-identificador/', verificar_identificador, name='verificar_identificador'),
 
     # Unidades
-    path('unidades/', View_Unidades),
+    path('unidades/', View_Unidades, name='unidades'),
 
     path('conductores/', conductores, name='conductores'),
     path('agregar_conductores/', agregar_conductor, name='agregar_conductor'),
@@ -97,7 +103,7 @@ urlpatterns = [
     path('api/conductores/', api_conductores, name='api_conductores'),
     path('api/conductores/<int:id>/', api_eliminar_conductor, name='api_eliminar_conductor'),
 
-    path('formularioUnidades/', View_Form_unidades),
+    path('formularioUnidades/', View_Form_unidades, name='formulario_unidades'),
     path('agregar_reportes/', agregar_reportes, name="agregar_reportes"),
     path('agregar_unidades/', agregar_unidades, name="agregar_unidades"),
     path('cambiar_estado/', cambiar_estado, name="cambiar_estado"),
@@ -114,36 +120,20 @@ urlpatterns = [
     path("api/reportes_cambio_repuestos/", contar_reporte_cambio_repuestos, name="reportes_cambio_repuestos"),
     path("api/reportes_colisiones_daños/", contar_reporte_colisiones_danos, name="reportes_colisiones_daños"),
 
-    # Certificados Prevencion
-    path('certificadosprevencion/', certificados_prevencion),
-    path('formulariocertificados/', formulario_certificado_prevencion),
-    path('planillacertificado/', planilla_certificado),
-    path('api/ultimo_reporte_solicitudes/', obtener_ultimo_reporte_solicitudes),
-    path('api/get_solicitudes/<str:referencia>/', api_get_solicitudes, name='get_solicitudes'),
-    path('generar_documento_guia/<int:id>/', doc_Guia, name='generar_documento_guia'),
-    path('api/eliminar_solicitudes/<int:id>/', api_eliminar_solicitudes, name='api_eliminar_solicitudes'),
-    path('api/modificar_solicitudes/<int:id>/', api_modificar_solicitudes, name='api_modificar_solicitudes'),
-    path('generar_documento_inspeccion/<int:id>/', doc_Inspeccion, name='generar_documento_inspeccion'),
-    path("validar-cedula/", validar_cedula, name="validar_cedula"),
-    path("validar-rif/", validar_rif, name="validar_rif"),
-
-    path('agregar_comercio/', agregar_comercio , name='agregar_comercio'),
-    path('agregar_solicitud/', agregar_o_actualizar_solicitud , name='agregar_solicitud'),
-
     # Tablas
-    path('tablageneral/', tabla_general),
+    path('tablageneral/', tabla_general, name="tabla_general"),
     path('procedimientos/', View_Procedimiento, name='view_procedimiento'),
     path('editar_procedimientos/', View_Procedimiento_Editar, name='view_procedimiento_editar'),
-    path('estadisticas/', View_Estadisticas),
-    path('rescate/', View_Rescate),
-    path('operaciones/', View_Operaciones),
-    path('prevencion/', View_Prevencion),
-    path('prehospitalaria/', View_prehospitalaria),
-    path('grumae/', View_grumae),
-    path('capacitacion/', View_capacitacion),
-    path('enfermeria/', View_enfermeria),
-    path('serviciosmedicos/', View_serviciosmedicos),
-    path('psicologia/', View_psicologia),
+    path('estadisticas/', View_Estadisticas, name='view_estadisticas'),
+    path('rescate/', View_Rescate, name='view_rescate'),
+    path('operaciones/', View_Operaciones, name='view_operaciones'),
+    path('prevencion/', View_Prevencion, name='view_prevencion'),
+    path('prehospitalaria/', View_prehospitalaria, name='view_prehospitalaria'),
+    path('grumae/', View_grumae, name='view_grumae'),
+    path('capacitacion/', View_capacitacion, name='view_capacitacion'),
+    path('enfermeria/', View_enfermeria, name='view_enfermeria'),
+    path('serviciosmedicos/', View_serviciosmedicos, name='view_serviciosmedicos'),
+    path('psicologia/', View_psicologia, name='view_psicologia'),
 
     # APIs
     path('api/procedimientos/<int:id>/', obtener_procedimiento, name='obtener_procedimiento'),
@@ -182,7 +172,6 @@ urlpatterns = [
     path('descargar-excel-prevencion/', generar_excel_prevencion, name='descargar_excel_prevencion'),
     path('descargar-excel-enfermeria/', generar_excel_enfermeria, name='descargar_excel_enfermeria'),
     path('descargar-excel-operacional/', generar_excel_operacional, name='descargar_excel_operacional'),
-    path('generar-excel-solicitudes/', generar_excel_solicitudes, name='generar_excel_solicitudes'),
     path('generar-excel-reportes-unidades/', generar_excel_reportes_unidades, name='generar_excel_reportes'),
     path('generar-excel-reportes-sarp/', generar_excel_reportes_sarp, name='generar_excel_sarp'),
     path('generar-excel-bienesmunicipales/', generar_excel_bienes_municipales, name='generar_excel_sarp'),

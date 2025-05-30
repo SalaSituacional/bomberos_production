@@ -1,3 +1,5 @@
+{% load static %}
+
 {% if user.user == "SeRvEr" %}
 {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -99,7 +101,7 @@
           </polygon>
         </g>
       </svg>
-      <a href="/formulariocertificados/" class="btn btn-danger">Solicitar</a>
+      <a href="{% url 'formulario_certificado_prevencion' %}" class="btn btn-danger">Solicitar</a>
     </div>
     <!-- <div class="request-prevencion-card">
       <h4 class="request-prevencion-title">Renovacion</h4>
@@ -274,7 +276,7 @@
     <div class="modal-content modal-content-two">
       <div class="modal-header header-dashboard-two">
         <section class="title-icon">
-          <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
+          <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo de bomberos" />
           <h2>Cuerpo de Bomberos</h2>
         </section>
       </div>

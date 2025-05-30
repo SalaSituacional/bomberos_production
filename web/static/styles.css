@@ -2122,14 +2122,20 @@ checkbox-styles {
     margin: 0;
   }
 
+  a,
   button {
     margin-right: 2rem;
     transform: scale(0.8);
   }
 
+  a,
   button:hover {
     transform: scale(0.9);
     transition: 0.1s ease-in-out all;
+  }
+
+  a {
+    font-size: 2rem;
   }
 }
 
@@ -4486,6 +4492,146 @@ checkbox-styles {
   transition: background-color 0.3s ease;
 }
 
+.contain-ven911-forms {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.form-911 {
+  border-radius: 20px;
+  background-color: #FFF;
+  margin: 0 auto;
+  width: 50%;
+  padding: 2rem;
+
+  h2 {
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+  }
+
+  label {
+    font-weight: 400;
+  }
+
+  div {
+    margin-bottom: 2rem;
+  }
+}
+
+.ven911-buttons {
+  width: 100%;
+  display: flex;
+  margin: 0 auto;
+  justify-content: center;
+  flex-direction: column;
+
+  button {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+  }
+
+  a {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+  }
+}
+
+.contain-ven911-dashboard {
+  width: 95%;
+  padding: 1rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.contain-cards-acordion {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.acordion-card {
+  width: 100%;
+}
+
+.contain-bar-pie-ven911 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #FFF;
+  padding: 1rem;
+  border-radius: 40px;
+}
+
+.chart-pie-ven911 {
+  width: 80%;
+  height: 40rem;
+  margin-bottom: 5rem;
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
+.filter-control-ven911 {
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 2rem;
+
+  input {
+    margin-bottom: 1rem;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 1rem;
+    margin-top: .5rem;
+  }
+}
+
+.filter-cards-acordion {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #FFF;
+  border-radius: 20px;
+  margin-top: 2rem;
+  padding: 2rem;
+
+  section {
+    width: 100%;
+    margin-bottom: .5rem;
+    padding: 1rem;
+  }
+
+  h3 {
+    text-align: center;
+  }
+}
+
+.title-ven-911 {
+  width: 100%;
+  background-color: #FFF;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 20px;
+}
+
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
@@ -5666,6 +5812,13 @@ checkbox-styles {
     padding: 1rem;
     margin: 0 auto;
   }
+
+  .contain-cards-acordion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
 }
 
 @media (max-width: 375px) {
@@ -6179,6 +6332,12 @@ checkbox-styles {
     justify-content: center;
   }
 
+  .contain-cards-acordion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
 }
 
 @media (max-width: 320px) {
@@ -6320,5 +6479,17 @@ checkbox-styles {
     width: 100%;
     padding: 1rem;
     margin: 0 auto;
+  }
+
+  .contain-cards-acordion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
+  .bar-chart-911 {
+    width: 100%;
+    height: 100px;
   }
 }

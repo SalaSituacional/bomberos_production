@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "web",
+    "ven911",
+    "seguridad_prevencion"
 ]
 
 MIDDLEWARE = [

@@ -24,13 +24,15 @@
     {% include "layouts/panel_psicologia.html" %}
 {% endif %}
 
+{% load static %}
+
 {% block content %}
 
 <div class="general-dashboard">
     <div class="div-user-name username-space">
       <h3 class="division-title">Antecedentes</h3>
       <section class="user-name" >
-        <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+        <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
         <svg
           width="30px"
           height="30px"
@@ -184,7 +186,7 @@
         <div class="modal-header header-dashboard-two">
           <section class="title-icon">
             <img
-              src="../static/assets/logo bomberos 2.svg"
+              src="{% static 'assets/logo bomberos 2.svg' %}"
               alt="Logo de bomberos"
             />
             <h2>Cuerpo de Bomberos</h2>
@@ -208,5 +210,5 @@
     </section>
   </footer>
 
-  <script src="../../static/js/info_modal.js"></script>
+  <script src="{% static 'js/info_modal.js' %}"></script>
 {% endblock %}

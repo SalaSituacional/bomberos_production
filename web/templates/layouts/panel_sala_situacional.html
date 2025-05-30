@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -7,8 +9,8 @@
   <meta name="description" content="Panel de Sala Situacional">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-  <link rel="shortcut icon" href="../../static/assets/logo bomberos 2.ico" type="image/x-icon" />
-  <link rel="stylesheet" href="../static/styles.css" />
+  <link rel="shortcut icon" href="{% static 'assets/logo bomberos 2.ico' %}" type="image/x-icon" />
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
   <title>Panel Principal</title>
 </head>
 
@@ -36,15 +38,15 @@
           </svg>
         </span>
       </button>
-      <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
+      <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo de bomberos" />
       <h1>Cuerpo de Bomberos</h1>
     </section>
     <section class="tools-exit-help">
       <a href="#">
-        <img src="../static/assets/help.svg" alt="help" />
+        <img src="{% static 'assets/help.svg' %}" alt="help" />
       </a>
       <a href="/logout/">
-        <img src="../static/assets/salir.svg" alt="exit" />
+        <img src="{% static 'assets/salir.svg' %}" alt="exit" />
       </a>
     </section>
   </header>
@@ -61,7 +63,7 @@
         <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/dashboard/">
+              <a class="nav-link" aria-current="page" href="{% url 'dashboard' %}">
                 <svg width="28px" height="28px" viewBox="-102.4 -102.4 1228.80 1228.80" class="icon" version="1.1"
                   xmlns="http://www.w3.org/2000/svg" fill="#000000" transform="rotate(0)matrix(1, 0, 0, 1, 0, 0)">
                   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -116,7 +118,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" aria-current="page" href="/dashboard_sarp/">
+                  <a class="dropdown-item" aria-current="page" href="{% url 'dashboard_sarp' %}">
                     <svg fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                       xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 496 496" xml:space="preserve" width="25px"
                       height="25px">
@@ -157,7 +159,7 @@
                     Dashboard</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/registros_sarp/">
+                  <a class="dropdown-item" href="{% url 'registros_sarp' %}">
                     <svg fill="#000000" width="25px" height="25px" viewBox="0 0 32 32" id="icon"
                       xmlns="http://www.w3.org/2000/svg">
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -183,6 +185,130 @@
                     </svg>
                     Registros</a>
                 </li>
+              </ul>
+            </li>
+
+            <!-- dropdown Ven-911 -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <svg fill="#000000" height="28px" width="28px" version="1.1" id="Capa_1"
+                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                  viewBox="0 0 291.65 291.65" xml:space="preserve" stroke="#000000"
+                  stroke-width="0.0029164800000000004">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <g>
+                      <path
+                        d="M224.441,211.335h-4.11v-76.935c0-41.083-33.423-74.506-74.506-74.506s-74.506,33.423-74.506,74.506v76.935h-4.11 c-16.759,0-30.393,13.634-30.393,30.393v39.92c0,5.523,4.477,10,10,10h198.02c5.523,0,10-4.477,10-10v-39.92 C254.834,224.97,241.2,211.335,224.441,211.335z M91.318,134.401c0-30.055,24.452-54.506,54.506-54.506 s54.506,24.452,54.506,54.506v76.935H91.318V134.401z M234.834,271.648H56.814v-29.92c0-5.731,4.662-10.393,10.393-10.393h157.233 c5.731,0,10.393,4.662,10.393,10.393V271.648z">
+                      </path>
+                      <path
+                        d="M145.824,39.999c5.523,0,10-4.477,10-10V10c0-5.523-4.477-10-10-10s-10,4.477-10,10v19.999 C135.824,35.522,140.301,39.999,145.824,39.999z">
+                      </path>
+                      <path
+                        d="M56.746,71.039c1.953,1.953,4.512,2.929,7.071,2.929s5.119-0.976,7.071-2.929c3.905-3.905,3.905-10.237,0-14.143 L56.748,42.755c-3.905-3.905-10.237-3.905-14.143,0c-3.905,3.905-3.905,10.237,0,14.143L56.746,71.039z">
+                      </path>
+                      <path
+                        d="M227.831,73.967c2.559,0,5.119-0.976,7.071-2.929l14.141-14.141c3.905-3.905,3.905-10.237,0-14.143 c-3.905-3.905-10.237-3.905-14.143,0L220.76,56.896c-3.905,3.905-3.905,10.237,0,14.143 C222.712,72.991,225.272,73.967,227.831,73.967z">
+                      </path>
+                      <path
+                        d="M145.824,90.827c-24.027,0-43.575,19.547-43.575,43.575c0,5.523,4.477,10,10,10s10-4.477,10-10 c0-12.999,10.576-23.575,23.575-23.575c5.523,0,10-4.477,10-10S151.347,90.827,145.824,90.827z">
+                      </path>
+                    </g>
+                  </g>
+                </svg>
+                Ven 911
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="{% url 'home_911' %}">
+                    <svg fill="#000000" height="25px" width="25px" version="1.1" id="Layer_1"
+                      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                      viewBox="0 0 512 512" xml:space="preserve" stroke="#000000" stroke-width="3.072">
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <g>
+                          <g>
+                            <g>
+                              <path
+                                d="M501.333,66.667H10.667C4.777,66.667,0,71.443,0,77.333v357.333c0,5.89,4.777,10.667,10.667,10.667h490.667 c5.89,0,10.667-4.777,10.667-10.667V77.333C512,71.443,507.224,66.667,501.333,66.667z M490.667,424H21.333V88h469.333V424z">
+                              </path>
+                              <path
+                                d="M53.333,402.667h405.333c5.89,0,10.667-4.777,10.667-10.667V120c0-5.89-4.777-10.667-10.667-10.667H53.333 c-5.89,0-10.667,4.777-10.667,10.667v272C42.667,397.89,47.443,402.667,53.333,402.667z M64,130.667h384v250.667H64V130.667z">
+                              </path>
+                              <path
+                                d="M157.395,152h-44.567c-15.161,0-27.494,12.334-27.494,27.493v59.679c0,15.162,12.334,27.494,27.493,27.494h50.729v57.04 c0,8.249-6.711,14.96-14.96,14.96H96c-5.89,0-10.667,4.777-10.667,10.667S90.11,360,96,360h52.595 c20.013,0,36.293-16.282,36.293-36.293V179.493C184.889,164.334,172.556,152,157.395,152z M163.554,245.333h-50.729 c-3.395,0-6.159-2.764-6.159-6.16v-59.679c0-3.397,2.764-6.16,6.16-6.16h44.568c3.397,0,6.16,2.764,6.16,6.16V245.333z">
+                              </path>
+                              <path
+                                d="M295.111,338.667h-28.445v-176c0-5.89-4.777-10.667-10.667-10.667c-3.385,0-6.395,1.581-8.349,4.039 c-0.139,0.165-0.285,0.364-0.433,0.579c-0.033,0.048-0.067,0.095-0.099,0.143c-0.016,0.025-0.032,0.045-0.048,0.07 l-39.111,59.857c-3.222,4.931-1.838,11.541,3.094,14.764c1.801,1.178,3.823,1.739,5.824,1.739c3.482,0,6.894-1.702,8.94-4.833 l19.516-29.867v140.175h-28.445c-5.89,0-10.667,4.777-10.667,10.667S210.998,360,216.889,360h78.223 c5.89,0,10.667-4.776,10.667-10.667S301.002,338.667,295.111,338.667z">
+                              </path>
+                              <path
+                                d="M416,338.667h-1.333c-5.89,0-10.667,4.777-10.667,10.667S408.777,360,414.667,360H416c5.89,0,10.667-4.776,10.667-10.667 S421.89,338.667,416,338.667z">
+                              </path>
+                              <path
+                                d="M376.889,152c-3.714,0-6.982,1.902-8.893,4.782c-0.012,0.018-0.025,0.032-0.036,0.05l-39.11,59.857 c-3.222,4.931-1.837,11.541,3.094,14.764c1.801,1.178,3.823,1.739,5.824,1.739c3.482,0,6.894-1.702,8.94-4.833l19.515-29.867 v140.175h-28.444c-5.89,0-10.667,4.777-10.667,10.667S331.888,360,337.778,360H376.8c0.015,0,0.03-0.002,0.045-0.002 c0.015,0,0.029,0.002,0.045,0.002c5.89,0,10.667-4.776,10.667-10.667V162.667C387.555,156.777,382.779,152,376.889,152z">
+                              </path>
+                            </g>
+                          </g>
+                        </g>
+                      </g>
+                    </svg>
+                    Dashboard</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'form_services' %}">
+                    <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink" width="25px" height="25px"
+                      viewBox="0 0 950.281 950.281" xml:space="preserve">
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <g>
+                          <g>
+                            <path
+                              d="M884.212,222.588L661.626,0H66.069v950.281h818.143V222.588z M681.542,116.083l86.588,86.588h-86.588V116.083z M816.212,882.281H134.069V68h479.473v202.671h202.67V882.281z">
+                            </path>
+                            <rect x="429.234" y="370.392" width="329.984" height="68"></rect>
+                            <polygon
+                              points="251.474,540.363 224.752,513.641 176.668,561.723 251.474,636.529 375.047,512.957 326.964,464.875 ">
+                            </polygon>
+                            <polygon
+                              points="251.474,709.744 224.752,683.021 176.669,731.105 251.474,805.912 375.047,682.34 326.964,634.256 ">
+                            </polygon>
+                            <polygon
+                              points="251.474,370.981 224.752,344.258 176.669,392.341 251.474,467.147 375.047,343.575 326.964,295.492 ">
+                            </polygon>
+                            <rect x="429.234" y="539.885" width="329.984" height="68"></rect>
+                            <rect x="429.234" y="709.375" width="329.984" height="68"></rect>
+                          </g>
+                        </g>
+                      </g>
+                    </svg>
+                    Formulario</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{% url 'table_911' %}">
+                    <svg width="25px" height="25px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                      xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <title>db-table</title>
+                        <desc>Created with Sketch.</desc>
+                        <defs> </defs>
+                        <g id="64px-Line" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                          <g id="db-table"> </g>
+                          <path
+                            d="M56,12 C56,9.794 54.206,8 52,8 L10,8 C7.794,8 6,9.794 6,12 L6,54 C6,56.206 7.794,58 10,58 L52,58 C54.206,58 56,56.206 56,54 L56,12 L56,12 Z M30,22 L30,32 L20,32 L20,22 L30,22 L30,22 Z M42,22 L42,32 L32,32 L32,22 L42,22 L42,22 Z M54,22 L54,32 L44,32 L44,22 L54,22 L54,22 Z M18,32 L8,32 L8,22 L18,22 L18,32 L18,32 Z M8,34 L18,34 L18,44 L8,44 L8,34 L8,34 Z M20,34 L30,34 L30,44 L20,44 L20,34 L20,34 Z M30,46 L30,56 L20,56 L20,46 L30,46 L30,46 Z M32,46 L42,46 L42,56 L32,56 L32,46 L32,46 Z M32,44 L32,34 L42,34 L42,44 L32,44 L32,44 Z M44,34 L54,34 L54,44 L44,44 L44,34 L44,34 Z M10,10 L52,10 C53.103,10 54,10.897 54,12 L54,20 L8,20 L8,12 C8,10.897 8.897,10 10,10 L10,10 Z M8,54 L8,46 L18,46 L18,56 L10,56 C8.897,56 8,55.103 8,54 L8,54 Z M52,56 L44,56 L44,46 L54,46 L54,54 C54,55.103 53.103,56 52,56 L52,56 Z"
+                            id="Shape" fill="#000000"> </path>
+                        </g>
+                      </g>
+                    </svg>
+                    Servicios</a>
+                </li>
+
               </ul>
             </li>
 
@@ -217,7 +343,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/dashboard_mecanica/">
+                  <a class="dropdown-item" href="{% url 'dashboard_mecanica' %}">
                     <svg fill="#000000" height="25px" width="25px" version="1.1" id="Layer_1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 306.833 306.833" xml:space="preserve">
@@ -236,7 +362,7 @@
                     Dashboard</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" aria-current="page" href="/unidades_inventario/">
+                  <a class="dropdown-item" aria-current="page" href="{% url 'inventario_unidades' %}">
                     <svg fill="#000000" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                       xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="28px"
                       height="28px">
@@ -323,7 +449,7 @@
                     Inventario</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/unidades/">
+                  <a class="dropdown-item" href="{% url 'unidades' %}">
                     <svg fill="#000000" height="28px" width="28px" version="1.1" id="Layer_1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 512 512" xml:space="preserve">
@@ -359,7 +485,7 @@
                     Unidades</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/conductores/">
+                  <a class="dropdown-item" href="{% url 'conductores' %}">
                     <svg fill="#000000" height="28px" width="28px" version="1.1" id="Layer_1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 512 512" xml:space="preserve">
@@ -419,31 +545,31 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/rescate/">• Rescate</a>
+                  <a class="dropdown-item" href="{% url 'view_rescate' %}">• Rescate</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/operaciones/">• Operaciones</a>
+                  <a class="dropdown-item" href="{% url 'view_operaciones' %}">• Operaciones</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/prevencion/">• Prevencion</a>
+                  <a class="dropdown-item" href="{% url 'view_prevencion' %}">• Prevencion</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/prehospitalaria/">• PreHospitalaria</a>
+                  <a class="dropdown-item" href="{% url 'view_prevencion' %}">• PreHospitalaria</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/enfermeria/">• Enfermeria</a>
+                  <a class="dropdown-item" href="{% url 'view_enfermeria' %}">• Enfermeria</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/serviciosmedicos/">• Servicios Medicos</a>
+                  <a class="dropdown-item" href="{% url 'view_serviciosmedicos' %}">• Servicios Medicos</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/psicologia/">• Psicologia</a>
+                  <a class="dropdown-item" href="{% url 'view_psicologia' %}">• Psicologia</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/capacitacion/">• Capacitacion</a>
+                  <a class="dropdown-item" href="{% url 'view_capacitacion' %}">• Capacitacion</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/grumae/">• Grumae</a>
+                  <a class="dropdown-item" href="{% url 'view_grumae' %}">• Grumae</a>
                 </li>
               </ul>
             </li>
@@ -502,7 +628,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" aria-current="page" href="/dashboard_bienes/">
+                  <a class="dropdown-item" aria-current="page" href="{% url 'dashboard_bienes' %}">
                     <svg fill="#000000" height="25px" width="25px" version="1.2" baseProfile="tiny" id="inventory"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 256 219.3" xml:space="preserve">
@@ -517,7 +643,7 @@
                     Dashboard</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/inventario_bienes/">
+                  <a class="dropdown-item" href="{% url 'inventario_bienes' %}">
                     <svg width="25px" height="25px" viewBox="-2.4 -2.4 28.80 28.80" fill="none"
                       xmlns="http://www.w3.org/2000/svg" stroke="#000000" stroke-width="0.00024000000000000003">
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -568,7 +694,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/personal/">
+                  <a class="dropdown-item" href="{% url 'personal' %}">
                     <svg width="25px" height="25px" viewBox="0 0 1024 1024" class="icon" version="1.1"
                       xmlns="http://www.w3.org/2000/svg" fill="#000000">
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -582,7 +708,7 @@
                     Personal</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/procedimientos/">
+                  <a class="dropdown-item" href="{% url 'view_procedimiento' %}">
                     <svg fill="#000000" height="25px" width="25px" version="1.1" id="Layer_1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       viewBox="0 0 512.00 512.00" xml:space="preserve" stroke="#000000"
@@ -613,7 +739,7 @@
                     Procedimientos</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/tablageneral/">
+                  <a class="dropdown-item" href="{% url 'tabla_general' %}">
                     <svg width="27px" height="27px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg"
                       xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -716,7 +842,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/certificadosprevencion/">
+                  <a class="dropdown-item" href="{% url 'certificados_prevencion' %}">
                     <svg fill="#000000" height="25px" width="25px" version="1.1" xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 512 512" xmlns:xlink="http://www.w3.org/1999/xlink"
                       enable-background="new 0 0 512 512">
@@ -748,7 +874,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/estadisticas/">
+              <a class="nav-link" href="{% url 'view_estadisticas' %}">
                 <svg fill="#000000" width="28px" height="28px" version="1.1" id="Capa_1"
                   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                   viewBox="0 0 282.772 282.772" xml:space="preserve">
@@ -778,7 +904,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/instagram/">
+              <a class="nav-link" href="{% url 'instagram_feed' %}">
                 <svg width="28px" height="28px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#000000">
                   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                   <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -796,7 +922,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/antecedentes/">
+              <a class="nav-link" href="{% url 'antecedentes' %}">
                 <svg fill="#000000" height="28px" width="28px" version="1.1" id="Layer_1"
                   xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
                   xml:space="preserve">
@@ -896,7 +1022,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li>
-                  <a class="dropdown-item" href="/alpha04/" target="_blank">
+                  <a class="dropdown-item" href="{% url 'admin:index' %}" target="_blank">
                     <svg fill="#000000" version="1.1" xmlns="http://www.w3.org/2000/svg"
                       xmlns:xlink="http://www.w3.org/1999/xlink" width="25px" height="25px" viewBox="0 0 512 512"
                       enable-background="new 0 0 512 512" xml:space="preserve">
@@ -913,7 +1039,7 @@
                     Panel Admin</a>
                 </li>
                 <li>
-                  <a class="dropdown-item download-link" href="/descargar-base-datos/">
+                  <a class="dropdown-item download-link" href="{% url 'descargar_base_datos' %}">
                     <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                       <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -926,7 +1052,7 @@
                     Backup</a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/registros/">
+                  <a class="dropdown-item" href="{% url 'registros' %}">
                     <svg fill="#000000" height="25px" width="25px" version="1.1" id="Capa_1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 60 60"
                       xml:space="preserve" stroke="#000000" stroke-width="1.0799999999999998">
@@ -957,7 +1083,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/">
+              <a class="nav-link" href="{% url 'inicio' %}">
                 <svg fill="#000000" width="28px" height="28px" viewBox="0 0 1024 1024"
                   xmlns="http://www.w3.org/2000/svg">
                   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -984,7 +1110,7 @@
   </div>
 
   {% block content %} {% endblock %}
-  <script src="../../static/js/loader-function.js"></script>
+  <script src="{% static 'js/loader-function.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
     integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
     crossorigin="anonymous"></script>
@@ -995,9 +1121,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>
-  <script src="../../static/js/off.js"></script>
-  <script src="../../static/js/filter-personal.js"></script>
-  <script src="../../static/js/export.js"></script>
+  <script src="{% static 'js/off.js' %}"></script>
+  <script src="{% static 'js/filter-personal.js' %}"></script>
+  <script src="{% static 'js/export.js' %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.7.1/dist/pptxgen.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

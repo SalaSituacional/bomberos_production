@@ -1,3 +1,5 @@
+{% load static %}
+
 {% if user.user == "SeRvEr" %}
     {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -23,12 +25,13 @@
 {% elif user.user == "Psicologia09" %}
     {% include "layouts/panel_psicologia.html" %}
 {% endif %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Grumae</h3>
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / {{ user.user }}</p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="user-login">{{ user.user }}</b></p>
       <svg
         width="30px"
         height="30px"
@@ -150,6 +153,8 @@
           <td>{{ row.hora }}</td>
           <td>{{ row.id_tipo_procedimiento.tipo_procedimiento }}</td>
           <td class="icons-accion">
+            
+            {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
             <!-- NO TOCAR BOTON ELIMINAR-->
             <button
               type="button"
@@ -191,6 +196,7 @@
                 </g>
               </svg>
             </button>
+            {% endif %}
 
             <!-- NO TOCAR Boton informacion-->
             <button
@@ -230,14 +236,17 @@
                 </g>
               </svg>
             </button>
-              <!-- Boton de Editar -->
-              <button 
-                class=" btn-editar" 
-                data-id="{{ row.id }}"
-                data-bs-toggle="modal" 
-                data-bs-target="#editarModal">
-                <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M823.3 938.8H229.4c-71.6 0-129.8-58.2-129.8-129.8V215.1c0-71.6 58.2-129.8 129.8-129.8h297c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7h-297c-24.5 0-44.4 19.9-44.4 44.4V809c0 24.5 19.9 44.4 44.4 44.4h593.9c24.5 0 44.4-19.9 44.4-44.4V512c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v297c0 71.6-58.2 129.8-129.8 129.8z" fill="#3688FF"></path><path d="M483 756.5c-1.8 0-3.5-0.1-5.3-0.3l-134.5-16.8c-19.4-2.4-34.6-17.7-37-37l-16.8-134.5c-1.6-13.1 2.9-26.2 12.2-35.5l374.6-374.6c51.1-51.1 134.2-51.1 185.3 0l26.3 26.3c24.8 24.7 38.4 57.6 38.4 92.7 0 35-13.6 67.9-38.4 92.7L513.2 744c-8.1 8.1-19 12.5-30.2 12.5z m-96.3-97.7l80.8 10.1 359.8-359.8c8.6-8.6 13.4-20.1 13.4-32.3 0-12.2-4.8-23.7-13.4-32.3L801 218.2c-17.9-17.8-46.8-17.8-64.6 0L376.6 578l10.1 80.8z" fill="#5F6379"></path></g></svg>
-              </button>
+
+            {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
+            <!-- Boton de Editar -->
+            <button 
+              class=" btn-editar" 
+              data-id="{{ row.id }}"
+              data-bs-toggle="modal" 
+              data-bs-target="#editarModal">
+              <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M823.3 938.8H229.4c-71.6 0-129.8-58.2-129.8-129.8V215.1c0-71.6 58.2-129.8 129.8-129.8h297c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7h-297c-24.5 0-44.4 19.9-44.4 44.4V809c0 24.5 19.9 44.4 44.4 44.4h593.9c24.5 0 44.4-19.9 44.4-44.4V512c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v297c0 71.6-58.2 129.8-129.8 129.8z" fill="#3688FF"></path><path d="M483 756.5c-1.8 0-3.5-0.1-5.3-0.3l-134.5-16.8c-19.4-2.4-34.6-17.7-37-37l-16.8-134.5c-1.6-13.1 2.9-26.2 12.2-35.5l374.6-374.6c51.1-51.1 134.2-51.1 185.3 0l26.3 26.3c24.8 24.7 38.4 57.6 38.4 92.7 0 35-13.6 67.9-38.4 92.7L513.2 744c-8.1 8.1-19 12.5-30.2 12.5z m-96.3-97.7l80.8 10.1 359.8-359.8c8.6-8.6 13.4-20.1 13.4-32.3 0-12.2-4.8-23.7-13.4-32.3L801 218.2c-17.9-17.8-46.8-17.8-64.6 0L376.6 578l10.1 80.8z" fill="#5F6379"></path></g></svg>
+            </button>
+            {% endif %}
           </td>
         </tr>
         <!-- prettier-ignore -->
@@ -247,6 +256,8 @@
       <input type="hidden" id="fecha_actual" value="{{ fecha_actual }}">
     </table>
   </div>
+
+{% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' or user.user == 'Comandancia' or user.user == '2dacomandancia' %}
   <div class="contain-dates">
     <h4 class="title-procediments">Procedimientos</h4>
     <br>
@@ -258,7 +269,7 @@
       </section>
     </div>
 
-    <div class="contain-dates">
+  <div class="contain-dates">
       <h4 class="title-procediments">Exportaciones</h4>
       <br>
       <section class="buttons-items input-group mb-3 filter-search">
@@ -266,11 +277,13 @@
         <input type="month" class="form-control fecha_manual" name="" id="mes_excel">
         <button id="exportarExcel" class="btn btn-danger download-link" disabled>Exportar .xls</button>
         </section>
-      </div>
+    </div>
+{% endif %}
 
   <!-- div general-dashboard fin -->
 </div>
 <!----------------------- Modal delete ---------------------------------->
+{% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
 <div
   class="modal fade"
   id="staticBackdrop"
@@ -307,6 +320,8 @@
     </div>
   </div>
 </div>
+{% endif %}
+
 <!----------------------- Modal Info ---------------------------------->
 <div class="modal fade" tabindex="-1" id="modal-info">
   <div class="modal-dialog modal-xl">
@@ -314,7 +329,7 @@
       <div class="modal-header header-dashboard-two">
         <section class="title-icon">
           <img
-            src="../static/assets/logo bomberos 2.svg"
+            src="{% static 'assets/logo bomberos 2.svg' %}"
             alt="Logo de bomberos"
           />
           <h2>Cuerpo de Bomberos</h2>
@@ -331,18 +346,20 @@
     </div>
   </div>
 </div>
+
 <footer class="footer">
   <section class="text-reserved">
     <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
+
 <!-- Script final definitivo para Mostrar detalles procedmientos -->
-<script src="../../static/js/grumae.js"></script>
-<script src="../../static/js/info_modal.js"></script>
-<script src="../../static/js/filters.js"></script>
+<script src="{% static 'js/grumae.js' %}"></script>
+<script src="{% static 'js/info_modal.js' %}"></script>
+<script src="{% static 'js/filters.js' %}"></script>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-<script src="../static/js/editar_proc.js"></script>
-<script src="../../static/js/cargar_mas_grumae.js"></script>
-<script src="../../static/js/export_excel/excel_grumae.js"></script>
+<script src="{% static 'js/editar_proc.js' %}"></script>
+<script src="{% static 'js/cargar_mas_grumae.js' %}"></script>
+<script src="{% static 'js/export_excel/excel_grumae.js' %}"></script>
 
 {% endblock %}

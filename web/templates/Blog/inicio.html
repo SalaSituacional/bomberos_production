@@ -1,4 +1,6 @@
+
 {% extends "blog.html" %} {% block content %}
+{% load static %}
 <head>
   <meta name="title" content="Inicio">
 </head>
@@ -40,25 +42,25 @@
   <div class="link-function">
     <section class="atention-person">
       <a href="#infomacion-ciudadano">
-        <img src="../../static/assets/image 13.svg" alt="Atencion al cliente" />
+        <img src="{% static 'assets/image 13.svg' %}" alt="Atencion al cliente" />
       </a>
       <span>Atencion Al Ciudadano</span>
     </section>
     <section class="atention-person">
-      <a href="salasituacional/">
-        <img src="../../static/assets/image 14.svg" alt="" />
+      <a href="{% url 'salasituacional' %}">
+        <img src="{% static 'assets/image 14.svg' %}" alt="" />
       </a>
       <span>Sala Situacional</span>
     </section>
     <section class="atention-person">
-      <a href="glp/">
-        <img src="../../static/assets/image 16.svg" alt="" />
+      <a href="{% url 'glp' %}">
+        <img src="{% static 'assets/image 16.svg' %}" alt="" />
       </a>
       <span>GLP</span>
     </section>
     <section class="atention-person">
-      <a href="drones/">
-        <img src="../../static/assets/drone.svg" alt="" />
+      <a href="{% url 'drones' %}">
+        <img src="{% static 'assets/drone.svg' %}" alt="" />
       </a>
       <span>Drones</span>
     </section>
@@ -69,8 +71,8 @@
       <span>Operaciones</span>
     </section> -->
     <section class="atention-person">
-      <a href="brigadajuvenil/">
-        <img src="../../static/assets/image 18.svg" alt="brigada juvenil" />
+      <a href="{% url 'brigadajuvenil' %}">
+        <img src="{% static 'assets/image 18.svg' %}" alt="brigada juvenil" />
       </a>
       <span>Brigada Juvenil</span>
     </section>
@@ -82,16 +84,16 @@
   </div>
   <div class="operations">
     <div class="card-operation">
-      <a href="blog_serviciosmedicos">Servicios Medicos</a>
+      <a href="{% url 'serviciosmedicos_inf' %}">Servicios Medicos</a>
     </div>
     <div class="card-operation">
-      <a href="blog_prevencion">Seguridad y Prevencion</a>
+      <a href="{% url 'prevencion_inf' %}">Seguridad y Prevencion</a>
     </div>
     <div class="card-operation">
-      <a href="blog_capacitacion">Capacitaciones</a>
+      <a href="{% url 'capacitacion_inf' %}">Capacitaciones</a>
     </div>
     <div class="card-operation">
-      <a href="blog_psicologia">Servicios Piscologicos</a>
+      <a href="{% url 'psicologia_inf' %}">Servicios Piscologicos</a>
     </div>
   </div>
 </div>
@@ -172,7 +174,7 @@
         Estamos presentes en puntos estrategicos de la ciudad de san cristobal
         para cuidar siempre de ti.
       </p>
-      <a href="/contacto/">
+      <a href="{% url 'contacto' %}">
         <button class="btn btn-danger">Ubicaciones</button>
       </a>
     </article>

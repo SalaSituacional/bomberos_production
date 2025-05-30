@@ -2710,193 +2710,6 @@ def api_solicitantes(request):
 
     return JsonResponse(op, safe=False)
 
-def api_get_solicitudes(request, referencia):
-    solicitudes = Solicitudes.objects.filter(id_solicitud__id_comercio=referencia)
-    data = []
-    documentos = True
-    hoy = datetime.today().date()
-    proximo_mes = hoy + timedelta(days=30)
-
-    for solicitud in solicitudes:
-        requisitos = Requisitos.objects.filter(id_solicitud=solicitud)
-        
-        requisitos_faltantes = []
-        documentos_proximos_vencer = []
-        documentos_vencidos = []
-
-        if requisitos.exists():
-            req = requisitos.first()
-            
-            # Verificar requisitos faltantes
-            if not req.cedula_identidad:
-                requisitos_faltantes.append("Cédula de identidad")
-            if not req.rif_representante:
-                requisitos_faltantes.append("RIF del representante")
-            if not req.rif_comercio:
-                requisitos_faltantes.append("RIF del comercio")
-            if not req.permiso_anterior:
-                requisitos_faltantes.append("Permiso anterior")
-            if not req.registro_comercio:
-                requisitos_faltantes.append("Registro de comercio")
-            if not req.documento_propiedad:
-                requisitos_faltantes.append("Documento de propiedad")
-            if not req.cedula_catastral:
-                requisitos_faltantes.append("Cédula catastral")
-            if not req.carta_autorizacion:
-                requisitos_faltantes.append("Carta de autorización")
-            if not req.plano_bomberil:
-                requisitos_faltantes.append("Plano bomberil")
-
-            # Verificar documentos próximos a vencer o ya vencidos
-            documentos_vencimiento = {
-                "Cédula de identidad": req.cedula_vencimiento,
-                "RIF del representante": req.rif_representante_vencimiento,
-                "RIF del comercio": req.rif_comercio_vencimiento,
-                "Documento de propiedad": req.documento_propiedad_vencimiento,
-                "Cédula catastral": req.cedula_catastral_vencimiento,
-            }
-
-            for nombre_doc, fecha_vencimiento in documentos_vencimiento.items():
-                if fecha_vencimiento:
-                    if fecha_vencimiento < hoy:
-                        documentos_vencidos.append(f"{nombre_doc} (venció el {fecha_vencimiento})")
-                    elif hoy <= fecha_vencimiento <= proximo_mes:
-                        documentos_proximos_vencer.append(f"{nombre_doc} (vence el {fecha_vencimiento})")
-
-        else:
-            requisitos_faltantes.append("No hay requisitos registrados para esta solicitud")
-            documentos = False
-        
-        data.append({
-            "id_solicitud": solicitud.id,
-            "id": solicitud.id_solicitud.id_comercio,
-            "fecha": solicitud.fecha_solicitud,
-            "solicitante": solicitud.solicitante_nombre_apellido,
-            "tipo_solicitud": solicitud.tipo_servicio,
-            "papeles_incompletos": bool(requisitos_faltantes),
-            "documentos_faltantes": requisitos_faltantes if requisitos_faltantes else ["Todos los documentos están en orden"],
-            "documentos_proximos_vencer": documentos_proximos_vencer if documentos_proximos_vencer else ["No hay documentos próximos a vencer"],
-            "documentos_vencidos": documentos_vencidos if documentos_vencidos else ["No hay documentos vencidos"],
-            "documentos": documentos
-        })
-    
-    return JsonResponse(data, safe=False)
-
-
-def api_modificar_solicitudes(request, id):
-    solicitud = get_object_or_404(Solicitudes, id=id)
-    datos_solicitud = get_object_or_404(Comercio, id_comercio=solicitud.id_solicitud.id_comercio)
-    requisitos = get_object_or_404(Requisitos, id_solicitud=solicitud.id)
-
-     # Datos para reemplazar en la plantilla
-    datos = {
-            "Id_Solicitud": solicitud.id,
-
-            "ID_Comercio": str(datos_solicitud.id_comercio),
-            "Fecha_Solicitud": str(solicitud.fecha_solicitud),
-            "Hora": str(solicitud.hora_solicitud),
-            "Tipo_Servicio": str(solicitud.tipo_servicio),
-            "Solicitante": str(solicitud.solicitante_nombre_apellido),
-            "CI": str(solicitud.solicitante_cedula),
-            "Tipo_Representante": str(solicitud.tipo_representante),
-            "Nombre_Comercio": str(datos_solicitud.nombre_comercio),
-            "Rif_Empresarial": str(datos_solicitud.rif_empresarial),
-            "Rif_Representante_Legal": str(solicitud.rif_representante_legal),
-            "Direccion": str(solicitud.direccion),
-            "Estado": str(solicitud.estado),
-            "Municipio": solicitud.municipio.id,
-            "Parroquia": solicitud.parroquia.id,
-            "Telefono": str(solicitud.numero_telefono),
-            "Correo_Electronico": str(solicitud.correo_electronico),
-            "Pago_Tasa_Servicio": str(solicitud.pago_tasa),
-            "Metodo_Pago": str(solicitud.metodo_pago),
-            "Referencia": str(solicitud.referencia),
-
-            "Status_Cedula": requisitos.cedula_identidad,
-            "Status_Rif": requisitos.rif_representante,
-            "Status_Comercio": requisitos.rif_comercio,
-            "Status_Permiso": requisitos.permiso_anterior,
-            "Status_Registro_Comercio": requisitos.registro_comercio,
-            "Status_Documento_Propiedad": requisitos.documento_propiedad,
-            "Status_Cedula_Catastral": requisitos.cedula_catastral,
-            "Status_Carta_Autorizacion": requisitos.carta_autorizacion,
-            "Status_Plano": requisitos.plano_bomberil,
-
-            "Fecha_Vencimiento_Cedula": requisitos.cedula_vencimiento,
-            "Fecha_Vencimiento_Rif": requisitos.rif_representante_vencimiento,
-            "Fecha_Vencimiento_Rif_Comercio": requisitos.rif_comercio_vencimiento,
-            "Fecha_Vencimiento_Documento_Propiedad": requisitos.documento_propiedad_vencimiento,
-            "Fecha_Vencimiento_Cedula_Catastral": requisitos.cedula_catastral_vencimiento,
-    }
-
-    return JsonResponse(datos, safe=False)
-
-def api_eliminar_solicitudes(request, id):
-    solicitud = get_object_or_404(Solicitudes, id=id)
-    solicitud.delete()
-    return JsonResponse({"message": "Solicitud eliminada correctamente"}, status=200)
-
-def validar_cedula(request):
-    cedula = request.GET.get("cedula", "").strip()
-    comercio_id = request.GET.get("comercio", "").strip()  # Obtener comercio enviado desde el frontend
-
-    # print(f"Cédula recibida: {cedula}")
-    # print(f"Comercio recibido: {comercio_id}")
-
-    if not cedula or not cedula.startswith(("V-", "E-")):
-        return JsonResponse({"error": "Formato inválido. Use V-12345678 o E-12345678."}, status=400)
-
-    # Obtener los comercios asociados a la cédula
-    solicitudes = Solicitudes.objects.filter(solicitante_cedula=cedula)
-    comercios_asociados = set(solicitudes.values_list("id_solicitud__id_comercio", flat=True))
-    cantidad_comercios = len(comercios_asociados)
-
-    # print(f"Comercios asociados encontrados: {comercios_asociados}")
-    # print(f"Cantidad de comercios asociados: {cantidad_comercios}")
-
-    # Si la cédula ya está en 3 comercios y el comercio actual no está en la lista, bloquear registro
-    if cantidad_comercios >= 3 and comercio_id not in comercios_asociados:
-        return JsonResponse({
-            "existe": True,
-            "cantidad_comercios": cantidad_comercios,
-            "valido": False,  # Bloquear el registro
-            "mensaje": "❌ La cédula ya está asociada a 3 comercios distintos."
-        })
-
-    return JsonResponse({
-        "existe": cantidad_comercios > 0,
-        "cantidad_comercios": cantidad_comercios,
-        "valido": True  # Permitir el registro
-    })
-
-def validar_rif(request):
-    rif = request.GET.get("rif", "").strip()
-
-    if not rif:
-        return JsonResponse({"error": "El RIF no puede estar vacío."}, status=400)
-
-    # Verificar si el RIF ya existe en la base de datos
-    existe = Comercio.objects.filter(rif_empresarial=rif).exists()
-
-    return JsonResponse({"existe": existe})
-
-def obtener_ultimo_reporte_solicitudes(request):
-    ultimo = Solicitudes.objects.select_related('id_solicitud').order_by('-id').first()
-
-    if not ultimo:
-        return JsonResponse({'error': 'No existen reportes aún'}, status=404)
-
-    data = {
-        'id': ultimo.id,
-        'fecha_solicitud': ultimo.fecha_solicitud,
-        'hora_solicitud': ultimo.hora_solicitud,
-        'tipo_servicio': ultimo.tipo_servicio,
-        'solicitante': ultimo.solicitante_nombre_apellido,
-        'comercio': ultimo.id_solicitud.nombre_comercio,
-        'id_comercio': ultimo.id_solicitud.id_comercio,
-    }
-
-    return JsonResponse(data)
 
 def contar_estados_unidades(request):
     # Obtener todos los estados de las unidades
@@ -3428,14 +3241,18 @@ def obtener_ultimo_reporte(request):
     ultimo_vuelo = Registro_Vuelos.objects.order_by('-fecha', '-id').first()
 
     if not ultimo_vuelo:
-        return JsonResponse({"error": "No hay reportes disponibles"}, status=404)
+        return JsonResponse({
+            "error": "No hay reportes disponibles",
+            "status": "empty"
+        }, status=200)  # Cambiado a 200 para manejar más fácil en el frontend
 
     return JsonResponse({
         "id_vuelo": ultimo_vuelo.id_vuelo,
         "fecha": str(ultimo_vuelo.fecha),
         "sitio": ultimo_vuelo.sitio,
         "dron": ultimo_vuelo.id_dron.nombre_dron,
-        "tipo_mision": ultimo_vuelo.tipo_mision
+        "tipo_mision": ultimo_vuelo.tipo_mision,
+        "status": "success"
     })
 
 def buscar_vuelo_por_id(request, vuelo_id):

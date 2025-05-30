@@ -7,12 +7,15 @@
 {% elif user.user == "Sarp_01"%}
 {% include "layouts/panel_sarp.html" %}
 {% endif %}
+
+{% load static %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Agregar Reporte De Vuelo</h3>
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -48,7 +51,7 @@
     <div class="buttons-inmuebles-form">
       <button class="btn btn-danger" type="submit">Enviar</button>
       <button class="btn btn-danger" type="button">
-        <a href="/registros_sarp/">
+        <a href="{% url 'registros_sarp' %}">
           Cancelar
         </a>
       </button>
@@ -63,6 +66,7 @@
     <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
+
 <script>
   // Obtener el formulario por su ID
   const form = document.getElementById("formularioSarp");
@@ -96,7 +100,7 @@
   }
 
 </script>
-<script src="../../static/js/loader-function.js"></script>
-<script src="../../static/js/sarp/sarp_forms.js"></script>
-<script src="../../static/js/sarp/rellenar_valores.js"></script>
+<script src="{% static 'js/loader-function.js' %}"></script>
+<script src="{% static 'js/sarp/sarp_forms.js' %}"></script>
+<script src="{% static 'js/sarp/rellenar_valores.js' %}"></script>
 {% endblock %}

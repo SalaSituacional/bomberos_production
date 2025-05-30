@@ -6,9 +6,15 @@
 {% include "layouts/panel_comandancia.html" %}
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
+{% elif user.user == "Rescate03"%}
+{% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Grumae02"%}
+{% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Operaciones01"%}
+{% include "layouts/panel_operaciones.html" %}
 {% endif %}
 
-
+{% load static  %}
 
 {% block content %}
 
@@ -16,7 +22,7 @@
     <div class="div-user-name username-space">
         <h3 class="division-title">Herramienta</h3>
         <section class="user-name">
-            <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+            <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
             <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -98,13 +104,6 @@
             <p class="text-danger">{{ form.fecha_adquisicion.errors }}</p>
             {% endif %}
         </div>
-        <div>
-            {{ form.vida_util.label_tag }}
-            {{ form.vida_util }}
-            {% if form.vida_util.errors %}
-            <p class="text-danger">{{ form.vida_util.errors }}</p>
-            {% endif %}
-        </div>
         <div class="">
             <label for="id_activo" class="form-control form-check-label">Activo:</label>
             <div class="form-check">
@@ -124,6 +123,7 @@
     </form>
 
 </div>
+
 <script>
     // Obtener el formulario por su ID
     const form = document.getElementById("form-herramientas");

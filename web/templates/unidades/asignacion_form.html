@@ -6,14 +6,22 @@
 {% include "layouts/panel_comandancia.html" %}
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
+{% elif user.user == "Rescate03"%}
+{% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Grumae02"%}
+{% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Operaciones01"%}
+{% include "layouts/panel_operaciones.html" %}
 {% endif %}
+
+{% load static %}
 
 {% block content %}
 <div class="general-dashboard">
     <div class="div-user-name username-space">
-        <h3 class="division-title">Inventario de unidades</h3>
+        <h3 class="division-title">Asignar Herramienta</h3>
         <section class="user-name">
-            <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+            <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
             <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -47,40 +55,6 @@
     <form method="post" id="form-devolver-herramientas" class="form-nueva-herramienta">
         <h2>{% if form.instance.pk %}Editar{% else %}Nueva{% endif %} Asignación</h2>
         {% csrf_token %}
-
-        <!-- {# Mostrar errores generales del formulario (non_field_errors) #}
-        {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-            {% for error in form.non_field_errors %}
-                <p>{{ error }}</p>
-            {% endfor %}
-        </div>
-        {% endif %} -->
-
-        <!-- <div class="row">
-            {% for field in form %}
-            <div class="col-md-6 mb-3">
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    
-                    {# Mostrar errores específicos del campo #}
-                    {% if field.errors %}
-                    <div class="invalid-feedback d-block">
-                        {% for error in field.errors %}
-                        <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                    
-                    {# Mostrar texto de ayuda #}
-                    {% if field.help_text %}
-                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-        </div> -->
 
         <div>
             {{ form.herramienta.label_tag }}
@@ -116,7 +90,7 @@
         <div class="buttons-footer-tools">
             <button type="submit" class="btn btn-danger">Guardar</button>
             <button type="reset" class="btn btn-danger">
-                <a href="{% url 'asignacion-list' %}" class="">Cancelaar</a>
+                <a href="{% url 'asignacion-list' %}" class="">Cancelar</a>
             </button>
         </div>
     </form>

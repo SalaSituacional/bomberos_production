@@ -11,16 +11,16 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="../static/styles.css" />
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
   </head>
   <body>
     <div class="alert alert-light" role="alert">
-      <img src="../static/assets/logo bomberos 2.svg" alt="Logo bomberos" />
+      <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo bomberos" />
       <h2>¡Oops! Algo salió mal.</h2>
       <p>
         Parece que hubo un problema en el servidor. Intenta de nuevo más tarde.
       </p>
-      <a href="/">Volver a la página de inicio</a>
+      <a href="{% url 'inicio' %}">Volver a la página de inicio</a>
     </div>
   </body>
 </html>

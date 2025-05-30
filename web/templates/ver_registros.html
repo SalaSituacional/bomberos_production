@@ -4,12 +4,14 @@
     {% include "layouts/panel_sala_situacional.html" %}
 {% endif %}
 
+{% load static %}
+
 {% block content %}
 <div class="general-dashboard">
     <div class="div-user-name  username-space">
       <h3 class="division-title">Registros Post</h3>
       <section class="user-name">
-        <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / {{ user.user }}</p>
+        <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
         <svg
           width="30px"
           height="30px"
@@ -44,7 +46,7 @@
 <!-- contenido -->
 
 <div class="table-responsive-sm">
-    <table class="table table-hover" id="data-table">
+    <table class="table table-hover" style="max-width: 100%;" id="data-table">
       <thead>
         <tr>
             <th scope="col">#</th>
@@ -83,8 +85,6 @@
     </section>
   </footer>
   <!-- Script final  -->
-  <!-- <script src="../static/js/info_modal.js"></script> -->
-  <script src="../../static/js/info_modal.js"></script>
-  <!-- <script src="../../static/js/table-general-filter2.js"></script> -->
-  <script src="../static/js/cargar_mas_registros.js"></script>
+  <script src="{% static 'js/info_modal.js' %}"></script>
+  <script src="{% static 'js/cargar_mas_registros.js' %}"></script>
 {% endblock %}
