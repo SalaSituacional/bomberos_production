@@ -20,32 +20,63 @@ document.addEventListener("DOMContentLoaded", actualizarMisiones);
 
 document.addEventListener("DOMContentLoaded", async function () {
     try {
-        const response = await fetchWithLoader("/api/ultimo_reporte/"); // Endpoint de tu API
+        const response = await fetchWithLoader("/api/ultimo_reporte/");
         const data = await response;
 
-        if (data) {
-            document.getElementById("reporte-id").textContent = data.id_vuelo;
-            document.getElementById("reporte-fecha").textContent = data.fecha;
-            document.getElementById("reporte-sitio").textContent = data.sitio;
-            document.getElementById("reporte-dron").textContent = data.dron;
-            document.getElementById("reporte-mision").textContent = data.tipo_mision;
+        const card = document.getElementById("ultimo-reporte-card");
+        const cardContent = document.getElementById("card-content");
+        
+        // Limpiar contenido previo
+        cardContent.innerHTML = '<button id="cerrar-reporte">&times;</button>';
 
-            // Mostrar la tarjeta con animación
-            const card = document.getElementById("ultimo-reporte-card");
-            card.classList.add("mostrar");
-
-            // Cerrar la tarjeta al hacer clic en el botón
-            document.getElementById("cerrar-reporte").addEventListener("click", function () {
-                card.classList.remove("mostrar");
-            });
-
-            // Ocultar después de 10 segundos
-            setTimeout(() => {
-                card.classList.remove("mostrar");
-            }, 20000);
+        if (data.status === "empty") {
+            // Caso cuando no hay reportes
+            cardContent.innerHTML += `<h2>${data.error}</h2>`;
+        } else if (data.status === "success") {
+            // Caso cuando hay reportes
+            cardContent.innerHTML += `
+                <h2>Último Reporte</h2>
+                <p><strong>ID Vuelo:</strong> <span id="reporte-id">${data.id_vuelo}</span></p>
+                <p><strong>Fecha:</strong> <span id="reporte-fecha">${data.fecha}</span></p>
+                <p><strong>Sitio:</strong> <span id="reporte-sitio">${data.sitio}</span></p>
+                <p><strong>Dron:</strong> <span id="reporte-dron">${data.dron}</span></p>
+                <p><strong>Misión:</strong> <span id="reporte-mision">${data.tipo_mision}</span></p>
+            `;
         }
+
+        // Mostrar la tarjeta con animación
+        card.classList.add("mostrar");
+
+        // Cerrar la tarjeta al hacer clic en el botón
+        document.getElementById("cerrar-reporte").addEventListener("click", function () {
+            card.classList.remove("mostrar");
+        });
+
+        // Ocultar después de 20 segundos
+        setTimeout(() => {
+            card.classList.remove("mostrar");
+        }, 20000);
+
     } catch (error) {
         console.error("Error obteniendo el último reporte:", error);
+        
+        const card = document.getElementById("ultimo-reporte-card");
+        card.innerHTML = `
+            <button id="cerrar-reporte">&times;</button>
+            <h2>Error al cargar los reportes</h2>
+            <p>Por favor intente más tarde</p>
+        `;
+        card.classList.add("mostrar");
+
+        // Cerrar la tarjeta al hacer clic en el botón
+        document.getElementById("cerrar-reporte").addEventListener("click", function () {
+            card.classList.remove("mostrar");
+        });
+
+        // Ocultar después de 20 segundos
+        setTimeout(() => {
+            card.classList.remove("mostrar");
+        }, 20000);
     }
 });
 
