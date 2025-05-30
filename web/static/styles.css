@@ -2122,14 +2122,18 @@ checkbox-styles {
     margin: 0;
   }
 
+  a,
   button {
     margin-right: 2rem;
     transform: scale(0.8);
   }
-
+  a,
   button:hover {
     transform: scale(0.9);
     transition: 0.1s ease-in-out all;
+  }
+  a{
+    font-size: 2rem;
   }
 }
 
@@ -4526,6 +4530,11 @@ checkbox-styles {
   flex-direction: column;
 
   button {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+  }
+  a {
     width: 80%;
     margin: 0 auto;
     margin-bottom: 1rem;

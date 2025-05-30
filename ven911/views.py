@@ -16,9 +16,10 @@ from django.views.decorators.http import require_http_methods
 from django.db.models import Count, Q, Sum
 from .urls import *
 from .forms import *
-import json
 from django.db.models import Prefetch
-
+from openpyxl import Workbook
+import json
+from openpyxl.styles import Font, Alignment
 
 
 # Create your views here.
@@ -44,20 +45,31 @@ def form_services(request):
     if not user:
         return redirect('/')
 
+    servicio_id = request.GET.get('id') or request.POST.get('id')
+    servicio_instance = None
+    
+    if servicio_id:
+        try:
+            servicio_instance = Servicio.objects.get(id=servicio_id)
+        except Servicio.DoesNotExist:
+            messages.error(request, 'El servicio a editar no existe')
+            return redirect('home_911')
+
     if request.method == 'POST':
-        form_services = ServicioForm(request.POST)
+        form_services = ServicioForm(request.POST, instance=servicio_instance)
         if form_services.is_valid():
             try:
                 servicio = form_services.save(commit=False)
                 servicio.save()
-                messages.success(request, 'Servicio registrado correctamente!')
+                action = 'editado' if servicio_id else 'registrado'
+                messages.success(request, f'Servicio {action} correctamente!')
                 return redirect('home_911')
             except Exception as e:
                 messages.error(request, f'Error al guardar: {str(e)}')
         else:
             messages.error(request, 'Error en el formulario. Revise los datos.')
     else:
-        form_services = ServicioForm()
+        form_services = ServicioForm(instance=servicio_instance)
 
     return render(request, "formulario_servicios.html", {
         "user": user,
@@ -65,8 +77,8 @@ def form_services(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         "formulario_servicios": form_services,
+        "modo_edicion": servicio_id is not None
     })
-
 
 # Vista de informacion de los servicios
 @login_required
@@ -90,13 +102,13 @@ def view_table_911(request):
 
 def obtener_servicios_json(request):
     try:
-        # Consulta optimizada
+        # Consulta optimizada - ahora filtra solo servicios del día actual
         servicios = Servicio.objects.filter(
-            fecha__gte=timezone.now() - timedelta(days=1)
+            fecha=timezone.now().date()  # Solo la fecha de hoy
         ).select_related('tipo_servicio', 'operador_de_guardia'
         ).order_by('-fecha', '-hora')
         
-        # Construcción de datos
+        # Construcción de datos (sin cambios)
         datos_servicios = []
         for s in servicios:
             operador = None
@@ -124,7 +136,6 @@ def obtener_servicios_json(request):
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-
 
 # api para elmininar servicio
 @csrf_exempt  # Solo si no usas CSRF en APIs (o configura CSRF correctamente)
@@ -207,3 +218,94 @@ def api_servicios_grafico(request):
         'data': valores,
         'count': len(labels)
     })
+    
+# api para exportar y descargar excel
+
+def exportar_servicios_excel(request):
+    try:
+        # Obtener el mes y año del parámetro GET
+        mes_param = request.GET.get('mes')
+        if not mes_param:
+            return HttpResponse("Debe especificar un mes (formato YYYY-MM)", status=400)
+        
+        # Parsear la fecha
+        try:
+            fecha_seleccionada = datetime.strptime(mes_param, '%Y-%m')
+            anio = fecha_seleccionada.year
+            mes = fecha_seleccionada.month
+        except ValueError:
+            return HttpResponse("Formato de fecha inválido. Use YYYY-MM", status=400)
+        
+        # Filtrar servicios por mes y año
+        servicios = Servicio.objects.filter(
+            fecha__year=anio,
+            fecha__month=mes
+        ).select_related('tipo_servicio', 'operador_de_guardia').order_by('fecha', 'hora')
+        
+        # Crear el libro de Excel
+        wb = Workbook()
+        ws = wb.active
+        ws.title = f"Servicios {mes_param}"
+        
+        # Encabezados con estilo
+        headers = [
+            '#', 'Fecha', 'Hora', 'Tipo de Servicio', 
+            'Cantidad', 'Operador de Guardia', 'Jerarquía'
+        ]
+        ws.append(headers)
+        
+        # Aplicar estilos a los encabezados
+        for col in range(1, len(headers) + 1):
+            cell = ws.cell(row=1, column=col)
+            cell.font = Font(bold=True)
+            cell.alignment = Alignment(horizontal='center')
+        
+        # Datos
+        for index, servicio in enumerate(servicios, start=1):
+            operador_nombre = ''
+            operador_jerarquia = ''
+            
+            if servicio.operador_de_guardia:
+                operador_nombre = f"{servicio.operador_de_guardia.nombres} {servicio.operador_de_guardia.apellidos}"
+                if hasattr(servicio.operador_de_guardia, 'jerarquia'):
+                    operador_jerarquia = servicio.operador_de_guardia.jerarquia
+            
+            ws.append([
+                index,  # Número secuencial en lugar del ID real
+                servicio.fecha.strftime('%Y-%m-%d') if servicio.fecha else '',
+                servicio.hora.strftime('%H:%M:%S') if servicio.hora else '',
+                servicio.tipo_servicio.nombre if servicio.tipo_servicio else '',
+                servicio.cantidad_tipo_servicio,
+                operador_nombre,
+                operador_jerarquia
+            ])
+        
+        # Autoajustar el ancho de las columnas
+        for column in ws.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            
+            adjusted_width = (max_length + 2) * 1.2
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        # Preparar la respuesta
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename=servicios_{mes_param}.xlsx'
+        wb.save(response)
+        
+        return response
+        
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}", status=500)
+    
+
+

@@ -63,8 +63,7 @@ function añadirEventListeners() {
     document.querySelectorAll('.btn-editar').forEach(btn => {
         btn.addEventListener('click', function () {
             const id = this.getAttribute('data-id');
-            console.log('Editar servicio ID:', id);
-            // Aquí puedes añadir la lógica para editar, por ejemplo, abrir un modal
+            window.location.href = form_services_edit + `?id=${id}`;
         });
     });
 

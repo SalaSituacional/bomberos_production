@@ -27,17 +27,27 @@
         </section>
 
     </div>
+
     <div class="contain-ven911-forms">
         <form action="{% url 'form_services' %}" method="POST" class="form-911">
-            <h2>Registrar Servicio</h2>
+            <h2>{% if modo_edicion %}Editar{% else %}Registrar{% endif %} Servicio</h2>
             {% csrf_token %}
+
+            {% if modo_edicion %}
+            <input type="hidden" name="id" value="{{ formulario_servicios.instance.id }}">
+            {% endif %}
+
             {{ formulario_servicios }}
+
             <div class="ven911-buttons">
-                <button type="submit" class="btn btn-danger">Enviar</button>
-                <button type="reset" class="btn btn-danger"><a href="{% url 'home_911' %}">Cancelar</a></button>
+                <button type="submit" class="btn btn-danger">
+                    {% if modo_edicion %}Actualizar{% else %}Enviar{% endif %}
+                </button>
+                    <a href="{% url 'home_911' %}" class="btn btn-danger">Cancelar</a>
             </div>
         </form>
     </div>
+
 </div>
 <footer class="footer">
     <section class="text-reserved">
