@@ -1,3 +1,5 @@
+{% load static %}
+
 {% if user.user == "SeRvEr" %}
     {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -28,7 +30,7 @@
 <div class="general-dashboard">
   <div class="div-user-name">
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / {{ user.user }}</p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="user-login">{{ user.user }}</b></p>
       <svg
         width="30px"
         height="30px"
@@ -559,12 +561,12 @@
   </section>
 </footer>
 
-<script src="../static/js/procedimientos/division.js"></script>
-<script src="../static/js/procedimientos/formularios_procedimientos.js"></script>
-<script src="../static/js/procedimientos/tipos_procedimientos.js"></script>
-<script src="../static/js/procedimientos/unidades.js"></script>
-<script src="../static/js/procedimientos/solicitante.js"></script>
-<script src="../static/js/procedimientos/otras_validaciones.js"></script>
+<script src="{% static 'js/procedimientos/division.js' %}"></script>
+<script src="{% static 'js/procedimientos/formularios_procedimientos.js' %}"></script>
+<script src="{% static 'js/procedimientos/tipos_procedimientos.js' %}"></script>
+<script src="{% static 'js/procedimientos/unidades.js' %}"></script>
+<script src="{% static 'js/procedimientos/solicitante.js' %}"></script>
+<script src="{% static 'js/procedimientos/otras_validaciones.js' %}"></script>
 
 {% if errors %}
 <script>
@@ -575,4 +577,5 @@
   errorModal.show();
 </script>
 {% endif %}
+
 {% endblock %}

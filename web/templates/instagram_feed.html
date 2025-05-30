@@ -4,12 +4,14 @@
     {% include "layouts/panel_sala_situacional.html" %}
 {% endif %}
 
+{% laod static %}
+
 {% block content %}
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
       <section class="user-name" >
-        <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+        <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
         <svg
           width="30px"
           height="30px"

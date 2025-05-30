@@ -23,11 +23,14 @@
 {% elif user.user == "Psicologia09" %}
     {% include "layouts/panel_psicologia.html" %}
 {% endif %}
+
+{% load static %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name">
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / {{ user.user }}</p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
       <svg
         width="30px"
         height="30px"
@@ -504,8 +507,8 @@
     </footer>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-  <script src="../static/js/estadisticas.js"></script>
-  <script src="../static/js/export.js"></script>
+  <script src="{% static 'js/estadisticas.js' %}"></script>
+  <script src="{% static 'js/export.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
   {% endblock %}

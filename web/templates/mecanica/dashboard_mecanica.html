@@ -1,3 +1,5 @@
+{% load static %}
+
 {% if user.user == "SeRvEr" %}
 {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -7,12 +9,13 @@
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
 {% endif %}
+
 {% block content %}
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
   <div class="div-user-name">
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -74,32 +77,21 @@
         <article class="card-mecanic color-blue">
           <span>Mensual: </span>
           <span id="combustible-mensual">
-            <b>
-
-              0
-            </b>
-
+            <b> 0 </b>
           </span>
         </article>
 
         <article class="card-mecanic color-blue">
           <span>Semanal: </span>
           <span id="combustible-semanal">
-            <b>
-
-              0
-            </b>
-
+            <b> 0 </b>
           </span>
         </article>
+
         <article class="card-mecanic color-blue">
           <span>Diario: </span>
           <span id="combustible-diario">
-            <b>
-
-              0
-            </b>
-
+            <b> 0 </b>
           </span>
         </article>
       </section>
@@ -303,33 +295,21 @@
         <article class="card-mecanic color-blue">
           <span>Mensual: </span>
           <span id="reportes-colisiones-mensual">
-            <b>
-
-              0
-            </b>
-
+            <b> 0 </b>
           </span>
         </article>
 
         <article class="card-mecanic color-blue">
           <span>Semanal: </span>
           <span id="reportes-colisiones-semanal">
-            <b>
-
-              0
-            </b>
-
+            <b> 0 </b>
           </span>
         </article>
 
         <article class="card-mecanic color-blue">
           <span>Diario: </span>
           <span id="reportes-colisiones-diario">
-            <b>
-
-              0
-            </b>
-
+            <b> 0 </b>
           </span>
         </article>
       </section>
@@ -337,6 +317,7 @@
     </div>
   </div>
 </div>
+
 <footer class="footer">
   <section class="text-reserved">
     <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
@@ -344,8 +325,8 @@
 </footer>
 
 <!-- fin resumen de procedimientos -->
-<script src="../../static/js/animate.js"></script>
-<script src="../../static/js/modal-dashboard.js"></script>
-<script src="../../static/js/unidades/conteo_unidades.js"></script>
-<script src="../../static/js/unidades/conteo_reportes_combustible.js"></script>
+<script src="{% static 'js/animate.js' %}"></script>
+<script src="{% static 'js/modal-dashboard.js' %}"></script>
+<script src="{% static 'js/unidades/conteo_unidades.js' %}"></script>
+<script src="{% static 'js/unidades/conteo_reportes_combustible.js' %}"></script>
 {% endblock %}

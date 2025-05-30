@@ -7,12 +7,15 @@
 {% elif user.user == "Sarp_01"%}
 {% include "layouts/panel_sarp.html" %}
 {% endif %}
+
+{% load static %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Registro SARP</h3>
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -66,7 +69,7 @@
       Agregar Reporte de Vuelo:
     </label>
     <button type="button" class="btn">
-      <a href="/formularios_sarp/">
+      <a href="{% url 'formularios_sarp' %}">
         <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
           fill="#000000">
@@ -168,45 +171,11 @@
   </section>
 </footer>
 
-<script src="../../static/js/loader-function.js"></script>
-<script>
-  // Obtener el formulario por su ID
-  const form = document.getElementById("form-new-drones");
-
-  if (form) {
-    // Seleccionar todas las divs dentro del formulario
-    const innerDivs = form.querySelectorAll("div");
-
-    // Iterar sobre cada div y aplicar las clases a sus inputs y labels
-    innerDivs.forEach(div => {
-      const label = div.querySelector("label");
-      const input = div.querySelector("input");
-      const select = div.querySelector("select");
-      const textarea = div.querySelector("textarea");
-
-      if (label) {
-        label.classList.add("form-label");
-      }
-
-      if (input) {
-        input.classList.add("form-control");
-      }
-
-      if (select) {
-        select.classList.add("form-select");
-      }
-      if (textarea) {
-        textarea.classList.add("form-control");
-      }
-    });
-  }
-
-</script>
-<script src="../../static/js/sarp/data_tables.js"></script>
-<script src="../../static/js/sarp/obtener_info_excel.js"></script>
-<script src="../../static/js/sarp/editar_reporte.js"></script>
-<script src="../../static/js/sarp/eliminar_reporte.js"></script>
-<script src="../../static/js/sarp/generar_excel_sarp.js"></script>
-<script src="../../static/js/sarp/buscador_reportes.js"></script>
+<script src="{% static 'js/sarp/data_tables.js' %}"></script>
+<script src="{% static 'js/sarp/obtener_info_excel.js' %}"></script>
+<script src="{% static 'js/sarp/editar_reporte.js' %}"></script>
+<script src="{% static 'js/sarp/eliminar_reporte.js' %}"></script>
+<script src="{% static 'js/sarp/generar_excel_sarp.js' %}"></script>
+<script src="{% static 'js/sarp/buscador_reportes.js' %}"></script>
 
 {% endblock %}

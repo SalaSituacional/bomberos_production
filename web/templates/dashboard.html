@@ -1,3 +1,5 @@
+{% load static %}
+
 {% if user.user == "SeRvEr" %}
     {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -67,8 +69,10 @@
         <h4 class="title-procediments">Incidentes <span id="parroquias"></span> - Parroquias</h4>
         <div class="position-end">
           <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == 'SeRvEr' %}
             <button class="btn btn-outline-danger" id="btn-total-one" onclick="fetchProcedimientos('Total')">Total</button>
             <button class="btn btn-outline-danger" id="btn-month-one" onclick="fetchProcedimientos('Mes')">Mes</button>
+            {% endif %}
             <button class="btn btn-outline-danger" id="btn-today-one" onclick="fetchProcedimientos('Hoy')">Hoy</button>
           </div>
         </div>
@@ -105,61 +109,87 @@
       <h4 class="title-procediments">Procedimientos <span id="divisiones"></span> - Divisiones</h4>
       <div class="position-end">
         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+          {% if user.user == 'Sala_Situacional' or user.user == '2dacomandancia' or user.user == 'Comandancia' or user.user == 'SeRvEr' %}
           <button class="btn btn-outline-danger" id="btn-total">Total</button>
           <button class="btn btn-outline-danger" id="btn-month">Mes</button>
+          {% endif %}
           <button class="btn btn-outline-danger" id="btn-today">Hoy</button>
         </div>
       </div>
       <div class="items-row">
+        {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Grumae02' or user.user == 'Rescate03' or user.user == 'Psicologia09' %}
         <section class="items-list style-two" id="colum-1">
-            <ol>
-                <li class="card-background-blue" data-division="grumae">
-                    <p>Grumae</p>
-                    <span class="count">0</span>
-                </li>
-                <li class="card-background-green" data-division="rescate">
-                    <p>Rescate</p>
-                    <span class="count">0</span>
-                </li>
-                <li class="card-background-violet" data-division="psicologia">
-                    <p>Psicologia</p>
-                    <span class="count">0</span>
-                </li>
-            </ol>
-        </section>
+          <ol>
+            {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Grumae02'  %}
+              <li class="card-background-blue" data-division="grumae">
+                  <p>Grumae</p>
+                  <span class="count">0</span>
+              </li>
+            {% endif %}
+            {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Rescate03'  %}
+              <li class="card-background-green" data-division="rescate">
+                  <p>Rescate</p>
+                  <span class="count">0</span>
+              </li>
+            {% endif %}
+            {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Psicologia09'  %}
+              <li class="card-background-violet" data-division="psicologia">
+                  <p>Psicologia</p>
+                  <span class="count">0</span>
+              </li>
+            {% endif %}
+          </ol>
+        </section> 
+        {% endif %}
+        {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Operaciones01' or user.user == 'Enfermeria08' or user.user == 'Prevencion05' %}
         <section class="items-list style-two" id="colum-2">
-            <ol>
-                <li class="card-background-red-light" data-division="operaciones">
-                    <p>Operaciones</p>
-                    <span class="count">0</span>
+          <ol>
+            {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Operaciones01' %}
+            <li class="card-background-red-light" data-division="operaciones">
+              <p>Operaciones</p>
+              <span class="count">0</span>
+            </li>
+            {% endif %}
+            {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Enfermeria08' %}
+            <li class="card-background-orange" data-division="enfermeria">
+              <p>Enfermeria</p>
+              <span class="count">0</span>
+            </li>
+            {% endif %}
+            {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Prevencion05' %}
+              <li class="card-background-blue-black" data-division="prevencion">
+                  <p>Prevencion</p>
+                  <span class="count">0</span>
                 </li>
-                <li class="card-background-orange" data-division="enfermeria">
-                    <p>Enfermeria</p>
-                    <span class="count">0</span>
-                </li>
-                <li class="card-background-blue-black" data-division="prevencion">
-                    <p>Prevencion</p>
-                    <span class="count">0</span>
-                </li>
-            </ol>
+                {% endif %}
+              </ol>
         </section>
+        {% endif %}
+        {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Capacitacion07' or user.user == 'Prehospitalaria04' or user.user == 'Serviciosmedicos06' %}
         <section class="items-list style-two" id="colum-3">
             <ol>
+              {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Capacitacion07' %}
                 <li class="card-background-cyan" data-division="capacitacion">
                     <p>Capacitacion</p>
                     <span class="count">0</span>
                 </li>
+              {% endif %}
+              {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Prehospitalaria04' %}
                 <li class="card-background-purple" data-division="prehospitalaria">
                     <p>PreHospitalaria</p>
                     <span class="count">0</span>
                 </li>
+              {% endif %}
+              {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Serviciosmedicos06' %}
                 <li class="card-background-red" data-division="servicios_medicos">
                     <p>Servicios Medicos</p>
                     <span class="count">0</span>
                 </li>
+              {% endif %}
             </ol>
         </section>
-    </div>
+        {% endif %}
+      </div>
     </div>
   </div>
 
@@ -169,127 +199,143 @@
     <canvas id="myChart"></canvas>
   </div>
 </div>
-<!-- Resumen de procedimientos  -->
-<h4 class="title-stadist-parroquies">Porcentajes  -   <span id="porcentajes"> </span></h4>
-<div class="analitics-filters">
-  <div class="position-end">
-    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-      <button class="btn btn-outline-danger" id="total" onclick="fetchPorcentajes('general')">Total</button>
-      <button class="btn btn-outline-danger" id="mes" onclick="fetchPorcentajes('mes')">Mes</button>
+
+{% if user.user == 'Sala_Situacional' or user.user == '2dacomandancia' or user.user == 'Comandancia' or user.user == 'SeRvEr' or user.user == 'Operaciones01' or user.user == 'Rescate03' or user.user == 'Prehospitalaria04' or user.user == 'Prevencion05' or user.user == 'Serviciosmedicos06' or user.user == 'Grumae02' %}
+  <!-- Resumen de procedimientos  -->
+  <h4 class="title-stadist-parroquies">Porcentajes  -  <span id="porcentajes"> </span></h4>
+  <div class="analitics-filters">
+    <div class="position-end">
+      <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+        <button class="btn btn-outline-danger" id="total" onclick="fetchPorcentajes('general')">Total</button>
+        <button class="btn btn-outline-danger" id="mes" onclick="fetchPorcentajes('mes')">Mes</button>
+      </div>
+    </div>
+    <div class="div-analytics">
+      <!-- Botones para elegir el período -->
+      {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Operaciones01' %}
+      <section class="progress-bar" id="operaciones">
+        <p>Operaciones</p>
+        <p id="progress-text-operaciones">0%</p>
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Success example"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="progress-bar bg-success"
+            id="progress-bar-operaciones"
+            style="width: 0%"
+          ></div>
+        </div>
+      </section>
+      {% endif %}
+      {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Prehospitalaria04' %}
+      <section class="progress-bar" id="prehospitalaria">
+        <p>PreHospitalaria</p>
+        <p id="progress-text-prehospitalaria">0%</p>
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Success example"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="progress-bar bg-info"
+            id="progress-bar-prehospitalaria"
+            style="width: 0%"
+          ></div>
+        </div>
+      </section>
+      {% endif %}
+      {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Rescate03' %}
+      <section class="progress-bar" id="rescate2">
+        <p>Rescate</p>
+        <p id="progress-text-rescate">0%</p>
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Success example"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="progress-bar bg-warning"
+            id="progress-bar-rescate"
+            style="width: 0%"
+          ></div>
+        </div>
+      </section>
+      {% endif %}
+      {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Grumae02' %}
+      <section class="progress-bar" id="grumae">
+        <p>Grumae</p>
+        <p id="progress-text-grumae">0%</p>
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Success example"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="progress-bar"
+            id="progress-bar-grumae"
+            style="width: 0%"
+          ></div>
+        </div>
+      </section>
+      {% endif %}
+      {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Serviciosmedicos06' %}
+      <section class="progress-bar" id="serviciosmedicos">
+        <p>Servicios medicos</p>
+        <p id="progress-text-servicios_medicos">0%</p>
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Success example"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="progress-bar bg-danger"
+            id="progress-bar-servicios_medicos"
+            style="width: 0%"
+          ></div>
+        </div>
+      </section>
+      {% endif %}
+      {% if user.user == 'Sala_Situacional' or user.user == 'Comandancia' or user.user == '2dacomandancia' or user.user == 'SeRvEr' or user.user == 'Prevencion05' %}
+      <section class="progress-bar" id="prevencion">
+        <p>Prevencion</p>
+        <p id="progress-text-prevencion">0%</p>
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Success example"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="progress-bar bg-danger"
+            id="progress-bar-prevencion"
+            style="width: 0%"
+          ></div>
+        </div>
+      </section>
+      {% endif %}
     </div>
   </div>
-<div class="div-analytics">
-  <!-- Botones para elegir el período -->
- <section class="progress-bar" id="operaciones">
-    <p>Operaciones</p>
-    <p id="progress-text-operaciones">0%</p>
-    <div
-      class="progress"
-      role="progressbar"
-      aria-label="Success example"
-      aria-valuenow="0"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <div
-        class="progress-bar bg-success"
-        id="progress-bar-operaciones"
-        style="width: 0%"
-      ></div>
-    </div>
-  </section>
-  <section class="progress-bar" id="prehospitalaria">
-    <p>PreHospitalaria</p>
-    <p id="progress-text-prehospitalaria">0%</p>
-    <div
-      class="progress"
-      role="progressbar"
-      aria-label="Success example"
-      aria-valuenow="0"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <div
-        class="progress-bar bg-info"
-        id="progress-bar-prehospitalaria"
-        style="width: 0%"
-      ></div>
-    </div>
-  </section>
-  <section class="progress-bar" id="rescate2">
-    <p>Rescate</p>
-    <p id="progress-text-rescate">0%</p>
-    <div
-      class="progress"
-      role="progressbar"
-      aria-label="Success example"
-      aria-valuenow="0"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <div
-        class="progress-bar bg-warning"
-        id="progress-bar-rescate"
-        style="width: 0%"
-      ></div>
-    </div>
-  </section>
-  <section class="progress-bar" id="grumae">
-    <p>Grumae</p>
-    <p id="progress-text-grumae">0%</p>
-    <div
-      class="progress"
-      role="progressbar"
-      aria-label="Success example"
-      aria-valuenow="0"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <div
-        class="progress-bar"
-        id="progress-bar-grumae"
-        style="width: 0%"
-      ></div>
-    </div>
-  </section>
-  <section class="progress-bar" id="serviciosmedicos">
-    <p>Servicios medicos</p>
-    <p id="progress-text-servicios_medicos">0%</p>
-    <div
-      class="progress"
-      role="progressbar"
-      aria-label="Success example"
-      aria-valuenow="0"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <div
-        class="progress-bar bg-danger"
-        id="progress-bar-servicios_medicos"
-        style="width: 0%"
-      ></div>
-    </div>
-  </section>
-  <section class="progress-bar" id="prevencion">
-    <p>Prevencion</p>
-    <p id="progress-text-prevencion">0%</p>
-    <div
-      class="progress"
-      role="progressbar"
-      aria-label="Success example"
-      aria-valuenow="0"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <div
-        class="progress-bar bg-danger"
-        id="progress-bar-prevencion"
-        style="width: 0%"
-      ></div>
-    </div>
-  </section>
-</div>
-</div>
+{% endif %}
+
 <footer class="footer">
   <section class="text-reserved">
     <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
@@ -327,10 +373,10 @@
 
 
 <!-- fin resumen de procedimientos -->
-<script src="../static/js/animate.js"></script>
-<script src="../static/js/graphic.js"></script>
-<script src="../static/js/modal-dashboard.js"></script>
-<script src="../static/js/ultimo_procedimiento.js"></script>
+<script src="{% static 'js/animate.js' %}"></script>
+<script src="{% static 'js/graphic.js' %}"></script>
+<script src="{% static 'js/modal-dashboard.js' %}"></script>
+<script src="{% static 'js/ultimo_procedimiento.js' %}"></script>
 {% endblock %}
 
 

@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -9,11 +11,11 @@
   <meta name="robots" content="follow" />
   <meta name="title" content="Blog" />
   <meta name="author" content="Cuerpo De Bomberos - San Cristobal - Estado Tachira" />
-  <link rel="icon" href="../../static/assets/logo bomberos 2.png" type="image/x-icon" />
+  <link rel="icon" href="{% static 'assets/logo bomberos 2.png' %}" type="image/x-icon" />
   <title>Cuerpo De Bomberos - San Cristobal</title>
   <link rel="canonical" href="https://cuerpobomberossc.com/" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="../static/styles.css" />
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
 </head>
 
 <body>
@@ -42,57 +44,57 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <nav class="nav-bar">
         <li class="nav-item">
-          <a class="nav-link" href="/">Inicio</a>
+          <a class="nav-link" href="{% url 'inicio' %}">Inicio</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="/informacion/" role="button"
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'informacion' %}" role="button"
             aria-expanded="false">Informacion</a>
           <ul class="dropdown-menu">
             <li>
-              <a class="dropdown-item" href="/informacion/">Reseña Historica</a>
+              <a class="dropdown-item" href="{% url 'informacion' %}">Reseña Historica</a>
             </li>
             <li>
-              <a class="dropdown-item" href="/informacion/#mision">Mision</a>
+              <a class="dropdown-item" href="{% url 'informacion' %}#mision">Mision</a>
             </li>
             <li>
-              <a class="dropdown-item" href="/informacion/#vision">Vision</a>
+              <a class="dropdown-item" href="{% url 'informacion' %}#vision">Vision</a>
             </li>
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="/noticias/" role="button"
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'noticias' %}" role="button"
             aria-expanded="false">Noticias</a>
           <ul class="dropdown-menu">
             <li>
-              <a class="dropdown-item" href="/proceso_captacion/">Proceso de Captacion</a>
+              <a class="dropdown-item" href="{% url 'captacion' %}">Proceso de Captacion</a>
             </li>
             <li>
-              <a class="dropdown-item" href="/noticias/#publicaciones">Publicaciones</a>
+              <a class="dropdown-item" href="{% url 'noticias' %}#publicaciones">Publicaciones</a>
             </li>
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="/zoedan/" role="button"
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'zoedan_tachira' %}" role="button"
             aria-expanded="false">Zoedan Tachira</a>
           <ul class="dropdown-menu">
             <li>
-              <a class="dropdown-item" href="/zoedan/#informacion-zoedan">Informacion</a>
+              <a class="dropdown-item" href="{% url 'zoedan_tachira' %}#informacion-zoedan">Informacion</a>
             </li>
             <li>
-              <a class="dropdown-item" href="/zoedan/#Ubicaciones-zoedan">Ubicaciones</a>
+              <a class="dropdown-item" href="{% url 'zoedan_tachira' %}#Ubicaciones-zoedan">Ubicaciones</a>
             </li>
             <li>
-              <a class="dropdown-item" href="/zoedan/#estaciones-zoedan">Estaciones</a>
+              <a class="dropdown-item" href="{% url 'zoedan_tachira' %}#estaciones-zoedan">Estaciones</a>
             </li>
           </ul>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/contacto/">Contacto</a>
+          <a class="nav-link" href="{% url 'contacto' %}">Contacto</a>
         </li>
       </nav>
     </div>
     <div class="link-to-system">
-      <a href="/login/">
+      <a href="{% url 'home' %}">
         <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
           <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -113,7 +115,7 @@
     <div class="log-social-media">
       <div class="icon-to-title">
         <div class="icon">
-          <img src="../static/assets/logo bomberos 2.svg" alt="Logo bomberos" />
+          <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo bomberos" />
         </div>
         <div class="title-blog">
           <p>Cuerpo Bomberos Tachira</p>
@@ -201,15 +203,8 @@
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../static/js/loader-function.js"></script>
+  <script src="{% static 'js/loader-function.js' %}"></script>
 
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
-        registrations.forEach((reg) => reg.unregister());
-      });
-    }
-  </script>
 </body>
 
 </html>

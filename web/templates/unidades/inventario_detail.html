@@ -14,13 +14,15 @@
 {% include "layouts/panel_operaciones.html" %}
 {% endif %}
 
+{% load static %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Inventario de unidades</h3>
     <section class="user-name">
       <p>
-        {{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span>
+        {{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b>
       </p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -41,8 +43,7 @@
 
 <div class="container-fluid">
   <h2>Inventario: {{ inventario.unidad }} - {{ inventario.fecha_revision|date:"d/m/Y" }}</h2>
-  <p>Realizado por: {{ inventario.realizado_por.jerarquia }} {{ inventario.realizado_por.nombres }} {{
-    inventario.realizado_por.apellidos }}</p>
+  <p>Realizado por: {{ inventario.realizado_por.jerarquia }} {{ inventario.realizado_por.nombres }} {{ inventario.realizado_por.apellidos }}</p>
 
   <form method="post">
     {% csrf_token %}
@@ -69,9 +70,9 @@
           <td>
             <select name="estado" class="form-select">
               {% for estado in detalle.herramienta.ESTADOS %}
-              <option value="{{ estado.0 }}" {% if detalle.estado==estado.0 %}selected{% endif %}>
-                {{ estado.1 }}
-              </option>
+                <option value="{{ estado.0 }}" {% if detalle.estado == estado.0 %}selected{% endif %}>
+                  {{ estado.1 }}
+                </option>
               {% endfor %}
             </select>
           </td>

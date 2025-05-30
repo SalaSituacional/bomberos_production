@@ -7,12 +7,15 @@
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
 {% endif %}
+
+{% load static %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Unidades</h3>
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -43,7 +46,7 @@
     <p>
       Agregar Unidad:
     </p>
-    <a href="/formularioUnidades/">
+    <a href="{% url 'formulario_unidades' %}">
       <button type="button" class="btn">
         <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
@@ -317,12 +320,11 @@
   </section>
 </footer>
 
-<script src="../../static/js/unidades/agregar_reporte.js"></script>
-<script src="../../static/js/unidades/cambiar_estado.js"></script>
-<script src="../../static/js/unidades/reasignar_unidad.js"></script>
-<script src="../../static/js/unidades/editar_unidades.js"></script>
-<script src="../../static/js/unidades/ver-informacion.js"></script>
-<script src="../../static/js/unidades/filter_table_unidades.js"></script>
-<script src="../../static/js/loader-function.js"></script>
-<script src="../../static/js/unidades/reportes_excel.js"></script>
+<script src="{% static 'js/unidades/agregar_reporte.js' %}"></script>
+<script src="{% static 'js/unidades/cambiar_estado.js' %}"></script>
+<script src="{% static 'js/unidades/reasignar_unidad.js' %}"></script>
+<script src="{% static 'js/unidades/editar_unidades.js' %}"></script>
+<script src="{% static 'js/unidades/ver-informacion.js' %}"></script>
+<script src="{% static 'js/unidades/filter_table_unidades.js' %}"></script>
+<script src="{% static 'js/unidades/reportes_excel.js' %}"></script>
 {% endblock %}

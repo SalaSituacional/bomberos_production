@@ -24,6 +24,8 @@
     {% include "layouts/panel_psicologia.html" %}
 {% endif %}
 
+{% load static %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name  username-space">
@@ -31,7 +33,7 @@
     
 
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / {{ user.user }}</p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
       <svg
         width="30px"
         height="30px"
@@ -155,7 +157,7 @@
       <div class="modal-header header-dashboard-two">
         <section class="title-icon">
           <img
-            src="../static/assets/logo bomberos 2.svg"
+            src="{% static 'assets/logo bomberos 2.svg' %}"
             alt="Logo de bomberos"
           />
           <h2>Cuerpo de Bomberos</h2>
@@ -188,7 +190,7 @@
     <div class="modal-content modal-content-two">
       <div class="modal-header header-dashboard-two">
         <section class="title-icon">
-          <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
+          <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo de bomberos" />
           <h2>Cuerpo de Bomberos</h2>
         </section>
       </div>
@@ -376,9 +378,9 @@
 </footer>
 </div>
 
-<script src="../static/js/modificar_personal.js"></script>
-<script src="../static/js/export_excel/excel_personal.js"></script>
-<script src="../static/js/notificacion_personal.js"></script>
+<script src="{% static 'js/modificar_personal.js' %}"></script>
+<script src="{% static 'js/export_excel/excel_personal.js' %}"></script>
+<script src="{% static 'js/notificacion_personal.js' %}"></script>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 {% endblock %}
 

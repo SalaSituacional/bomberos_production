@@ -1,3 +1,5 @@
+{% load static %}
+
 {% if user.user == "SeRvEr" %}
 {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -7,12 +9,13 @@
 {% elif user.user == "Bienes_00"%}
 {% include "layouts/panel_bienes.html" %}
 {% endif %}
+
 {% block content %}
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
         <section class="user-name">
-            <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+            <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
             <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -105,10 +108,7 @@
                 </article>
             </section>
         </div>
-    </div>
-
-
-    
+    </div>    
 </div>
 
 
@@ -119,6 +119,6 @@
 </footer>
 
 <!-- fin resumen de procedimientos -->
-<script src="../../static/js/animate.js"></script>
-<script src="../../static/js/modal-dashboard.js"></script>
+<script src="{% static 'js/animate.js' %}"></script>
+<script src="{% static 'js/modal-dashboard.js' %}"></script>
 {% endblock %}

@@ -1,3 +1,5 @@
+{% load static %}
+
 {% if user.user == "SeRvEr" %}
 {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -23,12 +25,13 @@
 {% elif user.user == "Psicologia09" %}
 {% include "layouts/panel_psicologia.html" %}
 {% endif %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Psicologia</h3>
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / {{ user.user }}</p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="user-login">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -115,6 +118,7 @@
             <td>{{ row.hora }}</td>
             <td>{{ row.id_tipo_procedimiento.tipo_procedimiento }}</td>
             <td class="icons-accion">
+              {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
               <!-- NO TOCAR BOTON ELIMINAR-->
               <button type="button" class="button_delete" data-id="{{ row.id }}" data-id_mostrar="{{ forloop.counter }}"
                 data-solicitante="{{ row.solicitante_externo }}" data-fecha="{{ row.fecha|date:'d-m-Y'}}"
@@ -134,6 +138,7 @@
                   </g>
                 </svg>
               </button>
+              {% endif %}
 
               <!-- NO TOCAR Boton informacion-->
               <button type="button" class="button-info" data-id="{{ row.id }}"
@@ -153,6 +158,8 @@
                   </g>
                 </svg>
               </button>
+
+              {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
               <!-- Boton de Editar -->
               <button class=" btn-editar" data-id="{{ row.id }}" data-bs-toggle="modal" data-bs-target="#editarModal">
                 <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1"
@@ -169,6 +176,7 @@
                   </g>
                 </svg>
               </button>
+              {% endif %}
             </td>
           </tr>
           <!-- prettier-ignore -->
@@ -179,6 +187,7 @@
     </table>
   </div>
     
+    {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' or user.user == 'Comandancia' or user.user == '2dacomandancia' %}
     <div class="contain-dates">
       <h4 class="title-procediments">Procedimientos</h4>
       <br>
@@ -190,7 +199,7 @@
       </section>
     </div>
     
-      <div class="contain-dates">
+    <div class="contain-dates">
         <h4 class="title-procediments">Exportaciones</h4>
         <br>
         <section class="buttons-items input-group mb-3 filter-search">
@@ -198,11 +207,13 @@
           <input type="month" class="form-control fecha_manual" name="" id="mes_excel"">
           <button id="exportarExcel" class="btn btn-danger download-link" disabled>Exportar .xls</button>
           </section>
-        </div>
+    </div>
+    {% endif %}
     
     <!-- general-dashboard fin  -->
   </div>
   <!----------------------- Modal delete ---------------------------------->
+  {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -227,13 +238,15 @@
       </div>
     </div>
   </div>
+  {% endif %}
+
   <!----------------------- Modal Info ---------------------------------->
   <div class="modal fade" tabindex="-1" id="modal-info">
     <div class="modal-dialog modal-xl">
       <div class="modal-content modal-content-two">
         <div class="modal-header header-dashboard-two">
           <section class="title-icon">
-            <img src="../static/assets/logo bomberos 2.svg" alt="Logo de bomberos" />
+            <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo de bomberos" />
             <h2>Cuerpo de Bomberos</h2>
           </section>
         </div>
@@ -255,12 +268,13 @@
       <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
     </section>
   </footer>
-  <script src="../../static/js/psicologia.js"></script>
-  <script src="../../static/js/filter-psicologia.js"></script>
-  <script src="../../static/js/info_modal.js"></script>
+
+  <script src="{% static 'js/psicologia.js' %}"></script>
+  <script src="{% static 'js/filter-psicologia.js' %}"></script>
+  <script src="{% static 'js/info_modal.js' %}"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-  <script src="../static/js/editar_proc.js"></script>
-  <script src="../../static/js/cargar_mas_psicologia.js"></script>
-  <script src="../../static/js/export_excel/excel_psicologia.js"></script>
+  <script src="{% static 'js/editar_proc.js' %}"></script>
+  <script src="{% static 'js/cargar_mas_psicologia.js' %}"></script>
+  <script src="{% static 'js/export_excel/excel_psicologia.js' %}"></script>
   {% endblock %}
 </div>
