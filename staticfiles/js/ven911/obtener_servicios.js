@@ -1,39 +1,50 @@
-// Al cargar la página, dejamos el input vacío inicialmente
 document.addEventListener('DOMContentLoaded', function () {
-    obtenerServicios(); // Cargará todos los registros
+    obtenerServicios(); // Cargará todos los registros al inicio
 });
+
 // Función para obtener los servicios y actualizar el DOM
 async function obtenerServicios() {
     try {
-        const fechaInicio = document.getElementById('fecha-inicio').value;
-        const fechaFin = document.getElementById('fecha-fin').value;
+        const fechaInicioInput = document.getElementById('fecha-inicio');
+        const fechaFinInput = document.getElementById('fecha-fin');
+        const fechaInicio = fechaInicioInput.value;
+        const fechaFin = fechaFinInput.value;
+        const tituloReporteElement = document.getElementById('titulo-reporte'); // Nuevo ID para el título del reporte
 
-        // Validación básica
+        // Validación básica de fechas
         if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
             alert('La fecha de inicio no puede ser mayor a la fecha final');
             return;
         }
 
-
-        let url = api_servicios_tipo;
+        let url = api_servicios_tipo; // Asegúrate de que 'api_servicios_tipo' esté definida globalmente o importada
         const params = new URLSearchParams();
 
         if (fechaInicio) params.append('fecha_inicio', fechaInicio);
         if (fechaFin) params.append('fecha_fin', fechaFin);
 
         if (params.toString()) url += `?${params.toString()}`;
-        // Si no hay fechas, se obtienen todos los registros
+
         console.log('URL de la API:', url); // Para depuración
 
-        const response = await fetchWithLoader(url);
+        const response = await fetchWithLoader(url); // Asegúrate de que 'fetchWithLoader' esté definida
         const data = await response;
         console.log('Datos obtenidos:', data);
+
+        // --- Lógica para el título del reporte ---
+        if (fechaInicio && fechaFin) {
+            tituloReporteElement.textContent = `Agrupación de Servicios (${fechaInicio} a ${fechaFin})`;
+        } else {
+            tituloReporteElement.textContent = 'Agrupación de Servicios - Totales Generales';
+        }
+        // --- Fin de la lógica para el título del reporte ---
+
+
         const mapeoIds = {
             // Hechos Viales
             'colisiones': 'Colisiones',
             'volvamientos': 'Volcamientos',
             'colisiondemotos': 'Colision De Motos',
-            'atencionesparamedicas': 'Atenciones Paramedicas',
             'accidentesdetransito': 'Accidentes De Transito - Otros',
             'colisiondevehdecarga': 'Colision De Veh. De Carga',
             'vehiculoqueacealvacio': 'Vehiculo Que Cae Al Vacio',
@@ -44,7 +55,7 @@ async function obtenerServicios() {
 
             // Operaciones, Comunicaciones
             'falsaalarma': 'Falsa Alarma',
-            'apoyoinstitucional': 'Apoyo Institucional',
+            'apoyounidadesalarma': 'Apoyo A Unidades De Alarma',
             'atendidonoefectuado': 'Atendido No Efectuado',
             'apoyoconplantaelectrica': 'Apoyo Con Planta Electrica',
 
@@ -85,7 +96,7 @@ async function obtenerServicios() {
             // Servicios Especiales (Suministros, Apoyo Inst)
             'achicamiento': 'Achicamiento',
             'servicioespecial': 'Servicio Especial',
-            'apoyoInstitucional': 'Apoyo Institucional',
+            'apoyoinstitucional': 'Apoyo Institucional',
             'abastecimientoagua': 'Abastecimiento De Agua',
             'dispersiondeparticulas': 'Dispersion De Particulas',
             'desinfeccionbiologicaporcovid': 'Desinfeccion Biologica Por Covid-19',
@@ -126,8 +137,6 @@ async function obtenerServicios() {
 
             // Capacitacion Practica Bomberil
             'practicabomberil': 'Practica Bomberil',
-
-
         };
 
         Object.keys(mapeoIds).forEach(id => {
@@ -151,7 +160,6 @@ async function obtenerServicios() {
             data['Colisiones'] || 0,
             data['Volcamientos'] || 0,
             data['Colision De Motos'] || 0,
-            data['Atenciones Paramedicas'] || 0,
             data['Accidentes De Transito - Otros'] || 0,
             data['Colision De Veh. De Carga'] || 0,
             data['Vehiculo Que Cae Al Vacio'] || 0,
@@ -170,7 +178,7 @@ async function obtenerServicios() {
         // Operaciones, Comunicaciones
         const operacionesComunicaciones = [
             data['Falsa Alarma'] || 0,
-            data['Apoyo Institucional'] || 0,
+            data['Apoyo A Unidades De Alarma'] || 0,
             data['Atendido No Efectuado'] || 0,
             data['Apoyo Con Planta Electrica'] || 0
         ];
@@ -198,10 +206,8 @@ async function obtenerServicios() {
         ];
         const totalHimenopteros = himenopteros.reduce((a, b) => a + b, 0);
         document.getElementById('heminopterostotales').textContent = `(${totalHimenopteros})`;
-        //    ==============================================
-        // Abordajes A Comunidades Traslados Con Ambulacia
-        //    ==============================================
 
+        // Abordajes A Comunidades Traslados Con Ambulancia
         const abordajesComunidadesTrasladosConAmbulancia = [
             data['Traslado Gestante'] || 0,
             data['Preparacion Comunitaria'] || 0,
@@ -228,10 +234,8 @@ async function obtenerServicios() {
         ];
         const totalatencionesprehospitalariasverificaciondesignosvitales = atencionesPrehospitalariasVerificacionDeSignosVitales.reduce((a, b) => a + b, 0);
         document.getElementById('atencionesprehospitalariasverificaciondesignostotales').textContent = `(${totalatencionesprehospitalariasverificaciondesignosvitales})`;
-        //    =============================================    
-        // Servicios Especiales (Suministros, Apoyo Inst)
-        //    =============================================
 
+        // Servicios Especiales (Suministros, Apoyo Inst)
         const serviciosEspecialesTotales = [
             data['Achicamiento'] || 0,
             data['Servicio Especial'] || 0,
@@ -243,9 +247,7 @@ async function obtenerServicios() {
         const totalserviciosespecialestotales = serviciosEspecialesTotales.reduce((a, b) => a + b, 0);
         document.getElementById('serviciosespecialestotales').textContent = `(${totalserviciosespecialestotales})`;
 
-        //    ====================
         // Pov Apostamientos
-        //    ====================
         const povapostamientostotales = [
             data['Puesto De Avanzadas'] || 0,
             data['Guardias De Prevencion'] || 0,
@@ -254,11 +256,7 @@ async function obtenerServicios() {
         const totalpovapostamientostotales = povapostamientostotales.reduce((a, b) => a + b, 0);
         document.getElementById('pov-apostamientostotales').textContent = `(${totalpovapostamientostotales})`;
 
-        // ==========================================
         // Inspecciones A Establecimientos Comerciales - Investigacion
-        // ==========================================
-
-
         const insepccionesestablecimientoscomercialestotales = [
             data['Prevencion Y Seguridad'] || 0,
             data['Investigacion De Servicios'] || 0,
@@ -266,11 +264,7 @@ async function obtenerServicios() {
         const totalinsepccionesestablecimientoscomercialestotales = insepccionesestablecimientoscomercialestotales.reduce((a, b) => a + b, 0);
         document.getElementById('insepccionesestablecimientoscomercialestotales').textContent = `(${totalinsepccionesestablecimientoscomercialestotales})`;
 
-        // ==========================================
         // Inspecciones A Zonas De Riesgo
-        // ==========================================
-
-
         const inspeccionesazonasderiesgototales = [
             data['Desalojo'] || 0,
             data['Derrumbes'] || 0,
@@ -280,10 +274,8 @@ async function obtenerServicios() {
         ];
         const totalinspeccionesazonasderiesgototales = inspeccionesazonasderiesgototales.reduce((a, b) => a + b, 0);
         document.getElementById('inspeccionesazonasderiesgototales').textContent = `(${totalinspeccionesazonasderiesgototales})`;
-        // ==========================================        
-        // Incendios (Estructurales, Forestales, Desechos, Vegetacion, GLP, Derrame De Combustible)
-        // ==========================================
 
+        // Incendios (Estructurales, Forestales, Desechos, Vegetacion, GLP, Derrame De Combustible)
         const incendiosestructuralesglpvegetaciontotales = [
             data['Reignicion'] || 0,
             data['Explosiones'] || 0,
@@ -301,26 +293,20 @@ async function obtenerServicios() {
         ];
         const totalincendiosestructuralesglpvegetaciontotales = incendiosestructuralesglpvegetaciontotales.reduce((a, b) => a + b, 0);
         document.getElementById('incendiosestructuralesglpvegetaciontotales').textContent = `(${totalincendiosestructuralesglpvegetaciontotales})`;
-        // ==========================================
-        // Talas Podas
-        // ==========================================
 
+        // Talas Podas
         const talaspodastotales = [
             data['Tala De Arbol'] || 0,
         ];
         const totaltalaspodastotales = talaspodastotales.reduce((a, b) => a + b, 0);
         document.getElementById('talaspodastotales').textContent = `(${totaltalaspodastotales})`;
 
-        // ==========================================
         // Capacitacion Practica Bomberil
-        // ==========================================
-
         const capacitacionpracticabomberiltotales = [
             data['Practica Bomberil'] || 0,
         ];
         const totalcapacitacionpracticabomberiltotales = capacitacionpracticabomberiltotales.reduce((a, b) => a + b, 0);
         document.getElementById('capacitacionpracticabomberiltotales').textContent = `(${totalcapacitacionpracticabomberiltotales})`;
-
 
         // Calcular suma total de todos los servicios
         const totalGeneral =
@@ -340,19 +326,15 @@ async function obtenerServicios() {
             totalcapacitacionpracticabomberiltotales;
 
         // Actualizar el elemento con la suma total
+        console.log(totalGeneral)
         document.getElementById('resultadostotales').textContent = `(${totalGeneral})`;
-
-        // ==============
-        // // fin script
-        // ==============
-
     }
 }
 
 function limpiarFiltro() {
     document.getElementById('fecha-inicio').value = '';
     document.getElementById('fecha-fin').value = '';
-    obtenerServicios();
+    obtenerServicios(); // Vuelve a cargar los datos sin filtros y actualiza el título
 }
 
 // Función auxiliar para obtener número de semana (ISO)

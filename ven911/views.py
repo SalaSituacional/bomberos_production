@@ -22,6 +22,7 @@ from django.db.models import Prefetch
 from openpyxl import Workbook
 import json
 from openpyxl.styles import Font, Alignment
+from datetime import timedelta # Importa timedelta para operaciones de fecha
 
 # Vista del dashboard Ven911
 @login_required
@@ -52,7 +53,7 @@ def form_services(request):
             servicio_instance = Servicio.objects.get(id=servicio_id)
         except Servicio.DoesNotExist:
             messages.error(request, 'El servicio a editar no existe')
-            return redirect('home_911')
+            return redirect('table_911')
 
     if request.method == 'POST':
         form_services = ServicioForm(request.POST, instance=servicio_instance)
@@ -62,7 +63,7 @@ def form_services(request):
                 servicio.save()
                 action = 'editado' if servicio_id else 'registrado'
                 messages.success(request, f'Servicio {action} correctamente!')
-                return redirect('home_911')
+                return redirect('form_services')
             except Exception as e:
                 messages.error(request, f'Error al guardar: {str(e)}')
         else:
@@ -98,43 +99,67 @@ def view_table_911(request):
         "registros_hoy" : registros_hoy,
     })
 
-
 def obtener_servicios_json(request):
     try:
-        # Consulta optimizada - ahora filtra solo servicios del día actual
+        fecha_str = request.GET.get('fecha') 
+        if fecha_str:
+            try:
+                hoy = timezone.datetime.strptime(fecha_str, '%Y-%m-%d').date()
+            except ValueError:
+                return JsonResponse({'error': 'Formato de fecha inválido. Usa YYYY-MM-DD'}, status=400)
+        else:
+            hoy = timezone.localdate() # Usa la fecha actual si no hay parámetro
+
+        # ... (Tu lógica existente para obtener servicios) ...
         servicios = Servicio.objects.filter(
-            fecha=timezone.now().date()  # Solo la fecha de hoy
-        ).select_related('tipo_servicio', 'operador_de_guardia'
-        ).order_by('-fecha', '-hora')
-        
-        # Construcción de datos (sin cambios)
+            fecha=hoy
+        ).select_related(
+            'tipo_servicio',
+            'operador_de_guardia'
+        ).order_by('-hora', '-id')
+
+        # Construcción de datos...
         datos_servicios = []
-        for s in servicios:
-            operador = None
-            if s.operador_de_guardia:
-                operador = {
-                    'id': s.operador_de_guardia.id,
-                    'nombre_completo': f"{s.operador_de_guardia.nombres} {s.operador_de_guardia.apellidos}"
+        for servicio in servicios:
+            operador_data = None
+            if servicio.operador_de_guardia:
+                nombre_completo = f"{servicio.operador_de_guardia.nombres} {servicio.operador_de_guardia.apellidos}"
+                jerarquia = getattr(servicio.operador_de_guardia, 'jerarquia', '')
+                if jerarquia:
+                    nombre_completo += f" - {jerarquia}"
+                
+                operador_data = {
+                    'id': servicio.operador_de_guardia.id,
+                    'nombre_completo': nombre_completo
                 }
-                if hasattr(s.operador_de_guardia, 'jerarquia'):
-                    operador['nombre_completo'] += f" - {s.operador_de_guardia.jerarquia}"
-            
-            datos_servicios.append({
-                'id': s.id,
+
+            servicio_data = {
+                'id': servicio.id,
                 'tipo_servicio': {
-                    'id': s.tipo_servicio.id,
-                    'nombre': s.tipo_servicio.nombre
-                } if s.tipo_servicio else None,
-                'cantidad_tipo_servicio': s.cantidad_tipo_servicio or 1,
-                'operador_de_guardia': operador,
-                'fecha': s.fecha.strftime('%Y-%m-%d') if s.fecha else None,
-                'hora': str(s.hora) if s.hora else None,
-            })
-        
-        return JsonResponse({'servicios': datos_servicios}, safe=False)
-        
+                    'id': servicio.tipo_servicio.id,
+                    'nombre': servicio.tipo_servicio.nombre
+                } if servicio.tipo_servicio else None,
+                'cantidad_tipo_servicio': servicio.cantidad_tipo_servicio,
+                'operador_de_guardia': operador_data,
+                'fecha': servicio.fecha.strftime('%Y-%m-%d') if servicio.fecha else None, # Asegúrate de que la fecha se formatee aquí
+                'hora': servicio.hora.strftime('%H:%M') if servicio.hora else None,
+            }
+            datos_servicios.append(servicio_data)
+
+        return JsonResponse({
+            'servicios': datos_servicios,
+            'fecha_consultada': hoy.strftime('%Y-%m-%d'), # <-- **Asegúrate de que esta línea esté presente**
+            'count': len(datos_servicios)
+        }, safe=False)
+
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        import logging
+        logging.exception("Error en obtener_servicios_json")
+        return JsonResponse({
+            'error': 'Error al obtener servicios',
+            'details': str(e),
+            'fecha_consultada': timezone.localdate().strftime('%Y-%m-%d') # Devuelve una fecha incluso en error
+        }, status=500)
 
 # api para elmininar servicio
 @csrf_exempt  # Solo si no usas CSRF en APIs (o configura CSRF correctamente)
@@ -177,18 +202,18 @@ def api_conteo_servicios(request):
                 
                 # Caso 2: Día inicial (solo horas >= 8:00 AM)
                 filtro_dia_inicio = Q(servicio__fecha=start_date, 
-                                    servicio__hora__gte=time(8, 0))
+                                    servicio__hora__gte=time(5, 0))
                 
                 # Caso 3: Día final (solo horas < 8:00 AM)
                 filtro_dia_fin = Q(servicio__fecha=end_date, 
-                                 servicio__hora__lt=time(8, 0))
+                                 servicio__hora__lt=time(5, 0))
                 
                 # Caso especial: Si es el mismo día (24 horas desde 8:00 AM a 8:00 AM del día siguiente)
                 if start_date == end_date:
                     filtro_servicios = (
-                        Q(servicio__fecha=start_date, servicio__hora__gte=time(8, 0)) |
+                        Q(servicio__fecha=start_date, servicio__hora__gte=time(5, 0)) |
                         Q(servicio__fecha=start_date + timezone.timedelta(days=1), 
-                         servicio__hora__lt=time(8, 0))
+                         servicio__hora__lt=time(5, 0))
                     )
                 else:
                     # Combinamos todos los casos para rangos de múltiples días

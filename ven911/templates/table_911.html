@@ -7,7 +7,6 @@
 {% endif %}
 {% load static %}
 {% block content %}
-<!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
         <section class="user-name">
@@ -32,27 +31,21 @@
         <div class="tool-personal">
             <section class="accion-filter">
                 <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">filtrado: </span>
+                    <span class="input-group-text" id="basic-addon1">Filtrado: </span>
                     <input type="text" class="form-control" placeholder="Buscar" id="filterid">
-                </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">Registros De Hoy: {{ registros_hoy }}</span>
-                </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1">Total de Registros {{ registros_totales }}</span>
                 </div>
             </section>
             <section class="accion-personal">
-                <span>Registrar </span>    
+                <span>Registrar </span>
                 <a href="{% url 'form_services' %}">
-                        <i class="bi bi-plus-circle"></i>
-                    </a>
+                    <i class="bi bi-plus-circle"></i>
+                </a>
             </section>
         </div>
 
-        <!-- tabla -->
+
         <div class="table-responsive-sm">
-            <table class="table table-hover" id="tablaven911">
+            <table class="table table-hover table-width-100" id="tablaven911">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -64,11 +57,24 @@
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
-                    <!-- Los elementos se generan dinamicamente con js -->
                 </tbody>
             </table>
         </div>
 
+        <div class="contain-dates">
+            <div class="buttons-items input-group mb-3 filter-search">
+
+                <button id="btn-dia-anterior" class="btn btn-danger">
+                    <i class="bi bi-chevron-left"></i> Día Anterior
+                </button>
+
+                <h4 id="current-date-display">Cargando fecha...</h4>
+
+                <button id="btn-dia-siguiente" class="btn btn-danger">
+                    Día Siguiente <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
         <div class="contain-dates">
             <h4 class="title-procediments">Exportar Reportes</h4>
             <br>
@@ -88,17 +94,16 @@
     </section>
 </footer>
 <script>
-    const api_table_911 = "{% url 'obtener_servicios_json' %}"
+    // Variables de URL de Django
+    const api_table_911 = "{% url 'obtener_servicios_json' %}";
     const URL_ELIMINAR = "{% url 'eliminar_servicio' 0 %}".replace('0', '__id__');
     const url_excel = "{% url 'exportar_servicios_excel' %}";
     const form_services_edit = "{% url 'form_services' %}";
 
 </script>
 
-<script src="../../static/js/animate.js"></script>
-<script src="{% static 'js/ven911/Tabla_servicios.js' %}"></script>
+<script src="{% static 'js/animate.js' %}"></script>
 <script src="{% static 'js/ven911/eliminar_servicio.js' %}"></script>
 <script src="{% static 'js/ven911/exportarExcel_table.js' %}"></script>
 <script src="{% static 'js/ven911/editar_servicio.js' %}"></script>
-
-{% endblock %}
+<script src="{% static 'js/ven911/Tabla_servicios.js' %}"></script> {% endblock %}
