@@ -35,7 +35,7 @@ async function obtenerServicios() {
         if (fechaInicio && fechaFin) {
             tituloReporteElement.textContent = `Agrupación de Servicios (${fechaInicio} a ${fechaFin})`;
         } else {
-            tituloReporteElement.textContent = 'Agrupación de Servicios - Totales Generales';
+            tituloReporteElement.textContent = 'Agrupación de Servicios - Totales ';
         }
         // --- Fin de la lógica para el título del reporte ---
 
