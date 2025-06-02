@@ -1,100 +1,115 @@
 from django import forms
 from.models import *
-from web.forms import Asignar_op_Municipios
+# from web.forms import Asignar_op_Municipios
 
-def Asignar_Comercios():
-   procedimientos = Comercio.objects.all()
-   op = [("", "Seleccione Una Opcion")]
-   for procedimiento in procedimientos:
-       op.append((str(procedimiento.id_comercio), f"{procedimiento.id_comercio}: {procedimiento.nombre_comercio}"))
-   return op
+class ComercioForm(forms.ModelForm):
+    class Meta:
+        model = Comercio
+        fields = ['nombre_comercio', 'rif_empresarial', 'departamento']
 
-class Comercios(forms.Form):
-    nombre_comercio = forms.CharField(required=False)
-    rif_empresarial = forms.CharField(required=False)
-
-class Formulario_Solicitud(forms.Form):
-    opc = [("", "Seleccione una Opcion"),
-        ("1", "La Concordia"),
-        ("2", "Pedro Maria Morantes"),
-        ("3", "San Juan Bautista"),
-        ("4", "San Sebastian"),
-        ("6", "Francisco Romero Lobo"),
+class SolicitudForm(forms.ModelForm):
+    parroquia = forms.ModelChoiceField(
+        queryset=Parroquias.objects.all(),
+        required=True
+    )
+    
+    TIPO_SERVICIO_CHOICES = [
+        ("", "Selecione Una Opcion"), 
+        ("Inspeccion", "Inspeccion"), 
+        ("Reinspeccion", "Reinspeccion")
+    ]
+    
+    TIPO_REPRESENTANTE_CHOICES = [
+        ("", "Selecione Una Opcion"), 
+        ("Presidente", "Presidente"), 
+        ("Propietario", "Propietario"), 
+        ("Representante Legal", "Representante Legal"), 
+        ("Encargado", "Encargado")
+    ]
+    
+    METODO_PAGO_CHOICES = [
+        ("", "Seleccione Una Opcion"), 
+        ("Efectivo", "Efectivo"), 
+        ("Transferencia", "Transferencia"), 
+        ("Deposito", "Deposito"), 
+        ("Otra Moneda", "Otra Moneda")
     ]
 
-    comercio = forms.ChoiceField(choices=Asignar_Comercios,required=False,widget=forms.Select(attrs={'class': 'disable-first-option'}))
-
-    fecha_solicitud = forms.DateField(
-        label="Fecha Solicitud",
-        widget=forms.DateInput(attrs={'type': 'date'}),
-        required=False
+    municipio = forms.ModelChoiceField(
+        queryset=Municipios.objects.all(),
+        required=True
+    )
+    id_solicitud = forms.ModelChoiceField(
+        queryset=Comercio.objects.all().order_by("id_comercio"),
+        required=True,
+        label="Comercio",
+        error_messages={
+            'invalid_choice': 'Por favor seleccione un comercio válido de la lista'
+        }
     )
 
-    hora_solicitud = forms.TimeField(
-        widget=forms.TimeInput(attrs={'type': 'time'}, format='%H:%M'),
-        required=False)  #
-
-    tipo_servicio = forms.ChoiceField(choices=(("", "Selecione Una Opcion"), ("Inspeccion", "Inspeccion"), ("Reinspeccion", "Reinspeccion")), required=False, widget=forms.Select(attrs={'class': 'disable-first-option'}))
-
-    solicitante_nombre_apellido = forms.CharField(label="Nombres Y Apellidos del Solicitante",required=False)
-
-    tipo_representante = forms.ChoiceField(choices=(("", "Selecione Una Opcion"), ("Presidente", "Presidente"), ("Propietario", "Propietario"), ("Representante Legal", "Representante Legal"), ("Encargado", "Encargado")), required=False, widget=forms.Select(attrs={'class': 'disable-first-option'}))
-
-    direccion = forms.CharField(required=False)
-
-    estado = forms.CharField(required=False)
-
-    municipio = forms.ChoiceField(choices=Asignar_op_Municipios, required=False,
-        widget=forms.Select(attrs={'class': 'disable-first-option'}))
-
-    parroquia = forms.ChoiceField(choices=opc, required=False,
-        widget=forms.Select(attrs={'class': 'disable-first-option'}))
+    tipo_servicio = forms.ChoiceField(choices=TIPO_SERVICIO_CHOICES, required=False)
+    tipo_representante = forms.ChoiceField(choices=TIPO_REPRESENTANTE_CHOICES, required=False)
+    metodo_pago = forms.ChoiceField(choices=METODO_PAGO_CHOICES, required=False)
     
-    numero_telefono = forms.CharField(required=False)
-    correo_electronico = forms.EmailField(required=False)
-    pago_tasa = forms.CharField(required=False)
-    metodo_pago = forms.ChoiceField(choices=(("", "Seleccione Una Opcion"), ("Efectivo", "Efectivo"), ("Transferencia", "Transferencia"), ("Deposito", "Deposito"), ("Otra Moneda", "Otra Moneda")),required=False)
-    referencia = forms.CharField(required=False)
-
-class Formularia_Requisitos(forms.Form):
-    cedula_identidad = forms.BooleanField(required=False,label="Cedula de Identidad")
-    solicitante_cedula = forms.CharField(label="Cedula Solicitante",required=False)
-    cedula_vecimiento = forms.DateField(
-        label="Fecha Vencimiento",
-        widget=forms.DateInput(attrs={'type': 'date'}),
-        required=False
-    )
-
-    rif_representante = forms.BooleanField(required=False,label="RIF Representante")
-    rif_representante_legal = forms.CharField(required=False)
-    rif_representante_vencimiento = forms.DateField(
-        label="Fecha Vencimiento",
-        widget=forms.DateInput(attrs={'type': 'date'}),
-        required=False
-    )
-
-    rif_comercio = forms.BooleanField(required=False,label="RIF Comercio")
-    rif_comercio_vencimiento = forms.DateField(
-        label="Fecha Vencimiento",
-        widget=forms.DateInput(attrs={'type': 'date'}),
-        required=False
-    )
-
-    cedula_catastral = forms.BooleanField(required=False,label="Cedula Catastral")
-    cedula_catastral_vencimiento = forms.DateField(
-        label="Fecha Vencimiento",
-        widget=forms.DateInput(attrs={'type': 'date'}),
-        required=False
-    )
-
-    documento_propiedad = forms.BooleanField(required=False,label="Documento de Propiedad/Carta de Arrendamiento")
-    documento_propiedad_vencimiento = forms.DateField(
-        label="Fecha Vencimiento",
-        widget=forms.DateInput(attrs={'type': 'date'}),
-        required=False
-    )
+    class Meta:
+        model = Solicitudes
+        fields = '__all__'
+        widgets = {
+            'fecha_solicitud': forms.DateInput(attrs={'type': 'date'}),
+            'hora_solicitud': forms.TimeInput(attrs={'type': 'time'}, format='%H:%M'),
+            'id_solicitud': forms.Select(attrs={'class': 'form-select'}),  # Widget para el campo ForeignKey
+        }
     
-    permiso_anterior = forms.BooleanField(required=False,label="Permiso Anterior (En Caso de Renovacion)")
-    carta_autorizacion = forms.BooleanField(required=False,label="Carta Autorizacion")
-    plano_bomberil = forms.BooleanField(required=False,label="Plano de Uso Bomberil")
-    registro_comercio = forms.BooleanField(required=False,label="Registro Comercio")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Añadir clases CSS a los campos
+        for field_name, field in self.fields.items():
+            if isinstance(field, forms.ChoiceField):
+                if field.choices and field.choices[0][0] == "":
+                    field.widget.attrs.update({'class': 'disable-first-option'})
+                elif isinstance(field, forms.ModelChoiceField):
+                    field.widget.attrs.update({'class': 'form-select'})
+            elif isinstance(field, forms.CharField):
+                field.widget.attrs.update({'class': 'form-control'})
+
+        self.editing = kwargs.pop('editing', False)
+        super().__init__(*args, **kwargs)
+        
+        if self.editing:
+            # Personalizaciones específicas para edición
+            self.fields['id_solicitud'].disabled = True
+            self.fields['fecha_solicitud'].disabled = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        metodo_pago = cleaned_data.get('metodo_pago')
+        referencia = cleaned_data.get('referencia')
+        
+        if metodo_pago in ['Transferencia', 'Deposito'] and not referencia:
+            self.add_error('referencia', 'Este campo es requerido para Transferencia/Deposito')
+        elif metodo_pago not in ['Transferencia', 'Deposito']:
+            cleaned_data['referencia'] = 'No Hay Referencia'
+            
+        return cleaned_data
+
+class RequisitosForm(forms.ModelForm):
+    class Meta:
+        model = Requisitos
+        fields = '__all__'
+        exclude = ['id_solicitud']
+        widgets = {
+            'cedula_vencimiento': forms.DateInput(attrs={'type': 'date'}),
+            'rif_representante_vencimiento': forms.DateInput(attrs={'type': 'date'}),
+            'rif_comercio_vencimiento': forms.DateInput(attrs={'type': 'date'}),
+            'documento_propiedad_vencimiento': forms.DateInput(attrs={'type': 'date'}),
+            'cedula_catastral_vencimiento': forms.DateInput(attrs={'type': 'date'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Configurar los campos booleanos
+        for field_name, field in self.fields.items():
+            if isinstance(field, forms.BooleanField):
+                field.widget.attrs.update({'class': 'form-check-input'})

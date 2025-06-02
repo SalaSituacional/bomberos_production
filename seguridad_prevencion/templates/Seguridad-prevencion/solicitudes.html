@@ -9,12 +9,13 @@
 {% elif user.user == "Prevencion05" %}
 {% include "layouts/panel_prevencion.html" %}
 {% endif %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Solicitudes</h3>
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -200,20 +201,74 @@
 <div class="contain-request">
   <h4 class="title-procediments">Guia De Registros</h4>
 </div>
-<div class="section-filter">
-  <!-- buscar_cedula.html -->
-  <form method="get" class="form-control">
-    <section class="filter-search-prevention">
-      <span class="input-group-text" id="basic-addon1"><b> Registros Totales:</b></span>
-      <input class="form-control" type="search" name="numero_expediente" id="expediente" placeholder=" {{conteo}}" readonly/>
-      <span class="input-group-text" id="basic-addon1"><b> Numero de Expediente: </b> </span>
-      <input class="form-control" type="search" name="numero_expediente" id="expediente" value="{{ numero_expediente }}" />
-      <span class="input-group-text" id="basic-addon1"><b> Rif Del Comercio: </b> </span>
-      <input class="form-control" type="search" name="rif_empresarial" id="rif" value="{{ rif_empresarial }}" />
-      <button type="submit" class="btn btn-danger">Buscar</button>      
-    </section>
+
+<div class="section-filter mb-4">
+  <form method="get" class="bg-light p-3 rounded shadow-sm">
+    <div class="row g-2 align-items-center">
+      <!-- Registros Totales -->
+      <div class="col-md-auto col-12">
+        <div class="d-flex align-items-center bg-white p-2 rounded border">
+          <span class="fw-bold me-2 text-nowrap">Registros:</span>
+          <span class="badge bg-danger rounded-pill">{{ conteo }}</span>
+        </div>
+      </div>
+      
+      <!-- Número de Expediente -->
+      <div class="col-md col-sm-6 col-12">
+        <div class="input-group">
+          <span class="input-group-text bg-white fw-bold text-nowrap">Expediente</span>
+          <input class="form-control" 
+                 type="search" 
+                 name="numero_expediente" 
+                 placeholder="Buscar..."
+                 value="{{ numero_expediente }}"
+                 aria-label="Número de expediente">
+        </div>
+      </div>
+      
+      <!-- RIF del Comercio -->
+      <div class="col-md col-sm-6 col-12">
+        <div class="input-group">
+          <span class="input-group-text bg-white fw-bold text-nowrap">RIF</span>
+          <input class="form-control" 
+                 type="search" 
+                 name="rif_empresarial" 
+                 placeholder="Buscar..."
+                 value="{{ rif_empresarial }}"
+                 aria-label="RIF del comercio">
+        </div>
+      </div>
+      
+      <!-- Filtro de Dependencia (solo para administrador) -->
+      {% if user.user == 'SeRvEr' or user.user == "Sala_Situacional" %}
+      <div class="col-md col-sm-6 col-12">
+        <div class="input-group">
+          <span class="input-group-text bg-white fw-bold text-nowrap">Dependencia</span>
+          <select class="form-select" name="dependencia">
+            <option value="">Todas</option>
+            <option value="San Cristobal">San Cristobal</option>
+            <option value="Junin">Junin</option>
+          </select>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Botones -->
+      <div class="col-md-auto col-6">
+        <button type="submit" class="btn btn-danger w-100">
+          <i class="fas fa-search me-1"></i> Buscar
+        </button>
+      </div>
+      
+      <div class="col-md-auto col-6">
+        <a href="?" class="btn btn-outline-secondary w-100">
+          <i class="fas fa-undo me-1"></i> Limpiar
+        </a>
+      </div>
+    </div>
   </form>
 </div>
+
 <div class="table-responsive-sm">
   <table class="table table-hover table-modify" id="data-table">
     <thead>
@@ -222,6 +277,7 @@
         <th scope="col">Número Expediente</th>
         <th scope="col">Nombre Del Comercio</th>
         <th scope="col">RIF Del Comercio</th>
+        <th scope="col">Departamento</th>
         <th scope="col">Acciones</th>
       </tr>
     </thead>
@@ -233,6 +289,7 @@
         <td>{{ row.id_comercio }}</td>
         <td>{{ row.nombre_comercio }}</td>
         <td>{{ row.rif_empresarial }}</td>
+        <td>{{ row.departamento }}</td>
         <td class="icons-accion-two">
           <!-- NO TOCAR Boton informacion-->
           <button type="button" class="button-info view-solicitudes" data-id="{{ row.id_comercio }}" data-bs-toggle="modal" data-bs-target="#modal-info">
@@ -256,20 +313,112 @@
       {% else %}
       {% if request.GET.numero_expediente %}
       <tr>
-        <td colspan="5" class="text-center text-warning">No se encontraron resultados.</td>
+        <td colspan="6" class="text-center text-warning">No se encontraron resultados.</td>
       </tr>
       {% endif %}
       {% endif %}
     </tbody>
   </table>
 </div>
-<div class="contain-dates">
-  <h4 class="title-procediments">Registros                                                                                                                                                                                                                                       </h4>
-  <br>
-  <section class="buttons-items input-group mb-3 filter-search">
-    <button id="exportarExcel" class="btn btn-danger">Exportar Excel</button>
-  </section>
+
+<!-- Paginación -->
+<div class="pagination-container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if comercios.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ comercios.previous_page_number }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% for num in comercios.paginator.page_range %}
+                {% if comercios.number == num %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                {% elif num > comercios.number|add:'-3' and num < comercios.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if comercios.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ comercios.next_page_number }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ comercios.paginator.num_pages }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    <div class="text-center">
+        <p>Mostrando {{ comercios.start_index }} - {{ comercios.end_index }} de {{ comercios.paginator.count }} registros</p>
+    </div>
 </div>
+
+<div class="contain-dates contain-dates-seguridad-prevencion">
+  <h4 class="title-procediments">Registros</h4>
+  
+  <div class="export-controls card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row g-3 align-items-center justify-content-center">
+        <div class="progress mt-3 d-none" id="exportProgress">
+          <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                role="progressbar" style="width: 0%"></div>
+        </div>
+
+        {% if user.user == 'SeRvEr' or user.user == 'Sala_Situacional' %}
+          <div class="col-md-4">
+              <span class="form-label">Dependencia</span>
+              <select class="form-select" name="dependencia" id="dependenciaSelect">
+                <option value="">Todas</option>
+                <option value="San Cristobal">San Cristobal</option>
+                <option value="Junin">Junin</option>
+              </select>
+          </div>
+        {% elif user.user == 'Prevencion05' %}
+          <input type="hidden" id="dependenciaUsuario" name="dependencia" value="San Cristobal">
+        {% endif %}
+        
+        
+        <div class="col-md-4">
+          <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+          <input type="date" id="fechaInicio" class="form-control">
+        </div>
+        
+        <div class="col-md-4">
+          <label for="fechaFin" class="form-label">Fecha Fin</label>
+          <input type="date" id="fechaFin" class="form-control">
+        </div>
+
+        <div class="col-md-5">
+          <div class="form-check mt-4 pt-2">
+            <input class="form-check-input" type="checkbox" id="soloUltimos">
+            <label class="form-check-label" for="soloUltimos">
+              Solo última solicitud por comercio
+            </label>
+          </div>
+        </div>
+        
+        <div class="col-md-5 text-center">
+          <button ty id="exportarExcel" class="btn btn-danger">
+            <i class="bi bi-file-earmark-excel me-2"></i> Exportar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!------------------------------ modal de informacion ------------------------------>
 <div class="modal fade" tabindex="-1" id="modal-info">
   <div class="modal-dialog modal-xl">
@@ -307,6 +456,28 @@
   </div>
 </div>
 
+
+<!-- Modal de Confirmación para Eliminar -->
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true" z-index="1050">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white" style="width: 100%;">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro que deseas eliminar esta solicitud? Esta acción no se puede deshacer.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- Notificación flotante -->
 <div id="notificacion" class="noti-container hidden" style="z-index: 2;">
   <span id="noti-emoji">📢</span>
@@ -323,19 +494,13 @@
   </section>
 </footer>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("expediente").value = "";
-    document.getElementById("rif").value = "";
-  });
-</script>
-<script src="../../static/js/prevencion-seguridad/api_tablas_prevencion.js"></script>
-<script src="../../static/js/prevencion-seguridad/api_descargar_solicitud.js"></script>
-<script src="../../static/js/prevencion-seguridad/api_eliminar_solicitud.js"></script>
-<script src="../../static/js/prevencion-seguridad/api_editar_solicitud.js"></script>
-<script src="../../static/js/loader-function.js"></script>
-<script src="../../static/js/prevencion-seguridad/export_excel_solicitudes.js"></script>
-<script src="../../static/js/prevencion-seguridad/notificacion_solicitud.js"></script>
+<script src="{% static 'js/prevencion-seguridad/api_tablas_prevencion.js' %}"></script>
+<script src="{% static 'js/prevencion-seguridad/notificacion_solicitud.js' %}"></script>
+<script src="{% static 'js/prevencion-seguridad/api_descargar_solicitud.js' %}"></script>
+<script src="{% static 'js/prevencion-seguridad/api_eliminar_solicitud.js' %}"></script>
+<script src="{% static 'js/prevencion-seguridad/api_editar_solicitud.js' %}"></script>
+<script src="{% static 'js/prevencion-seguridad/export_excel_solicitudes.js' %}"></script>
+
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
 {% endblock %}

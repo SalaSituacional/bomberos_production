@@ -7,12 +7,15 @@
 {% elif user.user == "Prevencion05" %}
 {% include "layouts/panel_prevencion.html" %}
 {% endif %}
+
+{% load static %}
+
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Certificado de Conformidad de Uso</h3>
     <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <span id="usuario">{{ user.user }}</span></p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -28,60 +31,367 @@
     </section>
   </div>
 </div>
-<!-- <aca va el formulario> -->
+
+<!-- Mensajes de Django con botón de cerrar -->
+{% if messages %}
+<div class="alert-messages">
+    {% for message in messages %}
+    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        {{ message }}
+        <button class="close-btn" onclick="this.parentElement.style.animation='fadeOut 0.3s forwards'">×</button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Formulario Solicitud -->
 <article class="content-form">
-  <form class="form-control border" id="formularioCrearSolicitudes" action="{% url 'agregar_solicitud' %}"
-    method="POST">
+  <form class="form-control border" id="formularioCrearSolicitudes" method="POST">
     {% csrf_token %}
+
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
     <section class="parte-b">
-      <article class="comerce-contain">
-        <label for="Agregar comercio">Agregar Comercio</label>
-        <button type="button" class="btn btn-danger agg_comercio" data-bs-toggle="modal" data-bs-target="#exampleModal"
-          data-bs-whatever="@fat">
-          <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <path
-                d="M12 7V17M7 12H17M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            </g>
-          </svg>
+  <h2 class="h6 mb-3 text-danger d-flex align-items-center">
+    <i class="bi bi-file-check-fill me-2"></i> Requisitos de Solicitud
+  </h2>
+  
+  <article class="comerce-contain">
+    <label for="Agregar comercio">Agregar Comercio</label>
+    <button type="button" class="btn btn-danger agg_comercio" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@fat">
+      <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <path d="M12 7V17M7 12H17M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </g>
+      </svg>
+    </button>
+  </article>
 
-
-        </button>
-      </article>
-      <h2>Requisitos de Solicitud</h2>
-      <div id="requisitos-comerce">
-        {{ requisitos.as_div }}
+  <div class="row g-3">
+    <!-- Cédula de Identidad -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="form-check form-switch mb-2">
+            <label class="form-check-label fw-bold" for="id_cedula_identidad">Cédula de Identidad</label>
+            <input type="checkbox" name="cedula_identidad" id="id_cedula_identidad" class="form-check-input">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small text-muted" for="id_cedula_vencimiento">Vencimiento</label>
+            <input type="date" name="cedula_vencimiento" id="id_cedula_vencimiento" class="form-control">
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
+
+    <!-- RIF Representante -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="form-check form-switch mb-2">
+            <label class="form-check-label fw-bold" for="id_rif_representante">RIF Representante</label>
+            <input type="checkbox" name="rif_representante" id="id_rif_representante" class="form-check-input">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small text-muted" for="id_rif_representante_vencimiento">Vencimiento</label>
+            <input type="date" name="rif_representante_vencimiento" id="id_rif_representante_vencimiento" class="form-control">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIF Comercio -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="form-check form-switch mb-2">
+            <label class="form-check-label fw-bold" for="id_rif_comercio">RIF Comercio</label>
+            <input type="checkbox" name="rif_comercio" id="id_rif_comercio" class="form-check-input">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small text-muted" for="id_rif_comercio_vencimiento">Vencimiento</label>
+            <input type="date" name="rif_comercio_vencimiento" id="id_rif_comercio_vencimiento" class="form-control">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documento de Propiedad -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="form-check form-switch mb-2">
+            <label class="form-check-label fw-bold" for="id_documento_propiedad">Documento de Propiedad</label>
+            <input type="checkbox" name="documento_propiedad" id="id_documento_propiedad" class="form-check-input">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small text-muted" for="id_documento_propiedad_vencimiento">Vencimiento</label>
+            <input type="date" name="documento_propiedad_vencimiento" id="id_documento_propiedad_vencimiento" class="form-control">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cédula Catastral -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="form-check form-switch mb-2">
+            <label class="form-check-label fw-bold" for="id_cedula_catastral">Cédula Catastral</label>
+            <input type="checkbox" name="cedula_catastral" id="id_cedula_catastral" class="form-check-input">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small text-muted" for="id_cedula_catastral_vencimiento">Vencimiento</label>
+            <input type="date" name="cedula_catastral_vencimiento" id="id_cedula_catastral_vencimiento" class="form-control">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4"></div>
+
+    <!-- Permiso Anterior -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="form-check form-switch">
+            <label class="form-check-label fw-bold" for="id_permiso_anterior">Permiso Anterior</label>
+            <input type="checkbox" name="permiso_anterior" id="id_permiso_anterior" class="form-check-input">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registro Comercio -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="form-check form-switch">
+            <label class="form-check-label fw-bold" for="id_registro_comercio">Registro de Comercio</label>
+            <input type="checkbox" name="registro_comercio" id="id_registro_comercio" class="form-check-input">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carta Autorización -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="form-check form-switch">
+            <label class="form-check-label fw-bold" for="id_carta_autorizacion">Carta de Autorización</label>
+            <input type="checkbox" name="carta_autorizacion" id="id_carta_autorizacion" class="form-check-input">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plano Bomberil -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="form-check form-switch">
+            <label class="form-check-label fw-bold" for="id_plano_bomberil">Plano Bomberil</label>
+            <input type="checkbox" name="plano_bomberil" id="id_plano_bomberil" class="form-check-input">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
     <section class="parte-a">
-      <h2>Solicitud de certificado de conformidad de uso</h2>
-      <div class="autocomplete-container ">
-        <label class="form-label"><b>Auto-Completado Para Busqueda De Comercio: </b></label>
-        <input type="text" id="comercioSearch" class="form-control" placeholder="Buscar comercio...">
-        <ul id="comercioList" class="autocomplete-list"></ul>
+  <h3 class="h6 mb-3 text-danger d-flex align-items-center">
+    <i class="bi bi-card-checklist me-2"></i> Datos de la Solicitud
+  </h3>
+  
+  <div class="row g-3">
+    <!-- Comercio -->
+    <div class="col-md-6">
+      <div class="form-floating">
+        <div class="select-autocomplete">
+          <input type="text" id="comercio-search" class="form-control" placeholder="Escribe para buscar comercio..." autocomplete="nope">
+          <i class="fas fa-search search-icon"></i>
+          <div class="dropdown" id="comercio-dropdown"></div>
+          <!-- Mantenemos el select original pero oculto -->
+          <select name="id_solicitud" class="hidden-select" id="id_id_solicitud" required>
+            <option value="" disabled selected>Seleccione un comercio</option>
+            {% for value, label in solicitud_form.fields.id_solicitud.choices %}
+              {% if value %}
+                <option value="{{ value }}">{{ label }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <label for="id_id_solicitud">Comercio</label>
       </div>
+    </div>
 
-      <div id="solicitud-comerce">{{ solicitud.as_div }}</div>
-    </section>
-    <div class="buttons-solicitud">
-      <button type="submit" class="btn btn-danger registrar" disabled>Crear Solicitud</button>
-        <a href="/certificadosprevencion/" class="btn btn-danger registrar">
-          Cancelar
-        </a>
+    <!-- Fecha y Hora -->
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="date" name="fecha_solicitud" class="form-control" id="id_fecha_solicitud" required>
+        <label for="id_fecha_solicitud">Fecha de Solicitud</label>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="time" name="hora_solicitud" class="form-control" id="id_hora_solicitud" required>
+        <label for="id_hora_solicitud">Hora de Solicitud</label>
+      </div>
+    </div>
+
+    <!-- Tipo de Servicio -->
+    <div class="col-md-6">
+      <div class="form-floating">
+        <select name="tipo_servicio" class="form-select disable-first-option" id="id_tipo_servicio" required>
+          <option value="" disabled selected>Selecione Una Opcion</option>
+          <option value="Inspeccion">Inspeccion</option>
+          <option value="Reinspeccion">Reinspeccion</option>
+        </select>
+        <label for="id_tipo_servicio">Tipo de Servicio</label>
+      </div>
+    </div>
+
+    <!-- Datos del Solicitante -->
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="text" name="solicitante_nombre_apellido" class="form-control" id="id_solicitante_nombre_apellido" required>
+        <label for="id_solicitante_nombre_apellido">Nombre y Apellido del Solicitante</label>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="text" name="solicitante_cedula" class="form-control" id="id_solicitante_cedula" placeholder="V-00000000" required>
+        <label for="id_solicitante_cedula">Cédula del Solicitante</label>
+      </div>
+      <div class="form-text text-danger" id="cedula-mensaje" style="display: none;"></div>
+    </div>
+
+    <!-- Tipo de Representante -->
+    <div class="col-md-6">
+      <div class="form-floating">
+        <select name="tipo_representante" class="form-select disable-first-option" id="id_tipo_representante" required>
+          <option value="" disabled selected>Seleccione Una Opción</option>
+          {% for value, label in solicitud_form.fields.tipo_representante.choices %}
+            {% if value %}
+              <option value="{{ value }}">{{ label }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <label for="id_tipo_representante">Tipo de Representante</label>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="text" name="rif_representante_legal" class="form-control" id="id_rif_representante_legal" placeholder="Rif del Representante Legal" required>
+        <label for="id_rif_representante_legal">RIF del Representante Legal</label>
+      </div>
+    </div>
+
+    <!-- Dirección -->
+    <div class="col-12">
+      <div class="form-floating">
+        <input type="text" name="direccion" class="form-control" id="id_direccion" required>
+        <label for="id_direccion">Dirección</label>
+      </div>
+    </div>
+
+    <!-- Ubicación -->
+    <div class="col-md-4">
+      <div class="form-floating">
+        <input type="text" name="estado" class="form-control" id="id_estado" required>
+        <label for="id_estado">Estado</label>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-floating">
+        <select name="municipio" class="form-select" id="id_municipio" required>
+          <option value="" disabled selected>Seleccione Una Opción</option>
+          {% for value, label in solicitud_form.fields.municipio.choices %}
+            {% if value %}
+              <option value="{{ value }}">{{ label }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <label for="id_municipio">Municipio</label>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-floating">
+        <select name="parroquia" class="form-select disable-first-option" id="id_parroquia" required>
+          <option value="" disabled selected>Seleccione Una Opción</option>
+          {% for value, label in solicitud_form.fields.parroquia.choices %}
+            {% if value %}
+              <option value="{{ value }}">{{ label }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <label for="id_parroquia">Parroquia</label>
+      </div>
+    </div>
+
+    <!-- Contacto -->
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="text" name="numero_telefono" class="form-control" id="id_numero_telefono" required>
+        <label for="id_numero_telefono">Número de Teléfono</label>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="text" name="correo_electronico" class="form-control" id="id_correo_electronico" required>
+        <label for="id_correo_electronico">Correo Electrónico</label>
+      </div>
+    </div>
+
+    <!-- Pago -->
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input type="text" name="pago_tasa" class="form-control" id="id_pago_tasa" required>
+        <label for="id_pago_tasa">Pago Tasa</label>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-floating">
+        <select name="metodo_pago" class="form-select disable-first-option" id="id_metodo_pago" required>
+          <option value="" disabled selected>Seleccione Una Opcion</option>
+          {% for value, label in solicitud_form.fields.metodo_pago.choices %}
+            {% if value %}
+              <option value="{{ value }}">{{ label }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <label for="id_metodo_pago">Método de Pago</label>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="form-floating">
+        <input type="text" name="referencia" class="form-control" id="id_referencia" value="No Hay Referencia">
+        <label for="id_referencia">Referencia</label>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <div class="buttons-solicitud" style="margin-top: 30px;">
+      <button type="submit" class="btn btn-danger registrar">Crear Solicitud</button>
+      <a href="{% url 'certificados_prevencion' %}" class="btn btn-danger registrar">
+      Cancelar
+      </a>
     </div>
   </form>
 </article>
-
-<!-- fin formulario -->
-<footer class="footer">
-  <section class="text-reserved">
-    <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
-  </section>
-</footer>
-
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -90,6 +400,7 @@
       <div class="modal-header header-dashboard-two add-comerce">
         <h2 class="modal-title fs-5" id="exampleModalLabel">Registro De Comercio</h2>
       </div>
+
       <div class="modal-body modify-comerce">
         <section class="contain-svg-comerce">
           <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -134,105 +445,61 @@
             </g>
           </svg>
         </section>
-        <form action="{% url 'agregar_comercio' %}" method="POST" class="form-add-comerce">
-          {% csrf_token %}
-          {{ comercio }}
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-          <button type="submit" class="btn btn-danger" id="boton-agregar-comercio">Agregar Comercio</button>
+          <form action="{% url 'agregar_comercio' %}" method="POST" class="form-add-comerce">
+            {% csrf_token %}
+
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+            <div class="mb-3">
+                <label for="nombre_comercio" class="form-label">Nombre del Comercio</label>
+                <input type="text" class="form-control" id="nombre_comercio" name="nombre_comercio" 
+                      value="{{ nombre_comercio|default:'' }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="rif_empresarial" class="form-label">RIF Empresarial</label>
+                <input type="text" class="form-control" id="rif_empresarial" name="rif_empresarial" 
+                      value="{{ rif_empresarial|default:'' }}" required>
+                <div id="rifHelp" class="form-text" style="margin: 0;">Ejemplo: J-12345678-9</div>
+                <div id="rif-error" class="invalid-feedback" style="display: none;">
+                    Este RIF ya está registrado en el sistema.
+                </div>
+            </div>
+            
+            {% if user.user == "SeRvEr" or user.user == "Sala_Situacional" %}
+            <div class="mb-3">
+                <label for="departamento" class="form-label">Departamento</label>
+                <select class="form-control" id="departamento" name="departamento">
+                  <option value="" disabled selected>Seleccione un departamento</option>
+                  <option value="San Cristobal">San Cristobal</option>
+                  <option value="Junin">Junin</option>
+                </select>
+            </div>
+            {% elif user.user == "Prevencion05" %}
+            <div class="mb-3">
+                <label for="departamento" class="form-label">Departamento</label>
+                <input type="text" class="form-control" id="departamento" name="departamento" 
+                      value="San Cristobal" readonly>
+            </div>
+            {% endif %}
+            
+            <div class="modal-footer" style="margin: 0;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-danger">Agregar Comercio</button>
+            </div>
         </form>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Seleccionar todos los inputs, labels y selects dentro del div con el id 'solicitud-comerce'
-    var solicitudComerceElements = document.querySelectorAll('#solicitud-comerce input, #solicitud-comerce label, #solicitud-comerce select');
-    var requisitosComerceInputs = document.querySelectorAll('#requisitos-comerce input', '#requisitos-comerce select');
+<!-- fin formulario -->
+<footer class="footer">
+  <section class="text-reserved">
+    <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
+  </section>
+</footer>
 
-    // Iterar sobre cada elemento y asignar las clases correspondientes
-    solicitudComerceElements.forEach(function (element) {
-      if (element.tagName.toLowerCase() === 'input' && element.type === 'checkbox') {
-        element.classList.add("form-control");
-        element.parentElement.classList.add("checkbox-styles");
-      } else if (element.tagName.toLowerCase() === 'input') {
-        element.classList.add("form-control");
-      } else if (element.tagName.toLowerCase() === 'label') {
-        element.classList.add("form-label");
-      } else if (element.tagName.toLowerCase() === 'select') {
-        element.classList.add("form-select");
-      }
-    });
-
-    // Iterar sobre cada input en 'requisitos-comerce' y asignar la clase 'form-select'
-    requisitosComerceInputs.forEach(function (input) {
-      input.classList.add("form-select");
-    });
-
-    // Seleccionar los elementos por sus ID y asignar clases específicas
-    var elemento = document.getElementById("id_nombre_comercio");
-    var elemento2 = document.getElementById("id_rif_empresarial");
-    var elemento3 = document.getElementById("id_cedula_identidad");
-    var elemento4 = document.getElementById("id_rif_representante");
-    var elemento5 = document.getElementById("id_rif_comercio");
-    var elemento6 = document.getElementById("id_cedula_catastral");
-    var elemento7 = document.getElementById("id_documento_propiedad");
-    var elemento8 = document.getElementById("id_permiso_anterior");
-    var elemento9 = document.getElementById("id_carta_autorizacion");
-    var elemento10 = document.getElementById("id_registro_comercio");
-    var elemento11 = document.getElementById("id_plano_bomberil");
-
-    // Asignar una clase de CSS a cada elemento si existe
-    if (elemento) {
-      elemento.classList.add("form-control");
-    }
-    if (elemento2) {
-      elemento2.classList.add("form-control");
-    }
-    if (elemento3) {
-      elemento3.classList.remove("form-select");
-      elemento3.classList.add("new-check");
-    }
-    if (elemento4) {
-      elemento4.classList.remove("form-select");
-      elemento4.classList.add("new-check");
-    }
-    if (elemento5) {
-      elemento5.classList.remove("form-select");
-      elemento5.classList.add("new-check");
-    }
-    if (elemento6) {
-      elemento6.classList.remove("form-select");
-      elemento6.classList.add("new-check");
-    }
-    if (elemento7) {
-      elemento7.classList.remove("form-select");
-      elemento7.classList.add("new-check");
-    }
-    if (elemento8) {
-      elemento8.classList.remove("form-select");
-      elemento8.classList.add("new-check");
-    }
-    if (elemento9) {
-      elemento9.classList.remove("form-select");
-      elemento9.classList.add("new-check");
-    }
-    if (elemento10) {
-      elemento10.classList.remove("form-select");
-      elemento10.classList.add("new-check");
-    }
-    if (elemento11) {
-      elemento11.classList.remove("form-select");
-      elemento11.classList.add("new-check");
-    }
-
-    document.getElementById("nacionalidad").classList.add("form-select");
-  });
-</script>
-
-<script src="../../static/js/prevencion-seguridad/formularios.js"></script>
-<script src="../../static/js/prevencion-seguridad/autocompletado.js"></script>
-<script src="../../static/js/prevencion-seguridad/llenar_valores.js"></script>
+<script src="{% static 'js/prevencion-seguridad/formularios.js' %}"></script>
 
 {% endblock %}

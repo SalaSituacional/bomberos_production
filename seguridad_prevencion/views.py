@@ -1,15 +1,23 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 import io
 import json
 from web.views.views import *
 from web.views.views_descargas import *
+from django.db import transaction
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
+import logging
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+from django.views import View
 
-# Create your views here.
+logger = logging.getLogger(__name__)
+
 def certificados_prevencion(request):
     user = request.session.get('user')
     if not user:
@@ -17,65 +25,165 @@ def certificados_prevencion(request):
 
     numero_expediente = request.GET.get('numero_expediente', '')
     rif_empresarial = request.GET.get('rif_empresarial', '').strip()
+    dependencia = request.GET.get('dependencia', '')
+    page = request.GET.get('page', 1)
     
-    # Obtener el total de registros en la base de datos
-    total_comercios = Comercio.objects.count()
-    # Inicialmente, la tabla estará vacía
-    comercios = Comercio.objects.none()
-
-    # Si el usuario busca, filtra los resultados
+    # Consulta base - filtrar por dependencia si no es administrador
+    if user['user'] == 'SeRvEr' or user['user'] == "Sala_Situacional":
+        comercios_query = Comercio.objects.all().order_by('id_comercio')
+    elif user['user'] == 'Prevencion05':
+        # Asumimos que el modelo Comercio tiene un campo 'dependencia'
+        comercios_query = Comercio.objects.filter(departamento = 'San Cristobal').order_by('id_comercio')
+    
+    # Aplicar filtros adicionales si existen
     if numero_expediente == "GET ALL":
-        comercios = list(Comercio.objects.all())
-        comercios = [{'id': comercio.id, 'id_comercio': comercio.id_comercio, 'nombre_comercio': comercio.nombre_comercio, 'rif_empresarial': comercio.rif_empresarial} for comercio in comercios]
-    
-    if numero_expediente and numero_expediente!="GET ALL":
-        # Filtra por numero_expediente
-        comercios = Comercio.objects.filter(id_comercio__icontains=numero_expediente)
-
+        pass  # Mostrar todos sin filtro
+    elif numero_expediente and numero_expediente != "GET ALL":
+        comercios_query = comercios_query.filter(id_comercio__icontains=numero_expediente)
     elif rif_empresarial:
-        # Filtra por rif_empresarial
-        comercios = Comercio.objects.filter(rif_empresarial__icontains=rif_empresarial)
-
+        comercios_query = comercios_query.filter(rif_empresarial__icontains=rif_empresarial)
+    
+    # Filtro adicional de dependencia para administradores
+    if (user['user'] == 'SeRvEr' or user['user'] == 'Sala_Situacional') and dependencia:
+        comercios_query = comercios_query.filter(departamento=dependencia)
+    
+    # Obtener el total de registros después de aplicar los filtros
+    total_comercios = comercios_query.count()
+    
+    # Configurar paginación (25 registros por página)
+    paginator = Paginator(comercios_query, 25)
+    
+    try:
+        comercios = paginator.page(page)
+    except PageNotAnInteger:
+        comercios = paginator.page(1)
+    except EmptyPage:
+        comercios = paginator.page(paginator.num_pages)
+    
     return render(request, "Seguridad-prevencion/solicitudes.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         "comercios": comercios,
-        "conteo": total_comercios,  # Mantiene el conteo total fijo
+        "conteo": total_comercios,
         "numero_expediente": numero_expediente,
         "rif_empresarial": rif_empresarial,
+        "dependencia": dependencia,
     })
 
 
 def formulario_certificado_prevencion(request):
+    # Verificación de usuario y sesión
     user = request.session.get('user')
     if not user:
-            return redirect('/')
-
-
-    return render(request, "Seguridad-prevencion/formularioSolicitud.html", {
+        logger.warning('Intento de acceso no autenticado a formulario_certificado_prevencion')
+        return redirect('/')
+    
+    try:
+        comercios = Comercio.objects.all()
+        logger.debug(f'Obtenidos {len(comercios)} comercios para el formulario')
+    except Exception as e:
+        logger.error(f'Error al obtener comercios: {str(e)}')
+        comercios = []
+        messages.error(request, 'Error al cargar la lista de comercios')
+    
+    if request.method == 'POST':
+        logger.info('Inicio de procesamiento de formulario POST')
+        
+        # Creamos una copia mutable del POST
+        post_data = request.POST.copy()
+        
+        # Verificamos si el método de pago requiere referencia
+        metodo_pago = post_data.get('metodo_pago', '')
+        requiere_referencia = metodo_pago in ['Transferencia', 'Deposito']
+        
+        # Si no requiere referencia, eliminamos el campo del POST para evitar validación
+        if not requiere_referencia:
+            post_data['referencia'] = 'No Hay Referencia'
+        
+        solicitud_form = SolicitudForm(post_data)
+        requisitos_form = RequisitosForm(post_data)
+        
+        if solicitud_form.is_valid() and requisitos_form.is_valid():
+            try:
+                # Guardamos la solicitud PRIMERO
+                solicitud = solicitud_form.save(commit=False)
+                
+                # Validación adicional del comercio
+                comercio_id = post_data.get('id_solicitud')
+                if not comercio_id:
+                    raise ValueError("Debe seleccionar un comercio válido")
+                
+                solicitud.id_solicitud_id = comercio_id
+                solicitud.save()  # Guardamos para obtener el ID
+                logger.info(f'Solicitud creada con ID: {solicitud.id}')
+                
+                # Ahora guardamos los requisitos ASOCIADOS a la solicitud
+                requisitos = requisitos_form.save(commit=False)
+                requisitos.id_solicitud = solicitud  # Asignamos la instancia completa
+                requisitos.save()
+                logger.info(f'Requisitos creados con ID: {requisitos.id} para solicitud {solicitud.id}')
+                
+                messages.success(request, 'Solicitud creada exitosamente!')
+                return redirect('certificados_prevencion')
+                
+            except ValueError as ve:
+                error_msg = f'Error de validación: {str(ve)}'
+                logger.error(error_msg)
+                messages.error(request, error_msg)
+            except Exception as e:
+                error_msg = f'Error al guardar la solicitud: {str(e)}'
+                logger.error(error_msg, exc_info=True)
+                messages.error(request, 'Ocurrió un error al procesar tu solicitud')
+                
+                # Guardamos los datos del formulario en la sesión para recuperarlos
+                request.session['comercio_form_data'] = {
+                    'solicitud_form_data': request.POST,  # Usamos el POST original aquí
+                    'requisitos_form_data': request.POST
+                }
+                return redirect(request.path)
+        else:
+            # Procesar errores de validación
+            for field, errors in solicitud_form.errors.items():
+                for error in errors:
+                    # Omitimos el error de referencia si no es requerido
+                    if field != 'referencia' or requiere_referencia:
+                        messages.error(request, f"{field}: {error}")
+            
+            for field, errors in requisitos_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+            
+            request.session['comercio_form_data'] = request.POST  # POST original
+            return redirect(request.path)
+    
+    # Manejo del GET (mostrar formulario)
+    context = {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "solicitud": Formulario_Solicitud,
-        "requisitos": Formularia_Requisitos,
-        "comercio": Comercios,
-    })
+        "comercio_form": ComercioForm(),
+        "comercios": comercios,
+        "solicitud_form": SolicitudForm(request.session.pop('comercio_form_data', None)),
+        "requisitos_form": RequisitosForm(request.session.pop('comercio_form_data', None)),
+    }
+    
+    return render(request, 'Seguridad-prevencion/formularioSolicitud.html', context)
 
 
-def planilla_certificado(request):
-    user = request.session.get('user')
-    if not user:
-            return redirect('/')
+# def planilla_certificado(request):
+#     user = request.session.get('user')
+#     if not user:
+#             return redirect('/')
 
-    return render(request, "Seguridad-prevencion/planillaCertificadoDeConformidad.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-    })
+#     return render(request, "Seguridad-prevencion/planillaCertificadoDeConformidad.html", {
+#         "user": user,
+#         "jerarquia": user["jerarquia"],
+#         "nombres": user["nombres"],
+#         "apellidos": user["apellidos"],
+#     })
 
 
 def obtener_ultimo_reporte_solicitudes(request):
@@ -98,108 +206,200 @@ def obtener_ultimo_reporte_solicitudes(request):
 
 
 def api_get_solicitudes(request, referencia):
-    solicitudes = Solicitudes.objects.filter(id_solicitud__id_comercio=referencia)
-    data = []
-    documentos = True
-    hoy = datetime.today().date()
-    proximo_mes = hoy + timedelta(days=30)
-
-    for solicitud in solicitudes:
-        requisitos = Requisitos.objects.filter(id_solicitud=solicitud)
+    try:
+        solicitudes = Solicitudes.objects.filter(
+            id_solicitud__id_comercio=referencia
+        ).select_related('id_solicitud').prefetch_related('requisitos_set')
         
-        requisitos_faltantes = []
-        documentos_proximos_vencer = []
-        documentos_vencidos = []
-
-        if requisitos.exists():
-            req = requisitos.first()
+        hoy = datetime.today().date()
+        proximo_mes = hoy + timedelta(days=30)
+        
+        data = []
+        for solicitud in solicitudes:
+            requisito = solicitud.requisitos_set.first()
             
-            # Verificar requisitos faltantes
-            if not req.cedula_identidad:
-                requisitos_faltantes.append("Cédula de identidad")
-            if not req.rif_representante:
-                requisitos_faltantes.append("RIF del representante")
-            if not req.rif_comercio:
-                requisitos_faltantes.append("RIF del comercio")
-            if not req.permiso_anterior:
-                requisitos_faltantes.append("Permiso anterior")
-            if not req.registro_comercio:
-                requisitos_faltantes.append("Registro de comercio")
-            if not req.documento_propiedad:
-                requisitos_faltantes.append("Documento de propiedad")
-            if not req.cedula_catastral:
-                requisitos_faltantes.append("Cédula catastral")
-            if not req.carta_autorizacion:
-                requisitos_faltantes.append("Carta de autorización")
-            if not req.plano_bomberil:
-                requisitos_faltantes.append("Plano bomberil")
+            # Documentos faltantes
+            documentos_faltantes = []
+            if not requisito:
+                documentos_faltantes = ["No hay requisitos registrados"]
+            else:
+                campos_faltantes = [
+                    ('Cédula de identidad', requisito.cedula_identidad),
+                    ('RIF del representante', requisito.rif_representante),
+                    ('RIF del comercio', requisito.rif_comercio),
+                    ('Permiso anterior', requisito.permiso_anterior),
+                    ('Registro de comercio', requisito.registro_comercio),
+                    ('Documento de propiedad', requisito.documento_propiedad),
+                    ('Cédula catastral', requisito.cedula_catastral),
+                    ('Carta de autorización', requisito.carta_autorizacion),
+                    ('Plano bomberil', requisito.plano_bomberil)
+                ]
+                documentos_faltantes = [nombre for nombre, existe in campos_faltantes if not existe]
 
-            # Verificar documentos próximos a vencer o ya vencidos
-            documentos_vencimiento = {
-                "Cédula de identidad": req.cedula_vencimiento,
-                "RIF del representante": req.rif_representante_vencimiento,
-                "RIF del comercio": req.rif_comercio_vencimiento,
-                "Documento de propiedad": req.documento_propiedad_vencimiento,
-                "Cédula catastral": req.cedula_catastral_vencimiento,
-            }
+            # Documentos con vencimiento
+            documentos_vencimiento = []
+            documentos_prox_vencer = []
+            
+            if requisito:
+                vencimientos = [
+                    ('Cédula de identidad', requisito.cedula_vencimiento),
+                    ('RIF del representante', requisito.rif_representante_vencimiento),
+                    ('RIF del comercio', requisito.rif_comercio_vencimiento),
+                    ('Documento de propiedad', requisito.documento_propiedad_vencimiento),
+                    ('Cédula catastral', requisito.cedula_catastral_vencimiento)
+                ]
+                
+                for nombre, fecha in vencimientos:
+                    if fecha:
+                        if fecha < hoy:
+                            documentos_vencimiento.append(f"{nombre} (venció el {fecha.strftime('%d/%m/%Y')}")
+                        elif fecha <= proximo_mes:
+                            documentos_prox_vencer.append(f"{nombre} (vence el {fecha.strftime('%d/%m/%Y')}")
 
-            for nombre_doc, fecha_vencimiento in documentos_vencimiento.items():
-                if fecha_vencimiento:
-                    if fecha_vencimiento < hoy:
-                        documentos_vencidos.append(f"{nombre_doc} (venció el {fecha_vencimiento})")
-                    elif hoy <= fecha_vencimiento <= proximo_mes:
-                        documentos_proximos_vencer.append(f"{nombre_doc} (vence el {fecha_vencimiento})")
+            data.append({
+                "id": solicitud.id_solicitud.id_comercio,
+                "id_solicitud": solicitud.id,
+                "comercio_departamento": solicitud.id_solicitud.departamento, 
+                "fecha": solicitud.fecha_solicitud.strftime('%d/%m/%Y'),
+                "solicitante": solicitud.solicitante_nombre_apellido,
+                "tipo_solicitud": solicitud.tipo_servicio,
+                "documentos_faltantes": documentos_faltantes or ["Todos los documentos están en orden"],
+                "documentos_proximos_vencer": documentos_prox_vencer or ["No hay documentos próximos a vencer"],
+                "documentos_vencidos": documentos_vencimiento or ["No hay documentos vencidos"],
+                "tiene_requisitos": requisito is not None
+            })
+            
+        return JsonResponse(data, safe=False)
+    
+    except Exception as e:
+        logger.error(f"Error en api_get_solicitudes: {str(e)}")
+        return JsonResponse({"error": str(e)}, status=500)
 
-        else:
-            requisitos_faltantes.append("No hay requisitos registrados para esta solicitud")
-            documentos = False
+
+
+
+class DocumentGenerator:
+    """Clase base para generación de documentos PDF con soporte para múltiples dependencias"""
+    
+    TEMPLATES = {
+        'San Cristobal': {
+            'solicitud': 'web/static/assets/Solictud_2025.pdf',
+            'inspeccion': 'web/static/assets/Inspeccion_2025.pdf'
+        },
+        'Junin': {
+            'solicitud': 'web/static/assets/Documentos Junin/Solictud_2025 (junin).pdf',
+            'inspeccion': 'web/static/assets/Documentos Junin/Inspeccion_2025 (junin).pdf'
+        },
+        'default': {
+            'solicitud': 'web/static/assets/Solictud.pdf',
+            'inspeccion': 'web/static/assets/Inspeccion.pdf'
+        }
+    }
+    
+    def __init__(self, solicitud_id, dependencia=None):
+        self.solicitud = get_object_or_404(Solicitudes, id=solicitud_id)
+        self.datos_comercio = get_object_or_404(
+            Comercio, 
+            id_comercio=self.solicitud.id_solicitud.id_comercio
+        )
+        self.dependencia = dependencia or self.datos_comercio.departamento
+        self.template_path = self.get_template_path()
+    
+    def get_template_path(self):
+        """Obtiene la ruta de la plantilla según la dependencia"""
+        template_type = self.get_template_type()
+        return self.TEMPLATES.get(self.dependencia, self.TEMPLATES['default'])[template_type]
+    
+    def get_template_type(self):
+        """Método abstracto para definir el tipo de plantilla"""
+        raise NotImplementedError("Debe implementarse en las clases hijas")
+    
+    def get_document_data(self):
+        """Obtiene los datos comunes para todos los documentos"""
+        return {
+            "ID_Comercio": str(self.datos_comercio.id_comercio),
+            "Fecha_Solicitud": str(self.solicitud.fecha_solicitud),
+            "Hora": str(self.solicitud.hora_solicitud),
+            "Tipo_Servicio": str(self.solicitud.tipo_servicio),
+            "Solicitante": str(self.solicitud.solicitante_nombre_apellido),
+            "CI": str(self.solicitud.solicitante_cedula),
+            "Tipo_Representante": str(self.solicitud.tipo_representante),
+            "Nombre_Comercio": str(self.datos_comercio.nombre_comercio),
+            "Rif_Empresarial": str(self.datos_comercio.rif_empresarial),
+            "Rif_Representante_Legal": str(self.solicitud.rif_representante_legal),
+            "Direccion": str(self.solicitud.direccion),
+            "Estado": str(self.solicitud.estado),
+            "Municipio": str(self.solicitud.municipio),
+            "Parroquia": str(self.solicitud.parroquia),
+            "Telefono": str(self.solicitud.numero_telefono),
+            "Correo_Electronico": str(self.solicitud.correo_electronico),
+            "Pago_Tasa_Servicio": str(self.solicitud.pago_tasa),
+            "Metodo_Pago": str(self.solicitud.metodo_pago),
+            "Referencia": str(self.solicitud.referencia),
+        }
+    
+    def fill_pdf_template(self, additional_data=None):
+        """Rellena la plantilla PDF con los datos"""
+        doc = fitz.open(self.template_path)
+        data = self.get_document_data()
         
-        data.append({
-            "id_solicitud": solicitud.id,
-            "id": solicitud.id_solicitud.id_comercio,
-            "fecha": solicitud.fecha_solicitud,
-            "solicitante": solicitud.solicitante_nombre_apellido,
-            "tipo_solicitud": solicitud.tipo_servicio,
-            "papeles_incompletos": bool(requisitos_faltantes),
-            "documentos_faltantes": requisitos_faltantes if requisitos_faltantes else ["Todos los documentos están en orden"],
-            "documentos_proximos_vencer": documentos_proximos_vencer if documentos_proximos_vencer else ["No hay documentos próximos a vencer"],
-            "documentos_vencidos": documentos_vencidos if documentos_vencidos else ["No hay documentos vencidos"],
-            "documentos": documentos
-        })
+        if additional_data:
+            data.update(additional_data)
+        
+        for page in doc:
+            for campo, valor in data.items():
+                search_str = f"{{{{{campo}}}}}"
+                text_instances = page.search_for(search_str)
+                
+                for inst in text_instances:
+                    x, y, x1, y1 = inst
+                    y_adjusted = y + 7.5  # Ajuste de posición vertical
+                    
+                    # Borrar texto anterior
+                    rect = fitz.Rect(x, y, x1, y1)
+                    page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))
+                    
+                    # Insertar nuevo texto
+                    page.insert_text(
+                        point=(x, y_adjusted),
+                        text=valor,
+                        fontsize=8,
+                        color=(0, 0, 0)
+                    )
+        
+        return doc
     
-    return JsonResponse(data, safe=False)
-
-
-def doc_Guia(request, id):
-    solicitud = get_object_or_404(Solicitudes, id=id)
-    datos_solicitud = get_object_or_404(Comercio, id_comercio=solicitud.id_solicitud.id_comercio)
-    requisitos = get_object_or_404(Requisitos, id_solicitud=solicitud.id)
+    def generate_response(self):
+        """Genera la respuesta HTTP con el PDF"""
+        doc = self.fill_pdf_template()
+        buffer = io.BytesIO()
+        doc.save(buffer)
+        doc.close()
+        buffer.seek(0)
+        
+        response = HttpResponse(buffer, content_type="application/pdf")
+        response["Content-Disposition"] = f'inline; filename="{self.get_output_filename()}"'
+        return response
     
-    # Ruta al archivo PDF plantilla en tu directorio estático
-    template_path = "web/static/assets/Solictud_2025.pdf"
-    doc = fitz.open(template_path)  # Abrimos la plantilla PDF
+    def get_output_filename(self):
+        """Método abstracto para definir el nombre del archivo de salida"""
+        raise NotImplementedError("Debe implementarse en las clases hijas")
 
-    # Datos para reemplazar en la plantilla
-    datos = {
-            "ID_Comercio": str(datos_solicitud.id_comercio),
-            "Fecha_Solicitud": str(solicitud.fecha_solicitud),
-            "Hora": str(solicitud.hora_solicitud),
-            "Tipo_Servicio": str(solicitud.tipo_servicio),
-            "Solicitante": str(solicitud.solicitante_nombre_apellido),
-            "CI": str(solicitud.solicitante_cedula),
-            "Tipo_Representante": str(solicitud.tipo_representante),
-            "Nombre_Comercio": str(datos_solicitud.nombre_comercio),
-            "Rif_Empresarial": str(datos_solicitud.rif_empresarial),
-            "Rif_Representante_Legal": str(solicitud.rif_representante_legal),
-            "Direccion": str(solicitud.direccion),
-            "Estado": str(solicitud.estado),
-            "Municipio": str(solicitud.municipio),
-            "Parroquia": str(solicitud.parroquia),
-            "Telefono": str(solicitud.numero_telefono),
-            "Correo_Electronico": str(solicitud.correo_electronico),
-            "Pago_Tasa_Servicio": str(solicitud.pago_tasa),
-            "Metodo_Pago": str(solicitud.metodo_pago),
-            "Referencia": str(solicitud.referencia),
+class GuiaDocumentGenerator(DocumentGenerator):
+    """Generador específico para documentos de Guía"""
+    
+    def get_template_type(self):
+        return 'solicitud'
+    
+    def get_output_filename(self):
+        return f"Guia_Solicitud_{self.solicitud.id}.pdf"
+    
+    def get_document_data(self):
+        base_data = super().get_document_data()
+        requisitos = get_object_or_404(Requisitos, id_solicitud=self.solicitud.id)
+        
+        # Datos adicionales específicos para la Guía
+        additional_data = {
             "Status_Cedula": "Completado" if requisitos.cedula_identidad else "Incompleto",
             "Status_Rif": "Completado" if requisitos.rif_representante else "Incompleto",
             "Status_Comercio": "Completado" if requisitos.rif_comercio else "Incompleto",
@@ -209,105 +409,48 @@ def doc_Guia(request, id):
             "Status_Cedula_Catastral": "Completado" if requisitos.cedula_catastral else "Incompleto",
             "Status_Carta_Autorizacion": "Completado" if requisitos.carta_autorizacion else "Incompleto",
             "Status_Plano": "Completado" if requisitos.plano_bomberil else "Incompleto",
-    }
+        }
+        
+        base_data.update(additional_data)
+        return base_data
 
-    # Rellenar la plantilla PDF
-    for page in doc:
-        for campo, valor in datos.items():
-            # Buscar las etiquetas sin espacios, como {{ID_Comercio}}
-            search_str = f"{{{{{campo}}}}}" 
-            text_instances = page.search_for(search_str)
+class InspeccionDocumentGenerator(DocumentGenerator):
+    """Generador específico para documentos de Inspección"""
+    
+    def get_template_type(self):
+        return 'inspeccion'
+    
+    def get_output_filename(self):
+        return f"Solicitud_inspeccion_{self.solicitud.id}.pdf"
 
-            for inst in text_instances:
-                x, y, x1, y1 = inst  # Obtener coordenadas
-                y_adjusted = y + 7.5  # Ajustar la coordenada Y hacia abajo en 7.5 unidades (ajusta este valor según sea necesario)
-                # Borrar el texto anterior
-                rect = fitz.Rect(x, y, x1, y1)
-                page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))
-                # Insertar el nuevo texto en la posición ajustada
-                page.insert_text((x, y_adjusted), valor, fontsize=8, color=(0, 0, 0))
-
-    # Guardar el PDF modificado en memoria
-    buffer = io.BytesIO()
-    doc.save(buffer)
-    doc.close()
-    buffer.seek(0)
-
-    # Configurar la respuesta HTTP para descargar el PDF
-    response = HttpResponse(buffer, content_type="application/pdf")
-    response["Content-Disposition"] = 'inline; filename="Guia_Solicitud.pdf"'
-
-    return response
-
+# Vistas
+def doc_Guia(request, id):
+    dependencia = request.GET.get('dependencia')
+    generator = GuiaDocumentGenerator(id, dependencia)
+    return generator.generate_response()
 
 def doc_Inspeccion(request, id):
-    # id = int(id)
-    solicitud = get_object_or_404(Solicitudes, id=id)
-    datos_solicitud = get_object_or_404(Comercio, id_comercio=solicitud.id_solicitud.id_comercio)
-
-    template_path = "web/static/assets/Inspeccion_2025.pdf"
-    doc = fitz.open(template_path)
-
-    datos = {
-        "ID_Comercio": str(datos_solicitud.id_comercio),
-        "Fecha_Solicitud": str(solicitud.fecha_solicitud),
-        "Hora": str(solicitud.hora_solicitud),
-        "Tipo_Servicio": str(solicitud.tipo_servicio),
-        "Solicitante": str(solicitud.solicitante_nombre_apellido),
-        "CI": str(solicitud.solicitante_cedula),
-        "Tipo_Representante": str(solicitud.tipo_representante),
-        "Nombre_Comercio": str(datos_solicitud.nombre_comercio),
-        "Rif_Empresarial": str(datos_solicitud.rif_empresarial),
-        "Rif_Representante_Legal": str(solicitud.rif_representante_legal),
-        "Direccion": str(solicitud.direccion),
-        "Estado": str(solicitud.estado),
-        "Municipio": str(solicitud.municipio),
-        "Parroquia": str(solicitud.parroquia),
-        "Telefono": str(solicitud.numero_telefono),
-        "Correo_Electronico": str(solicitud.correo_electronico),
-        "Pago_Tasa_Servicio": str(solicitud.pago_tasa),
-        "Metodo_Pago": str(solicitud.metodo_pago),
-        "Referencia": str(solicitud.referencia),
-    }
-    for page in doc:
-        for campo, valor in datos.items():
-            # Buscar las etiquetas sin espacios, como {{ID_Comercio}}
-            search_str = f"{{{{{campo}}}}}" 
-            text_instances = page.search_for(search_str)
-
-            for inst in text_instances:
-                x, y, x1, y1 = inst  # Obtener coordenadas
-                y_adjusted = y + 7.5  # Ajustar la coordenada Y hacia abajo en 2 unidades (ajusta este valor según sea necesario)
-                # Borrar el texto anterior
-                rect = fitz.Rect(x, y, x1, y1)
-                page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1))
-                # Insertar el nuevo texto en la posición ajustada
-                page.insert_text((x, y_adjusted), valor, fontsize=8, color=(0, 0, 0))
-
-    buffer = io.BytesIO()
-    doc.save(buffer)
-    doc.close()
-    buffer.seek(0)
-
-    response = HttpResponse(buffer, content_type="application/pdf")
-    response["Content-Disposition"] = 'inline; filename="Solicitud_inspeccion.pdf"'
+    dependencia = request.GET.get('dependencia')
+    generator = InspeccionDocumentGenerator(id, dependencia)
+    return generator.generate_response()
 
 
-    return response
+
 
 
 def api_eliminar_solicitudes(request, id):
     solicitud = get_object_or_404(Solicitudes, id=id)
     solicitud.delete()
-    return JsonResponse({"message": "Solicitud eliminada correctamente"}, status=200)
+    return JsonResponse({
+        "message": "Solicitud eliminada correctamente",
+        "status": "success"
+    }, status=200)
 
 
 def validar_cedula(request):
     cedula = request.GET.get("cedula", "").strip()
     comercio_id = request.GET.get("comercio", "").strip()  # Obtener comercio enviado desde el frontend
 
-    # print(f"Cédula recibida: {cedula}")
-    # print(f"Comercio recibido: {comercio_id}")
 
     if not cedula or not cedula.startswith(("V-", "E-")):
         return JsonResponse({"error": "Formato inválido. Use V-12345678 o E-12345678."}, status=400)
@@ -316,9 +459,6 @@ def validar_cedula(request):
     solicitudes = Solicitudes.objects.filter(solicitante_cedula=cedula)
     comercios_asociados = set(solicitudes.values_list("id_solicitud__id_comercio", flat=True))
     cantidad_comercios = len(comercios_asociados)
-
-    # print(f"Comercios asociados encontrados: {comercios_asociados}")
-    # print(f"Cantidad de comercios asociados: {cantidad_comercios}")
 
     # Si la cédula ya está en 3 comercios y el comercio actual no está en la lista, bloquear registro
     if cantidad_comercios >= 3 and comercio_id not in comercios_asociados:
@@ -336,221 +476,196 @@ def validar_cedula(request):
     })
 
 
-def validar_rif(request):
-    rif = request.GET.get("rif", "").strip()
+def editar_solicitud(request, id):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
 
-    if not rif:
-        return JsonResponse({"error": "El RIF no puede estar vacío."}, status=400)
-
-    # Verificar si el RIF ya existe en la base de datos
-    existe = Comercio.objects.filter(rif_empresarial=rif).exists()
-
-    return JsonResponse({"existe": existe})
-
-
-def api_modificar_solicitudes(request, id):
+    # Obtener los objetos necesarios
     solicitud = get_object_or_404(Solicitudes, id=id)
     datos_solicitud = get_object_or_404(Comercio, id_comercio=solicitud.id_solicitud.id_comercio)
     requisitos = get_object_or_404(Requisitos, id_solicitud=solicitud.id)
-
-     # Datos para reemplazar en la plantilla
-    datos = {
-            "Id_Solicitud": solicitud.id,
-
-            "ID_Comercio": str(datos_solicitud.id_comercio),
-            "Fecha_Solicitud": str(solicitud.fecha_solicitud),
-            "Hora": str(solicitud.hora_solicitud),
-            "Tipo_Servicio": str(solicitud.tipo_servicio),
-            "Solicitante": str(solicitud.solicitante_nombre_apellido),
-            "CI": str(solicitud.solicitante_cedula),
-            "Tipo_Representante": str(solicitud.tipo_representante),
-            "Nombre_Comercio": str(datos_solicitud.nombre_comercio),
-            "Rif_Empresarial": str(datos_solicitud.rif_empresarial),
-            "Rif_Representante_Legal": str(solicitud.rif_representante_legal),
-            "Direccion": str(solicitud.direccion),
-            "Estado": str(solicitud.estado),
-            "Municipio": solicitud.municipio.id,
-            "Parroquia": solicitud.parroquia.id,
-            "Telefono": str(solicitud.numero_telefono),
-            "Correo_Electronico": str(solicitud.correo_electronico),
-            "Pago_Tasa_Servicio": str(solicitud.pago_tasa),
-            "Metodo_Pago": str(solicitud.metodo_pago),
-            "Referencia": str(solicitud.referencia),
-
-            "Status_Cedula": requisitos.cedula_identidad,
-            "Status_Rif": requisitos.rif_representante,
-            "Status_Comercio": requisitos.rif_comercio,
-            "Status_Permiso": requisitos.permiso_anterior,
-            "Status_Registro_Comercio": requisitos.registro_comercio,
-            "Status_Documento_Propiedad": requisitos.documento_propiedad,
-            "Status_Cedula_Catastral": requisitos.cedula_catastral,
-            "Status_Carta_Autorizacion": requisitos.carta_autorizacion,
-            "Status_Plano": requisitos.plano_bomberil,
-
-            "Fecha_Vencimiento_Cedula": requisitos.cedula_vencimiento,
-            "Fecha_Vencimiento_Rif": requisitos.rif_representante_vencimiento,
-            "Fecha_Vencimiento_Rif_Comercio": requisitos.rif_comercio_vencimiento,
-            "Fecha_Vencimiento_Documento_Propiedad": requisitos.documento_propiedad_vencimiento,
-            "Fecha_Vencimiento_Cedula_Catastral": requisitos.cedula_catastral_vencimiento,
+    
+    if request.method == 'POST':
+        # Procesar el formulario enviado
+        form = SolicitudForm(request.POST, instance=solicitud)
+        requisitos_form = RequisitosForm(request.POST, instance=requisitos)
+        
+        if form.is_valid() and requisitos_form.is_valid():
+            form.save()
+            requisitos_form.save()
+            messages.success(request, 'Solicitud actualizada correctamente')
+            return redirect('certificados_prevencion')
+    else:
+        # Mostrar formulario con datos iniciales
+        form = SolicitudForm(instance=solicitud)
+        requisitos_form = RequisitosForm(instance=requisitos)
+    
+    # Contexto para la plantilla
+    context = {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        'form': form,
+        'requisitos_form': requisitos_form,
+        'comercio': datos_solicitud,
+        'editing': True,
+        'solicitud_id': id
     }
-
-    return JsonResponse(datos, safe=False)
+    
+    return render(request, 'Seguridad-prevencion/editar_solicitud.html', context)
 
 
 def agregar_comercio(request):
     if request.method == "POST":
-        comercio = request.POST.get("nombre_comercio")  # Obtener el valor del formulario
-        rif_empresarial = request.POST.get("rif_empresarial")  # Obtener el valor del formulario
+        comercio = request.POST.get("nombre_comercio")
+        rif_empresarial = request.POST.get("rif_empresarial").strip()
+        departamento = request.POST.get("departamento", "")
 
-        # Guardar en la base de datos y obtener el objeto creado
+        # Validar si el RIF ya existe
+        if Comercio.objects.filter(rif_empresarial=rif_empresarial).exists():
+            messages.error(request, "Este RIF ya está registrado en el sistema.")
+            
+            # Guardar los datos del formulario en la sesión
+            request.session['comercio_form_data'] = {
+                'nombre_comercio': comercio,
+                'rif_empresarial': rif_empresarial,
+                'departamento': departamento
+            }
+            
+            return redirect(f"/seguridad_prevencion/formulariocertificados/?rif_error=true")
+
+        # Guardar en la base de datos si no existe
         nuevo_comercio = Comercio.objects.create(
             nombre_comercio=comercio,
-            rif_empresarial=rif_empresarial
+            rif_empresarial=rif_empresarial,
+            departamento=departamento
         )
 
-        # Redirigir a la misma página con el ID del comercio en la URL
-        return redirect(f"/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
+        # Limpiar datos de sesión si existían
+        if 'comercio_form_data' in request.session:
+            del request.session['comercio_form_data']
 
-    return HttpResponse("Método no permitido", status=405)
-
-
-def agregar_o_actualizar_solicitud(request):
-    if request.method == "POST":
-        # Obtener el ID de la solicitud (si existe, para actualización)
-        id_solicitud = request.POST.get("id_solicitud")  # ID de la tabla Solicitudes (no de Comercio)
-        
-        # Datos del formulario de Solicitud
-        comercio_id = request.POST.get("comercio")
-        fecha_solicitud = request.POST.get("fecha_solicitud")
-        hora_solicitud = request.POST.get("hora_solicitud")
-        tipo_servicio = request.POST.get("tipo_servicio")
-        solicitante = request.POST.get("solicitante_nombre_apellido")
-        solicitante_cedula = request.POST.get("solicitante_cedula")
-        nacionalidad = request.POST.get("nacionalidad")
-        tipo_representante = request.POST.get("tipo_representante")
-        rif_representante = request.POST.get("rif_representante_legal")
-        direccion = request.POST.get("direccion")
-        estado = request.POST.get("estado")
-        municipio_id = request.POST.get("municipio")
-        parroquia_id = request.POST.get("parroquia")
-        numero_telefono = request.POST.get("numero_telefono")
-        correo = request.POST.get("correo_electronico")
-        pago = request.POST.get("pago_tasa")
-        metodo_pago = request.POST.get("metodo_pago")
-        referencia = request.POST.get("referencia") or "SIN REFERENCIA"
-
-        # Función auxiliar para checkboxes
-        def get_checkbox_value(field_name):
-            return request.POST.get(field_name) == "on"
-
-        # Obtener instancias de modelos relacionados
-        comercio_instance = get_object_or_404(Comercio, id_comercio=comercio_id)
-        municipio_instance = get_object_or_404(Municipios, id=municipio_id)
-        parroquia_instance = get_object_or_404(Parroquias, id=parroquia_id)
-
-        # ===== CREAR O ACTUALIZAR SOLICITUD =====
-        if id_solicitud:  # ACTUALIZAR solicitud existente
-            solicitud = get_object_or_404(Solicitudes, id=id_solicitud)
-            solicitud.id_solicitud = comercio_instance  # ✅ Campo correcto
-           
-            solicitud.fecha_solicitud = fecha_solicitud
-            solicitud.hora_solicitud = hora_solicitud
-            solicitud.tipo_servicio = tipo_servicio
-            solicitud.solicitante_nombre_apellido = solicitante
-            solicitud.solicitante_cedula = f"{nacionalidad}-{solicitante_cedula}"
-            solicitud.tipo_representante = tipo_representante
-            solicitud.rif_representante_legal = rif_representante
-            solicitud.direccion = direccion
-            solicitud.estado = estado
-            solicitud.municipio = municipio_instance
-            solicitud.parroquia = parroquia_instance
-            solicitud.numero_telefono = numero_telefono
-            solicitud.correo_electronico = correo
-            solicitud.pago_tasa = pago
-            solicitud.metodo_pago = metodo_pago
-            solicitud.referencia = referencia
-            
-            solicitud.save()
-            
-            created = False
-        else:  # CREAR nueva solicitud
-            solicitud = Solicitudes.objects.create(
-                id_solicitud=comercio_instance,  # ✅ Campo correcto
-                fecha_solicitud=request.POST.get("fecha_solicitud"),
-                hora_solicitud=hora_solicitud,
-                tipo_servicio=tipo_servicio,
-                solicitante_nombre_apellido=solicitante,
-                solicitante_cedula=f"{nacionalidad}-{solicitante_cedula}",
-                tipo_representante=tipo_representante,
-                rif_representante_legal=rif_representante,
-                direccion=direccion,
-                estado=estado,
-                municipio=municipio_instance,
-                parroquia=parroquia_instance,
-                numero_telefono=numero_telefono,
-                correo_electronico=correo,
-                pago_tasa=pago,
-                metodo_pago=metodo_pago,
-                referencia=referencia
-            )
-            
-            created = True
-
-        # ===== ACTUALIZAR O CREAR REQUISITOS =====
-        Requisitos.objects.update_or_create(
-            id_solicitud=solicitud,
-            defaults={
-                "cedula_identidad": get_checkbox_value("cedula_identidad"),
-                "cedula_vencimiento": request.POST.get("cedula_vecimiento"),
-                "rif_representante": get_checkbox_value("rif_representante"),
-                "rif_representante_vencimiento": request.POST.get("rif_representante_vencimiento"),
-                "rif_comercio": get_checkbox_value("rif_comercio"),
-                "rif_comercio_vencimiento": request.POST.get("rif_comercio_vencimiento"),
-                "permiso_anterior": get_checkbox_value("permiso_anterior"),
-                "registro_comercio": get_checkbox_value("registro_comercio"),
-                "documento_propiedad": get_checkbox_value("documento_propiedad"),
-                "documento_propiedad_vencimiento": request.POST.get("documento_propiedad_vencimiento"),
-                "cedula_catastral": get_checkbox_value("cedula_catastral"),
-                "cedula_catastral_vencimiento": request.POST.get("cedula_catastral_vencimiento"),
-                "carta_autorizacion": get_checkbox_value("carta_autorizacion"),
-                "plano_bomberil": get_checkbox_value("plano_bomberil"),
-            }
-        )
-
-        return redirect("/certificadosprevencion/")
+        return redirect(f"/seguridad_prevencion/formulariocertificados/?comercio_id={nuevo_comercio.id_comercio}")
 
     return HttpResponse("Método no permitido", status=405)
 
 
 def generar_excel_solicitudes(request):
-    # Obtener todas las solicitudes con la información del comercio relacionada, ordenadas por fecha descendente
-    solicitudes = Solicitudes.objects.select_related('id_solicitud').order_by('-fecha_solicitud')
+    print("=== INICIO DE generar_excel_solicitudes ===")
     
-    # Crear un diccionario para almacenar la solicitud más reciente por comercio
-    comercio_dict = {}
+    user = request.session.get('user')
+    print(f"Datos de usuario en sesión: {user}")
     
-    for solicitud in solicitudes:
-        comercio = solicitud.id_solicitud  # Comercio asociado a la solicitud
-        if comercio.id_comercio not in comercio_dict:
-            comercio_dict[comercio.id_comercio] = {
+    if not user:
+        print("Redireccionando: No hay usuario en sesión")
+        return JsonResponse({'error': 'No autenticado'}, status=401)
+    
+    # Obtener parámetros de filtro
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+    solo_ultimos = request.GET.get('solo_ultimos', 'true').lower() == 'true'
+    page = int(request.GET.get('page', 1))
+    page_size = int(request.GET.get('page_size', 500))
+    departamento_filtro = request.GET.get('departamento', '').strip()
+    print(f"Valor recibido de departamento: '{departamento_filtro}'")  # Debe mostrar 'Junin'
+    
+    print(f"Parámetros recibidos - fecha_inicio: {fecha_inicio}, fecha_fin: {fecha_fin}, solo_ultimos: {solo_ultimos}, departamento: {departamento_filtro}")
+    
+    # Determinar departamentos permitidos según el usuario
+    username = user.get('user', '')
+    print(f"Username obtenido: {username}")
+    
+    if username in ['SeRvEr', 'Sala_Situacional']:
+        print("Usuario identificado como Admin/Sala_Situacional")
+        if departamento_filtro:
+            departamentos_permitidos = [departamento_filtro]
+        else:
+            departamentos_permitidos = ['Junin', 'San Cristobal']
+    elif username == 'Prevencion05':
+        print("Usuario identificado como Prevencion05")
+        departamentos_permitidos = ['San Cristobal']
+    elif username == 'Junin':
+        print("Usuario identificado como Junin")
+        departamentos_permitidos = ['Junin']
+    else:
+        print(f"Usuario no reconocido: {username}. Devolviendo lista vacía")
+        return JsonResponse([], safe=False)
+
+    print(f"Departamentos permitidos: {departamentos_permitidos}")
+
+    # Construir consulta base
+    queryset = Solicitudes.objects.select_related(
+        'id_solicitud', 'municipio', 'parroquia'
+    ).filter(
+        id_solicitud__departamento__in=departamentos_permitidos
+    ).order_by('-fecha_solicitud')
+
+    print(f"Total registros inicial: {queryset.count()}")
+
+    # Aplicar filtros de fecha si existen
+    if fecha_inicio:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d').date()
+            queryset = queryset.filter(fecha_solicitud__gte=fecha_inicio)
+            print(f"Filtro fecha_inicio aplicado: {fecha_inicio}")
+        except ValueError:
+            print("Formato de fecha inicio inválido")
+
+    if fecha_fin:
+        try:
+            fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d').date()
+            queryset = queryset.filter(fecha_solicitud__lte=fecha_fin)
+            print(f"Filtro fecha_fin aplicado: {fecha_fin}")
+        except ValueError:
+            print("Formato de fecha fin inválido")
+
+    print(f"Total registros después de filtros fecha: {queryset.count()}")
+
+    # Manejar diferentes modos de exportación
+    if solo_ultimos:
+        print("Modo: Solo últimas solicitudes")
+        # Obtener solo la última solicitud por comercio
+        subquery = Solicitudes.objects.filter(
+            id_solicitud=models.OuterRef('id_solicitud')
+        ).order_by('-fecha_solicitud').values('id')[:1]
+
+        queryset = queryset.filter(id__in=subquery)
+    else:
+        print("Modo: Todas las solicitudes")
+        # Para exportar todo, usamos paginación
+        paginator = Paginator(queryset, page_size)
+        page_obj = paginator.get_page(page)
+        queryset = page_obj.object_list
+
+    print(f"Total registros final: {queryset.count()}")
+
+    # Preparar datos
+    data = []
+    for solicitud in queryset:
+        try:
+            comercio = solicitud.id_solicitud
+            data.append({
                 'ID Comercio': comercio.id_comercio,
                 'Nombre Comercio': comercio.nombre_comercio,
                 'RIF Comercio': comercio.rif_empresarial,
+                'Departamento': comercio.departamento,
                 'Número de Teléfono': solicitud.numero_telefono,
                 'Nombre y Apellido del Solicitante': solicitud.solicitante_nombre_apellido,
-                'Fecha de Solicitud': solicitud.fecha_solicitud,
+                'Fecha de Solicitud': solicitud.fecha_solicitud.strftime('%Y-%m-%d') if solicitud.fecha_solicitud else None,
                 'Dirección': solicitud.direccion,
-            }
-    
-    # Convertir el diccionario en una lista de valores
-    data = list(comercio_dict.values())
-    
-    # Crear DataFrame de pandas y ordenarlo por fecha de solicitud descendente
-    df = pd.DataFrame(data).sort_values(by='ID Comercio', ascending=True)
+                'Estado': solicitud.estado,
+                'Municipio': solicitud.municipio.municipio if solicitud.municipio else 'N/A',
+                'Parroquia': solicitud.parroquia.parroquia if solicitud.parroquia else 'N/A',
+            })
+        except Exception as e:
+            print(f"Error procesando solicitud {solicitud.id}: {str(e)}")
+            continue
 
-    # Convertir DataFrame a JSON
-    json_data = df.to_json(orient='records', date_format='iso')
+    print(f"Total de registros a exportar: {len(data)}")
+    print("=== FIN DE generar_excel_solicitudes ===")
+    
+    return JsonResponse(data, safe=False)
 
-    # Devolver los datos como JSON
-    return JsonResponse(json.loads(json_data), safe=False)
 
