@@ -31,6 +31,8 @@
         <div class="contain-bar-pie-ven911">
             <div class="chart-pie-ven911">
                 <h2>Panel De Servicios 911</h2>
+                <h3 class="chart-title">Servicios por Tipo Mes Actual - <span id="titulo-grafica-periodo"></span> <span
+                        id="total-servicios-grafica"></span></h3>
                 <canvas id="bar-chart-911"></canvas>
             </div>
             <br>
@@ -40,7 +42,7 @@
                 <button type="submit" class="btn btn-danger" onclick="filterByMonth()">Filtrar</button>
             </div>
         </div>
-        <h3 class="title-ven-911">Agrupacion De Servicios - Total: <span id="resultadostotales"></span></h3>
+        <h3 class="title-ven-911"><span id="titulo-reporte"></span> <span id="resultadostotales"></span></h3>
         <div class="contain-cards-acordion">
             <div class="accordion accordion-flush acordion-card" id="accordionFlushExample">
                 <div class="accordion-item">
@@ -57,7 +59,6 @@
                                 <li>Colisiones - <span id="colisiones"></span></li>
                                 <li>Volcamientos - <span id="volvamientos"></span></li>
                                 <li>Colision De Motos - <span id="colisiondemotos"></span></li>
-                                <li>Atenciones Paramedicas - <span id="atencionesparamedicas"></span></li>
                                 <li>Accidentes De Transito - <span id="accidentesdetransito"></span></li>
                                 <li>Colision De VEH De Carga - <span id="colisiondevehdecarga"></span></li>
                                 <li>Vehiculo Que Cae Al Vacio - <span id="vehiculoqueacealvacio"></span></li>
@@ -96,7 +97,7 @@
                         <div class="accordion-body">
                             <ol>
                                 <li>Falsa Alarma - <span id="falsaalarma"></span></li>
-                                <li>Apoyo Institucional - <span id="apoyoinstitucional"></span></li>
+                                <li>Apoyo Unidades De Alarma - <span id="apoyounidadesalarma"></span></li>
                                 <li>Atendido No Efectuado - <span id="atendidonoefectuado"></span></li>
                                 <li>Apoyo Con Planta Electrica - <span id="apoyoconplantaelectrica"></span></li>
                             </ol>
@@ -213,7 +214,7 @@
                             <ol>
                                 <li>Achicamiento - <span id="achicamiento"></span></li>
                                 <li>Servicio Especial - <span id="servicioespecial"></span></li>
-                                <li>Apoyo Institucional - <span id="apoyoInstitucional"></span></li>
+                                <li>Apoyo Institucional - <span id="apoyoinstitucional"></span></li>
                                 <li>Abastecimiento De Agua - <span id="abastecimientoagua"></span></li>
                                 <li>Dispersion De Particulas - <span id="dispersiondeparticulas"></span></li>
                                 <li>Desinfeccion Biologica Por Covid-19 - <span

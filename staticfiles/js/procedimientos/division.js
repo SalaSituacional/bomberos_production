@@ -1,4 +1,6 @@
-function ocultarCheckbox(id) {
+const user = document.getElementById("user-login").textContent
+  
+  function ocultarCheckbox(id) {
     const checkbox = document.getElementById(id);
     checkbox.checked = false; // Desmarcar el checkbox
   }

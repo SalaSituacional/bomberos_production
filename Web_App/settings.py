@@ -17,7 +17,7 @@ SECRET_KEY = 'django-insecure-usf!gyb)c_93(yhk-ab2gm%&_(hlk1ough81m110qhhrn4$cvy
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Debug true significa desarrollo modo de pruebas
-DEBUG = True
+DEBUG = False
 
 #------------- modo producción-----------------
 # Debug false significa producción, listo para usarse
@@ -129,3 +129,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+HANDLER404 = 'web.views.custom_404_view'
+HANDLER500 = 'web.views.custom_500_view'

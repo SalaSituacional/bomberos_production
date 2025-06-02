@@ -60,7 +60,7 @@ admin.site.register(InventarioUnidad)
 admin.site.register(DetalleInventario)
 
 
-# admin.site.register(InstagramPost)
+admin.site.register(InstagramPost)
 # admin.site.register(Divisiones)
 # admin.site.register(Municipios)
 # admin.site.register(Parroquias)
