@@ -1,6 +1,6 @@
 async function mostrarUltimoReporte() {
     try {
-      const res = await fetchWithLoader("/api/ultimo_reporte_solicitudes/");
+      const res = await fetchWithLoader("/seguridad_prevencion/api/ultimo_reporte_solicitudes/");
 
       const data = await res;
       const mensaje = `📋 Servicio: <strong>${data.tipo_servicio}</strong><br>🏢 Empresa: <strong>${data.comercio}</strong><br>🕒 Fecha: ${data.fecha_solicitud}`;

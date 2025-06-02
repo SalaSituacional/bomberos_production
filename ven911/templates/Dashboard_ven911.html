@@ -377,9 +377,9 @@
         </section>
     </footer>
     <script>
-        api_servicios_tipo = "{% url 'obtener_total_servicios' %}";
-        api_servicios_grafica = "{% url 'obtener_servicios_grafica' %}";
-        var planilla_pdf = "{% static 'assets/reporte_diarias_alcalde.pdf' %}";
+        const api_servicios_tipo = "{% url 'obtener_total_servicios' %}";
+        const api_servicios_grafica = "{% url 'obtener_servicios_grafica' %}";
+        const planilla_pdf = "{% static 'assets/reporte_diarias_alcalde.pdf' %}";
     </script>
     <!-- cdn para los pdf -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>

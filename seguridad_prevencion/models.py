@@ -6,6 +6,7 @@ class Comercio(models.Model):
     id_comercio = models.CharField(max_length=10, unique=True, editable=False, default='')
     nombre_comercio = models.CharField(max_length=100)
     rif_empresarial = models.CharField(max_length=100)
+    departamento = models.CharField(max_length=100)
 
     def save(self, *args, **kwargs):
         if not self.id_comercio:
@@ -34,10 +35,10 @@ class Solicitudes(models.Model):
     correo_electronico = models.CharField()
     pago_tasa = models.CharField()
     metodo_pago = models.CharField()
-    referencia = models.CharField(default="NO HAY REFERENCIA")
+    referencia = models.CharField(default="No Hay Referencia")
 
     def __str__(self):
-            return f"Solicitud {self.id_solicitud} - {self.tipo_servicio} - {self.solicitante_nombre_apellido}"
+            return f"Solicitud {self.id_solicitud} - {self.tipo_servicio} - {self.solicitante_nombre_apellido} - Municipio: {self.municipio}"
 
 class Requisitos(models.Model):
   id_solicitud = models.ForeignKey(Solicitudes, on_delete=models.CASCADE)
