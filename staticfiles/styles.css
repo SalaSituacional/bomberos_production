@@ -3319,50 +3319,6 @@ checkbox-styles {
   }
 }
 
-.parte-a {
-  width: 100%;
-  margin: 2rem auto;
-  display: flex;
-  flex-direction: column;
-
-  h2 {
-    font-size: 1.8rem;
-    text-align: center;
-  }
-
-  div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-    margin: 2rem;
-
-    div {
-      width: 40%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 1rem 0;
-
-      label {
-        align-self: flex-start;
-        font-size: 1.1rem;
-        font-weight: 700;
-      }
-    }
-
-    select,
-    input {
-      width: 100%;
-      align-items: center;
-      padding: 0.3rem;
-      border-radius: .5rem;
-      border: solid .1px #0004;
-    }
-  }
-}
-
 .agg_comercio {
   width: 5rem;
   margin: 0;
@@ -3392,53 +3348,6 @@ checkbox-styles {
   border-radius: 40px;
   background-color: #FFF;
 
-}
-
-.parte-b {
-  margin: 0 auto;
-  width: 100%;
-  height: auto;
-  display: flex;
-  padding: 1rem;
-  flex-wrap: wrap;
-  flex-direction: column;
-
-  h2 {
-    font-size: 1.5rem;
-    text-align: center;
-  }
-
-  div {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    margin: 1rem;
-
-    div {
-      width: 90%;
-      display: flex;
-      flex-direction: row;
-      margin: 1rem 0;
-
-      label {
-        align-self: flex-start;
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-right: 1rem;
-        margin-bottom: .5rem;
-        display: block;
-      }
-
-      input {
-        border-radius: 10px;
-        width: 100%;
-        margin: 0 auto;
-      }
-    }
-  }
 }
 
 .new-check {
@@ -3510,50 +3419,412 @@ checkbox-styles {
   /* Se oculta por defecto */
 }
 
+.contentedor-general-campos{
+    display: flex; flex-direction: row; width: 80%; justify-content: space-between; margin-top: 1rem;
+  }
+  .grupo-campos-switch{
+    display: flex; align-items: center; justify-content: flex-start; width: 40%;
+  }
+  .grupo-campos-fecha{
+    display: flex; align-items: center; justify-content: space-between; width: 60%;
+  }
+  .label-switch{
+    width: 80%;
+  }
+  .label-fecha{
+    margin-right: 10px;
+  }
+  .input-switch{
+    display: flex; justify-content: flex-start;
+  }
+  .parte-a{
+    display: flex; flex-direction: column; width: 100%; align-items: center; margin-top: 20px;
+  }
+  .form-group{
+    width: 80%;
+    margin-top: 20px;
+  }
+  /* Estilos para los mensajes */
+.alert-messages {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+}
+
+.alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    animation: slideIn 0.3s ease-out forwards;
+    opacity: 0;
+    transform: translateX(-20px);
+    position: relative;
+    overflow: hidden;
+}
+
+.alert:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+}
+
+.alert-success {
+    background-color: #f0fff4;
+    color: #2f855a;
+    border-left: 5px solid #38a169;
+}
+
+.alert-error {
+    background-color: #fff5f5;
+    color: #c53030;
+    border-left: 5px solid #e53e3e;
+}
+
+.alert-info {
+    background-color: #ebf8ff;
+    color: #2b6cb0;
+    border-left: 5px solid #3182ce;
+}
+
+.alert-warning {
+    background-color: #fffaf0;
+    color: #b7791f;
+    border-left: 5px solid #dd6b20;
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+/* Botón de cerrar */
+.alert .close-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font-size: 1.2em;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.alert .close-btn:hover {
+    opacity: 1;
+}
+
+/* Estilos generales del formulario */
+  .parte-a {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+  }
+
+  .parte-a h2 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+    font-weight: 600;
+  }
+
+  /* Estilos para los grupos de formulario */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #495057;
+  }
+
+  /* Estilos para inputs y selects */
+  .form-control, .form-select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+  }
+
+  /* Estilo especial para campos deshabilitados */
+  .form-control:disabled, .form-select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+  }
+
+  /* Estilo para campos requeridos */
+  .form-group.required label:after {
+    content: " *";
+    color: #dc3545;
+  }
+
+  /* Estilo para campos activos (como el de referencia) */
+  .campo-activo {
+    position: relative;
+  }
+
+  .campo-activo label {
+    color: #2c3e50;
+    font-weight: 600;
+  }
+
+  .campo-activo .form-control, .campo-activo .form-select {
+    border-left: 3px solid #28a745;
+    padding-left: 12px;
+  }
+
+  /* Estilo para campos inactivos */
+  .campo-inactivo label {
+    color: #6c757d;
+  }
+
+  .campo-inactivo .form-control, .campo-inactivo .form-select {
+    background-color: #f8f9fa;
+    color: #6c757d;
+  }
+
+  /* Estilo para los botones */
+  .buttons-solicitud {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+  }
+
+  .btn.registrar {
+    padding: 10px 25px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn-danger.registrar {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+
+  .btn-danger.registrar:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    transform: translateY(-2px);
+  }
+
+  /* Estilo para selects con primera opción deshabilitada */
+  .disable-first-option option:first-child {
+    color: #6c757d;
+  }
+
+  /* Grid layout para campos que podrían estar en línea */
+  @media (min-width: 768px) {
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+  }
 
 
 /* Estilos para el Autocompletado */
-.autocomplete-container {
-  position: relative;
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
+/* Estilos para el autocompletado */
+  .select-autocomplete {
+    position: relative;
+    width: 100%;
+  }
+  
+  .select-autocomplete input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .select-autocomplete .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ced4da;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    z-index: 1000;
+    display: none;
+  }
+  
+  .select-autocomplete .dropdown-item {
+    padding: 8px 15px;
+    cursor: pointer;
+  }
+  
+  .select-autocomplete .dropdown-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .select-autocomplete .search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+  }
+  
+  /* Ocultar el select original pero mantenerlo para el formulario */
+  .hidden-select {
+    display: none;
+  }
 
-  input {
-    width: 40% !important;
+  .mensaje-cedula {
+    font-size: 0.85rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Para el estado de validación */
+.cedula-valida {
+    color: #28a745;
+    background-color: #e8f5e9;
+}
+
+.cedula-invalida {
+    color: #dc3545;
+    background-color: #f8d7da;
+}
+
+.pagination-container {
+    margin: 20px 0;
+}
+
+.pagination {
+    margin-bottom: 10px;
+}
+
+.page-item.active .page-link {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.page-link {
+    color: #dc3545;
+}
+
+.page-link:hover {
+    color: #a71d2a;
+}
+
+.text-center {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Estilos personalizados para el formulario */
+.section-filter .input-group-text {
+  min-width: 80px; /* Ancho mínimo para las etiquetas */
+  justify-content: center;
+}
+
+.section-filter .form-control:read-only {
+  background-color: #f8f9fa;
+}
+
+.section-filter .btn {
+  white-space: nowrap; /* Evita que el texto del botón se rompa */
+}
+.section-filter .input-group-text {
+  min-width: 80px;
+  justify-content: center;
+  background-color: #dc3545 !important;
+  border-right: none;
+  color: white;
+}
+
+.section-filter .form-control {
+  border-left: none;
+}
+
+.section-filter .badge {
+  font-size: 0.9rem;
+  padding: 0.5em 0.75em;
+}
+
+.form-floating input {
+        padding-top: 2rem !important;
+        padding-bottom: .5rem !important;
+    }
+    .form-floating select{
+        padding-top: 2rem !important;
+        padding-bottom: .5rem !important;
+    }
+
+.form-check-input:checked{
+  background-color: #b6243a;
+  border-color: #b6243a;
+}
+
+/* Filtros */
+
+.contain-dates-seguridad-prevencion .export-controls{
+  width: 90% !important;
+  border: none;
+
+  .card-body{
+    padding: 1.1rem !important;
+    box-shadow: none;
+  }
+  .form-check{
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    justify-content: center;
+  }
+  .form-check-inpu{
+    text-align: center;
+    /* justify-content: center; */
+    width: 20%;
+  }
+  .form-check-label{
+    text-align: center;
   }
 }
 
-.autocomplete-list {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 30%;
-  width: 40%;
-  border: 1px solid #ccc;
-  max-height: 200px;
-  overflow-y: auto;
-  background: white;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: none;
-}
-
-.autocomplete-list li {
-  padding: 8px;
-  cursor: pointer;
-}
-
-.autocomplete-list li:hover {
-  background-color: #f0f0f0;
-}
-
-
-
-
-
+/* ====================================================================================================================================================== */
 
 
 
@@ -4457,7 +4728,7 @@ checkbox-styles {
 .form-check {
   width: 100%;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   padding: 0;
   margin: 0;
@@ -4466,7 +4737,11 @@ checkbox-styles {
     padding: 0;
     margin: 0;
   }
+}
 
+#confirmDeleteModal {
+  position: fixed;
+  top: 250px;
 }
 
 .buttons-row {
@@ -5219,6 +5494,29 @@ checkbox-styles {
         height: auto;
       }
     }
+  }
+}
+
+/* Responsividad adicional */
+@media (max-width: 768px) {
+  .section-filter .input-group-text {
+    min-width: 70px;
+    font-size: 0.85rem;
+  }
+  
+  .section-filter .btn i {
+    margin-right: 0 !important;
+  }
+  
+  .section-filter .btn span {
+    display: none;
+  }
+  .section-filter .col-md-auto {
+    margin-bottom: 10px;
+  }
+  
+  .section-filter .btn i {
+    margin-right: 0.3rem;
   }
 }
 

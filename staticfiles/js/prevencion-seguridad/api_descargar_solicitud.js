@@ -1,61 +1,142 @@
-async function descargarWordSolicitud() {
-  tablaPrevencionContenido.addEventListener("click", async (event) => {
-    if (event.target.closest("#Ver_documento")) {
-      let boton = event.target.closest("#Ver_documento");
-      let referencia = boton.getAttribute("data-solicitud");
-      let tipo = boton.getAttribute("data-tipo-documento");
+// const DocumentConfig = {
+//   types: {
+//     Solicitud: {
+//       endpoint: '/seguridad_prevencion/generar_documento_guia/',
+//       filenamePrefix: 'Solicitud_'
+//     },
+//     Guia: {
+//       endpoint: '/seguridad_prevencion/generar_documento_inspeccion/',
+//       filenamePrefix: 'Guia_'
+//     }
+//   }
+// };
 
-      let url = "";
-      if (tipo === "Solicitud") {
-        url = `/generar_documento_guia/${referencia}/`;
-        nombreArchivo = `Solicitud_${referencia}.pdf`; // Nombre personalizado
+// // Estado global para control de peticiones
+// const AppState = {
+//   activeRequests: 0,
+//   loadingScreen: null
+// };
 
-      } else if (tipo === "Guia") {
-        url = `/generar_documento_inspeccion/${referencia}/`;
-        nombreArchivo = `Guia_${referencia}.pdf`; // Nombre personalizado
+// // Función principal que se ejecuta al cargar la página
+// document.addEventListener('DOMContentLoaded', () => {
+//   // Inicializar pantalla de carga
+//   AppState.loadingScreen = document.getElementById('loadingScreen');
+  
+//   // Configurar manejadores
+//   setupModalOpeners();
+//   setupModalContentHandlers();
+// });
 
-      }
+// // Configura los botones que abren la modal
+// function setupModalOpeners() {
+//   document.addEventListener('click', (e) => {
+//     if (e.target.closest('.view-solicitudes')) {
+//       setTimeout(setupModalContentHandlers, 100);
+//     }
+//   });
+// }
 
-      if (url) {
-        try {
-          const response = await fetchWithLoader2(url); // Se vuelve a incluir fetchWithLoader2
+// // Configura los manejadores para los botones dentro de la modal
+// function setupModalContentHandlers() {
+//   const modalContent = document.getElementById('modal-info');
+  
+//   if (!modalContent) return;
 
-          if (!response.ok) {
-            throw new Error(`Error al obtener el archivo: ${response.statusText}`);
-          }
+//   modalContent.addEventListener('click', async (e) => {
+//     const viewBtn = e.target.closest('#Ver_documento');
+//     if (!viewBtn) return;
 
-          const blob = await response.blob();
-          const pdfUrl = URL.createObjectURL(blob);
+//     e.preventDefault();
+//     await processDocumentGeneration(viewBtn);
+//   });
+// }
 
-          // Abre el PDF en una nueva pestaña
-          window.open(pdfUrl, "_blank");
-          // Asigna un nombre al archivo en la URL de la pestaña
-          // pdfWindow.document.title = nombreArchivo; // Cambia el título de la pestaña
+// // Maneja la generación del documento
+// async function processDocumentGeneration(button) {
+//   const referencia = button.dataset.solicitud;
+//   const tipo = button.dataset.tipoDocumento;
+//   const config = DocumentConfig.types[tipo];
 
-        } catch (error) {
-          console.error("❌ Error al abrir el archivo:", error);
-        }
-      }
-    }{}
-  });
-}
+//   if (!config) {
+//     console.error('Tipo de documento no configurado:', tipo);
+//     return;
+//   }
 
-// Definición de fetchWithLoader2
-async function fetchWithLoader2(url, options = {}) {
-  activeRequests++; // Incrementa el contador de peticiones activas
-  showLoader(); // Muestra el loader de carga
+//   try {
+//     showLoadingScreen();
+    
+//     const url = `${config.endpoint}${referencia}/`;
+//     const nombreArchivo = `${config.filenamePrefix}${referencia}.pdf`;
+    
+//     const response = await fetchWithLoading(url);
+//     if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+    
+//     const blob = await response.blob();
+//     openPdfInNewTab(blob, nombreArchivo);
+//   } catch (error) {
+//     console.error('Error al generar documento:', error);
+//     showError('Error al generar el documento. Por favor intente nuevamente.');
+//   } finally {
+//     hideLoadingScreen();
+//   }
+// }
 
-  try {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`Error en la solicitud: ${response.status} ${response.statusText}`);
-    }
-    return response;
-  } catch (error) {
-    console.error("Error al consumir la API:", error);
-    throw error;
-  } finally {
-    activeRequests--; // Decrementa el contador de peticiones activas
-    hideLoader(); // Oculta el loader cuando se completa la petición
-  }
-}
+// // Función para fetch con control de pantalla de carga
+// async function fetchWithLoading(url, options = {}) {
+//   try {
+//     showLoadingScreen();
+//     const response = await fetch(url, options);
+//     return response;
+//   } catch (error) {
+//     throw error;
+//   } finally {
+//     hideLoadingScreen();
+//   }
+// }
+
+// // Función para abrir PDF en nueva pestaña
+// function openPdfInNewTab(blob, filename) {
+//   const pdfUrl = URL.createObjectURL(blob);
+//   const newWindow = window.open(pdfUrl, '_blank');
+  
+//   if (newWindow) {
+//     newWindow.document.title = filename;
+//     newWindow.focus();
+//   }
+// }
+
+// // Control de la pantalla de carga
+// function showLoadingScreen() {
+//   AppState.activeRequests++;
+//   updateLoadingScreen();
+// }
+
+// function hideLoadingScreen() {
+//   if (AppState.activeRequests > 0) {
+//     AppState.activeRequests--;
+//   }
+//   updateLoadingScreen();
+// }
+
+// function updateLoadingScreen() {
+//   if (!AppState.loadingScreen) return;
+  
+//   if (AppState.activeRequests > 0) {
+//     AppState.loadingScreen.style.display = 'flex';
+//   } else {
+//     AppState.loadingScreen.style.display = 'none';
+//   }
+// }
+
+// // Mostrar errores
+// function showError(message) {
+//   const errorToast = document.createElement('div');
+//   errorToast.className = 'alert alert-danger position-fixed top-0 end-0 m-3';
+//   errorToast.style.zIndex = '9999';
+//   errorToast.textContent = message;
+//   document.body.appendChild(errorToast);
+  
+//   setTimeout(() => {
+//     errorToast.remove();
+//   }, 5000);
+// }
