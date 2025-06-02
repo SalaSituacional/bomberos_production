@@ -1,6 +1,7 @@
 const ctx = document.getElementById('bar-chart-911').getContext('2d');
 let myChart;
 const apiUrl = api_servicios_grafica; // Asumiendo que api_servicios_grafica es una variable global con la URL de la API
+
 // Configuración común de la gráfica
 const chartConfig = {
     type: 'bar',
@@ -31,11 +32,11 @@ const chartConfig = {
         scales: {
             x: { 
                 beginAtZero: true, 
-                title: { display: true, font: { size: 18 } },
+                title: { display: true, text: 'Cantidad de Servicios', font: { size: 18 } }, // Añadido texto al título del eje X
                 ticks: { font: { size: 18 } }
             },
             y: { 
-                title: { display: true, font: { size: 18 } },
+                // title: { display: true, text: 'Tipo de Servicio', font: { size: 18 } }, // Añadido texto al título del eje Y
                 ticks: { font: { size: 18 } }
             }
         },
@@ -52,8 +53,8 @@ async function loadChartData(month = null) {
     try {
         const url = month ? `${apiUrl}?month=${month}` : apiUrl;
         const response = await fetchWithLoader(url);
-                
-        const { labels, data } = await response;
+                                
+        const { labels, data } = await response; // Asegúrate de que la API devuelve un objeto con 'labels' y 'data'
         
         if (myChart) {
             myChart.data.labels = labels;
@@ -66,12 +67,29 @@ async function loadChartData(month = null) {
             myChart = new Chart(ctx, chartConfig);
         }
         
+        // --- NUEVA LÓGICA PARA EL TOTAL DE LA GRÁFICA ---
+        const totalGrafica = data.reduce((sum, value) => sum + value, 0);
+        const totalGraficaElement = document.getElementById('total-servicios-grafica');
+        if (totalGraficaElement) {
+            totalGraficaElement.textContent = `(${totalGrafica})`;
+        }
+        // --- FIN DE LA NUEVA LÓGICA ---
+
         // Actualizar el input de mes si se proporcionó
-        if (month) document.getElementById('month').value = month;
+        if (month) {
+            document.getElementById('month').value = month;
+        } else {
+            // Si no se pasó un mes (carga inicial o se borró el filtro),
+            // actualiza el título para reflejar "total" o "general".
+            // Podrías tener un elemento HTML específico para este título de la gráfica.
+            // Por ahora, lo dejaremos implícito con el total, pero si necesitas un título dinámico,
+            // se agregaría una lógica similar a la de `obtenerServicios` para el título.
+        }
         
     } catch (error) {
-        console.error('Error:', error);
-        // Aquí puedes mostrar un mensaje al usuario
+        console.error('Error al cargar los datos de la gráfica:', error);
+        // Aquí puedes mostrar un mensaje al usuario en el HTML, por ejemplo:
+        // document.getElementById('total-servicios-grafica').textContent = '(Error al cargar)';
     }
 }
 
@@ -83,7 +101,7 @@ function filterByMonth() {
 
 // Inicialización al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
-    const currentMonth = new Date().toISOString().slice(0, 7);
+    const currentMonth = new Date().toISOString().slice(0, 7); // Formato YYYY-MM
     document.getElementById('month').value = currentMonth;
-    loadChartData(currentMonth);
+    loadChartData(currentMonth); // Carga la gráfica con el mes actual por defecto
 });
