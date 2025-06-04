@@ -6126,6 +6126,23 @@ checkbox-styles {
     width: 100%;
     align-items: center;
   }
+  .filter-form{
+    flex-wrap: wrap;
+  }
+  .filter-group{
+    width: 100%;
+    margin-bottom: 1rem;
+    gap: 1rem
+  }
+  .step-links{
+    flex-direction: column;
+  }
+  .form-911{
+    width: 90%;
+    h2{
+      width: 100%;
+    }
+  }
 }
 
 @media (max-width: 375px) {
@@ -6821,5 +6838,11 @@ checkbox-styles {
   }
   .chart-pie-ven911{
     margin: 0;
+  }
+  .step-links{
+    flex-direction: column;
+  }
+  .current{
+    width: 100%;
   }
 }
