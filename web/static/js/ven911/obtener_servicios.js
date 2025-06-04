@@ -100,6 +100,7 @@ async function obtenerServicios() {
             'abastecimientoagua': 'Abastecimiento De Agua',
             'dispersiondeparticulas': 'Dispersion De Particulas',
             'desinfeccionbiologicaporcovid': 'Desinfeccion Biologica Por Covid-19',
+            'comisionespecial': 'Comisión Especial',
 
             // Pov Apostamientos
             'puestodeavanzadas': 'Puesto De Avanzadas',
@@ -242,7 +243,8 @@ async function obtenerServicios() {
             data['Apoyo Institucional'] || 0,
             data['Abastecimiento De Agua'] || 0,
             data['Dispersion De Particulas'] || 0,
-            data['Desinfeccion Biologica Por Covid-19'] || 0
+            data['Desinfeccion Biologica Por Covid-19'] || 0,
+            data['Comisión Especial'] || 0
         ];
         const totalserviciosespecialestotales = serviciosEspecialesTotales.reduce((a, b) => a + b, 0);
         document.getElementById('serviciosespecialestotales').textContent = `(${totalserviciosespecialestotales})`;
