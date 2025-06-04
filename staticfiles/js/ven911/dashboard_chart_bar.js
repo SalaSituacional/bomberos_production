@@ -1,10 +1,11 @@
-// Obtiene el contexto del canvas para la gráfica de barras mensual, usando un nombre único
-const ctxMonthBar = document.getElementById('bar-chart-911').getContext('2d');
-let myMonthChart; // Variable para almacenar la instancia de la gráfica mensual
-const apiUrlMonth = api_servicios_grafica; // Asumiendo que api_servicios_grafica es una variable global con la URL de la API
+// Obtiene el contexto del canvas para la gráfica, usando un nombre único
+const ctx911 = document.getElementById('bar-chart-horizontal-911').getContext('2d');
+let myChart2; // Variable para almacenar la instancia de la gráfica
+// Usamos un nombre único para la URL de la API para evitar conflictos
+const apiUrl911 = api_servicios_grafica_dia; // Asegúrate de que esta URL sea la correcta para tu API
 
-// Configuración común de la gráfica mensual, usando un nombre único
-const chartConfigMonth = {
+// Configuración común de la gráfica, usando un nombre único
+const chartConfig911 = {
     type: 'bar', // Tipo de gráfica: barras
     data: {
         labels: [], // Etiquetas para el eje (nombres de servicios)
@@ -27,7 +28,7 @@ const chartConfigMonth = {
         }]
     },
     options: {
-        indexAxis: 'y', // Eje de índice para las barras (vertical)
+        indexAxis: 'x', // Eje de índice para las barras (horizontal)
         responsive: true, // La gráfica se adapta al tamaño del contenedor
         maintainAspectRatio: false, // No mantiene la relación de aspecto original
         scales: {
@@ -41,7 +42,11 @@ const chartConfigMonth = {
                 ticks: { font: { size: 18 } } // Estilo de las etiquetas del eje X
             },
             y: { 
-                // title: { display: true, text: 'Tipo de Servicio', font: { size: 18 } }, // Título del eje Y (comentado en tu original)
+                title: { 
+                    display: true, 
+                    text: 'Tipo de Servicio', // Título del eje Y
+                    font: { size: 18 } 
+                }, 
                 ticks: { font: { size: 18 } } // Estilo de las etiquetas del eje Y
             }
         },
@@ -66,20 +71,9 @@ const chartConfigMonth = {
     }
 };
 
-// Función para mostrar/ocultar un loader (simulado)
-function showLoaderMonth() {
-    // Implementa tu lógica para mostrar un loader visual para esta gráfica
-    // console.log("Mostrando loader para gráfica mensual...");
-}
-
-function hideLoaderMonth() {
-    // Implementa tu lógica para ocultar el loader para esta gráfica
-    // console.log("Ocultando loader para gráfica mensual...");
-}
-
-// Función para realizar fetch con loader, específica para esta gráfica
-async function fetchWithLoaderMonth(url) {
-    showLoaderMonth(); // Muestra el loader antes de la petición
+// Función para realizar fetch con loader
+async function fetchWithLoader(url) {
+    showLoader(); // Muestra el loader antes de la petición
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -87,75 +81,70 @@ async function fetchWithLoaderMonth(url) {
         }
         return await response.json();
     } finally {
-        hideLoaderMonth(); // Oculta el loader después de la petición (éxito o error)
+        hideLoader(); // Oculta el loader después de la petición (éxito o error)
     }
 }
 
-// Función única para cargar/actualizar datos de la gráfica mensual
-async function loadMonthChartData(month = null) {
+// Función única para cargar/actualizar datos de la gráfica
+async function loadChartData(day = null) {
     try {
-        // Construye la URL de la API con el parámetro 'month' si se proporciona
-        const url = month ? `${apiUrlMonth}?month=${month}` : apiUrlMonth;
+        // Construye la URL de la API con el parámetro 'day' si se proporciona
+        const url = day ? `${apiUrl911}?day=${day}` : apiUrl911; // Usamos apiUrl911 aquí
                                         
-        const { labels, data } = await fetchWithLoaderMonth(url); // Llama a la API
+        const { labels, data } = await fetchWithLoader(url); // Llama a la API
         
-        if (myMonthChart) {
+        if (myChart2) { // Usamos myChart2 para esta instancia de la gráfica
             // Si la gráfica ya existe, actualiza sus datos
-            myMonthChart.data.labels = labels;
-            myMonthChart.data.datasets[0].data = data;
-            myMonthChart.update(); // Actualiza la gráfica
+            myChart2.data.labels = labels;
+            myChart2.data.datasets[0].data = data;
+            myChart2.update(); // Actualiza la gráfica
         } else {
             // Si la gráfica no existe, la crea
             // Asegúrate de que ChartDataLabels esté importado y registrado si lo usas
             // <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
             Chart.register(ChartDataLabels); 
-            chartConfigMonth.data.labels = labels;
-            chartConfigMonth.data.datasets[0].data = data;
-            myMonthChart = new Chart(ctxMonthBar, chartConfigMonth);
+            chartConfig911.data.labels = labels; // Usamos chartConfig911 aquí
+            chartConfig911.data.datasets[0].data = data; // Usamos chartConfig911 aquí
+            myChart2 = new Chart(ctx911, chartConfig911); // Usamos ctx911 y chartConfig911 para crear la gráfica
         }
         
         // --- Lógica para el total de la gráfica ---
         const totalGrafica = data.reduce((sum, value) => sum + value, 0); // Suma todos los valores
-        // Asumiendo que tienes un ID único para el total de esta gráfica mensual
-        const totalGraficaElement = document.getElementById('total-servicios-grafica_month'); 
+        const totalGraficaElement = document.getElementById('total-servicios-grafica-day');
         if (totalGraficaElement) {
             totalGraficaElement.textContent = `(${totalGrafica})`; // Muestra el total
         }
 
-        // Actualizar el título de la gráfica para reflejar el mes
-        // Asumiendo que tienes un ID único para el título de esta gráfica mensual
-        const tituloGraficaPeriodoElement = document.getElementById('titulo-grafica-periodo_month');
+        // Actualizar el título de la gráfica para reflejar el día
+        const tituloGraficaPeriodoElement = document.getElementById('titulo-grafica-periodo-day');
         if (tituloGraficaPeriodoElement) {
-            tituloGraficaPeriodoElement.textContent = month ? month : 'Total'; // Muestra el mes o 'Total'
+            tituloGraficaPeriodoElement.textContent = day ? day : 'Total'; // Muestra el día o 'Total'
         }
         
     } catch (error) {
-        console.error('Error al cargar los datos de la gráfica mensual:', error);
+        console.error('Error al cargar los datos de la gráfica:', error);
         // Puedes mostrar un mensaje de error en la UI si lo deseas
-        const totalGraficaElement = document.getElementById('total-servicios-grafica_month');
+        const totalGraficaElement = document.getElementById('total-servicios-grafica-day');
         if (totalGraficaElement) {
             totalGraficaElement.textContent = '(Error al cargar)';
         }
-        const tituloGraficaPeriodoElement = document.getElementById('titulo-grafica-periodo_month');
+        const tituloGraficaPeriodoElement = document.getElementById('titulo-grafica-periodo-day');
         if (tituloGraficaPeriodoElement) {
             tituloGraficaPeriodoElement.textContent = 'Error';
         }
     }
 }
 
-// Función para manejar el filtrado por mes
-function filterByMonthChart() {
-    const month = document.getElementById('month').value; // Obtiene el valor del input de mes
-    loadMonthChartData(month); // Carga los datos para el mes seleccionado
+// Función para manejar el filtrado por día
+function filterByDay() {
+    const day = document.getElementById('day').value; // Obtiene el valor del input de fecha
+    loadChartData(day); // Carga los datos para el día seleccionado
 }
 
 // Inicialización al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
-    const currentMonth = new Date().toISOString().slice(0, 7); // Formato 'YYYY-MM'
-    // Asumiendo que el input de mes tiene el ID 'month'
-    const monthInput = document.getElementById('month');
-    if (monthInput) {
-        monthInput.value = currentMonth; // Establece el mes actual como valor por defecto
-    }
-    loadMonthChartData(currentMonth); // Carga la gráfica con el mes actual por defecto
+    // Obtiene la fecha actual en formato 'YYYY-MM-DD'
+    const today = new Date().toISOString().slice(0, 10); 
+    document.getElementById('day').value = today; // Establece la fecha actual como valor por defecto
+    loadChartData(today); // Carga la gráfica con el día actual por defecto
 });
