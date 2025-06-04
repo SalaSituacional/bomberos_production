@@ -1,12 +1,18 @@
+# Python bytecode
 *.pyc
 __pycache__/
+# Entornos virtuales
 venv/
 .venv/
+# Variables de entorno
 *.env
+# Bases de datos
 db.sqlite3
 *.db
-**/migrations/*.pyc
-**/migrations/*.py
+# Migraciones (ignora todo excepto __init__.py)
+**/migrations/*
 !**/migrations/__init__.py
+# Archivos SQL
 *.sql
-Web_App/settings.py
+# # Configuración sensible de Django
+# Web_App/settings.py

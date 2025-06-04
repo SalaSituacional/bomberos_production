@@ -4846,10 +4846,7 @@ checkbox-styles {
   justify-content: center;
   text-align: center;
   background-color: #FFF;
-  padding: 1rem;
   border-radius: 40px;
-  padding: 1.5rem;
-
 }
 
 .chart-pie-ven911 {
@@ -5495,6 +5492,16 @@ checkbox-styles {
       }
     }
   }
+  #bar-chart-911,
+  #bar-chart-horizontal-911{
+    box-sizing: content-box !important;
+    padding: 0 !important;
+    height: 20rem;
+  }
+  .chart-pie-ven911{
+    width: 100%;
+    padding: 0;
+  }
 }
 
 /* Responsividad adicional */
@@ -5517,6 +5524,9 @@ checkbox-styles {
   
   .section-filter .btn i {
     margin-right: 0.3rem;
+  }
+  #bar-chart-911{
+    box-sizing: content-box !important;
   }
 }
 
@@ -6125,6 +6135,23 @@ checkbox-styles {
     flex-direction: column;
     width: 100%;
     align-items: center;
+  }
+  .filter-form{
+    flex-wrap: wrap;
+  }
+  .filter-group{
+    width: 100%;
+    margin-bottom: 1rem;
+    gap: 1rem
+  }
+  .step-links{
+    flex-direction: column;
+  }
+  .form-911{
+    width: 90%;
+    h2{
+      width: 100%;
+    }
   }
 }
 
@@ -6820,6 +6847,13 @@ checkbox-styles {
     padding: 0 !important;
   }
   .chart-pie-ven911{
-    margin: 0;
+    margin-bottom: 6rem;
+  }
+  
+  .step-links{
+    flex-direction: column;
+  }
+  .current{
+    width: 100%;
   }
 }

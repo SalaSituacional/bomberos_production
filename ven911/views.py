@@ -200,7 +200,7 @@ def api_conteo_servicios(request):
                 filtro_intermedio = Q(servicio__fecha__gt=start_date, 
                                     servicio__fecha__lt=end_date)
                 
-                # Caso 2: Día inicial (solo horas >= 8:00 AM)
+                # Caso 2: Día inicial (solo horas >= 5:00 AM)
                 filtro_dia_inicio = Q(servicio__fecha=start_date, 
                                     servicio__hora__gte=time(5, 0))
                 
@@ -208,7 +208,7 @@ def api_conteo_servicios(request):
                 filtro_dia_fin = Q(servicio__fecha=end_date, 
                                  servicio__hora__lt=time(5, 0))
                 
-                # Caso especial: Si es el mismo día (24 horas desde 8:00 AM a 8:00 AM del día siguiente)
+                # Caso especial: Si es el mismo día (24 horas desde 5:00 AM a 5:00 AM del día siguiente)
                 if start_date == end_date:
                     filtro_servicios = (
                         Q(servicio__fecha=start_date, servicio__hora__gte=time(5, 0)) |

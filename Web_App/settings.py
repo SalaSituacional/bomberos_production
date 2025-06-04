@@ -19,10 +19,6 @@ SECRET_KEY = 'django-insecure-usf!gyb)c_93(yhk-ab2gm%&_(hlk1ough81m110qhhrn4$cvy
 # Debug true significa desarrollo modo de pruebas
 DEBUG = False
 
-#------------- modo producción-----------------
-# Debug false significa producción, listo para usarse
-# DEBUG = False
-
 # ALLOWED_HOSTS = []
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'cuerpobomberossc.com', 'www.cuerpobomberossc.com', 'bomberos-production.onrender.com']
