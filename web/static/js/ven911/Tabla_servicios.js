@@ -10,9 +10,9 @@ async function cargarTablaServicios(fecha = null) {
     if (fecha) {
         // Si se proporciona una fecha, la añadimos como parámetro de consulta
         url += `?fecha=${fecha}`;
-        console.log(`Cargando servicios para la fecha: ${fecha}`); // Depuración
+        // console.log(`Cargando servicios para la fecha: ${fecha}`); // Depuración
     } else {
-        console.log('Cargando servicios para la fecha actual (por defecto)'); // Depuración
+        // console.log('Cargando servicios para la fecha actual (por defecto)'); // Depuración
     }
 
     const tbody = document.querySelector('#tablaven911 tbody');
@@ -141,12 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDiaSiguiente = document.getElementById('btn-dia-siguiente');
     if (btnDiaSiguiente) {
         btnDiaSiguiente.addEventListener('click', () => {
-            console.log('Botón "Día Siguiente" clickeado.'); // Depuración
+            // console.log('Botón "Día Siguiente" clickeado.'); // Depuración
             if (fechaActualEnDisplay) {
                 const currentDisplayedDate = new Date(fechaActualEnDisplay + 'T00:00:00'); // IMPORTANTE: Añadir 'T00:00:00' para evitar problemas de zona horaria
                 currentDisplayedDate.setDate(currentDisplayedDate.getDate() + 1); // Suma un día
                 const nextDayFormatted = obtenerFechaActualFormateada(currentDisplayedDate); // Formatea la nueva fecha
-                console.log(`Calculado día siguiente: ${nextDayFormatted}`); // Depuración
+                // console.log(`Calculado día siguiente: ${nextDayFormatted}`); // Depuración
                 cargarTablaServicios(nextDayFormatted); // Carga la tabla con la fecha del día siguiente
             } else {
                 console.warn('fechaActualEnDisplay es nula. No se puede calcular el día siguiente.');
@@ -160,12 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDiaAnterior = document.getElementById('btn-dia-anterior');
     if (btnDiaAnterior) {
         btnDiaAnterior.addEventListener('click', () => {
-            console.log('Botón "Día Anterior" clickeado.'); // Depuración
+            // console.log('Botón "Día Anterior" clickeado.'); // Depuración
             if (fechaActualEnDisplay) {
                 const currentDisplayedDate = new Date(fechaActualEnDisplay + 'T00:00:00'); // IMPORTANTE: Añadir 'T00:00:00' para evitar problemas de zona horaria
                 currentDisplayedDate.setDate(currentDisplayedDate.getDate() - 1); // Resta un día
                 const prevDayFormatted = obtenerFechaActualFormateada(currentDisplayedDate); // Formatea la nueva fecha
-                console.log(`Calculado día anterior: ${prevDayFormatted}`); // Depuración
+                // console.log(`Calculado día anterior: ${prevDayFormatted}`); // Depuración
                 cargarTablaServicios(prevDayFormatted); // Carga la tabla con la fecha del día anterior
             } else {
                 console.warn('fechaActualEnDisplay es nula. No se puede calcular el día anterior.');

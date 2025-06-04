@@ -25,11 +25,11 @@ async function obtenerServicios() {
 
         if (params.toString()) url += `?${params.toString()}`;
 
-        console.log('URL de la API:', url); // Para depuración
+        // console.log('URL de la API:', url); // Para depuración
 
         const response = await fetchWithLoader(url); // Asegúrate de que 'fetchWithLoader' esté definida
         const data = await response;
-        console.log('Datos obtenidos:', data);
+        // console.log('Datos obtenidos:', data);
 
         // --- Lógica para el título del reporte ---
         if (fechaInicio && fechaFin) {
@@ -326,7 +326,7 @@ async function obtenerServicios() {
             totalcapacitacionpracticabomberiltotales;
 
         // Actualizar el elemento con la suma total
-        console.log(totalGeneral)
+        // console.log(totalGeneral)
         document.getElementById('resultadostotales').textContent = `(${totalGeneral})`;
     }
 }
