@@ -232,8 +232,8 @@ def api_conteo_servicios(request):
     
     return JsonResponse(conteo)
 
-# api servicios de grafica
-def api_servicios_grafico(request):
+# api servicios de grafica mes
+def api_servicios_grafico_mes(request):
     # Obtener parámetro de mes
     month_filter = request.GET.get('month')
     
@@ -275,6 +275,60 @@ def api_servicios_grafico(request):
         'data': valores,
         'count': len(labels)
     })
+
+# api servicios grafica dia
+
+def api_servicios_grafico_dia(request):
+    """
+    API para obtener datos de servicios para una gráfica, filtrados por día.
+    Espera un parámetro 'day' en formato 'YYYY-MM-DD'.
+    """
+    # Obtener parámetro de día
+    day_filter = request.GET.get('day')
+    
+    # Filtrar servicios basados en el día si se proporciona
+    servicios_query = Servicio.objects.all()
+    
+    if day_filter:
+        try:
+            # Convertir string 'YYYY-MM-DD' a objeto date
+            filter_date = datetime.strptime(day_filter, '%Y-%m-%d').date()
+            year, month, day = filter_date.year, filter_date.month, filter_date.day
+            
+            # Filtrar servicios por año, mes y día
+            servicios_query = servicios_query.filter(
+                fecha__year=year,
+                fecha__month=month,
+                fecha__day=day
+            )
+        except (ValueError, TypeError):
+            # Manejar error si el formato de fecha es incorrecto
+            # Podrías loguear el error o devolver una respuesta de error más específica
+            print(f"Error: Formato de fecha incorrecto para el filtro: {day_filter}")
+            pass # Continúa sin aplicar el filtro de día si hay un error
+    
+    # Anotar y contar los tipos de servicio
+    # Se usa 'servicio__in=servicios_query' para asegurar que solo se cuentan los servicios filtrados
+    datos = TipoServicio.objects.filter(
+        servicio__in=servicios_query
+    ).annotate(
+        total=Sum('servicio__cantidad_tipo_servicio', filter=Q(servicio__fecha__isnull=False))
+    ).values_list('nombre', 'total').order_by('nombre')
+
+    # Preparar datos para la respuesta
+    labels = []
+    valores = []
+    for nombre, total in datos:
+        labels.append(nombre)
+        valores.append(total if total is not None else 0) # Asegura que el total no sea None
+
+    return JsonResponse({
+        'labels': labels,
+        'data': valores,
+        'count': len(labels)
+    })
+
+
     
 # api para exportar y descargar excel
 
