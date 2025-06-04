@@ -27,6 +27,192 @@
 {% endif %}
 
 {% block content %}
+
+<style>
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.current {
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+.tabla-general-procedimientos{
+  width: 100%;
+}
+
+.icons-accion {
+  width: auto;
+  display: flex;
+  margin: 0;
+  justify-content: space-between;
+}
+
+/* Contenedor principal */
+.filter-container {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  width: 95%;
+}
+
+/* Estadísticas */
+.filter-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .5rem;
+}
+
+.stat-box {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.stat-badge {
+  display: inline-block;
+  background-color: #b6243a;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.9em;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+/* Formulario */
+.filter-form {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 65%;
+
+  margin: 0 auto;
+}
+
+.filter-group {
+  min-width: 22%; /* Evita desbordamiento */
+}
+
+/* Input flotante */
+.floating-input, .floating-select {
+  position: relative;
+}
+
+.floating-input input, 
+.floating-select select {
+  width: 100%;
+  padding: 16px 12px 4px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.floating-input input:focus, 
+.floating-select select:focus {
+  outline: none;
+  border-color: #b6243a;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+.floating-input label, 
+.floating-select label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label,
+.floating-select select:focus + label,
+.floating-select select:not([value=""]) + label {
+  top: 4px;
+  font-size: 0.7rem;
+  color: #b6243a;
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+/* Botones */
+.filter-actions {
+  display: flex;
+  /* gap: 8px; */
+  align-items: flex-end;
+  /* height: 56px; Altura consistente con los inputs */
+}
+
+.filter-button, .clear-button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-button {
+  background-color: #b6243a;
+  color: white;
+  border: none;
+}
+
+.filter-button:hover {
+  background-color: #88091c;
+}
+
+.clear-button {
+  background-color: transparent;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.clear-button:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .filter-actions {
+    height: auto;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+}
+</style>
+
 <div class="general-dashboard">
   <div class="div-user-name  username-space">
     <h3 class="division-title">Tabla Operacional</h3>
@@ -46,52 +232,101 @@
       </svg>
     </section>
   </div>
-  <!-- section filter -->
-  <div class="section-filter">
-    <section class="totals-procediments">
-      <b>Procedimientos Totales: </b><span>{{ contador_total }}</span>
-    </section>
-    <section class="totals-procediments">
-      <b>Registros de Hoy: </b><span>{{ total }}</span>
-    </section>
-    <section class="filter-search">
-      <span class="input-group-text" id="basic-addon1"><b> Parroquia: </b> </span>
-      <input class="form-control" type="search" name="Buscar" id="search-input-two" placeholder="Ubicacion" />
-    </section>
-    <section class="filter-search">
-      <!-- <label for="search-input-three"><b>Procedimientos: </b></label> -->
-      <span class="input-group-text" id="basic-addon1"><b> Procedimientos: </b> </span>
-      <input class="form-control" type="search" name="Buscar" id="search-input-three" placeholder="Tipo" />
-    </section>
-    <section class="filter-search">
-      <!-- Input para seleccionar el trimestre -->
-      <span class="input-group-text" id="basic-addon1"><b> Trimestre: </b> </span>
-      <select id="quarterInput" class="form-select">
-        <option value="">Seleccionar Trimestre</option>
-        <option value="1">(Ene - Mar)</option>
-        <option value="2">(Abr - Jun)</option>
-        <option value="3">(Jul - Sep)</option>
-        <option value="4">(Oct - Dic)</option>
-      </select>
-    </section>
+  
+<!-- section filter -->
+<div class="filter-container">
+  <div class="filter-stats">
+    <div class="stat-box">
+      <strong>Procedimientos Totales: </strong>
+      <span class="stat-badge">{{ contador_total }}</span>
+    </div>
+    <div class="stat-box">
+      <strong>Registros de Hoy: </strong>
+      <span class="stat-badge">{{ total }}</span>
+    </div>
   </div>
+
+  <form method="get" action="" class="filter-form">
+    <!-- Filtro Parroquia -->
+    <div class="filter-group">
+      <div class="floating-select">
+        <select name="parroquia" id="search-input-two">
+          <option value="">Seleccionar...</option>
+          {% for parroquia in parroquias_list %}
+            <option value="{{ parroquia.id }}" 
+                    {% if filtro_parroquia == parroquia.id %}selected{% endif %}>
+              {{ parroquia.parroquia }}
+            </option>
+          {% endfor %}
+        </select>
+        <label for="search-input-two">Buscar por Parroquia</label>
+      </div>
+    </div>
+
+    <!-- Filtro Procedimiento -->
+    <div class="filter-group">
+      <div class="floating-select">
+        <select name="procedimiento" id="search-input-three">
+          <option value="">Seleccionar...</option>
+          {% for procedimiento in procedimientos_list %}
+            <option value="{{ procedimiento.id }}" 
+                    {% if filtro_procedimiento == procedimiento.id %}selected{% endif %}>
+              {{ procedimiento.tipo_procedimiento }}
+            </option>
+          {% endfor %}
+        </select>
+        <label for="search-input-three">Buscar por Procedimiento</label>
+      </div>
+    </div>
+
+    <!-- Filtro Trimestre -->
+    <div class="filter-group">
+      <div class="floating-select">
+        <select id="quarterInput" name="trimestre">
+          <option value="">Seleccionar...</option>
+          <option value="1" {% if filtro_trimestre == '1' %}selected{% endif %}>(Ene - Mar)</option>
+          <option value="2" {% if filtro_trimestre == '2' %}selected{% endif %}>(Abr - Jun)</option>
+          <option value="3" {% if filtro_trimestre == '3' %}selected{% endif %}>(Jul - Sep)</option>
+          <option value="4" {% if filtro_trimestre == '4' %}selected{% endif %}>(Oct - Dic)</option>
+        </select>
+        <label for="quarterInput">Trimestre</label>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="filter-actions">
+      <input type="hidden" name="fecha" value="{{ fecha_actual }}">
+      <button type="submit" class="filter-button" title="Filtrar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+        </svg>
+      </button>
+      {% if filtro_parroquia or filtro_procedimiento or filtro_trimestre %}
+        <a href="?fecha={{ fecha_actual }}" class="clear-button" title="Limpiar filtros">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
   <!-- tabla -->
   <div class="table-responsive-sm">
-    <table class="table table-hover" id="data-table">
+    <table class="table table-hover tabla-general-procedimientos" id="data-table">
       <thead>
         <tr>
           <th scope="col">#</th>
           <th scope="col">Division</th>
           <th scope="col">Solicitante</th>
-          <th scope="col">Jefe de comision</th>
-          <th scope="col">Unidad</th>
-          <th scope="col">Efectivos Enviados</th>
+          <th scope="col">Jefe de C.</th>
           <th scope="col">Parroquia</th>
           <th scope="col">Municipio</th>
           <th scope="col">Direccion</th>
           <th scope="col">Fecha</th>
           <th scope="col">Hora</th>
-          <th scope="col">Tipo de procedimiento</th>
+          <th scope="col">Tipo P.</th>
           <th scope="col">Acciones</th>
         </tr>
       </thead>
@@ -103,31 +338,28 @@
             <!-- prettier-ignore -->
             <th scope="row">{{ forloop.counter }}</th>
             <!-- prettier-ignore -->
-            <td> {{ row.id_division.division }}</td>
+            <td class="fixed-width">{{ row.id_division.division }}</td>
             {% if row.solicitante_externo == "" %}
             <!-- prettier-ignore -->
-            <td>{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{ row.id_solicitante.apellidos.split|first }}</td>
+            <td class="fixed-width">{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{ row.id_solicitante.apellidos.split|first }}</td>
             {% else %}
             <!-- prettier-ignore -->
-            <td>{{ row.solicitante_externo }}</td>
+            <td class="fixed-width">{{ row.solicitante_externo }}</td>
             {% endif %}
             <!-- prettier-ignore -->
-            <td>{{ row.id_jefe_comision.jerarquia }} {{ row.id_jefe_comision.nombres.split|first }} {{ row.id_jefe_comision.apellidos.split|first }}</td>
+            <td class="fixed-width">{{ row.id_jefe_comision.jerarquia }} {{ row.id_jefe_comision.nombres.split|first }} {{ row.id_jefe_comision.apellidos.split|first }}</td>
             <!-- prettier-ignore -->
-            <td>{{ row.unidad }}</td>
-            <!-- prettier-ignore -->
-            <td>{{ row.efectivos_enviados}}</td>
             {% if row.id_parroquia.parroquia != "Sin Registro" %}
-            <td>{{ row.id_parroquia.parroquia }}</td>
+            <td class="fixed-width">{{ row.id_parroquia.parroquia }}</td>
             {% else %}
-            <td>Otros Municipios</td>
+            <td class="fixed-width">Otros Municipios</td>
             {% endif %}
             <!-- prettier-ignore -->
-            <td>{{ row.id_municipio.municipio }}</td>
+            <td class="fixed-width">{{ row.id_municipio.municipio }}</td>
             <td class="fixed-width">{{ row.direccion }}</td>
-            <td>{{ row.fecha|date:"d-m-Y" }}</td>
-            <td>{{ row.hora }}</td>
-            <td>{{ row.id_tipo_procedimiento.tipo_procedimiento }}</td>
+            <td class="fixed-width">{{ row.fecha|date:"d-m-Y" }}</td>
+            <td class="fixed-width">{{ row.hora }}</td>
+            <td class="fixed-width">{{ row.id_tipo_procedimiento.tipo_procedimiento }}</td>
             <td class="icons-accion">
 
               {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
@@ -201,16 +433,30 @@
     </table>
   </div>
 
-  {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' or user.user == 'Comandancia' or user.user == '2dacomandancia' %}
-  <div class="contain-dates">
-    <section class="buttons-items input-group mb-3">
-      <span class="input-group-text"><b> Seleccionar Fecha:</b></span>
-      <input type="date" class="form-control" name="fecha_manual" id="fecha_manual">
-      <button id="carga_manual" class="btn btn-danger" disabled>Obtener Fecha</button>
-      <button id="cargar_mas_btn" class="btn btn-danger">Cargar Procedimientos</button>
-    </section>
+  <!-- Después de tu tabla existente -->
+  <div class="pagination">
+      <span class="step-links">
+          {% if datos.has_previous %}
+              <a href="?page=1{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+                class="btn btn-danger">&laquo; Primera</a>
+              <a href="?page={{ datos.previous_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+                class="btn btn-danger">Anterior</a>
+          {% endif %}
+
+          <span class="current">
+              Página {{ datos.number }} de {{ datos.paginator.num_pages }}.
+          </span>
+
+          {% if datos.has_next %}
+              <a href="?page={{ datos.next_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+                class="btn btn-danger">Siguiente</a>
+              <a href="?page={{ datos.paginator.num_pages }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+                class="btn btn-danger">Última &raquo;</a>
+          {% endif %}
+      </span>
   </div>
 
+  {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' or user.user == 'Comandancia' or user.user == '2dacomandancia' %}
   <div class="contain-dates">
     <h4 class="title-procediments">Exportaciones</h4>
     <br>
@@ -282,10 +528,9 @@
 
 <!-- Script final  -->
 <script src="{% static 'js/operaciones.js' %}"></script>
-<script src="{% static 'js/cargar_mas.js' %}"></script>
 <script src="{% static 'js/info_modal.js' %}"></script>
 <script src="{% static 'js/editar_proc.js' %}"></script>
-<script src="{% static 'js/table-general-filter2.js' %}"></script>
+<!-- <script src="{% static 'js/table-general-filter2.js' %}"></script> -->
 <script src="{% static 'js/export_excel/excel_operacional.js' %}"></script>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 

@@ -324,22 +324,6 @@ def Registros_sarp(request):
         "formularioDrones": DronesForm,
     })
 
-# @login_required
-# def inventario_unidades(request):
-#     user = request.session.get('user')
-
-#     if not user:
-#         return redirect('/')
-#     # Renderizar la página con los datos
-#     return render(request, "unidades/unidades_inventario.html", {
-#         "user": user,
-#         "jerarquia": user["jerarquia"],
-#         "nombres": user["nombres"],
-#         "apellidos": user["apellidos"],
-#     })
-
-# ========================
-
 @login_required
 def conductores(request):
     user = request.session.get('user')
