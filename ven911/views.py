@@ -282,53 +282,67 @@ def api_servicios_grafico_dia(request):
     """
     API para obtener datos de servicios para una gráfica, filtrados por día.
     Espera un parámetro 'day' en formato 'YYYY-MM-DD'.
+    Filtra desde las 5 AM del día anterior hasta las 5 AM del día actual.
     """
     # Obtener parámetro de día
     day_filter = request.GET.get('day')
     
-    # Filtrar servicios basados en el día si se proporciona
+    # Filtrar servicios basados en el rango de 5 AM a 5 AM
     servicios_query = Servicio.objects.all()
     
     if day_filter:
         try:
             # Convertir string 'YYYY-MM-DD' a objeto date
             filter_date = datetime.strptime(day_filter, '%Y-%m-%d').date()
-            year, month, day = filter_date.year, filter_date.month, filter_date.day
             
-            # Filtrar servicios por año, mes y día
-            servicios_query = servicios_query.filter(
-                fecha__year=year,
-                fecha__month=month,
-                fecha__day=day
-            )
-        except (ValueError, TypeError):
-            # Manejar error si el formato de fecha es incorrecto
-            # Podrías loguear el error o devolver una respuesta de error más específica
-            print(f"Error: Formato de fecha incorrecto para el filtro: {day_filter}")
-            pass # Continúa sin aplicar el filtro de día si hay un error
+            # Crear el rango de fechas
+            # Día anterior desde las 5 AM
+            start_date = filter_date - timedelta(days=1)
+            end_date = filter_date
+            
+            # Si el campo fecha es DateField (sin hora), necesitamos lógica especial
+            # Asumimos que los registros del día anterior son para el periodo de 5AM a 23:59
+            # y los del día actual son para el periodo de 00:00 a 5AM
+            
+            # Opción 1: Si tienes un campo hora separado (como en eo_servicios)
+            if hasattr(Servicio, 'hora'):  # Si existe campo hora
+                servicios_query = servicios_query.filter(
+                    Q(fecha=start_date, hora__gte=time(5, 0)) |  # Día anterior desde 5AM
+                    Q(fecha=end_date, hora__lt=time(5, 0))       # Día actual hasta 5AM
+                )
+            # Opción 2: Si solo tienes campo fecha (DateField)
+            else:
+                # Filtramos ambos días completos (aproximación)
+                servicios_query = servicios_query.filter(
+                    fecha__in=[start_date, end_date]
+                )
+                # Nota: Esto no discrimina por hora, sería mejor añadir campo DateTimeField
+            
+        except (ValueError, TypeError) as e:
+            print(f"Error en formato de fecha: {day_filter}. Error: {str(e)}")
+            pass
     
     # Anotar y contar los tipos de servicio
-    # Se usa 'servicio__in=servicios_query' para asegurar que solo se cuentan los servicios filtrados
     datos = TipoServicio.objects.filter(
         servicio__in=servicios_query
     ).annotate(
-        total=Sum('servicio__cantidad_tipo_servicio', filter=Q(servicio__fecha__isnull=False))
+        total=Sum('servicio__cantidad_tipo_servicio', 
+                 filter=Q(servicio__fecha__isnull=False))
     ).values_list('nombre', 'total').order_by('nombre')
 
     # Preparar datos para la respuesta
-    labels = []
-    valores = []
-    for nombre, total in datos:
-        labels.append(nombre)
-        valores.append(total if total is not None else 0) # Asegura que el total no sea None
+    labels = [nombre for nombre, _ in datos]
+    valores = [total if total is not None else 0 for _, total in datos]
 
     return JsonResponse({
         'labels': labels,
         'data': valores,
-        'count': len(labels)
+        'count': len(labels),
+        'date_range': {
+            'start': start_date.isoformat() if day_filter else None,
+            'end': end_date.isoformat() if day_filter else None
+        }
     })
-
-
     
 # api para exportar y descargar excel
 
