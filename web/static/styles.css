@@ -4913,6 +4913,224 @@ checkbox-styles {
   width: 100%;
 }
 
+
+
+
+
+
+
+
+/* Seccion de filtrado y paginacion para las tablas */
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.current {
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+.tabla-general-procedimientos{
+  width: 100%;
+}
+.tabla-operaciones {
+  width: 100%;
+}
+.tabla-rescate {
+  width: 100%;
+}
+.tabla-prehospitalaria {
+  width: 100%;
+}
+.tabla-grumae{
+  width: 100%;
+}
+.tabla-prevencion{
+  width: 100%;
+}
+.tabla-capacitacion{
+  width: 100%;
+}
+.tabla-enfermeria{
+  width: 100%;
+}
+.tabla-serviciosmedicos{
+  width: 100%;
+}
+.tabla-psicologia{
+  width: 100%;
+}
+
+.icons-accion {
+  width: auto;
+  display: flex;
+  margin: 0;
+  justify-content: space-between;
+}
+
+/* Contenedor principal */
+.filter-container {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+  width: 95%;
+}
+
+/* Estadísticas */
+.filter-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .5rem;
+}
+
+.stat-box {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.stat-badge {
+  display: inline-block;
+  background-color: #b6243a;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.9em;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+/* Formulario */
+.filter-form {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 65%;
+
+  margin: 0 auto;
+}
+
+.filter-group {
+  min-width: 22%; /* Evita desbordamiento */
+}
+
+/* Input flotante */
+.floating-input, .floating-select {
+  position: relative;
+}
+
+.floating-input input, 
+.floating-select select {
+  width: 100%;
+  padding: 16px 12px 4px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.floating-input input:focus, 
+.floating-select select:focus {
+  outline: none;
+  border-color: #b6243a;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+.floating-input label, 
+.floating-select label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label,
+.floating-select select:focus + label,
+.floating-select select:not([value=""]) + label {
+  top: 4px;
+  font-size: 0.7rem;
+  color: #b6243a;
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+/* Botones */
+.filter-actions {
+  display: flex;
+  /* gap: 8px; */
+  align-items: flex-end;
+  /* height: 56px; Altura consistente con los inputs */
+}
+
+.filter-button, .clear-button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-button {
+  background-color: #b6243a;
+  color: white;
+  border: none;
+}
+
+.filter-button:hover {
+  background-color: #88091c;
+}
+
+.clear-button {
+  background-color: transparent;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.clear-button:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .filter-actions {
+    height: auto;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+}
+
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
