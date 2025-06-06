@@ -1,5 +1,4 @@
 let mesExcel = ""
-const user = document.getElementById("user-login")
 
 async function generarExcel(mes) {
   try {
@@ -91,21 +90,19 @@ async function generarExcel(mes) {
   }
 }
 
-if (user === "Sala_Situacional" || user === "SeRvEr" || user === "Comandancia" || user === "2dacomandancia") { 
-  document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("mes_excel").addEventListener("change", function () {
-      mesExcel = document.getElementById("mes_excel").value;
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("mes_excel").addEventListener("change", function () {
+    mesExcel = document.getElementById("mes_excel").value;
+    
+    if (this.value) {
+      const boton = document.getElementById("exportarExcel");
+      boton.removeAttribute("disabled");
       
-      if (this.value) {
-        const boton = document.getElementById("exportarExcel");
-        boton.removeAttribute("disabled");
-        
-        boton.addEventListener("click", function () {
-          generarExcel(mesExcel);
-        });
-      } else {
-        document.getElementById("exportarExcel").setAttribute("disabled", true);
-      }
-    });
+      boton.addEventListener("click", function () {
+        generarExcel(mesExcel);
+      });
+    } else {
+      document.getElementById("exportarExcel").setAttribute("disabled", true);
+    }
   });
-}
+});

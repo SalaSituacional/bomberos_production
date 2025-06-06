@@ -1,5 +1,6 @@
 {% load static %}
 
+
 {% if user.user == "SeRvEr" %}
 {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -27,192 +28,6 @@
 {% endif %}
 
 {% block content %}
-
-<style>
-.pagination {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-
-.step-links {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.current {
-    margin: 0 10px;
-    font-weight: bold;
-}
-
-.tabla-general-procedimientos{
-  width: 100%;
-}
-
-.icons-accion {
-  width: auto;
-  display: flex;
-  margin: 0;
-  justify-content: space-between;
-}
-
-/* Contenedor principal */
-.filter-container {
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  margin: 0 auto;
-  margin-bottom: 30px;
-  width: 95%;
-}
-
-/* Estadísticas */
-.filter-stats {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: .5rem;
-}
-
-.stat-box {
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 0.95rem;
-}
-
-.stat-badge {
-  display: inline-block;
-  background-color: #b6243a;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.9em;
-  font-weight: bold;
-  margin-left: 4px;
-}
-
-/* Formulario */
-.filter-form {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  width: 65%;
-
-  margin: 0 auto;
-}
-
-.filter-group {
-  min-width: 22%; /* Evita desbordamiento */
-}
-
-/* Input flotante */
-.floating-input, .floating-select {
-  position: relative;
-}
-
-.floating-input input, 
-.floating-select select {
-  width: 100%;
-  padding: 16px 12px 4px;
-  font-size: 1rem;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  background-color: white;
-  transition: all 0.2s;
-}
-
-.floating-input input:focus, 
-.floating-select select:focus {
-  outline: none;
-  border-color: #b6243a;
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
-}
-
-.floating-input label, 
-.floating-select label {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  font-size: 0.85rem;
-  color: #6c757d;
-  pointer-events: none;
-  transition: all 0.2s;
-}
-
-.floating-input input:focus + label,
-.floating-input input:not(:placeholder-shown) + label,
-.floating-select select:focus + label,
-.floating-select select:not([value=""]) + label {
-  top: 4px;
-  font-size: 0.7rem;
-  color: #b6243a;
-}
-
-.input-hint {
-  font-size: 0.75rem;
-  color: #6c757d;
-  margin-top: 4px;
-  padding-left: 4px;
-}
-
-/* Botones */
-.filter-actions {
-  display: flex;
-  /* gap: 8px; */
-  align-items: flex-end;
-  /* height: 56px; Altura consistente con los inputs */
-}
-
-.filter-button, .clear-button {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filter-button {
-  background-color: #b6243a;
-  color: white;
-  border: none;
-}
-
-.filter-button:hover {
-  background-color: #88091c;
-}
-
-.clear-button {
-  background-color: transparent;
-  color: #6c757d;
-  border: 1px solid #dee2e6;
-}
-
-.clear-button:hover {
-  background-color: #f8f9fa;
-  color: #212529;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .filter-form {
-    grid-template-columns: 1fr;
-  }
-  
-  .filter-actions {
-    height: auto;
-    justify-content: flex-start;
-    margin-top: 8px;
-  }
-}
-</style>
-
 <div class="general-dashboard">
   <div class="div-user-name  username-space">
     <h3 class="division-title">Tabla Operacional</h3>
@@ -233,84 +48,83 @@
     </section>
   </div>
   
-<!-- section filter -->
-<div class="filter-container">
-  <div class="filter-stats">
-    <div class="stat-box">
-      <strong>Procedimientos Totales: </strong>
-      <span class="stat-badge">{{ contador_total }}</span>
-    </div>
-    <div class="stat-box">
-      <strong>Registros de Hoy: </strong>
-      <span class="stat-badge">{{ total }}</span>
-    </div>
-  </div>
-
-  <form method="get" action="" class="filter-form">
-    <!-- Filtro Parroquia -->
-    <div class="filter-group">
-      <div class="floating-select">
-        <select name="parroquia" id="search-input-two">
-          <option value="">Seleccionar...</option>
-          {% for parroquia in parroquias_list %}
-            <option value="{{ parroquia.id }}" 
-                    {% if filtro_parroquia == parroquia.id %}selected{% endif %}>
-              {{ parroquia.parroquia }}
-            </option>
-          {% endfor %}
-        </select>
-        <label for="search-input-two">Buscar por Parroquia</label>
+  <!-- section filter -->
+  <div class="filter-container">
+    <div class="filter-stats">
+      <div class="stat-box">
+        <strong>Procedimientos Totales: </strong>
+        <span class="stat-badge">{{ contador_total }}</span>
+      </div>
+      <div class="stat-box">
+        <strong>Registros de Hoy: </strong>
+        <span class="stat-badge">{{ total }}</span>
       </div>
     </div>
 
-    <!-- Filtro Procedimiento -->
-    <div class="filter-group">
-      <div class="floating-select">
-        <select name="procedimiento" id="search-input-three">
-          <option value="">Seleccionar...</option>
-          {% for procedimiento in procedimientos_list %}
-            <option value="{{ procedimiento.id }}" 
-                    {% if filtro_procedimiento == procedimiento.id %}selected{% endif %}>
-              {{ procedimiento.tipo_procedimiento }}
-            </option>
-          {% endfor %}
-        </select>
-        <label for="search-input-three">Buscar por Procedimiento</label>
+    <form method="get" action="" class="filter-form">
+      <!-- Filtro Parroquia -->
+      <div class="filter-group">
+        <div class="floating-select">
+          <select name="parroquia" id="search-input-two">
+            <option value="">Seleccionar...</option>
+            {% for parroquia in parroquias_list %}
+              <option value="{{ parroquia.id }}" 
+                      {% if filtro_parroquia == parroquia.id|stringformat:"s" %}selected{% endif %}>
+                {{ parroquia.parroquia }}
+              </option>
+            {% endfor %}
+          </select>
+          <label for="search-input-two">Buscar por Parroquia</label>
+        </div>
       </div>
-    </div>
 
-    <!-- Filtro Trimestre -->
-    <div class="filter-group">
-      <div class="floating-select">
-        <select id="quarterInput" name="trimestre">
-          <option value="">Seleccionar...</option>
-          <option value="1" {% if filtro_trimestre == '1' %}selected{% endif %}>(Ene - Mar)</option>
-          <option value="2" {% if filtro_trimestre == '2' %}selected{% endif %}>(Abr - Jun)</option>
-          <option value="3" {% if filtro_trimestre == '3' %}selected{% endif %}>(Jul - Sep)</option>
-          <option value="4" {% if filtro_trimestre == '4' %}selected{% endif %}>(Oct - Dic)</option>
-        </select>
-        <label for="quarterInput">Trimestre</label>
+      <!-- Filtro Procedimiento -->
+      <div class="filter-group">
+        <div class="floating-select">
+          <select name="procedimiento" id="search-input-three">
+            <option value="">Seleccionar...</option>
+            {% for procedimiento in procedimientos_list %}
+              <option value="{{ procedimiento.id }}" 
+                      {% if filtro_procedimiento == procedimiento.id|stringformat:"s" %}selected{% endif %}>
+                {{ procedimiento.tipo_procedimiento }}
+              </option>
+            {% endfor %}
+          </select>
+          <label for="search-input-three">Buscar por Procedimiento</label>
+        </div>
       </div>
-    </div>
 
-    <!-- Botones -->
-    <div class="filter-actions">
-      <input type="hidden" name="fecha" value="{{ fecha_actual }}">
-      <button type="submit" class="filter-button" title="Filtrar">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
-        </svg>
-      </button>
-      {% if filtro_parroquia or filtro_procedimiento or filtro_trimestre %}
-        <a href="?fecha={{ fecha_actual }}" class="clear-button" title="Limpiar filtros">
+      <!-- Filtro Trimestre -->
+      <div class="filter-group">
+        <div class="floating-select">
+          <select id="quarterInput" name="trimestre">
+            <option value="">Seleccionar...</option>
+            <option value="1" {% if filtro_trimestre == 1 %}selected{% endif %}>(Ene - Mar)</option>
+            <option value="2" {% if filtro_trimestre == 2 %}selected{% endif %}>(Abr - Jun)</option>
+            <option value="3" {% if filtro_trimestre == 3 %}selected{% endif %}>(Jul - Sep)</option>
+            <option value="4" {% if filtro_trimestre == 4 %}selected{% endif %}>(Oct - Dic)</option>
+          </select>
+          <label for="quarterInput">Trimestre</label>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="filter-actions">
+        <button type="submit" class="filter-button" title="Filtrar">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
           </svg>
-        </a>
-      {% endif %}
-    </div>
-  </form>
-</div>
+        </button>
+        {% if filtro_parroquia or filtro_procedimiento or filtro_trimestre %}
+          <a href="" class="clear-button" title="Limpiar filtros">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
 
   <!-- tabla -->
   <div class="table-responsive-sm">
