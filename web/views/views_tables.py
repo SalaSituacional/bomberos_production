@@ -24,9 +24,19 @@ def contar_procedimientos_hoy():
     
     return conteo_hoy
 
+def contar_procedimientos_hoy_division(division):
+    hoy_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    hoy_fin = hoy_inicio + timedelta(days=1)
+    
+    conteo_hoy = Procedimientos.objects.filter(
+        id_division__id=division,
+        fecha__gte=hoy_inicio,
+        fecha__lt=hoy_fin
+    ).count()
+    
+    return conteo_hoy
 
-
-# Funciones Principales
+# Tablas
 def View_Operaciones(request):
     user = request.session.get('user')
     if not user:
@@ -34,28 +44,54 @@ def View_Operaciones(request):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
-    conteo_total = Procedimientos.objects.filter(id_division=2)
-    conteo_total = conteo_total.count()
+    # Obtener parámetros de filtrado
+    parroquia = request.GET.get('parroquia', '')
+    procedimiento = request.GET.get('procedimiento', '')
+    trimestre = request.GET.get('trimestre', '')
 
-    # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-    if fecha_carga:
-        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
+    # Consulta base (filtramos por división 2 - Operaciones)
+    datos_combined = Procedimientos.objects.filter(id_division=2)
 
-    # Filtrar procedimientos según la fecha
-    datos_combined = Procedimientos.objects.filter(
-        id_division=2,
-        fecha__gte=fecha_inicio,
-        fecha__lt=fecha_fin
-    ).order_by('-fecha')
+    # Filtrar por fecha según el rol del usuario
+    if user.get('user') == 'Operaciones01':
+        # Solo mostrar procedimientos del día actual para usuarios de Operaciones
+        hoy = timezone.now().date()
+        fecha_inicio = datetime.combine(hoy, datetime.min.time())
+        fecha_fin = datetime.combine(hoy, datetime.max.time())
+        datos_combined = datos_combined.filter(fecha__range=(fecha_inicio, fecha_fin))
+    # Para Admin y Sala Situacional no se aplica filtro de fecha (ven todo)
 
-    # Conteo total
-    total = datos_combined.count()
+    # Aplicar filtros adicionales
+    if parroquia:
+        datos_combined = datos_combined.filter(id_parroquia__id=parroquia)
+
+    if procedimiento:
+        datos_combined = datos_combined.filter(id_tipo_procedimiento__id=procedimiento)
+
+    if trimestre:
+        trimestre = int(trimestre)
+        meses = {
+            1: [1, 2, 3],   # Ene-Mar
+            2: [4, 5, 6],    # Abr-Jun
+            3: [7, 8, 9],    # Jul-Sep
+            4: [10, 11, 12]  # Oct-Dic
+        }.get(trimestre, [])
+        datos_combined = datos_combined.filter(fecha__month__in=meses)
+
+    # Ordenar y contar
+    datos_combined = datos_combined.order_by('-fecha')
+    conteo_total = Procedimientos.objects.filter(id_division=2).count()
+
+    # Configuración de paginación
+    page = request.GET.get('page', 1)
+    paginator = Paginator(datos_combined, 10)
+
+    try:
+        datos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        datos_paginados = paginator.page(1)
+    except EmptyPage:
+        datos_paginados = paginator.page(paginator.num_pages)
 
     # Manejo de eliminación por solicitud POST
     if request.method == 'POST':
@@ -68,43 +104,19 @@ def View_Operaciones(request):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(datos_combined.values(
-            'id', 
-            'id_division__division',  # Nombre de la division relacionada
-            'tipo_servicio', 
-            'id_solicitante__nombres',  # Nombre del solicitante relacionado
-            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
-            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
-            'solicitante_externo', 
-            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
-            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
-            'dependencia', 
-            'efectivos_enviados', 
-            'id_municipio__municipio',  # Nombre del municipio relacionado
-            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
-            'fecha', 
-            'hora', 
-            'direccion', 
-            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
-        ))
-
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
-    
-    # Renderizar la página normal
     return render(request, "Divisiones/operaciones.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "datos": datos_combined,
-        "total": total,
+        "datos": datos_paginados,
+        "total": contar_procedimientos_hoy_division(2),  # Conteo de procedimientos de hoy para la división Operaciones
         "contador_total": conteo_total,
-        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
+        "filtro_parroquia": parroquia,
+        "filtro_procedimiento": procedimiento,
+        "filtro_trimestre": trimestre,
+        "procedimientos_list": Tipos_Procedimientos.objects.filter(id_division=2).distinct(),
+        "parroquias_list": Parroquias.objects.all(),
     })
 
 def View_Rescate(request):
@@ -114,28 +126,54 @@ def View_Rescate(request):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
-    conteo_total = Procedimientos.objects.filter(id_division=1)
-    conteo_total = conteo_total.count()
+    # Obtener parámetros de filtrado
+    parroquia = request.GET.get('parroquia', '')
+    procedimiento = request.GET.get('procedimiento', '')
+    trimestre = request.GET.get('trimestre', '')
 
-    # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-    if fecha_carga:
-        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
+    # Consulta base (filtramos por división 1 - Rescate)
+    datos_combined = Procedimientos.objects.filter(id_division=1)
 
-    # Filtrar procedimientos según la fecha
-    datos_combined = Procedimientos.objects.filter(
-        id_division=1,
-        fecha__gte=fecha_inicio,
-        fecha__lt=fecha_fin
-    ).order_by('-fecha')
+    # Filtrar por fecha según el rol del usuario
+    if user.get('user') == 'Rescate03':
+        # Solo mostrar procedimientos del día actual para usuarios de Rescate
+        hoy = timezone.now().date()
+        fecha_inicio = datetime.combine(hoy, datetime.min.time())
+        fecha_fin = datetime.combine(hoy, datetime.max.time())
+        datos_combined = datos_combined.filter(fecha__range=(fecha_inicio, fecha_fin))
+    # Para Admin y Sala Situacional no se aplica filtro de fecha (ven todo)
 
-    # Conteo total
-    total = datos_combined.count()
+    # Aplicar filtros adicionales
+    if parroquia:
+        datos_combined = datos_combined.filter(id_parroquia__id=parroquia)
+
+    if procedimiento:
+        datos_combined = datos_combined.filter(id_tipo_procedimiento__id=procedimiento)
+
+    if trimestre:
+        trimestre = int(trimestre)
+        meses = {
+            1: [1, 2, 3],   # Ene-Mar
+            2: [4, 5, 6],    # Abr-Jun
+            3: [7, 8, 9],    # Jul-Sep
+            4: [10, 11, 12]  # Oct-Dic
+        }.get(trimestre, [])
+        datos_combined = datos_combined.filter(fecha__month__in=meses)
+
+    # Ordenar y contar
+    datos_combined = datos_combined.order_by('-fecha')
+    conteo_total = Procedimientos.objects.filter(id_division=1).count()
+
+    # Configuración de paginación
+    page = request.GET.get('page', 1)
+    paginator = Paginator(datos_combined, 10)
+
+    try:
+        datos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        datos_paginados = paginator.page(1)
+    except EmptyPage:
+        datos_paginados = paginator.page(paginator.num_pages)
 
     # Manejo de eliminación por solicitud POST
     if request.method == 'POST':
@@ -148,204 +186,20 @@ def View_Rescate(request):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(datos_combined.values(
-            'id', 
-            'id_division__division',  # Nombre de la division relacionada
-            'tipo_servicio', 
-            'id_solicitante__nombres',  # Nombre del solicitante relacionado
-            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
-            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
-            'solicitante_externo', 
-            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
-            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
-            'dependencia', 
-            'efectivos_enviados', 
-            'id_municipio__municipio',  # Nombre del municipio relacionado
-            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
-            'fecha', 
-            'hora', 
-            'direccion', 
-            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
-        ))
-
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
-    
     # Renderizar la página normal
     return render(request, "Divisiones/rescate.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "datos": datos_combined,
-        "total": total,
+        "datos": datos_paginados,
+        "total": contar_procedimientos_hoy_division(1),  # Conteo de procedimientos de hoy para la división Operaciones
         "contador_total": conteo_total,
-        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
-    })
-
-def View_Prevencion(request):
-    user = request.session.get('user')
-    if not user:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
-        return redirect('/')
-
-    conteo_total = Procedimientos.objects.filter(id_division=3)
-    conteo_total = conteo_total.count()
-
-    # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-    if fecha_carga:
-        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
-
-    # Filtrar procedimientos según la fecha
-    datos_combined = Procedimientos.objects.filter(
-        id_division=3,
-        fecha__gte=fecha_inicio,
-        fecha__lt=fecha_fin
-    ).order_by('-fecha')
-
-    # Conteo total
-    total = datos_combined.count()
-
-    # Manejo de eliminación por solicitud POST
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            procedimiento = get_object_or_404(Procedimientos, id=id)
-            procedimiento.delete()
-            return JsonResponse({'success': True})
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=400)
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(datos_combined.values(
-            'id', 
-            'id_division__division',  # Nombre de la division relacionada
-            'tipo_servicio', 
-            'id_solicitante__nombres',  # Nombre del solicitante relacionado
-            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
-            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
-            'solicitante_externo', 
-            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
-            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
-            'dependencia', 
-            'efectivos_enviados', 
-            'id_municipio__municipio',  # Nombre del municipio relacionado
-            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
-            'fecha', 
-            'hora', 
-            'direccion', 
-            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
-        ))
-
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
-    
-    # Renderizar la página normal
-    return render(request, "Divisiones/prevencion.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        "datos": datos_combined,
-        "total": total,
-        "contador_total": conteo_total,
-        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
-    })
-
-def View_grumae(request):
-    user = request.session.get('user')
-    if not user:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
-        return redirect('/')
-
-    conteo_total = Procedimientos.objects.filter(id_division=4)
-    conteo_total = conteo_total.count()
-
-    # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-    if fecha_carga:
-        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
-
-
-    # Filtrar procedimientos según la fecha
-    datos_combined = Procedimientos.objects.filter(
-        id_division=4,
-        fecha__gte=fecha_inicio,
-        fecha__lt=fecha_fin
-    ).order_by('-fecha')
-
-    # Conteo total
-    total = datos_combined.count()
-
-    # Manejo de eliminación por solicitud POST
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            procedimiento = get_object_or_404(Procedimientos, id=id)
-            procedimiento.delete()
-            return JsonResponse({'success': True})
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=400)
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(datos_combined.values(
-            'id', 
-            'id_division__division',  # Nombre de la division relacionada
-            'tipo_servicio', 
-            'id_solicitante__nombres',  # Nombre del solicitante relacionado
-            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
-            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
-            'solicitante_externo', 
-            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
-            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
-            'dependencia', 
-            'efectivos_enviados', 
-            'id_municipio__municipio',  # Nombre del municipio relacionado
-            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
-            'fecha', 
-            'hora', 
-            'direccion', 
-            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
-        ))
-
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
-    
-    # Renderizar la página normal
-    return render(request, "Divisiones/grumae.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        "datos": datos_combined,
-        "total": total,
-        "contador_total": conteo_total,
-        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
+        "filtro_parroquia": parroquia,
+        "filtro_procedimiento": procedimiento,
+        "filtro_trimestre": trimestre,
+        "procedimientos_list": Tipos_Procedimientos.objects.filter(id_division=1).distinct(),
+        "parroquias_list": Parroquias.objects.all(),
     })
 
 def View_prehospitalaria(request):
@@ -355,28 +209,54 @@ def View_prehospitalaria(request):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
-    conteo_total = Procedimientos.objects.filter(id_division=5)
-    conteo_total = conteo_total.count()
+    # Obtener parámetros de filtrado
+    parroquia = request.GET.get('parroquia', '')
+    procedimiento = request.GET.get('procedimiento', '')
+    trimestre = request.GET.get('trimestre', '')
 
-    # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-    if fecha_carga:
-        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
+    # Consulta base (filtramos por división 5 - Prehospitalaria)
+    datos_combined = Procedimientos.objects.filter(id_division=5)
 
-    # Filtrar procedimientos según la fecha
-    datos_combined = Procedimientos.objects.filter(
-        id_division=5,
-        fecha__gte=fecha_inicio,
-        fecha__lt=fecha_fin
-    ).order_by('-fecha')
+    # Filtrar por fecha según el rol del usuario
+    if user.get('user') == 'Prehospitalaria04':
+        # Solo mostrar procedimientos del día actual para usuarios de Prehospitalaria
+        hoy = timezone.now().date()
+        fecha_inicio = datetime.combine(hoy, datetime.min.time())
+        fecha_fin = datetime.combine(hoy, datetime.max.time())
+        datos_combined = datos_combined.filter(fecha__range=(fecha_inicio, fecha_fin))
+    # Para Admin y Sala Situacional no se aplica filtro de fecha (ven todo)
 
-    # Conteo total
-    total = datos_combined.count()
+    # Aplicar filtros adicionales
+    if parroquia:
+        datos_combined = datos_combined.filter(id_parroquia__id=parroquia)
+
+    if procedimiento:
+        datos_combined = datos_combined.filter(id_tipo_procedimiento__id=procedimiento)
+
+    if trimestre:
+        trimestre = int(trimestre)
+        meses = {
+            1: [1, 2, 3],   # Ene-Mar
+            2: [4, 5, 6],    # Abr-Jun
+            3: [7, 8, 9],    # Jul-Sep
+            4: [10, 11, 12]  # Oct-Dic
+        }.get(trimestre, [])
+        datos_combined = datos_combined.filter(fecha__month__in=meses)
+
+    # Ordenar y contar
+    datos_combined = datos_combined.order_by('-fecha')
+    conteo_total = Procedimientos.objects.filter(id_division=5).count()
+
+    # Configuración de paginación
+    page = request.GET.get('page', 1)
+    paginator = Paginator(datos_combined, 10)
+
+    try:
+        datos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        datos_paginados = paginator.page(1)
+    except EmptyPage:
+        datos_paginados = paginator.page(paginator.num_pages)
 
     # Manejo de eliminación por solicitud POST
     if request.method == 'POST':
@@ -388,33 +268,7 @@ def View_prehospitalaria(request):
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(datos_combined.values(
-            'id', 
-            'id_division__division',  # Nombre de la division relacionada
-            'tipo_servicio', 
-            'id_solicitante__nombres',  # Nombre del solicitante relacionado
-            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
-            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
-            'solicitante_externo', 
-            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
-            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
-            'dependencia', 
-            'efectivos_enviados', 
-            'id_municipio__municipio',  # Nombre del municipio relacionado
-            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
-            'fecha', 
-            'hora', 
-            'direccion', 
-            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
-        ))
-
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
+    
     
     # Renderizar la página normal
     return render(request, "Divisiones/prehospitalaria.html", {
@@ -422,10 +276,182 @@ def View_prehospitalaria(request):
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "datos": datos_combined,
-        "total": total,
+        "datos": datos_paginados,
+        "total": contar_procedimientos_hoy_division(5),  # Conteo de procedimientos de hoy para la división Prehospitalaria
         "contador_total": conteo_total,
-        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
+        "filtro_parroquia": parroquia,
+        "filtro_procedimiento": procedimiento,
+        "filtro_trimestre": trimestre,
+        "procedimientos_list": Tipos_Procedimientos.objects.filter(id_division=5).distinct(),
+        "parroquias_list": Parroquias.objects.all(),
+    })
+
+def View_grumae(request):
+    user = request.session.get('user')
+    if not user:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+        return redirect('/')
+
+    # Obtener parámetros de filtrado
+    parroquia = request.GET.get('parroquia', '')
+    procedimiento = request.GET.get('procedimiento', '')
+    trimestre = request.GET.get('trimestre', '')
+
+    # Consulta base (filtramos por división 4 - Grumae)
+    datos_combined = Procedimientos.objects.filter(id_division=4)
+
+    # Filtrar por fecha según el rol del usuario
+    if user.get('user') == 'Grumae02':
+        # Solo mostrar procedimientos del día actual para usuarios de Prehospitalaria
+        hoy = timezone.now().date()
+        fecha_inicio = datetime.combine(hoy, datetime.min.time())
+        fecha_fin = datetime.combine(hoy, datetime.max.time())
+        datos_combined = datos_combined.filter(fecha__range=(fecha_inicio, fecha_fin))
+    # Para Admin y Sala Situacional no se aplica filtro de fecha (ven todo)
+
+    # Aplicar filtros adicionales
+    if parroquia:
+        datos_combined = datos_combined.filter(id_parroquia__id=parroquia)
+
+    if procedimiento:
+        datos_combined = datos_combined.filter(id_tipo_procedimiento__id=procedimiento)
+
+    if trimestre:
+        trimestre = int(trimestre)
+        meses = {
+            1: [1, 2, 3],   # Ene-Mar
+            2: [4, 5, 6],    # Abr-Jun
+            3: [7, 8, 9],    # Jul-Sep
+            4: [10, 11, 12]  # Oct-Dic
+        }.get(trimestre, [])
+        datos_combined = datos_combined.filter(fecha__month__in=meses)
+
+    # Ordenar y contar
+    datos_combined = datos_combined.order_by('-fecha')
+    conteo_total = Procedimientos.objects.filter(id_division=4).count()
+
+    # Configuración de paginación
+    page = request.GET.get('page', 1)
+    paginator = Paginator(datos_combined, 10)
+
+    try:
+        datos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        datos_paginados = paginator.page(1)
+    except EmptyPage:
+        datos_paginados = paginator.page(paginator.num_pages)
+
+    # Manejo de eliminación por solicitud POST
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            id = data.get('id')
+            procedimiento = get_object_or_404(Procedimientos, id=id)
+            procedimiento.delete()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    
+    
+    # Renderizar la página normal
+    return render(request, "Divisiones/grumae.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "datos": datos_paginados,
+        "total": contar_procedimientos_hoy_division(4),  # Conteo de procedimientos de hoy para la división Prehospitalaria
+        "contador_total": conteo_total,
+        "filtro_parroquia": parroquia,
+        "filtro_procedimiento": procedimiento,
+        "filtro_trimestre": trimestre,
+        "procedimientos_list": Tipos_Procedimientos.objects.filter(id_division=4).distinct(),
+        "parroquias_list": Parroquias.objects.all(),
+    })
+
+def View_Prevencion(request):
+    user = request.session.get('user')
+    if not user:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+        return redirect('/')
+
+    # Obtener parámetros de filtrado
+    parroquia = request.GET.get('parroquia', '')
+    procedimiento = request.GET.get('procedimiento', '')
+    trimestre = request.GET.get('trimestre', '')
+
+    # Consulta base (filtramos por división 3 - Prevencion)
+    datos_combined = Procedimientos.objects.filter(id_division=3)
+
+    # Filtrar por fecha según el rol del usuario
+    if user.get('user') == 'Prevencion05':
+        # Solo mostrar procedimientos del día actual para usuarios de Prevencion
+        hoy = timezone.now().date()
+        fecha_inicio = datetime.combine(hoy, datetime.min.time())
+        fecha_fin = datetime.combine(hoy, datetime.max.time())
+        datos_combined = datos_combined.filter(fecha__range=(fecha_inicio, fecha_fin))
+    # Para Admin y Sala Situacional no se aplica filtro de fecha (ven todo)
+
+    # Aplicar filtros adicionales
+    if parroquia:
+        datos_combined = datos_combined.filter(id_parroquia__id=parroquia)
+
+    if procedimiento:
+        datos_combined = datos_combined.filter(id_tipo_procedimiento__id=procedimiento)
+
+    if trimestre:
+        trimestre = int(trimestre)
+        meses = {
+            1: [1, 2, 3],   # Ene-Mar
+            2: [4, 5, 6],    # Abr-Jun
+            3: [7, 8, 9],    # Jul-Sep
+            4: [10, 11, 12]  # Oct-Dic
+        }.get(trimestre, [])
+        datos_combined = datos_combined.filter(fecha__month__in=meses)
+
+    # Ordenar y contar
+    datos_combined = datos_combined.order_by('-fecha')
+    conteo_total = Procedimientos.objects.filter(id_division=3).count()
+
+    # Configuración de paginación
+    page = request.GET.get('page', 1)
+    paginator = Paginator(datos_combined, 10)
+
+    try:
+        datos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        datos_paginados = paginator.page(1)
+    except EmptyPage:
+        datos_paginados = paginator.page(paginator.num_pages)
+
+    # Manejo de eliminación por solicitud POST
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            id = data.get('id')
+            procedimiento = get_object_or_404(Procedimientos, id=id)
+            procedimiento.delete()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    
+    
+    # Renderizar la página normal
+    return render(request, "Divisiones/prevencion.html", {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "datos": datos_paginados,
+        "total": contar_procedimientos_hoy_division(3),  # Conteo de procedimientos de hoy para la división Prehospitalaria
+        "contador_total": conteo_total,
+        "filtro_parroquia": parroquia,
+        "filtro_procedimiento": procedimiento,
+        "filtro_trimestre": trimestre,
+        "procedimientos_list": Tipos_Procedimientos.objects.filter(id_division=3).distinct(),
+        "parroquias_list": Parroquias.objects.all(),
     })
 
 def View_capacitacion(request):
@@ -435,28 +461,54 @@ def View_capacitacion(request):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
-    conteo_total = Procedimientos.objects.filter(id_division=9)
-    conteo_total = conteo_total.count()
+    # Obtener parámetros de filtrado
+    parroquia = request.GET.get('parroquia', '')
+    procedimiento = request.GET.get('procedimiento', '')
+    trimestre = request.GET.get('trimestre', '')
 
-    # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-    if fecha_carga:
-        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
+    # Consulta base (filtramos por división 9 - Capacitacion)
+    datos_combined = Procedimientos.objects.filter(id_division=9)
 
-    # Filtrar procedimientos según la fecha
-    datos_combined = Procedimientos.objects.filter(
-        id_division=9,
-        fecha__gte=fecha_inicio,
-        fecha__lt=fecha_fin
-    ).order_by('-fecha')
+    # Filtrar por fecha según el rol del usuario
+    if user.get('user') == 'Capacitacion07':
+        # Solo mostrar procedimientos del día actual para usuarios de Prevencion
+        hoy = timezone.now().date()
+        fecha_inicio = datetime.combine(hoy, datetime.min.time())
+        fecha_fin = datetime.combine(hoy, datetime.max.time())
+        datos_combined = datos_combined.filter(fecha__range=(fecha_inicio, fecha_fin))
+    # Para Admin y Sala Situacional no se aplica filtro de fecha (ven todo)
 
-    # Conteo total
-    total = datos_combined.count()
+    # Aplicar filtros adicionales
+    if parroquia:
+        datos_combined = datos_combined.filter(id_parroquia__id=parroquia)
+
+    if procedimiento:
+        datos_combined = datos_combined.filter(dependencia=procedimiento)
+
+    if trimestre:
+        trimestre = int(trimestre)
+        meses = {
+            1: [1, 2, 3],   # Ene-Mar
+            2: [4, 5, 6],    # Abr-Jun
+            3: [7, 8, 9],    # Jul-Sep
+            4: [10, 11, 12]  # Oct-Dic
+        }.get(trimestre, [])
+        datos_combined = datos_combined.filter(fecha__month__in=meses)
+
+    # Ordenar y contar
+    datos_combined = datos_combined.order_by('-fecha')
+    conteo_total = Procedimientos.objects.filter(id_division=9).count()
+
+    # Configuración de paginación
+    page = request.GET.get('page', 1)
+    paginator = Paginator(datos_combined, 10)
+
+    try:
+        datos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        datos_paginados = paginator.page(1)
+    except EmptyPage:
+        datos_paginados = paginator.page(paginator.num_pages)
 
     # Manejo de eliminación por solicitud POST
     if request.method == 'POST':
@@ -468,33 +520,7 @@ def View_capacitacion(request):
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(datos_combined.values(
-            'id', 
-            'id_division__division',  # Nombre de la division relacionada
-            'tipo_servicio', 
-            'id_solicitante__nombres',  # Nombre del solicitante relacionado
-            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
-            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
-            'solicitante_externo', 
-            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
-            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
-            'dependencia', 
-            'efectivos_enviados', 
-            'id_municipio__municipio',  # Nombre del municipio relacionado
-            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
-            'fecha', 
-            'hora', 
-            'direccion', 
-            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
-        ))
-
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
+    
     
     # Renderizar la página normal
     return render(request, "Divisiones/capacitacion.html", {
@@ -502,10 +528,14 @@ def View_capacitacion(request):
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "datos": datos_combined,
-        "total": total,
+        "datos": datos_paginados,
+        "total": contar_procedimientos_hoy_division(9),  # Conteo de procedimientos de hoy para la división Prehospitalaria
         "contador_total": conteo_total,
-        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
+        "filtro_parroquia": parroquia,
+        "filtro_procedimiento": procedimiento,
+        "filtro_trimestre": trimestre,
+        "procedimientos_list": Tipos_Procedimientos.objects.filter(id_division=9).distinct(),
+        "parroquias_list": Parroquias.objects.all(),
     })
 
 def View_enfermeria(request):
@@ -515,28 +545,54 @@ def View_enfermeria(request):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
-    conteo_total = Procedimientos.objects.filter(id_division=6)
-    conteo_total = conteo_total.count()
+    # Obtener parámetros de filtrado
+    parroquia = request.GET.get('parroquia', '')
+    procedimiento = request.GET.get('procedimiento', '')
+    trimestre = request.GET.get('trimestre', '')
 
-    # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-    if fecha_carga:
-        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
+    # Consulta base (filtramos por división 6 - Enfermeria)
+    datos_combined = Procedimientos.objects.filter(id_division=6)
 
-    # Filtrar procedimientos según la fecha
-    datos_combined = Procedimientos.objects.filter(
-        id_division=6,
-        fecha__gte=fecha_inicio,
-        fecha__lt=fecha_fin
-    ).order_by('-fecha')
+    # Filtrar por fecha según el rol del usuario
+    if user.get('user') == 'Enfermeria08':
+        # Solo mostrar procedimientos del día actual para usuarios de Prevencion
+        hoy = timezone.now().date()
+        fecha_inicio = datetime.combine(hoy, datetime.min.time())
+        fecha_fin = datetime.combine(hoy, datetime.max.time())
+        datos_combined = datos_combined.filter(fecha__range=(fecha_inicio, fecha_fin))
+    # Para Admin y Sala Situacional no se aplica filtro de fecha (ven todo)
 
-    # Conteo total
-    total = datos_combined.count()
+    # Aplicar filtros adicionales
+    if parroquia:
+        datos_combined = datos_combined.filter(id_parroquia__id=parroquia)
+
+    if procedimiento:
+        datos_combined = datos_combined.filter(id_tipo_procedimiento__id=procedimiento)
+
+    if trimestre:
+        trimestre = int(trimestre)
+        meses = {
+            1: [1, 2, 3],   # Ene-Mar
+            2: [4, 5, 6],    # Abr-Jun
+            3: [7, 8, 9],    # Jul-Sep
+            4: [10, 11, 12]  # Oct-Dic
+        }.get(trimestre, [])
+        datos_combined = datos_combined.filter(fecha__month__in=meses)
+
+    # Ordenar y contar
+    datos_combined = datos_combined.order_by('-fecha')
+    conteo_total = Procedimientos.objects.filter(id_division=6).count()
+
+    # Configuración de paginación
+    page = request.GET.get('page', 1)
+    paginator = Paginator(datos_combined, 10)
+
+    try:
+        datos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        datos_paginados = paginator.page(1)
+    except EmptyPage:
+        datos_paginados = paginator.page(paginator.num_pages)
 
     # Manejo de eliminación por solicitud POST
     if request.method == 'POST':
@@ -548,32 +604,7 @@ def View_enfermeria(request):
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(datos_combined.values(
-            'id', 
-            'id_division__division',  # Nombre de la division relacionada
-            'id_solicitante__nombres',  # Nombre del solicitante relacionado
-            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
-            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
-            'solicitante_externo', 
-            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
-            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
-            'dependencia', 
-            'efectivos_enviados', 
-            'id_municipio__municipio',  # Nombre del municipio relacionado
-            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
-            'fecha', 
-            'hora', 
-            'direccion', 
-            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
-        ))
-
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
+    
     
     # Renderizar la página normal
     return render(request, "Divisiones/enfermeria.html", {
@@ -581,10 +612,14 @@ def View_enfermeria(request):
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "datos": datos_combined,
-        "total": total,
+        "datos": datos_paginados,
+        "total": contar_procedimientos_hoy_division(6),  # Conteo de procedimientos de hoy para la división Enfermeria
         "contador_total": conteo_total,
-        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
+        "filtro_parroquia": parroquia,
+        "filtro_procedimiento": procedimiento,
+        "filtro_trimestre": trimestre,
+        "procedimientos_list": Tipos_Procedimientos.objects.filter(id_division=6).distinct(),
+        "parroquias_list": Parroquias.objects.all(),
     })
 
 def View_serviciosmedicos(request):
@@ -594,27 +629,54 @@ def View_serviciosmedicos(request):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
+    # Obtener parámetros de filtrado
+    parroquia = request.GET.get('parroquia', '')
+    procedimiento = request.GET.get('procedimiento', '')
+    trimestre = request.GET.get('trimestre', '')
+
+    # Consulta base (filtramos por división 7 - Servicios Medicos)
+    datos_combined = Procedimientos.objects.filter(id_division=7)
+
+    # Filtrar por fecha según el rol del usuario
+    if user.get('user') == 'Serviciosmedicos06':
+        # Solo mostrar procedimientos del día actual para usuarios de Prevencion
+        hoy = timezone.now().date()
+        fecha_inicio = datetime.combine(hoy, datetime.min.time())
+        fecha_fin = datetime.combine(hoy, datetime.max.time())
+        datos_combined = datos_combined.filter(fecha__range=(fecha_inicio, fecha_fin))
+    # Para Admin y Sala Situacional no se aplica filtro de fecha (ven todo)
+
+    # Aplicar filtros adicionales
+    if parroquia:
+        datos_combined = datos_combined.filter(id_parroquia__id=parroquia)
+
+    if procedimiento:
+        datos_combined = datos_combined.filter(id_tipo_procedimiento__id=procedimiento)
+
+    if trimestre:
+        trimestre = int(trimestre)
+        meses = {
+            1: [1, 2, 3],   # Ene-Mar
+            2: [4, 5, 6],    # Abr-Jun
+            3: [7, 8, 9],    # Jul-Sep
+            4: [10, 11, 12]  # Oct-Dic
+        }.get(trimestre, [])
+        datos_combined = datos_combined.filter(fecha__month__in=meses)
+
+    # Ordenar y contar
+    datos_combined = datos_combined.order_by('-fecha')
     conteo_total = Procedimientos.objects.filter(id_division=7).count()
 
-    # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-    if fecha_carga:
-        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
+    # Configuración de paginación
+    page = request.GET.get('page', 1)
+    paginator = Paginator(datos_combined, 10)
 
-    # Filtrar procedimientos según la fecha
-    datos_combined = Procedimientos.objects.filter(
-        id_division=7,
-        fecha__gte=fecha_inicio,
-        fecha__lt=fecha_fin
-    ).order_by('-fecha')
-
-    # Conteo total
-    total = datos_combined.count()
+    try:
+        datos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        datos_paginados = paginator.page(1)
+    except EmptyPage:
+        datos_paginados = paginator.page(paginator.num_pages)
 
     # Manejo de eliminación por solicitud POST
     if request.method == 'POST':
@@ -626,33 +688,7 @@ def View_serviciosmedicos(request):
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(datos_combined.values(
-            'id', 
-            'id_division__division',  # Nombre de la division relacionada
-            'tipo_servicio', 
-            'id_solicitante__nombres',  # Nombre del solicitante relacionado
-            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
-            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
-            'solicitante_externo', 
-            'unidad__nombre_unidad',  # Nombre de la unidad relacionada
-            'id_jefe_comision__nombres',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__apellidos',  # Nombre del jefe de comisión relacionado
-            'id_jefe_comision__jerarquia',  # Nombre del jefe de comisión relacionado
-            'dependencia', 
-            'efectivos_enviados', 
-            'id_municipio__municipio',  # Nombre del municipio relacionado
-            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
-            'fecha', 
-            'hora', 
-            'direccion', 
-            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
-        ))
-
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
+    
     
     # Renderizar la página normal
     return render(request, "Divisiones/serviciosmedicos.html", {
@@ -660,10 +696,14 @@ def View_serviciosmedicos(request):
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "datos": datos_combined,
-        "total": total,
+        "datos": datos_paginados,
+        "total": contar_procedimientos_hoy_division(7),  # Conteo de procedimientos de hoy para la división Prehospitalaria
         "contador_total": conteo_total,
-        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
+        "filtro_parroquia": parroquia,
+        "filtro_procedimiento": procedimiento,
+        "filtro_trimestre": trimestre,
+        "procedimientos_list": Tipos_Procedimientos.objects.filter(id_division=7).distinct(),
+        "parroquias_list": Parroquias.objects.all(),
     })
 
 def View_psicologia(request):
@@ -673,28 +713,54 @@ def View_psicologia(request):
             return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
         return redirect('/')
 
-    conteo_total = Procedimientos.objects.filter(id_division=8)
-    conteo_total = conteo_total.count()
+    # Obtener parámetros de filtrado
+    parroquia = request.GET.get('parroquia', '')
+    procedimiento = request.GET.get('procedimiento', '')
+    trimestre = request.GET.get('trimestre', '')
 
-    # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-    if fecha_carga:
-        fecha_inicio = datetime.strptime(fecha_carga, "%Y-%m-%d")
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
+    # Consulta base (filtramos por división 8 - Psicologia)
+    datos_combined = Procedimientos.objects.filter(id_division=8)
 
-    # Filtrar procedimientos según la fecha
-    datos_combined = Procedimientos.objects.filter(
-        id_division=8,
-        fecha__gte=fecha_inicio,
-        fecha__lt=fecha_fin
-    ).order_by('-fecha')
+    # Filtrar por fecha según el rol del usuario
+    if user.get('user') == 'Psicologia09':
+        # Solo mostrar procedimientos del día actual para usuarios de Prevencion
+        hoy = timezone.now().date()
+        fecha_inicio = datetime.combine(hoy, datetime.min.time())
+        fecha_fin = datetime.combine(hoy, datetime.max.time())
+        datos_combined = datos_combined.filter(fecha__range=(fecha_inicio, fecha_fin))
+    # Para Admin y Sala Situacional no se aplica filtro de fecha (ven todo)
 
-    # Conteo total
-    total = datos_combined.count()
+    # Aplicar filtros adicionales
+    if parroquia:
+        datos_combined = datos_combined.filter(id_parroquia__id=parroquia)
+
+    if procedimiento:
+        datos_combined = datos_combined.filter(id_tipo_procedimiento__id=procedimiento)
+
+    if trimestre:
+        trimestre = int(trimestre)
+        meses = {
+            1: [1, 2, 3],   # Ene-Mar
+            2: [4, 5, 6],    # Abr-Jun
+            3: [7, 8, 9],    # Jul-Sep
+            4: [10, 11, 12]  # Oct-Dic
+        }.get(trimestre, [])
+        datos_combined = datos_combined.filter(fecha__month__in=meses)
+
+    # Ordenar y contar
+    datos_combined = datos_combined.order_by('-fecha')
+    conteo_total = Procedimientos.objects.filter(id_division=8).count()
+
+    # Configuración de paginación
+    page = request.GET.get('page', 1)
+    paginator = Paginator(datos_combined, 10)
+
+    try:
+        datos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        datos_paginados = paginator.page(1)
+    except EmptyPage:
+        datos_paginados = paginator.page(paginator.num_pages)
 
     # Manejo de eliminación por solicitud POST
     if request.method == 'POST':
@@ -706,40 +772,25 @@ def View_psicologia(request):
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(datos_combined.values(
-            'id', 
-            'id_division__division',  # Nombre de la division relacionada
-            'tipo_servicio', 
-            'id_solicitante__nombres',  # Nombre del solicitante relacionado
-            'id_solicitante__apellidos',  # Nombre del solicitante relacionado
-            'id_solicitante__jerarquia',  # Nombre del solicitante relacionado
-            'solicitante_externo', 
-            'id_municipio__municipio',  # Nombre del municipio relacionado
-            'id_parroquia__parroquia',  # Nombre de la parroquia relacionada
-            'fecha', 
-            'hora', 
-            'direccion', 
-            'id_tipo_procedimiento__tipo_procedimiento'  # Tipo de procedimiento relacionado
-        ))
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'total': total, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
-
-
+    
+    
     # Renderizar la página normal
     return render(request, "Divisiones/psicologia.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "datos": datos_combined,
-        "total": total,
+        "datos": datos_paginados,
+        "total": contar_procedimientos_hoy_division(8),  # Conteo de procedimientos de hoy para la división Enfermeria
         "contador_total": conteo_total,
-        "fecha_actual": fecha_inicio.strftime("%Y-%m-%d"),  # El día actual
+        "filtro_parroquia": parroquia,
+        "filtro_procedimiento": procedimiento,
+        "filtro_trimestre": trimestre,
+        "procedimientos_list": Tipos_Procedimientos.objects.filter(id_division=8).distinct(),
+        "parroquias_list": Parroquias.objects.all(),
     })
 
+# Tabla general
 def tabla_general(request):
     user = request.session.get('user')
     if not user:
@@ -821,3 +872,5 @@ def tabla_general(request):
         "parroquias_list": Parroquias.objects.all(),
         "filtro_trimestre": trimestre,
     })
+
+
