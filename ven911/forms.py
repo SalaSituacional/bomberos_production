@@ -46,13 +46,6 @@ class ServicioForm(ModelForm):
         
         # Definir el orden de las jerarquías (de mayor a menor rango)
         HIERARCHY_ORDER = [
-            'General',
-            'Coronel',
-            'Teniente Coronel',
-            'Mayor',
-            'Capitán',
-            'Primer Teniente',
-            'Teniente',
             'Sargento Mayor',
             'Sargento Primero',
             'Sargento Segundo',
@@ -73,6 +66,7 @@ class ServicioForm(ModelForm):
         personal_queryset = (
             Personal.objects
             .exclude(id__in=[0, 4])
+            .filter(jerarquia__in=HIERARCHY_ORDER)
             .only('jerarquia', 'apellidos', 'nombres')
             .annotate(hierarchy_order=hierarchy_order)
             .order_by('hierarchy_order')
