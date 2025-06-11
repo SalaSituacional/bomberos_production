@@ -48,7 +48,7 @@ class ServicioForm(ModelForm):
         HIERARCHY_ORDER = [
             'Sargento Mayor',
             'Sargento Primero',
-            'Sargento Segundo',
+            'Sargento segundo',
             'Cabo Primero',
             'Cabo Segundo',
             'Distinguido',
