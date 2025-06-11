@@ -119,15 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Función para abrir PDF en nueva pestaña
-  // const openPdfInNewTab = (pdfUrl, filename) => {
-  //   const newWindow = window.open(pdfUrl, '_blank');
-  //   if (newWindow) {
-  //     newWindow.document.title = filename;
-  //     newWindow.focus();
-  //   }
-  // };
-
   // Manejador para ver solicitudes
   const handleViewSolicitudes = async (boton) => {
     const referencia = boton.dataset.id;
@@ -196,15 +187,4 @@ document.addEventListener("DOMContentLoaded", () => {
       handleDeleteDocument(e.target.closest('.eliminar-documento'));
     }
   });
-
-  // // Función para mostrar errores
-  // const showError = (message) => {
-  //   const errorToast = document.createElement('div');
-  //   errorToast.className = 'alert alert-danger position-fixed top-0 end-0 m-3';
-  //   errorToast.style.zIndex = '9999';
-  //   errorToast.textContent = message;
-  //   document.body.appendChild(errorToast);
-    
-  //   setTimeout(() => errorToast.remove(), 5000);
-  // };
 });
