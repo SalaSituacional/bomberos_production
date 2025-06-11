@@ -5746,6 +5746,17 @@ checkbox-styles {
   #bar-chart-911{
     box-sizing: content-box !important;
   }
+
+  .contain-ven911-forms {
+    form {
+      width: 90%;
+
+      h2 {
+        width: 100%;
+      }
+    }
+  }
+
 }
 
 @media (max-width: 480px) {
