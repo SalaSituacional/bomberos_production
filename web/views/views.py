@@ -113,6 +113,8 @@ def Home(request):
                 return redirect("/dashboard_bienes/")
             if user.user == "Ven_911":
                 return redirect("/ven911/home/")
+            if user.user == "ComandanciaJunin":
+                return redirect("/junin/DashboardJunin/")
             else:
                 return redirect("/dashboard/")
         except Usuarios.DoesNotExist:

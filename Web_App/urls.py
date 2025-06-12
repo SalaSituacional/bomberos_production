@@ -26,12 +26,14 @@ from django.views.generic import TemplateView
 handler404 = custom_404_view
 from ven911.urls import *
 from seguridad_prevencion.urls import *
+from junin.urls import *
 
 #Se crean las rutas que se podran visitar en la aplicacion web.
 urlpatterns = [
     # includes
     path('ven911/', include('ven911.urls')),
     path('seguridad_prevencion/', include('seguridad_prevencion.urls')),
+    path('junin/', include('junin.urls')),
 
     # Admin
     path('alpha04/', admin.site.urls),

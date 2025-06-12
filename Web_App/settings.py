@@ -17,7 +17,7 @@ SECRET_KEY = 'django-insecure-usf!gyb)c_93(yhk-ab2gm%&_(hlk1ough81m110qhhrn4$cvy
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Debug true significa desarrollo modo de pruebas
-DEBUG = False
+DEBUG = True
 
 # ALLOWED_HOSTS = []
 
@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "web",
     "ven911",
-    "seguridad_prevencion"
+    "seguridad_prevencion",
+    "junin"
 ]
 
 MIDDLEWARE = [
