@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
         endpoint: '/seguridad_prevencion/generar_documento_inspeccion/',
         filenamePrefix: 'Guia_'
       },
+      Credencial: {
+        endpoint: '/seguridad_prevencion/generar_credencial/',
+        filenamePrefix: 'Credencial_'
+      },
       Eliminar: {
         endpoint: '/seguridad_prevencion/api/eliminar_solicitudes/'
       }
@@ -24,15 +28,18 @@ document.addEventListener("DOMContentLoaded", () => {
     templates: {
       'San Cristobal': {
         solicitud: 'Solictud_2025.pdf',
-        inspeccion: 'Inspeccion_2025.pdf'
+        inspeccion: 'Inspeccion_2025.pdf',
+        credencial: 'Credencial_2025.pdf'
       },
       'Junin': {
         solicitud: 'Solicitud_2025 (junin).pdf',
-        inspeccion: 'Inspeccion_2025 (junin).pdf'
+        inspeccion: 'Inspeccion_2025 (junin).pdf',
+        credencial: 'Credencial_2025 (junin).pdf'
       },
       'default': {
         solicitud: 'Solictud.pdf',
-        inspeccion: 'Inspeccion.pdf'
+        inspeccion: 'Inspeccion.pdf',
+        credencial: 'Credencial.pdf'
       }
     }
   };
@@ -73,7 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
                   title="Descargar Solicitud">
             <i class="bi bi-file-text"></i>
           </button>
-        </td>
+          ${ tieneProblemas ? '' : `
+          <button class="btn btn-info btn-sm mx-1 descargar-credencial" 
+                  data-solicitud="${item.id_solicitud}" 
+                  data-departamento="${item.comercio_departamento || 'default'}"
+                  title="Descargar Credencial">
+            <i class="bi bi-person-badge"></i>
+          </button>
+        </td>`}
       </tr>
       ${tieneProblemas ? `
         <tr class="table-${tipo === 'Solicitud' ? 'warning' : 'info'}">
@@ -172,6 +186,15 @@ document.addEventListener("DOMContentLoaded", () => {
     window.open(url, '_blank');
   };
 
+    // Manejador para descargar credencial
+  const handleDownloadCredencial = (boton) => {
+      const solicitudId = boton.dataset.solicitud;
+      const dependencia = boton.dataset.departamento;
+      const url = `/seguridad_prevencion/generar_credencial/${solicitudId}/?dependencia=${dependencia}`;
+      window.open(url, '_blank');
+  };
+
+
   // Manejador de eventos delegado
   document.addEventListener('click', (e) => {
     if (e.target.closest('.view-solicitudes')) {
@@ -185,6 +208,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     else if (e.target.closest('.eliminar-documento')) {
       handleDeleteDocument(e.target.closest('.eliminar-documento'));
+    }
+    else if (e.target.closest('.descargar-credencial')) {
+      handleDownloadCredencial(e.target.closest('.descargar-credencial'));
     }
   });
 });
