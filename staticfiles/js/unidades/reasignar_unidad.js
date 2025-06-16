@@ -6,8 +6,6 @@ botonesDivision.forEach((boton) => {
     let unidad = this.getAttribute("data-unidad-nombre"); // Nombre de la unidad
     let divisionActual = this.getAttribute("data-division-actual"); // Nombre de la unidad
 
-    console.log(id_unidad, unidad);
-
     // Obtener el elemento input original
     let input = document.getElementById("id_id_unidad_division");
 
