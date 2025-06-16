@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "web",
     "ven911",
     "seguridad_prevencion",
+    "junin",
     "mecanica",
 ]
 

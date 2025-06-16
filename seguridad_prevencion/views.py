@@ -15,22 +15,21 @@ import logging
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.views import View
-
 import os
-
 from dateutil.relativedelta import relativedelta
 import io
 import fitz  # PyMuPDF
 
+from io import BytesIO
+import qrcode
+from qrcode.image.pil import PilImage
+
 
 try:
-    import qrcode
-    from qrcode.image.pil import PilImage
     QR_AVAILABLE = True
 except ImportError:
     QR_AVAILABLE = False
 
-from io import BytesIO
 
 
 logger = logging.getLogger(__name__)
@@ -483,9 +482,13 @@ class CredencialDocumentGenerator(DocumentGenerator):
             f"Vencimiento: {fecha_vencimiento.strftime('%d/%m/%Y')}\n"
             f"ID: {str(self.datos_comercio.id_comercio).zfill(6)}"
         )
-    
+
+    #----------------- ESTA FUNCION SE ENCARGA DE LOS ESTILOS DEL TEXTO_--------------------------
     def fill_pdf_template(self, additional_data=None):
-        """Versión con estilos profesionales y tipografía especial para el nombre"""
+        """
+        Rellena la plantilla PDF con los datos, aplicando estilos profesionales
+        y manejando el centrado del texto de manera mejorada.
+        """
         doc = fitz.open(self.template_path)
         data = self.get_document_data()
         
@@ -495,11 +498,14 @@ class CredencialDocumentGenerator(DocumentGenerator):
         # Configuración de estilos profesionales
         styles = {
             "Nombre_Comercio": {
-                "size": 25,
-                "font_path": os.path.join(settings.BASE_DIR, 'web', 'static', 'fonts', 'GreatVibes-Regular.ttf'),  # Ruta absoluta
-                "color": (0.2, 0.2, 0.6),
-                "align": 1,
-                "spacing": 1
+                "size": 35,
+                # Usa 'fontfile' para rutas de fuentes, 'fontname' para nombres de PyMuPDF
+                "font": "Times-Roman", # O la ruta a tu fuente personalizada, ej: os.path.join(settings.BASE_DIR, 'web', 'static', 'fonts', 'GreatVibes-Regular.ttf')
+                "color": (0.2, 0.2, 0.6), # Color de relleno del texto (azul oscuro)
+                "align": 1, # Alineación centrada (se maneja en _insert_centered_text)
+                "render_mode": 2,       # Relleno y Trazado
+                "stroke_width": 0.8,    # Grosor del trazado
+                "stroke_color": (0.0, 0.0, 0.0) # Color del trazado (negro)
             },
             "Rif_Empresarial": {
                 "size": 20,
@@ -511,12 +517,12 @@ class CredencialDocumentGenerator(DocumentGenerator):
                 "size": 18,
                 "font": "Calibri",
                 "color": (0.3, 0.3, 0.3),  # Gris oscuro
-                "align": 0  # Alineación izquierda
+                "align": 1 # Cambiado a centrado para que funcione con el nuevo rect
             },
             "Fecha_Solicitud": {
                 "size": 12,
                 "font": "Calibri",
-                "color": (0.1, 0.1, 0.1),
+                "color": (0, 0, 0),
                 "align": 1  # Centrado
             },
             "ID_Comercio": {
@@ -524,100 +530,162 @@ class CredencialDocumentGenerator(DocumentGenerator):
                 "font": "Calibri-Bold",
                 "color": (0, 0, 0),  # Rojo oscuro
                 "align": 1  # Centrado
+            },
+            "Fecha_Emision": { # Asegúrate de tener estilo para Fecha_Emision si la usas como placeholder
+                "size": 12,
+                "font": "Calibri",
+                "color": (0, 0, 0),
+                "align": 1
             }
         }
 
         for page in doc:
-            # Calcular centro horizontal de la página
             page_width = page.rect.width  # Ancho total de la página
             
             for field, value in data.items():
-                if field == "Q":  # Saltar el QR
+                if field == "Q":  # Saltar el QR, ya que se maneja por separado
                     continue
                     
                 placeholder = f"({field})"
-                instances = page.search_for(placeholder)
+                instances = page.search_for(placeholder) # Busca todas las instancias del placeholder
                 
-                for rect in instances:
+                for rect in instances: # Itera sobre cada ocurrencia del placeholder
                     if not rect.is_valid:
+                        print(f"Rectángulo inválido para el campo {field}. Saltando.")
                         continue
                     
+                    # Obtén el estilo para el campo o un estilo por defecto
                     style = styles.get(field, {
                         "size": 11,
-                        "font": "Calibri",
+                        "font": "Times-Roman",
                         "color": (0, 0, 0),
-                        "align": 0
+                        "align": 0, # Default alignment (se forzará si es necesario)
+                        "render_mode": 0,    # Default render_mode
+                        "stroke_width": 0,   # Default stroke_width
+                        "stroke_color": (0, 0, 0) # Default stroke_color
                     })
-                    
-                    # Limpieza del área
+
+                    # Limpieza del área del placeholder original: dibuja un rectángulo blanco sobre él
+                    # Esto es crucial para eliminar el texto del placeholder antes de insertar el nuevo.
                     page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1), overlay=False)
                     
                     if field == "Nombre_Comercio":
+                        # Este campo tiene su propia lógica de centrado con _insert_centered_text
                         self._insert_centered_text(
                             page=page,
                             text=value,
-                            y_position=rect.y0,
+                            y_position=rect.y0, # Usar el y0 (coordenada superior) del placeholder original
                             style=styles["Nombre_Comercio"],
                             page_width=page_width
                         )
                     else:
-                        # Para otros campos (Calibri)
+                        # Para otros campos que se quieren centrar horizontalmente en la página:
+                        # Se define un nuevo rectángulo que abarca todo el ancho de la página (0 a page_width)
+                        # y mantiene la posición vertical del placeholder original (rect.y0).
+                        # La altura se expande un poco para asegurar suficiente espacio para el texto.
+                        
+                        # Ajusta el factor 1.5 si el texto se corta o tiene demasiado espacio vertical.
+                        # Este rect permite que 'align=1' (centrado) funcione para toda la página.
+                        target_rect = fitz.Rect(0, rect.y0, page_width, rect.y1 + style["size"] * 1.5) 
+
                         try:
                             page.insert_textbox(
-                                rect,
+                                target_rect, # Usa el nuevo rectángulo que abarca todo el ancho
                                 str(value),
                                 fontsize=style["size"],
                                 fontname=style["font"],
                                 color=style["color"],
-                                align=style["align"],
-                                overlay=True
+                                align=style["align"], # Usa la alineación definida en los estilos (idealmente 1 para centrado)
+                                overlay=True # Superpone el nuevo texto
                             )
-                        except:
-                            # Fallback simple
+                            # print(f"Texto '{value}' insertado para el campo '{field}' en {target_rect}")
+                        except Exception as e:
+                            # print(f"ERROR: No se pudo insertar texto para {field}: {e}. Cayendo a fallback.")
+                            # Fallback simple si insert_textbox falla.
+                            # Este fallback no es centrado automáticamente, solo inserta en un punto.
+                            # Si necesitas un fallback centrado, deberías replicar la lógica de _insert_centered_text aquí.
                             page.insert_text(
-                                point=(rect.x0 + 2, rect.y0 + style["size"]),
+                                point=(rect.x0 + 2, rect.y0 + style["size"]), # Punto relativo al placeholder original
                                 text=str(value),
                                 fontsize=style["size"],
                                 color=style["color"]
                             )
             
-            # Generación del QR
+            # Generación e inserción del QR
             if QR_AVAILABLE and "Q" in data:
                 self._insert_qr_code(page, data["Q"])
         
         return doc
-
+    # -------------- ESTA FUNCION SE ENCARGA DEL POSICIONAMIENTO Y ESTILOS DEL TEXTO----------------
     def _insert_centered_text(self, page, text, y_position, style, page_width):
-        """Versión que detecta automáticamente los métodos disponibles"""
-        print(f"\n=== Iniciando inserción de texto: '{text}' ===")
+        """
+        Inserta texto centrado horizontalmente en la página,
+        manejando fuentes personalizadas y estándar.
+        """
+        # print(f"\n=== Iniciando inserción de texto centrado: '{text}' ===")
         
-        font_path = os.path.normpath(os.path.join(settings.BASE_DIR, 'web', 'static', 'fonts', 'GreatVibes-Regular.ttf'))
-        
-        # Detección de método de medición disponible
+        # Determina si la fuente es un archivo (.ttf) o un nombre estándar de PyMuPDF
+        font_name_or_path = style.get("font", "Times-Roman")
+        is_font_file = font_name_or_path.lower().endswith('.ttf')
+
+        # Detección de método de medición de texto disponible
         has_get_text_length = hasattr(page, 'get_text_length')
-        print(f"• Método de medición disponible: {'get_text_length' if has_get_text_length else 'estimación aproximada'}")
-        # Cálculo del ancho del texto
+        # print(f"• Método de medición de texto disponible: {'get_text_length' if has_get_text_length else 'estimación aproximada'}")
+        
+        # Cálculo del ancho del texto para centrado
+        text_width = 0
         if has_get_text_length:
             try:
-                text_width = page.get_text_length(text, fontsize=style["size"], fontfile=font_path)
-            except:
-                text_width = len(text) * style["size"] * 0.6
+                if is_font_file:
+                     text_width = page.get_text_length(text, fontsize=style["size"], fontfile=font_name_or_path)
+                else:
+                    text_width = page.get_text_length(text, fontsize=style["size"], fontname=font_name_or_path)
+                # print(f"  Ancho de texto calculado con precisión: {text_width:.2f}")
+            except Exception as e:
+                # print(f"  ADVERTENCIA: Error al calcular text_length para '{font_name_or_path}': {e}. Usando estimación.")
+                text_width = len(text) * style["size"] * 0.6 # Fallback de estimación
         else:
-            text_width = len(text) * style["size"] * 0.6
+            text_width = len(text) * style["size"] * 0.6 # Fallback de estimación
+            # print(f"  Ancho de texto estimado: {text_width:.2f}")
             
-        x_center = (page_width - text_width) / 2
-        y_pos = y_position + style["size"] * 1.3
+        x_center = (page_width - text_width) / 2 + 10
         
-        # Intento con GreatVibes
-        page.insert_text(
-            (x_center, y_pos),
-            text,
-            fontsize=style["size"],
-            fontfile=font_path,
-            color=style["color"],
-            overlay=True
-        )
-        print(f"✅ Texto insertado en ({x_center:.2f}, {y_pos:.2f})")
+        # Ajuste vertical: y_position es la parte superior del placeholder.
+        # Añadimos un offset para posicionar la línea base del texto.
+        # Puedes ajustar este factor (ej. '1.2') para subir o bajar el texto.
+        # Un valor más alto moverá el texto más abajo. Un valor más bajo, más arriba.
+        y_pos = y_position + style["size"] * 1
+        
+        # Inserción del texto con los estilos definidos
+        try:
+            insert_params = {
+                "point": (x_center, y_pos),
+                "text": text,
+                "fontsize": style["size"],
+                "color": style["color"],
+                "overlay": True,
+                "render_mode": style.get("render_mode", 0),
+                "stroke_width": style.get("stroke_width", 0),
+                "stroke_color": style.get("stroke_color", (0, 0, 0))
+            }
+            if is_font_file:
+                insert_params["fontfile"] = font_name_or_path
+            else:
+                insert_params["fontname"] = font_name_or_path
+
+            page.insert_text(**insert_params)
+            
+            # print(f"✅ Texto insertado en ({x_center:.2f}, {y_pos:.2f}) con render_mode={insert_params['render_mode']}")
+        except Exception as e:
+            # print(f"❌ ERROR al insertar texto en _insert_centered_text: {e}")
+            # Fallback simple si la inserción con estilo falla (sin render_mode especial)
+            page.insert_text(
+                (x_center, y_pos),
+                text,
+                fontsize=style["size"],
+                color=style["color"],
+                overlay=True
+            )
         return
                 
     def _wrap_text(self, text, max_chars):
@@ -689,7 +757,7 @@ class CredencialDocumentGenerator(DocumentGenerator):
             )
             
         except Exception as e:
-            print(f"Error generando QR: {e}")
+            # print(f"Error generando QR: {e}")
             # Insertar mensaje de fallback
             fallback_text = "CÓDIGO QR\nNO DISPONIBLE"
             fallback_rect = fitz.Rect(
@@ -842,13 +910,13 @@ def agregar_comercio(request):
 
 
 def generar_excel_solicitudes(request):
-    print("=== INICIO DE generar_excel_solicitudes ===")
+    # print("=== INICIO DE generar_excel_solicitudes ===")
     
     user = request.session.get('user')
-    print(f"Datos de usuario en sesión: {user}")
+    # print(f"Datos de usuario en sesión: {user}")
     
     if not user:
-        print("Redireccionando: No hay usuario en sesión")
+        # print("Redireccionando: No hay usuario en sesión")
         return JsonResponse({'error': 'No autenticado'}, status=401)
     
     # Obtener parámetros de filtro
@@ -858,31 +926,31 @@ def generar_excel_solicitudes(request):
     page = int(request.GET.get('page', 1))
     page_size = int(request.GET.get('page_size', 500))
     departamento_filtro = request.GET.get('departamento', '').strip()
-    print(f"Valor recibido de departamento: '{departamento_filtro}'")  # Debe mostrar 'Junin'
+    # print(f"Valor recibido de departamento: '{departamento_filtro}'")  # Debe mostrar 'Junin'
     
-    print(f"Parámetros recibidos - fecha_inicio: {fecha_inicio}, fecha_fin: {fecha_fin}, solo_ultimos: {solo_ultimos}, departamento: {departamento_filtro}")
+    # print(f"Parámetros recibidos - fecha_inicio: {fecha_inicio}, fecha_fin: {fecha_fin}, solo_ultimos: {solo_ultimos}, departamento: {departamento_filtro}")
     
     # Determinar departamentos permitidos según el usuario
     username = user.get('user', '')
-    print(f"Username obtenido: {username}")
+    # print(f"Username obtenido: {username}")
     
     if username in ['SeRvEr', 'Sala_Situacional']:
-        print("Usuario identificado como Admin/Sala_Situacional")
+        # print("Usuario identificado como Admin/Sala_Situacional")
         if departamento_filtro:
             departamentos_permitidos = [departamento_filtro]
         else:
             departamentos_permitidos = ['Junin', 'San Cristobal']
     elif username == 'Prevencion05':
-        print("Usuario identificado como Prevencion05")
+        # print("Usuario identificado como Prevencion05")
         departamentos_permitidos = ['San Cristobal']
     elif username == 'Junin':
-        print("Usuario identificado como Junin")
+        # print("Usuario identificado como Junin")
         departamentos_permitidos = ['Junin']
     else:
-        print(f"Usuario no reconocido: {username}. Devolviendo lista vacía")
+        # print(f"Usuario no reconocido: {username}. Devolviendo lista vacía")
         return JsonResponse([], safe=False)
 
-    print(f"Departamentos permitidos: {departamentos_permitidos}")
+    # print(f"Departamentos permitidos: {departamentos_permitidos}")
 
     # Construir consulta base
     queryset = Solicitudes.objects.select_related(
@@ -891,14 +959,14 @@ def generar_excel_solicitudes(request):
         id_solicitud__departamento__in=departamentos_permitidos
     ).order_by('-fecha_solicitud')
 
-    print(f"Total registros inicial: {queryset.count()}")
+    # print(f"Total registros inicial: {queryset.count()}")
 
     # Aplicar filtros de fecha si existen
     if fecha_inicio:
         try:
             fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d').date()
             queryset = queryset.filter(fecha_solicitud__gte=fecha_inicio)
-            print(f"Filtro fecha_inicio aplicado: {fecha_inicio}")
+            # print(f"Filtro fecha_inicio aplicado: {fecha_inicio}")
         except ValueError:
             print("Formato de fecha inicio inválido")
 
@@ -906,15 +974,15 @@ def generar_excel_solicitudes(request):
         try:
             fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d').date()
             queryset = queryset.filter(fecha_solicitud__lte=fecha_fin)
-            print(f"Filtro fecha_fin aplicado: {fecha_fin}")
+            # print(f"Filtro fecha_fin aplicado: {fecha_fin}")
         except ValueError:
             print("Formato de fecha fin inválido")
 
-    print(f"Total registros después de filtros fecha: {queryset.count()}")
+    # print(f"Total registros después de filtros fecha: {queryset.count()}")
 
     # Manejar diferentes modos de exportación
     if solo_ultimos:
-        print("Modo: Solo últimas solicitudes")
+        # print("Modo: Solo últimas solicitudes")
         # Obtener solo la última solicitud por comercio
         subquery = Solicitudes.objects.filter(
             id_solicitud=models.OuterRef('id_solicitud')
@@ -922,13 +990,13 @@ def generar_excel_solicitudes(request):
 
         queryset = queryset.filter(id__in=subquery)
     else:
-        print("Modo: Todas las solicitudes")
+        # print("Modo: Todas las solicitudes")
         # Para exportar todo, usamos paginación
         paginator = Paginator(queryset, page_size)
         page_obj = paginator.get_page(page)
         queryset = page_obj.object_list
 
-    print(f"Total registros final: {queryset.count()}")
+    # print(f"Total registros final: {queryset.count()}")
 
     # Preparar datos
     data = []
@@ -949,11 +1017,11 @@ def generar_excel_solicitudes(request):
                 'Parroquia': solicitud.parroquia.parroquia if solicitud.parroquia else 'N/A',
             })
         except Exception as e:
-            print(f"Error procesando solicitud {solicitud.id}: {str(e)}")
+            # print(f"Error procesando solicitud {solicitud.id}: {str(e)}")
             continue
 
-    print(f"Total de registros a exportar: {len(data)}")
-    print("=== FIN DE generar_excel_solicitudes ===")
+    # print(f"Total de registros a exportar: {len(data)}")
+    # print("=== FIN DE generar_excel_solicitudes ===")
     
     return JsonResponse(data, safe=False)
 
