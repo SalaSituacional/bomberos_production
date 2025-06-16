@@ -34,7 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "web",
     "ven911",
-    "seguridad_prevencion"
+    "seguridad_prevencion",
+    "junin",
+    "mecanica",
 ]
 
 MIDDLEWARE = [

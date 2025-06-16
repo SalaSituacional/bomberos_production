@@ -2,7 +2,7 @@ let mesExcel = "";
 
 // Función para descargar el archivo Excel con los datos de capacitación
 function descargarExcelUnidades(mes) {
-  fetch(`/generar-excel-reportes-unidades/?mes=${mes}`)
+  fetch(`/mecanica/generar-excel-reportes-unidades/?mes=${mes}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

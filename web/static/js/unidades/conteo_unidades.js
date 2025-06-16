@@ -1,4 +1,4 @@
-fetchWithLoader("/api/conteo_unidades/")
+fetchWithLoader("/mecanica/api/conteo_unidades/")
   .then(response => response)
   .then(data => conteoUnidades(data))
   .catch(error => console.error("Error al obtener los datos", error));

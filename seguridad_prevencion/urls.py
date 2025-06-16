@@ -18,7 +18,8 @@ urlpatterns = [
     # path('planillacertificado/', planilla_certificado, name='planilla_certificado_prevencion'),
     path('generar_documento_guia/<int:id>/', doc_Guia, name='generar_documento_guia'),
     path('generar_documento_inspeccion/<int:id>/', doc_Inspeccion, name='generar_documento_inspeccion'),
-    
+    path('generar_credencial/<int:id>/', doc_Credencial, name='generar_credencial'),
+
     path('api/eliminar_solicitudes/<int:id>/', api_eliminar_solicitudes, name='api_eliminar_solicitudes'),
 
     path('editar_solicitud/<int:id>/', editar_solicitud, name='editar_solicitud'),

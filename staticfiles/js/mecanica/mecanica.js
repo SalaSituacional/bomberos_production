@@ -37,7 +37,7 @@ const formatDate = (dateStr) => {
 // Obtener conductores desde la API
 const fetchConductores = async () => {
   try {
-    const response = fetchWithLoader('/api/conductores/');
+    const response = fetchWithLoader('/mecanica/api/conductores/');
     conductoresData = await response;
     renderConductores();
   } catch (error) {
@@ -267,7 +267,7 @@ confirmarEliminarBtn.addEventListener('click', async () => {
   if (!conductorAEliminar) return;
 
   try {
-    const response = await fetchWithLoader(`/api/conductores/${conductorAEliminar}/`, {
+    const response = await fetchWithLoader(`/mecanica/api/conductores/${conductorAEliminar}/`, {
       method: 'DELETE',
       headers: {
         'X-CSRFToken': csrftoken,

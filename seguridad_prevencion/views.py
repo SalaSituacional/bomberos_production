@@ -15,6 +15,22 @@ import logging
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.views import View
+import os
+from dateutil.relativedelta import relativedelta
+import io
+import fitz  # PyMuPDF
+
+from io import BytesIO
+import qrcode
+from qrcode.image.pil import PilImage
+
+
+try:
+    QR_AVAILABLE = True
+except ImportError:
+    QR_AVAILABLE = False
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -284,15 +300,18 @@ class DocumentGenerator:
     TEMPLATES = {
         'San Cristobal': {
             'solicitud': 'web/static/assets/Solictud_2025.pdf',
-            'inspeccion': 'web/static/assets/Inspeccion_2025.pdf'
+            'inspeccion': 'web/static/assets/Inspeccion_2025.pdf',
+            'credencial': 'web/static/assets/Certificado_Sistema_SC.pdf'
         },
         'Junin': {
-            'solicitud': 'web/static/assets/Documentos Junin/Solictud_2025 (junin).pdf',
-            'inspeccion': 'web/static/assets/Documentos Junin/Inspeccion_2025 (junin).pdf'
+            'solicitud': 'web/static/assets/documentos_junin/Solictud_2025 (junin).pdf',
+            'inspeccion': 'web/static/assets/documentos_junin/Inspeccion_2025 (junin).pdf',
+            'credencial': 'web/static/assets/documentos_junin/Certificado_Sistema_Junin.pdf'
         },
         'default': {
             'solicitud': 'web/static/assets/Solictud.pdf',
-            'inspeccion': 'web/static/assets/Inspeccion.pdf'
+            'inspeccion': 'web/static/assets/Inspeccion.pdf',
+            'credencial': 'web/static/assets/Certificado_Sistema.pdf'
         }
     }
     
@@ -308,7 +327,13 @@ class DocumentGenerator:
     def get_template_path(self):
         """Obtiene la ruta de la plantilla según la dependencia"""
         template_type = self.get_template_type()
-        return self.TEMPLATES.get(self.dependencia, self.TEMPLATES['default'])[template_type]
+        try:
+            templates = self.TEMPLATES.get(self.dependencia, self.TEMPLATES['default'])
+            if template_type not in templates:
+                raise ValueError(f"Plantilla '{template_type}' no definida para dependencia '{self.dependencia}'")
+            return templates[template_type]
+        except KeyError as e:
+            raise ValueError(f"Error al acceder a plantillas: {str(e)}")
     
     def get_template_type(self):
         """Método abstracto para definir el tipo de plantilla"""
@@ -423,6 +448,273 @@ class InspeccionDocumentGenerator(DocumentGenerator):
     def get_output_filename(self):
         return f"Solicitud_inspeccion_{self.solicitud.id}.pdf"
 
+class CredencialDocumentGenerator(DocumentGenerator):
+    """Generador optimizado para documentos de Credencial"""
+    
+    def get_template_type(self):
+        return 'credencial'
+    
+    def get_output_filename(self):
+        return f"Credencial_{self.datos_comercio.nombre_comercio}_{self.solicitud.id}.pdf"
+    
+    def get_document_data(self):
+        """Obtiene todos los datos necesarios para la credencial"""
+        base_data = super().get_document_data()
+        
+        fecha_emision = date.today()
+        
+        additional_data = {
+            "Fecha_Emision": fecha_emision.strftime('%d/%m/%Y'),
+            "Q": self.generate_qr_content(fecha_emision, fecha_emision + relativedelta(years=1))
+        }
+    
+        base_data.update(additional_data)
+        return base_data
+    
+    def generate_qr_content(self, fecha_emision, fecha_vencimiento):
+        """Genera el contenido estructurado para el QR"""
+        return (
+            f"CERTIFICADO DE CONFORMIDAD\n"
+            f"Comercio: {self.datos_comercio.nombre_comercio}\n"
+            f"RIF: {self.datos_comercio.rif_empresarial}\n"
+            f"Dirección: {self.solicitud.direccion}\n"
+            f"Emisión: {fecha_emision.strftime('%d/%m/%Y')}\n"
+            f"Vencimiento: {fecha_vencimiento.strftime('%d/%m/%Y')}\n"
+            f"ID: {str(self.datos_comercio.id_comercio).zfill(6)}"
+        )
+    
+    def fill_pdf_template(self, additional_data=None):
+        """Versión con estilos profesionales y tipografía especial para el nombre"""
+        doc = fitz.open(self.template_path)
+        data = self.get_document_data()
+        
+        if additional_data:
+            data.update(additional_data)
+        
+        # Configuración de estilos profesionales
+        styles = {
+            "Nombre_Comercio": {
+                "size": 30,
+                "font": "Times-Roman", # O la ruta a tu fuente si es personalizada, ej: os.path.join(settings.BASE_DIR, 'web', 'static', 'fonts', 'GreatVibes-Regular.ttf')
+                "color": (0.2, 0.2, 0.6), # Color de relleno del texto (azul oscuro)
+                "align": 1,
+                "spacing": 1, # Este 'spacing' no se usa directamente por insert_text, ver explicación abajo
+                "render_mode": 2,       # <-- ¡NUEVO! Relleno y Trazado
+                "stroke_width": 0.8,    # <-- ¡NUEVO! Grosor del trazado (0.5 a 1.5 suele ser bueno)
+                "stroke_color": (0.0, 0.0, 0.0) # <-- ¡NUEVO! Color del trazado (negro)
+            },
+            "Rif_Empresarial": {
+                "size": 20,
+                "font": "Calibri-Bold",
+                "color": (0.1, 0.1, 0.1),  # Negro suave
+                "align": 1  # Centrado
+            },
+            "Direccion": {
+                "size": 18,
+                "font": "Calibri",
+                "color": (0.3, 0.3, 0.3),  # Gris oscuro
+                "align": 0  # Alineación izquierda
+            },
+            "Fecha_Solicitud": {
+                "size": 12,
+                "font": "Calibri",
+                "color": (0.1, 0.1, 0.1),
+                "align": 1  # Centrado
+            },
+            "ID_Comercio": {
+                "size": 11,
+                "font": "Calibri-Bold",
+                "color": (0, 0, 0),  # Rojo oscuro
+                "align": 1  # Centrado
+            }
+        }
+
+        for page in doc:
+            # Calcular centro horizontal de la página
+            page_width = page.rect.width  # Ancho total de la página
+            
+            for field, value in data.items():
+                if field == "Q":  # Saltar el QR
+                    continue
+                    
+                placeholder = f"({field})"
+                instances = page.search_for(placeholder)
+                
+                for rect in instances:
+                    if not rect.is_valid:
+                        continue
+                    
+                    # Obtén el estilo para el campo o un estilo por defecto
+                    style = styles.get(field, {
+                        "size": 11,
+                        "font": "Times-Roman", # Cambiado 
+                        "color": (0, 0, 0),
+                        "align": 0,
+                        "render_mode": 0,    # Default render_mode
+                        "stroke_width": 0,   # Default stroke_width
+                        "stroke_color": (0, 0, 0) # Default stroke_color
+                    })
+
+                    
+                    # Limpieza del área
+                    page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1), overlay=False)
+                    
+                    if field == "Nombre_Comercio":
+                        self._insert_centered_text(
+                            page=page,
+                            text=value,
+                            y_position=rect.y0,
+                            style=styles["Nombre_Comercio"],
+                            page_width=page_width
+                        )
+                    else:
+                        # Para otros campos (Calibri)
+                        try:
+                            page.insert_textbox(
+                                rect,
+                                str(value),
+                                fontsize=style["size"],
+                                fontname=style["font"],
+                                color=style["color"],
+                                align=style["align"],
+                                overlay=True
+                            )
+                        except:
+                            # Fallback simple
+                            page.insert_text(
+                                point=(rect.x0 + 2, rect.y0 + style["size"]),
+                                text=str(value),
+                                fontsize=style["size"],
+                                color=style["color"]
+                            )
+            
+            # Generación del QR
+            if QR_AVAILABLE and "Q" in data:
+                self._insert_qr_code(page, data["Q"])
+        
+        return doc
+
+    def _insert_centered_text(self, page, text, y_position, style, page_width):
+        """Versión que detecta automáticamente los métodos disponibles"""
+        print(f"\n=== Iniciando inserción de texto: '{text}' ===")
+        
+        font_path = "Times-Roman"
+        
+        # Detección de método de medición disponible
+        has_get_text_length = hasattr(page, 'get_text_length')
+        print(f"• Método de medición disponible: {'get_text_length' if has_get_text_length else 'estimación aproximada'}")
+        # Cálculo del ancho del texto
+        if has_get_text_length:
+            try:
+                text_width = page.get_text_length(text, fontsize=style["size"], fontfile=font_path)
+            except:
+                text_width = len(text) * style["size"] * 0.6
+        else:
+            text_width = len(text) * style["size"] * 0.6
+            
+        x_center = (page_width - text_width) / 2
+        y_pos = y_position + style["size"] * 1.3
+        
+        # Intento con GreatVibes
+        page.insert_text(
+            (x_center, y_pos),
+            text,
+            fontsize=style["size"],
+            fontfile=font_path,
+            color=style["color"],
+            overlay=True
+        )
+        print(f"✅ Texto insertado en ({x_center:.2f}, {y_pos:.2f})")
+        return
+                
+    def _wrap_text(self, text, max_chars):
+        """Divide el texto en líneas según el máximo de caracteres"""
+        words = text.split()
+        lines = []
+        current_line = ""
+        
+        for word in words:
+            if len(current_line) + len(word) + 1 <= max_chars:
+                current_line = f"{current_line} {word}".strip()
+            else:
+                lines.append(current_line)
+                current_line = word
+        
+        if current_line:
+            lines.append(current_line)
+        
+        return "\n".join(lines)
+
+    def _insert_qr_code(self, page, qr_content):
+        """Método mejorado para inserción de QR con validación"""
+        # Buscar área designada para el QR
+        qr_markers = ["[Q]", "QR_CODE", "QR_IMAGE"]
+        qr_area = None
+        
+        for marker in qr_markers:
+            qr_area = page.search_for(marker)
+            if qr_area:
+                qr_area = qr_area[0]  # Tomar la primera coincidencia
+                break
+        
+        # Si no se encuentra marcador, usar área predeterminada
+        if not qr_area:
+            page_center_x = page.rect.width / 2
+            qr_size = 100  # Tamaño predeterminado
+            qr_area = fitz.Rect(
+                page_center_x - qr_size/2,
+                400,  # Posición Y aproximada
+                page_center_x + qr_size/2,
+                400 + qr_size
+            )
+        
+        try:
+            # Validar área del QR
+            if not qr_area.is_valid or qr_area.is_empty:
+                raise ValueError("Área QR inválida")
+            
+            # Generar imagen QR
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_H,
+                box_size=6,
+                border=1,
+            )
+            qr.add_data(qr_content)
+            qr.make(fit=True)
+            
+            img = qr.make_image(fill_color="black", back_color="white")
+            img_bytes = io.BytesIO()
+            img.save(img_bytes, format='PNG')
+            img_bytes.seek(0)
+            
+            # Insertar imagen
+            page.insert_image(
+                qr_area,
+                stream=img_bytes.getvalue(),
+                keep_proportion=True
+            )
+            
+        except Exception as e:
+            print(f"Error generando QR: {e}")
+            # Insertar mensaje de fallback
+            fallback_text = "CÓDIGO QR\nNO DISPONIBLE"
+            fallback_rect = fitz.Rect(
+                qr_area.x0,
+                qr_area.y0,
+                qr_area.x1,
+                qr_area.y0 + 40  # Altura suficiente para el texto
+            )
+            
+            if fallback_rect.is_valid and not fallback_rect.is_empty:
+                page.insert_textbox(
+                    fallback_rect,
+                    fallback_text,
+                    fontsize=8,
+                    color=(1, 0, 0),
+                    align=1
+                )
+  
 # Vistas
 def doc_Guia(request, id):
     dependencia = request.GET.get('dependencia')
@@ -434,6 +726,10 @@ def doc_Inspeccion(request, id):
     generator = InspeccionDocumentGenerator(id, dependencia)
     return generator.generate_response()
 
+def doc_Credencial(request, id):
+    dependencia = request.GET.get('dependencia')
+    generator = CredencialDocumentGenerator(id, dependencia)
+    return generator.generate_response()
 
 
 
@@ -553,13 +849,13 @@ def agregar_comercio(request):
 
 
 def generar_excel_solicitudes(request):
-    print("=== INICIO DE generar_excel_solicitudes ===")
+    # print("=== INICIO DE generar_excel_solicitudes ===")
     
     user = request.session.get('user')
-    print(f"Datos de usuario en sesión: {user}")
+    # print(f"Datos de usuario en sesión: {user}")
     
     if not user:
-        print("Redireccionando: No hay usuario en sesión")
+        # print("Redireccionando: No hay usuario en sesión")
         return JsonResponse({'error': 'No autenticado'}, status=401)
     
     # Obtener parámetros de filtro
@@ -569,31 +865,31 @@ def generar_excel_solicitudes(request):
     page = int(request.GET.get('page', 1))
     page_size = int(request.GET.get('page_size', 500))
     departamento_filtro = request.GET.get('departamento', '').strip()
-    print(f"Valor recibido de departamento: '{departamento_filtro}'")  # Debe mostrar 'Junin'
+    # print(f"Valor recibido de departamento: '{departamento_filtro}'")  # Debe mostrar 'Junin'
     
-    print(f"Parámetros recibidos - fecha_inicio: {fecha_inicio}, fecha_fin: {fecha_fin}, solo_ultimos: {solo_ultimos}, departamento: {departamento_filtro}")
+    # print(f"Parámetros recibidos - fecha_inicio: {fecha_inicio}, fecha_fin: {fecha_fin}, solo_ultimos: {solo_ultimos}, departamento: {departamento_filtro}")
     
     # Determinar departamentos permitidos según el usuario
     username = user.get('user', '')
-    print(f"Username obtenido: {username}")
+    # print(f"Username obtenido: {username}")
     
     if username in ['SeRvEr', 'Sala_Situacional']:
-        print("Usuario identificado como Admin/Sala_Situacional")
+        # print("Usuario identificado como Admin/Sala_Situacional")
         if departamento_filtro:
             departamentos_permitidos = [departamento_filtro]
         else:
             departamentos_permitidos = ['Junin', 'San Cristobal']
     elif username == 'Prevencion05':
-        print("Usuario identificado como Prevencion05")
+        # print("Usuario identificado como Prevencion05")
         departamentos_permitidos = ['San Cristobal']
     elif username == 'Junin':
-        print("Usuario identificado como Junin")
+        # print("Usuario identificado como Junin")
         departamentos_permitidos = ['Junin']
     else:
-        print(f"Usuario no reconocido: {username}. Devolviendo lista vacía")
+        # print(f"Usuario no reconocido: {username}. Devolviendo lista vacía")
         return JsonResponse([], safe=False)
 
-    print(f"Departamentos permitidos: {departamentos_permitidos}")
+    # print(f"Departamentos permitidos: {departamentos_permitidos}")
 
     # Construir consulta base
     queryset = Solicitudes.objects.select_related(
@@ -602,14 +898,14 @@ def generar_excel_solicitudes(request):
         id_solicitud__departamento__in=departamentos_permitidos
     ).order_by('-fecha_solicitud')
 
-    print(f"Total registros inicial: {queryset.count()}")
+    # print(f"Total registros inicial: {queryset.count()}")
 
     # Aplicar filtros de fecha si existen
     if fecha_inicio:
         try:
             fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d').date()
             queryset = queryset.filter(fecha_solicitud__gte=fecha_inicio)
-            print(f"Filtro fecha_inicio aplicado: {fecha_inicio}")
+            # print(f"Filtro fecha_inicio aplicado: {fecha_inicio}")
         except ValueError:
             print("Formato de fecha inicio inválido")
 
@@ -617,15 +913,15 @@ def generar_excel_solicitudes(request):
         try:
             fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d').date()
             queryset = queryset.filter(fecha_solicitud__lte=fecha_fin)
-            print(f"Filtro fecha_fin aplicado: {fecha_fin}")
+            # print(f"Filtro fecha_fin aplicado: {fecha_fin}")
         except ValueError:
             print("Formato de fecha fin inválido")
 
-    print(f"Total registros después de filtros fecha: {queryset.count()}")
+    # print(f"Total registros después de filtros fecha: {queryset.count()}")
 
     # Manejar diferentes modos de exportación
     if solo_ultimos:
-        print("Modo: Solo últimas solicitudes")
+        # print("Modo: Solo últimas solicitudes")
         # Obtener solo la última solicitud por comercio
         subquery = Solicitudes.objects.filter(
             id_solicitud=models.OuterRef('id_solicitud')
@@ -633,13 +929,13 @@ def generar_excel_solicitudes(request):
 
         queryset = queryset.filter(id__in=subquery)
     else:
-        print("Modo: Todas las solicitudes")
+        # print("Modo: Todas las solicitudes")
         # Para exportar todo, usamos paginación
         paginator = Paginator(queryset, page_size)
         page_obj = paginator.get_page(page)
         queryset = page_obj.object_list
 
-    print(f"Total registros final: {queryset.count()}")
+    # print(f"Total registros final: {queryset.count()}")
 
     # Preparar datos
     data = []
@@ -660,11 +956,11 @@ def generar_excel_solicitudes(request):
                 'Parroquia': solicitud.parroquia.parroquia if solicitud.parroquia else 'N/A',
             })
         except Exception as e:
-            print(f"Error procesando solicitud {solicitud.id}: {str(e)}")
+            # print(f"Error procesando solicitud {solicitud.id}: {str(e)}")
             continue
 
-    print(f"Total de registros a exportar: {len(data)}")
-    print("=== FIN DE generar_excel_solicitudes ===")
+    # print(f"Total de registros a exportar: {len(data)}")
+    # print("=== FIN DE generar_excel_solicitudes ===")
     
     return JsonResponse(data, safe=False)
 
