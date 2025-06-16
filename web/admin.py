@@ -52,14 +52,6 @@ admin.site.register(RegistroPeticiones)
 # admin.site.register(Conductor)
 
 
-
-admin.site.register(CategoriaHerramienta)
-admin.site.register(Herramienta)
-admin.site.register(AsignacionHerramienta)
-admin.site.register(InventarioUnidad)
-admin.site.register(DetalleInventario)
-
-
 admin.site.register(InstagramPost)
 # admin.site.register(Divisiones)
 # admin.site.register(Municipios)

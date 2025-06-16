@@ -6,7 +6,7 @@ botonesEditar.forEach((boton) => {
 
       try {
         const response = await fetchWithLoader(
-          `/obtener_info_unidad/${id_unidad}/`
+          `/mecanica/obtener_info_unidad/${id_unidad}/`
         );
 
         let data = await response;
@@ -15,7 +15,7 @@ botonesEditar.forEach((boton) => {
         localStorage.setItem("datosSolicitud", JSON.stringify(data));
 
         // Redirigir a la página destino
-        window.location.href = "/formularioUnidades/";
+        window.location.href = "/mecanica/formularioUnidades/";
       } catch (error) {
         console.error("❌ Error al Obtener los Datos:", error);
       }

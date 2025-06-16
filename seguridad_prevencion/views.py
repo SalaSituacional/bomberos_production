@@ -15,22 +15,21 @@ import logging
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.views import View
-
 import os
-
 from dateutil.relativedelta import relativedelta
 import io
 import fitz  # PyMuPDF
 
+from io import BytesIO
+import qrcode
+from qrcode.image.pil import PilImage
+
 
 try:
-    import qrcode
-    from qrcode.image.pil import PilImage
     QR_AVAILABLE = True
 except ImportError:
     QR_AVAILABLE = False
 
-from io import BytesIO
 
 
 logger = logging.getLogger(__name__)
@@ -495,11 +494,14 @@ class CredencialDocumentGenerator(DocumentGenerator):
         # Configuración de estilos profesionales
         styles = {
             "Nombre_Comercio": {
-                "size": 25,
-                "font_path": os.path.join(settings.BASE_DIR, 'web', 'static', 'fonts', 'GreatVibes-Regular.ttf'),  # Ruta absoluta
-                "color": (0.2, 0.2, 0.6),
+                "size": 30,
+                "font": "Times-Roman", # O la ruta a tu fuente si es personalizada, ej: os.path.join(settings.BASE_DIR, 'web', 'static', 'fonts', 'GreatVibes-Regular.ttf')
+                "color": (0.2, 0.2, 0.6), # Color de relleno del texto (azul oscuro)
                 "align": 1,
-                "spacing": 1
+                "spacing": 1, # Este 'spacing' no se usa directamente por insert_text, ver explicación abajo
+                "render_mode": 2,       # <-- ¡NUEVO! Relleno y Trazado
+                "stroke_width": 0.8,    # <-- ¡NUEVO! Grosor del trazado (0.5 a 1.5 suele ser bueno)
+                "stroke_color": (0.0, 0.0, 0.0) # <-- ¡NUEVO! Color del trazado (negro)
             },
             "Rif_Empresarial": {
                 "size": 20,
@@ -542,12 +544,17 @@ class CredencialDocumentGenerator(DocumentGenerator):
                     if not rect.is_valid:
                         continue
                     
+                    # Obtén el estilo para el campo o un estilo por defecto
                     style = styles.get(field, {
                         "size": 11,
-                        "font": "Calibri",
+                        "font": "Times-Roman", # Cambiado 
                         "color": (0, 0, 0),
-                        "align": 0
+                        "align": 0,
+                        "render_mode": 0,    # Default render_mode
+                        "stroke_width": 0,   # Default stroke_width
+                        "stroke_color": (0, 0, 0) # Default stroke_color
                     })
+
                     
                     # Limpieza del área
                     page.draw_rect(rect, color=(1, 1, 1), fill=(1, 1, 1), overlay=False)
@@ -591,7 +598,7 @@ class CredencialDocumentGenerator(DocumentGenerator):
         """Versión que detecta automáticamente los métodos disponibles"""
         print(f"\n=== Iniciando inserción de texto: '{text}' ===")
         
-        font_path = os.path.normpath(os.path.join(settings.BASE_DIR, 'web', 'static', 'fonts', 'GreatVibes-Regular.ttf'))
+        font_path = "Times-Roman"
         
         # Detección de método de medición disponible
         has_get_text_length = hasattr(page, 'get_text_length')
@@ -842,13 +849,13 @@ def agregar_comercio(request):
 
 
 def generar_excel_solicitudes(request):
-    print("=== INICIO DE generar_excel_solicitudes ===")
+    # print("=== INICIO DE generar_excel_solicitudes ===")
     
     user = request.session.get('user')
-    print(f"Datos de usuario en sesión: {user}")
+    # print(f"Datos de usuario en sesión: {user}")
     
     if not user:
-        print("Redireccionando: No hay usuario en sesión")
+        # print("Redireccionando: No hay usuario en sesión")
         return JsonResponse({'error': 'No autenticado'}, status=401)
     
     # Obtener parámetros de filtro
@@ -858,31 +865,31 @@ def generar_excel_solicitudes(request):
     page = int(request.GET.get('page', 1))
     page_size = int(request.GET.get('page_size', 500))
     departamento_filtro = request.GET.get('departamento', '').strip()
-    print(f"Valor recibido de departamento: '{departamento_filtro}'")  # Debe mostrar 'Junin'
+    # print(f"Valor recibido de departamento: '{departamento_filtro}'")  # Debe mostrar 'Junin'
     
-    print(f"Parámetros recibidos - fecha_inicio: {fecha_inicio}, fecha_fin: {fecha_fin}, solo_ultimos: {solo_ultimos}, departamento: {departamento_filtro}")
+    # print(f"Parámetros recibidos - fecha_inicio: {fecha_inicio}, fecha_fin: {fecha_fin}, solo_ultimos: {solo_ultimos}, departamento: {departamento_filtro}")
     
     # Determinar departamentos permitidos según el usuario
     username = user.get('user', '')
-    print(f"Username obtenido: {username}")
+    # print(f"Username obtenido: {username}")
     
     if username in ['SeRvEr', 'Sala_Situacional']:
-        print("Usuario identificado como Admin/Sala_Situacional")
+        # print("Usuario identificado como Admin/Sala_Situacional")
         if departamento_filtro:
             departamentos_permitidos = [departamento_filtro]
         else:
             departamentos_permitidos = ['Junin', 'San Cristobal']
     elif username == 'Prevencion05':
-        print("Usuario identificado como Prevencion05")
+        # print("Usuario identificado como Prevencion05")
         departamentos_permitidos = ['San Cristobal']
     elif username == 'Junin':
-        print("Usuario identificado como Junin")
+        # print("Usuario identificado como Junin")
         departamentos_permitidos = ['Junin']
     else:
-        print(f"Usuario no reconocido: {username}. Devolviendo lista vacía")
+        # print(f"Usuario no reconocido: {username}. Devolviendo lista vacía")
         return JsonResponse([], safe=False)
 
-    print(f"Departamentos permitidos: {departamentos_permitidos}")
+    # print(f"Departamentos permitidos: {departamentos_permitidos}")
 
     # Construir consulta base
     queryset = Solicitudes.objects.select_related(
@@ -891,14 +898,14 @@ def generar_excel_solicitudes(request):
         id_solicitud__departamento__in=departamentos_permitidos
     ).order_by('-fecha_solicitud')
 
-    print(f"Total registros inicial: {queryset.count()}")
+    # print(f"Total registros inicial: {queryset.count()}")
 
     # Aplicar filtros de fecha si existen
     if fecha_inicio:
         try:
             fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d').date()
             queryset = queryset.filter(fecha_solicitud__gte=fecha_inicio)
-            print(f"Filtro fecha_inicio aplicado: {fecha_inicio}")
+            # print(f"Filtro fecha_inicio aplicado: {fecha_inicio}")
         except ValueError:
             print("Formato de fecha inicio inválido")
 
@@ -906,15 +913,15 @@ def generar_excel_solicitudes(request):
         try:
             fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d').date()
             queryset = queryset.filter(fecha_solicitud__lte=fecha_fin)
-            print(f"Filtro fecha_fin aplicado: {fecha_fin}")
+            # print(f"Filtro fecha_fin aplicado: {fecha_fin}")
         except ValueError:
             print("Formato de fecha fin inválido")
 
-    print(f"Total registros después de filtros fecha: {queryset.count()}")
+    # print(f"Total registros después de filtros fecha: {queryset.count()}")
 
     # Manejar diferentes modos de exportación
     if solo_ultimos:
-        print("Modo: Solo últimas solicitudes")
+        # print("Modo: Solo últimas solicitudes")
         # Obtener solo la última solicitud por comercio
         subquery = Solicitudes.objects.filter(
             id_solicitud=models.OuterRef('id_solicitud')
@@ -922,13 +929,13 @@ def generar_excel_solicitudes(request):
 
         queryset = queryset.filter(id__in=subquery)
     else:
-        print("Modo: Todas las solicitudes")
+        # print("Modo: Todas las solicitudes")
         # Para exportar todo, usamos paginación
         paginator = Paginator(queryset, page_size)
         page_obj = paginator.get_page(page)
         queryset = page_obj.object_list
 
-    print(f"Total registros final: {queryset.count()}")
+    # print(f"Total registros final: {queryset.count()}")
 
     # Preparar datos
     data = []
@@ -949,11 +956,11 @@ def generar_excel_solicitudes(request):
                 'Parroquia': solicitud.parroquia.parroquia if solicitud.parroquia else 'N/A',
             })
         except Exception as e:
-            print(f"Error procesando solicitud {solicitud.id}: {str(e)}")
+            # print(f"Error procesando solicitud {solicitud.id}: {str(e)}")
             continue
 
-    print(f"Total de registros a exportar: {len(data)}")
-    print("=== FIN DE generar_excel_solicitudes ===")
+    # print(f"Total de registros a exportar: {len(data)}")
+    # print("=== FIN DE generar_excel_solicitudes ===")
     
     return JsonResponse(data, safe=False)
 

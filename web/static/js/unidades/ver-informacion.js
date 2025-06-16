@@ -7,7 +7,7 @@ botonesVer.forEach((boton) => {
 
     try {
       const response = await fetchWithLoader(
-        `/mostrar_informacion/${id_unidad}/`
+        `/mecanica/mostrar_informacion/${id_unidad}/`
       );
 
       let data = await response;

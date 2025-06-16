@@ -1,4 +1,4 @@
-fetchWithLoader("/api/reportes_combustible/")
+fetchWithLoader("/mecanica/api/reportes_combustible/")
   .then((response) => response)
   .then((data) => conteoReportesCombustible(data))
   .catch((error) => console.error("Error al obtener los datos", error));
@@ -10,7 +10,7 @@ function conteoReportesCombustible(data) {
   document.getElementById("combustible-diario").innerHTML = data.reportes_hoy;
 }
 
-fetchWithLoader("/api/reportes_lubricantes/")
+fetchWithLoader("/mecanica/api/reportes_lubricantes/")
   .then((response) => response)
   .then((data) => conteoReportesLubricantes(data))
   .catch((error) => console.error("Error al obtener los datos", error));
@@ -22,7 +22,7 @@ function conteoReportesLubricantes(data) {
   document.getElementById("lubricantes-diario").innerHTML = data.reportes_hoy;
 }
 
-fetchWithLoader("/api/reportes_neumaticos/")
+fetchWithLoader("/mecanica/api/reportes_neumaticos/")
   .then((response) => response)
   .then((data) => conteoReportesNeumaticos(data))
   .catch((error) => console.error("Error al obtener los datos", error));
@@ -34,7 +34,7 @@ function conteoReportesNeumaticos(data) {
   document.getElementById("neumaticos-diario").innerHTML = data.reportes_hoy;
 }
 
-fetchWithLoader("/api/reportes_reparaciones/")
+fetchWithLoader("/mecanica/api/reportes_reparaciones/")
   .then((response) => response)
   .then((data) => conteoReportesReparaciones(data))
   .catch((error) => console.error("Error al obtener los datos", error));
@@ -46,7 +46,7 @@ function conteoReportesReparaciones(data) {
   document.getElementById("reparaciones-diario").innerHTML = data.reportes_hoy;
 }
 
-fetchWithLoader("/api/reportes_electricas/")
+fetchWithLoader("/mecanica/api/reportes_electricas/")
   .then((response) => response)
   .then((data) => conteoReportesElectricas(data))
   .catch((error) => console.error("Error al obtener los datos", error));
@@ -58,7 +58,7 @@ function conteoReportesElectricas(data) {
   document.getElementById("electricas-diario").innerHTML = data.reportes_hoy;
 }
 
-fetchWithLoader("/api/reportes_cambio_repuestos/")
+fetchWithLoader("/mecanica/api/reportes_cambio_repuestos/")
   .then((response) => response)
   .then((data) => conteoReportesCambioRepuestos(data))
   .catch((error) => console.error("Error al obtener los datos", error));
@@ -70,7 +70,7 @@ function conteoReportesCambioRepuestos(data) {
   document.getElementById("cambio-repuestos-diario").innerHTML = data.reportes_hoy;
 }
 
-fetchWithLoader("/api/reportes_colisiones_daños/")
+fetchWithLoader("/mecanica/api/reportes_colisiones_daños/")
   .then((response) => response)
   .then((data) => conteoReportesColisionesDaños(data))
   .catch((error) => console.error("Error al obtener los datos", error));
