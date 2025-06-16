@@ -26,7 +26,7 @@
             detalleModal.show();
 
             try {
-                const response = await fetchWithLoader(`/inventarios/ajax/${id}/`);
+                const response = await fetchWithLoader(`/mecanica/inventarios/ajax/${id}/`);
                 const data = await response;
 
                 // Construir HTML con los datos
@@ -91,14 +91,14 @@
 
     // Función auxiliar para clases de badges según estado
     function getEstadoBadgeClass(estado) {
-            const estadosClasses = {
-        'Bueno': 'bg-success',
-    'Regular': 'bg-warning',
-    'Malo': 'bg-danger',
-    'En reparación': 'bg-secondary'
-            };
-    return estadosClasses[estado] || 'bg-primary';
-        }
+        const estadosClasses = {
+            'Bueno': 'bg-success',
+            'Regular': 'bg-warning',
+            'Malo': 'bg-danger',
+            'En reparación': 'bg-secondary'
+        };
+        return estadosClasses[estado] || 'bg-primary';
+    }
 
     // Resetear el modal cuando se cierre
     detalleModal._element.addEventListener('hidden.bs.modal', function () {

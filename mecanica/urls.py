@@ -36,24 +36,29 @@ urlpatterns = [
     path('generar-excel-reportes-unidades/', generar_excel_reportes_unidades, name='generar_excel_reportes'),
 
     # Urls Para el Area de Invenario de Unidades
-    # Herramientas
-    path('unidades_inventario/', herramienta_list, name='inventario_unidades'),
-    path('herramientas/nueva/', herramienta_create, name='herramienta-create'),
-    path('herramientas/<int:pk>/editar/', herramienta_update, name='herramienta-update'),
+    # # Herramientas
+    path('herramientas/', listar_herramientas, name='listar-herramientas'),
+    path('herramientas/nueva/', crear_herramienta, name='crear-herramienta'),
+    path('herramientas/editar/<int:pk>/', editar_herramienta, name='editar-herramienta'),
+    path('herramientas/eliminar/<int:pk>/', eliminar_herramienta, name='eliminar-herramienta'),
     
-    # Asignaciones
-    path('asignaciones/', asignacion_list, name='asignacion-list'),
-    path('asignaciones/nueva/', asignacion_create, name='asignacion-create'),
-    path('asignaciones/<int:pk>/devolver/', asignacion_devolver, name='asignacion-devolver'),
+    # path('unidades_inventario/', herramienta_list, name='inventario_unidades'),
+    # path('herramientas/nueva/', herramienta_create, name='herramienta-create'),
+    # path('herramientas/<int:pk>/editar/', herramienta_update, name='herramienta-update'),
     
-    # Inventarios
-    path('inventarios/nuevo/', inventario_create, name='inventario-create'),
-    path('inventarios/<int:pk>/', inventario_detail, name='inventario-detalle'),
+    # # Asignaciones
+    # path('asignaciones/', asignacion_list, name='asignacion-list'),
+    # path('asignaciones/nueva/', asignacion_create, name='asignacion-create'),
+    # path('asignaciones/<int:pk>/devolver/', asignacion_devolver, name='asignacion-devolver'),
     
-    path('inventarios/', inventario_list, name='inventario-list'),
-    path('inventarios/ajax/<int:pk>/', inventario_detail_ajax, name='inventario-detail-ajax'),
+    # # Inventarios
+    # path('inventarios/nuevo/', inventario_create, name='inventario-create'),
+    # path('inventarios/<int:pk>/', inventario_detail, name='inventario-detalle'),
+    
+    # path('inventarios/', inventario_list, name='inventario-list'),
+    # path('inventarios/ajax/<int:pk>/', inventario_detail_ajax, name='inventario-detail-ajax'),
 
-    # Reportes
-    path('reportes/', reporte_inventario, name='reporte-inventario'),
+    # # Reportes
+    # path('reportes/', reporte_inventario, name='reporte-inventario'),
 
 ]

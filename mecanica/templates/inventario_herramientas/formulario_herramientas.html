@@ -1,6 +1,3 @@
-{% load customfilters %}
-{% load static %}
-
 {% if user.user == "SeRvEr" %}
 {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -9,22 +6,17 @@
 {% include "layouts/panel_comandancia.html" %}
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
-{% elif user.user == "Rescate03"%}
-{% include "layouts/panel_rescate.html" %}
-{% elif user.user == "Grumae02"%}
-{% include "layouts/panel_grumae.html" %}
-{% elif user.user == "Operaciones01"%}
-{% include "layouts/panel_operaciones.html" %}
 {% endif %}
+
+{% load static %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
-    <h3 class="division-title">Inventario de unidades</h3>
+    <h3 class="division-title">{{ titulo }}</h3>
     <section class="user-name">
-      <p>
-        {{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b>
-      </p>
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
         <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -41,51 +33,31 @@
   </div>
 </div>
 
-<div class="container-fluid container-modify">
-  <nav class="navbar navbar-expand-lg nav-inventario">
-    <ul class="nav nav-tabs border-radius-modify">
-      <li class="nav-item"><a class="nav-link" href="{% url 'inventario_unidades' %}">Herramientas</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'inventario-list' %}">Inventario</a></li>
-      <li class="nav-item"><a class="nav-link" href="{% url 'asignacion-list' %}">Asignaciones</a></li>
-    </ul>
-  </nav>
-  <br>
 
-  <div class="container-filter-inventario">
-    <div class="inventario-filter">
-      <span class="input-group-text">Nombre de la unidad:</span>
-      <input class="form-control" type="text" placeholder="Nombre">
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="form-group text-right">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <a href="{% url 'listar-herramientas' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
-  <div class="div-responsive-table responsive-table">
-
-    <table class="table table-hover" style="max-width: 100%;">
-      <thead>
-        <tr>
-          <th>Unidad</th>
-          {% for categoria in categorias %}
-          <th>{{ categoria.nombre }}</th>
-          {% endfor %}
-          <th>Total Asignado</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in data %}
-        <tr>
-          <td>{{ item.unidad.nombre_unidad }}</td>
-          {% for datos in item.categorias_lista %}
-          <td class="{% if datos.asignadas == 0 %}table-danger{% endif %}">
-            {{ datos.asignadas }} / {{ datos.total }}
-          </td>
-          {% endfor %}
-          <td>{{ item.total_asignadas }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
 </div>
 
-<script src="{% static 'js/unidades/filters/reportes.js' %}"></script>
+
+
+<footer class="footer">
+  <section class="text-reserved">
+    <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
+  </section>
+</footer>
 {% endblock %}
