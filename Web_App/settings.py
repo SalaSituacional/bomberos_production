@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap5',
     "web",
     "ven911",
     "seguridad_prevencion",
@@ -59,6 +61,9 @@ LOGIN_REDIRECT_URL = '/dashboard/'  # Cambia esto a la vista a la que quieres re
 
 SESSION_COOKIE_AGE = 18000  # Tiempo en segundos
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Cierra sesión al cerrar el navegador
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"  # Opcional
+CRISPY_TEMPLATE_PACK = "bootstrap5"  # Usa Bootstrap 5
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

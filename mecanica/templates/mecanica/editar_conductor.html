@@ -108,36 +108,6 @@
     <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
-<!-- 
-<script>
-  // Obtener el formulario por su ID
-  const form = document.getElementById("");
-
-  if (form) {
-    // Seleccionar todas las divs dentro del formulario
-    const innerDivs = form.querySelectorAll("div > div");
-
-    // Iterar sobre cada div y aplicar las clases a sus inputs y labels
-    innerDivs.forEach(div => {
-      const label = div.querySelector("label");
-      const input = div.querySelector("input");
-      const select = div.querySelector("select");
-
-      if (label) {
-        label.classList.add("form-label");
-      }
-
-      if (input) {
-        input.classList.add("form-control");
-      }
-
-      if (select) {
-        select.classList.add("form-select");
-      }
-    });
-  }
-
-</script> -->
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -149,7 +119,7 @@
       const newForm = licenciaContainer.firstElementChild.cloneNode(true); // Clona el primer div dentro del contenedor
 
       // Actualizar todos los atributos name/id con el nuevo índice
-      const oldPrefix = 'licencias-0-'; // Asumimos que el primer formulario tiene índice 0
+      const oldPrefix = 'licencias-1-'; // Asumimos que el primer formulario tiene índice 0
       const newPrefix = `licencias-${formNum}-`;
       const regex = new RegExp(oldPrefix.replace('-', '\\-'), 'g');
 
@@ -182,7 +152,7 @@
 
       // Insertar al final del contenedor
       licenciaContainer.appendChild(newForm);
-      totalForms.value = formNum + 1;
+      totalForms.value = formNum  + 1;
     });
   });
 </script>
