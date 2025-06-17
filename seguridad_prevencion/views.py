@@ -50,6 +50,11 @@ def certificados_prevencion(request):
     elif user['user'] == 'Prevencion05':
         # Asumimos que el modelo Comercio tiene un campo 'dependencia'
         comercios_query = Comercio.objects.filter(departamento = 'San Cristobal').order_by('id_comercio')
+    elif user['user'] == 'ComandanciaJunin':
+        # Asumimos que el modelo Comercio tiene un campo 'dependencia'
+        comercios_query = Comercio.objects.filter(departamento = 'Junin').order_by('id_comercio')
+    
+
     
     # Aplicar filtros adicionales si existen
     if numero_expediente == "GET ALL":
@@ -943,8 +948,8 @@ def generar_excel_solicitudes(request):
     elif username == 'Prevencion05':
         # print("Usuario identificado como Prevencion05")
         departamentos_permitidos = ['San Cristobal']
-    elif username == 'Junin':
-        # print("Usuario identificado como Junin")
+    elif username == 'ComandanciaJunin':
+        # print("Usuario identificado como ComandanciaJunin")
         departamentos_permitidos = ['Junin']
     else:
         # print(f"Usuario no reconocido: {username}. Devolviendo lista vacía")
