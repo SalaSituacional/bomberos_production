@@ -31,8 +31,29 @@
         </section>
 
     </div>
-    <!-- grafica barra horizontal -->
-    <div class="contain-ven911-dashboard">
+    <!-- Grafico de lineas year -->
+    <div class="contain-bar-pie-ven911">
+    <div class="chart-pie-ven911">
+        <h2>Panel De Servicios 911 (Anual)</h2>
+        <!-- Título y total para la gráfica anual -->
+        <h3 class="chart-title">Servicios por Tipo (Año: <span id="titulo-grafica-periodo_year"></span>)
+            <span id="total-servicios-grafica_year"></span></h3>
+        <!-- Canvas para la nueva gráfica de línea -->
+        <canvas id="line-chart-911"></canvas>
+    </div>
+    <br>
+    <div class="filter-control-ven911">
+        <label for="year" class="input-form">Año:</label>
+        <!-- Input para el año (corregido a type="number") -->
+        <input type="number" id="year-filter-input" name="year" class="form-control" min="2000" max="2100">
+        <!-- Botón para filtrar por año -->
+        <button type="submit" class="btn btn-danger" onclick="filterByYear()">Filtrar</button>
+        <!-- <button id="export-line-chart-btn" class="btn btn-danger">Exportar</button> -->
+    </div>
+</div>
+
+        
+        <!-- grafica barra horizontal -->
         <div class="contain-bar-pie-ven911">
             <div class="chart-pie-ven911">
                 <h2>Panel De Servicios 911</h2>
@@ -408,7 +429,9 @@
         const api_servicios_tipo = "{% url 'obtener_total_servicios' %}";
         const api_servicios_grafica = "{% url 'obtener_servicios_grafica' %}";
         const api_servicios_grafica_dia = "{% url 'obtener_servicios_grafica_dia' %}";
+        const apiUrlYear = "{% url 'api_servicios_grafico_year' %}"; 
         const planilla_pdf = "{% static 'assets/reporte_diarias_alcalde.pdf' %}";
+
     </script>
     <!-- cdn para los pdf -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
@@ -421,6 +444,7 @@
     <script src="{% static 'js/loader-function.js' %}"></script>
     <script src="{% static 'js/ven911/dashboard_chart.js' %}"></script>
     <script src="{% static 'js/ven911/dashboard_chart_bar.js' %}"></script>
+    <script src="{% static 'js/ven911/dashboard_line_year.js' %}"></script>
     <script src="{% static 'js/ven911/obtener_servicios.js' %}"></script>
     <script src="{% static 'js/ven911/pdf_planilla.js' %}"></script>
     <script src="{% static 'js/ven911/export_charts.js' %}"></script>

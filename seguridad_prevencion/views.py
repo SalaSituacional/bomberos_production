@@ -393,7 +393,7 @@ class DocumentGenerator:
                     page.insert_text(
                         point=(x, y_adjusted),
                         text=valor,
-                        fontsize=8,
+                        fontsize=7,
                         color=(0, 0, 0)
                     )
         
@@ -519,7 +519,7 @@ class CredencialDocumentGenerator(DocumentGenerator):
                 "align": 1  # Centrado
             },
             "Direccion": {
-                "size": 18,
+                "size": 14,
                 "font": "Calibri",
                 "color": (0.3, 0.3, 0.3),  # Gris oscuro
                 "align": 1 # Cambiado a centrado para que funcione con el nuevo rect
@@ -659,7 +659,7 @@ class CredencialDocumentGenerator(DocumentGenerator):
         # Añadimos un offset para posicionar la línea base del texto.
         # Puedes ajustar este factor (ej. '1.2') para subir o bajar el texto.
         # Un valor más alto moverá el texto más abajo. Un valor más bajo, más arriba.
-        y_pos = y_position + style["size"] * 1
+        y_pos = y_position + style["size"] * 0.9
         
         # Inserción del texto con los estilos definidos
         try:
