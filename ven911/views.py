@@ -23,6 +23,7 @@ from openpyxl import Workbook
 import json
 from openpyxl.styles import Font, Alignment
 from datetime import timedelta # Importa timedelta para operaciones de fecha
+from collections import defaultdict # Para agrupar y sumar fácilmente
 
 # Vista del dashboard Ven911
 @login_required
@@ -343,6 +344,50 @@ def api_servicios_grafico_dia(request):
             'end': end_date.isoformat() if day_filter else None
         }
     })
+
+# api servicios grafico por año
+def api_servicios_grafico_year(request):
+    # Obtener parámetro de año
+    year_filter = request.GET.get('year')
+    
+    # Filtrar servicios basados en el año si se proporciona
+    servicios_query = Servicio.objects.all()
+    
+    if year_filter:
+        try:
+            # Convertir el string del año a un entero
+            filter_year = int(year_filter)
+            
+            # Filtrar servicios solo por año
+            servicios_query = servicios_query.filter(
+                fecha__year=filter_year
+            )
+        except (ValueError, TypeError):
+            # Manejar error si el formato del año es incorrecto
+            pass
+    
+    # Anotar y contar los tipos de servicio para el año filtrado
+    # Esta es la lógica clave: agrupa por TipoServicio y suma sus cantidades
+    datos = TipoServicio.objects.filter(
+        servicio__in=servicios_query # Filtra por los servicios que ya fueron filtrados por año
+    ).annotate(
+        total=Sum('servicio__cantidad_tipo_servicio', filter=Q(servicio__fecha__isnull=False)
+        )
+    ).values_list('nombre', 'total').order_by('nombre')
+
+    # Preparar datos para la respuesta
+    labels = []
+    valores = []
+    for nombre, total in datos:
+        labels.append(nombre)
+        valores.append(total if total is not None else 0) # Asegurar que el total sea 0 si es None
+
+    return JsonResponse({
+        'labels': labels,
+        'data': valores,
+        'count': len(labels)
+    })
+
     
 # api para exportar y descargar excel
 

@@ -50,6 +50,11 @@ def certificados_prevencion(request):
     elif user['user'] == 'Prevencion05':
         # Asumimos que el modelo Comercio tiene un campo 'dependencia'
         comercios_query = Comercio.objects.filter(departamento = 'San Cristobal').order_by('id_comercio')
+    elif user['user'] == 'ComandanciaJunin':
+        # Asumimos que el modelo Comercio tiene un campo 'dependencia'
+        comercios_query = Comercio.objects.filter(departamento = 'Junin').order_by('id_comercio')
+    
+
     
     # Aplicar filtros adicionales si existen
     if numero_expediente == "GET ALL":
@@ -388,7 +393,7 @@ class DocumentGenerator:
                     page.insert_text(
                         point=(x, y_adjusted),
                         text=valor,
-                        fontsize=8,
+                        fontsize=7,
                         color=(0, 0, 0)
                     )
         
@@ -514,7 +519,7 @@ class CredencialDocumentGenerator(DocumentGenerator):
                 "align": 1  # Centrado
             },
             "Direccion": {
-                "size": 18,
+                "size": 14,
                 "font": "Calibri",
                 "color": (0.3, 0.3, 0.3),  # Gris oscuro
                 "align": 1 # Cambiado a centrado para que funcione con el nuevo rect
@@ -654,7 +659,7 @@ class CredencialDocumentGenerator(DocumentGenerator):
         # Añadimos un offset para posicionar la línea base del texto.
         # Puedes ajustar este factor (ej. '1.2') para subir o bajar el texto.
         # Un valor más alto moverá el texto más abajo. Un valor más bajo, más arriba.
-        y_pos = y_position + style["size"] * 1
+        y_pos = y_position + style["size"] * 0.9
         
         # Inserción del texto con los estilos definidos
         try:
@@ -943,8 +948,8 @@ def generar_excel_solicitudes(request):
     elif username == 'Prevencion05':
         # print("Usuario identificado como Prevencion05")
         departamentos_permitidos = ['San Cristobal']
-    elif username == 'Junin':
-        # print("Usuario identificado como Junin")
+    elif username == 'ComandanciaJunin':
+        # print("Usuario identificado como ComandanciaJunin")
         departamentos_permitidos = ['Junin']
     else:
         # print(f"Usuario no reconocido: {username}. Devolviendo lista vacía")
