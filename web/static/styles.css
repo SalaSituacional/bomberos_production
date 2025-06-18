@@ -4973,6 +4973,12 @@ checkbox-styles {
 .tabla_herramientas{
   width: 100%;
 }
+.tabla_herramientas_inventario{
+  width: 100%;
+}
+.tabla_asignaciones{
+  width: 100%;
+}
 
 .icons-accion {
   width: auto;

@@ -47,6 +47,10 @@ urlpatterns = [
     # path('herramientas/<int:pk>/editar/', herramienta_update, name='herramienta-update'),
     
     # # Asignaciones
+    path('asignaciones/', asignacion_unidades, name='asignacion-unidades'),
+    path('asignaciones/<int:unidad_id>/', detalle_asignacion, name='detalle-asignacion'),
+    path('asignaciones/devolver/<int:asignacion_id>/', devolver_herramienta, name='devolver-herramienta'),
+
     # path('asignaciones/', asignacion_list, name='asignacion-list'),
     # path('asignaciones/nueva/', asignacion_create, name='asignacion-create'),
     # path('asignaciones/<int:pk>/devolver/', asignacion_devolver, name='asignacion-devolver'),

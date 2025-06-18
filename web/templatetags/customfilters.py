@@ -22,3 +22,8 @@ def sum_attr(listado, attr_path):
         except (ValueError, TypeError):
             pass
     return total
+
+@register.filter
+def sub(value, arg):
+    """Resta el arg del value"""
+    return value - arg

@@ -9,6 +9,7 @@
 {% endif %}
 
 {% load static %}
+{% load customfilters %}
 
 {% block content %}
 <div class="general-dashboard">
@@ -34,9 +35,9 @@
 
 
 <div class="container-fluid">
-    
-    <div class="row mb-4">
+    <div class="row mb-4 text-end">
         <div class="col d-flex justify-content-end">
+            <a href="{% url 'asignacion-unidades' %}" class="btn btn-danger me-2">Asignaciones</a>
             <a href="{% url 'crear-herramienta' %}" class="btn btn-danger">
                 <i class="bi bi-plus-circle me-2"></i> Nueva Herramienta
             </a>
@@ -95,25 +96,36 @@
                             <td>{{ herramienta.categoria.nombre }}</td>
                             <td>{{ herramienta.cantidad_total }}</td>
                             <td>
-                                {% if herramienta.get_estado_display == "Disponible" %}
-                                    <span class="badge bg-success text-light">
+                                {% if herramienta.get_estado_display == "Bueno" %}
+                                    <span class="badge bg-success text-light" style="font-size: 0.85rem;">
                                         {{ herramienta.get_estado_display }}
                                     </span>
-                                {% elif herramienta.get_estado_display == "En uso" %}
-                                    <span class="badge bg-warning text-dark">
+                                {% elif herramienta.get_estado_display == "Regular" %}
+                                    <span class="badge bg-warning text-dark" style="font-size: 0.85rem;">
                                         {{ herramienta.get_estado_display }}
                                     </span>
                                 {% else %}
-                                    <span class="badge bg-secondary text-light">
+                                    <span class="badge bg-danger text-light" style="font-size: 0.85rem;">
                                         {{ herramienta.get_estado_display }}
                                     </span>
                                 {% endif %}
                             </td>
                             <td>
                                 {% if herramienta.asignadas > 0 %}
-                                <span class="badge bg-warning text-dark">{{ herramienta.asignadas }} asignada(s)</span>
+                                    <span class="badge bg-secondary text-light" style="font-size: 0.85rem;">
+                                        {{ herramienta.asignadas }} asignadas(s)
+                                    </span>
                                 {% else %}
-                                <span class="badge bg-success text-light">Disponible</span>
+                                <span class="badge bg-success text-light" style="font-size: 0.85rem;">Disponible</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if herramienta.asignadas > 0 %}
+                                    <span class="badge bg-primary text-light" style="font-size: 0.85rem;">
+                                        {{ herramienta.cantidad_total|sub:herramienta.asignadas }} disponible(s)
+                                    </span>
+                                {% else %}
+                                <span class="badge bg-success text-light" style="font-size: 0.85rem;">Disponible</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -140,7 +152,7 @@
 
 <footer class="footer">
   <section class="text-reserved">
-    <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
+    <h5>2025 © Cuerpo de bomberos - San Cristobal</h5>
   </section>
 </footer>
 {% endblock %}
