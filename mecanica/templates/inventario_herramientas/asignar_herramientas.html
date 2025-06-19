@@ -15,12 +15,12 @@
 {% endif %}
 
 {% load static %}
-{% load crispy_forms_tags %}
 
 {% block content %}
+
 <div class="general-dashboard">
   <div class="div-user-name username-space">
-    <h3 class="division-title">{{ titulo }}</h3>
+    <h3 class="division-title">Asignación de Herramientas por Unidad</h3>
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -39,28 +39,58 @@
   </div>
 </div>
 
-
+<!-- Main Content -->
 <div class="container-fluid">
-    <div class="card">
-        <div class="card-body">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <div class="form-group text-right">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Guardar
-                    </button>
-                    <a href="{% url 'listar-herramientas' %}" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Cancelar
-                    </a>
-                </div>
-            </form>
-        </div>
+  <div class="card shadow">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover tabla_herramientas_inventario">
+          <thead class="thead-light">
+            <tr>
+              <th>Unidad</th>
+              <th>Herramientas Asignadas</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for unidad in unidades %}
+            <tr>
+              <td>{{ unidad.nombre_unidad }}</td>
+              <td>
+                <span class="badge bg-danger" style="font-size: 1.3rem;">
+                  {{ unidad.num_herramientas }}
+                </span>
+              </td>
+              <td>
+                <a
+                  href="{% url 'detalle-asignacion' unidad.id %}"
+                  class="btn btn-sm btn-outline-danger"
+                >
+                    <i class="bi bi-tools"></i> Gestionar
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3" class="text-center">
+                No hay unidades registradas
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
+
+  <div class="d-flex justify-content-center align-items-center mt-4">
+      <a href="{% url 'listar-herramientas' %}" class="btn btn-outline-danger" style="width: 60%;">
+          <i class="bi bi-arrow-left"></i> Volver
+      </a>
+  </div>
 </div>
 
-
-
+<!-- Footer -->
 <footer class="footer">
   <section class="text-reserved">
     <h5>2025 © Cuerpo de bomberos - San Cristobal</h>

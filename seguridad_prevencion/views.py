@@ -393,7 +393,7 @@ class DocumentGenerator:
                     page.insert_text(
                         point=(x, y_adjusted),
                         text=valor,
-                        fontsize=8,
+                        fontsize=7,
                         color=(0, 0, 0)
                     )
         
@@ -504,13 +504,9 @@ class CredencialDocumentGenerator(DocumentGenerator):
         styles = {
             "Nombre_Comercio": {
                 "size": 35,
-                # Usa 'fontfile' para rutas de fuentes, 'fontname' para nombres de PyMuPDF
                 "font": "Times-Roman", # O la ruta a tu fuente personalizada, ej: os.path.join(settings.BASE_DIR, 'web', 'static', 'fonts', 'GreatVibes-Regular.ttf')
                 "color": (0.2, 0.2, 0.6), # Color de relleno del texto (azul oscuro)
                 "align": 1, # Alineación centrada (se maneja en _insert_centered_text)
-                "render_mode": 2,       # Relleno y Trazado
-                "stroke_width": 0.8,    # Grosor del trazado
-                "stroke_color": (0.0, 0.0, 0.0) # Color del trazado (negro)
             },
             "Rif_Empresarial": {
                 "size": 20,
@@ -519,7 +515,7 @@ class CredencialDocumentGenerator(DocumentGenerator):
                 "align": 1  # Centrado
             },
             "Direccion": {
-                "size": 18,
+                "size": 14,
                 "font": "Calibri",
                 "color": (0.3, 0.3, 0.3),  # Gris oscuro
                 "align": 1 # Cambiado a centrado para que funcione con el nuevo rect
@@ -564,10 +560,6 @@ class CredencialDocumentGenerator(DocumentGenerator):
                         "size": 11,
                         "font": "Times-Roman",
                         "color": (0, 0, 0),
-                        "align": 0, # Default alignment (se forzará si es necesario)
-                        "render_mode": 0,    # Default render_mode
-                        "stroke_width": 0,   # Default stroke_width
-                        "stroke_color": (0, 0, 0) # Default stroke_color
                     })
 
                     # Limpieza del área del placeholder original: dibuja un rectángulo blanco sobre él
@@ -627,51 +619,68 @@ class CredencialDocumentGenerator(DocumentGenerator):
         Inserta texto centrado horizontalmente en la página,
         manejando fuentes personalizadas y estándar.
         """
-        # print(f"\n=== Iniciando inserción de texto centrado: '{text}' ===")
+        print(f"\n=== Iniciando inserción de texto centrado: '{text}' ===")
         
+        # Asegurarse de que el texto no tenga espacios extra que afecten el cálculo del ancho
+        text_to_measure = str(text).strip() # Convertir a string y limpiar espacios
+
         # Determina si la fuente es un archivo (.ttf) o un nombre estándar de PyMuPDF
-        font_name_or_path = style.get("font", "Times-Roman")
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # IMPORTANTE: Si la fuente aquí es la que causa el problema de renderizado (texto duplicado),
+        # asegúrate de que sea una fuente válida y que PyMuPDF pueda procesarla.
+        # Intenta usar "Helvetica" o "Times-Roman" para verificar si la fuente es el problema.
+        # Si usas un archivo TTF, la ruta debe ser correcta y el archivo accesible.
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        font_name_or_path = style.get("font", "Times-Roman") 
         is_font_file = font_name_or_path.lower().endswith('.ttf')
 
         # Detección de método de medición de texto disponible
         has_get_text_length = hasattr(page, 'get_text_length')
-        # print(f"• Método de medición de texto disponible: {'get_text_length' if has_get_text_length else 'estimación aproximada'}")
+        print(f"• Método de medición de texto disponible: {'get_text_length' if has_get_text_length else 'estimación aproximada'}")
         
         # Cálculo del ancho del texto para centrado
         text_width = 0
         if has_get_text_length:
             try:
                 if is_font_file:
-                     text_width = page.get_text_length(text, fontsize=style["size"], fontfile=font_name_or_path)
+                    text_width = page.get_text_length(text_to_measure, fontsize=style["size"], fontfile=font_name_or_path)
                 else:
-                    text_width = page.get_text_length(text, fontsize=style["size"], fontname=font_name_or_path)
-                # print(f"  Ancho de texto calculado con precisión: {text_width:.2f}")
+                    text_width = page.get_text_length(text_to_measure, fontsize=style["size"], fontname=font_name_or_path)
+                print(f"  Ancho de texto calculado con precisión: {text_width:.2f}")
             except Exception as e:
-                # print(f"  ADVERTENCIA: Error al calcular text_length para '{font_name_or_path}': {e}. Usando estimación.")
-                text_width = len(text) * style["size"] * 0.6 # Fallback de estimación
+                # Este 'except' se activa si get_text_length falla (posiblemente por la fuente)
+                print(f"  ADVERTENCIA: Error al calcular text_length para '{font_name_or_path}' con texto '{text_to_measure}': {e}. Usando estimación.")
+                text_width = len(text_to_measure) * style["size"] * 0.8 # Fallback de estimación (menos preciso)
         else:
-            text_width = len(text) * style["size"] * 0.6 # Fallback de estimación
-            # print(f"  Ancho de texto estimado: {text_width:.2f}")
+            text_width = len(text_to_measure) * style["size"] * 0.6 # Fallback si get_text_length no existe
+            print(f"  Ancho de texto estimado: {text_width:.2f}")
             
-        x_center = (page_width - text_width) / 2 + 10
+        # Cálculo del x_center para centrado horizontal
+        # Si page_width es el ancho total de la página, esto centrará en toda la página.
+        # Si necesitas centrar dentro de márgenes específicos de la plantilla,
+        # deberías pasar un 'ancho_area_centrado' diferente y un 'offset_x_inicial'.
+        x_center = (page_width - text_width) / 2   
         
         # Ajuste vertical: y_position es la parte superior del placeholder.
         # Añadimos un offset para posicionar la línea base del texto.
-        # Puedes ajustar este factor (ej. '1.2') para subir o bajar el texto.
-        # Un valor más alto moverá el texto más abajo. Un valor más bajo, más arriba.
-        y_pos = y_position + style["size"] * 1
-        
+        y_pos = y_position + style["size"] * 1 
+
+        # --- Debugging Final (mantener para monitoreo) ---
+        print(f"DEBUG FINAL: Texto a insertar: '{text_to_measure}'")
+        print(f"DEBUG FINAL: text_width: {text_width:.2f}")
+        print(f"DEBUG FINAL: page_width (usado para centrado): {page_width:.2f}")
+        print(f"DEBUG FINAL: x_center calculado: {x_center:.2f}")
+        print(f"DEBUG FINAL: y_pos calculado: {y_pos:.2f}")
+        # --- Fin Debugging Final ---
+
         # Inserción del texto con los estilos definidos
         try:
             insert_params = {
                 "point": (x_center, y_pos),
-                "text": text,
+                "text": text_to_measure, # Usar el texto limpio
                 "fontsize": style["size"],
                 "color": style["color"],
                 "overlay": True,
-                "render_mode": style.get("render_mode", 0),
-                "stroke_width": style.get("stroke_width", 0),
-                "stroke_color": style.get("stroke_color", (0, 0, 0))
             }
             if is_font_file:
                 insert_params["fontfile"] = font_name_or_path
@@ -680,19 +689,21 @@ class CredencialDocumentGenerator(DocumentGenerator):
 
             page.insert_text(**insert_params)
             
-            # print(f"✅ Texto insertado en ({x_center:.2f}, {y_pos:.2f}) con render_mode={insert_params['render_mode']}")
+            print(f"✅ Texto insertado en ({x_center:.2f}, {y_pos:.2f})") # Mensaje de éxito simplificado
         except Exception as e:
-            # print(f"❌ ERROR al insertar texto en _insert_centered_text: {e}")
-            # Fallback simple si la inserción con estilo falla (sin render_mode especial)
+            # Este 'except' se activará si hay un problema al insertar el texto
+            # incluso con los parámetros simplificados.
+            print(f"❌ ERROR CRÍTICO al insertar texto en _insert_centered_text (incluso sin render_mode): {e}. Fallback simple.")
+            # Fallback simple sin parámetros especiales, solo lo esencial
             page.insert_text(
                 (x_center, y_pos),
-                text,
+                text_to_measure,
                 fontsize=style["size"],
                 color=style["color"],
                 overlay=True
             )
         return
-                
+
     def _wrap_text(self, text, max_chars):
         """Divide el texto en líneas según el máximo de caracteres"""
         words = text.split()

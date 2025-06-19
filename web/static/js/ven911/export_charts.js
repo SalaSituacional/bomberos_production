@@ -39,4 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.warn('El botón con ID "export-bar-chart-horizontal-btn" no fue encontrado.');
     }
+
+    const exportLineChartBtn = document.getElementById('export-line-chart-btn');
+    if (exportLineChartBtn) {
+        exportLineChartBtn.addEventListener('click', () => {
+            exportCanvasAsImage('line-chart-911', 'grafico_lineas');
+        });
+    } else {
+        console.warn('El botón con ID "export-line-chart-btn" no fue encontrado.');
+    }
+
 });

@@ -40,6 +40,9 @@ urlpatterns = [
     path('servicios_grafica/', api_servicios_grafico_mes, name='obtener_servicios_grafica'),
     # api para la grafica por dia
     path('servicios_grafica_dia/', api_servicios_grafico_dia, name='obtener_servicios_grafica_dia'),
+    # api para la grafica por year
+    path('servicios_grafica_year/', api_servicios_grafico_year, name='api_servicios_grafico_year'),
+
 
     # api para exportar excel
     path('exportar-servicios-excel/', exportar_servicios_excel, name='exportar_servicios_excel'),

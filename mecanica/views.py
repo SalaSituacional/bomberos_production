@@ -18,10 +18,10 @@ from django.forms.models import model_to_dict
 from django.views.decorators.http import require_http_methods
 import pandas as pd
 import json
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F
+from django.db import transaction
 
 # ========================= Dashboard Mecanica ========================
-@login_required
 def Dashboard_mecanica(request):
     user = request.session.get('user')
 
@@ -337,7 +337,7 @@ def listar_herramientas(request):
     categorias = CategoriaHerramienta.objects.all().order_by('nombre')
     
     herramientas = Herramienta.objects.annotate(
-        asignadas=Count('asignacionherramienta', filter=Q(asignacionherramienta__fecha_devolucion__isnull=True))
+        asignadas=Count('asignaciones', filter=Q(asignaciones__fecha_devolucion__isnull=True))
     ).order_by('nombre')
     
     if query:
@@ -436,472 +436,150 @@ def eliminar_herramienta(request, pk):
 
 
 # 2- Asignacion Herramientas ===============================
-@login_required
 def asignacion_unidades(request):
-    unidades = Unidades.objects.annotate(
-        num_herramientas=Count('asignacionherramienta', filter=Q(asignacionherramienta__fecha_devolucion__isnull=True))
-    )
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
 
-    return render(request, 'inventario/asignacion_unidades.html', {
-        'unidades': unidades
+    unidades = Unidades.objects.exclude(id__in=[26, 30, 27]).annotate(
+        num_herramientas=Count(
+            'asignaciones_herramientas',
+            filter=Q(asignaciones_herramientas__fecha_devolucion__isnull=True)
+        )
+    ).order_by('nombre_unidad')
+    
+    return render(request, 'inventario_herramientas/asignar_herramientas.html', {
+        "user": user,
+        'jerarquia': user['jerarquia'],
+        'nombres': user['nombres'],
+        'apellidos': user['apellidos'],
+        'unidades': unidades,
+        'seccion_activa': 'asignaciones'
     })
 
-@login_required
+
 def detalle_asignacion(request, unidad_id):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+
     unidad = get_object_or_404(Unidades, pk=unidad_id)
+    
+    # Obtener asignaciones activas
     asignaciones = AsignacionHerramienta.objects.filter(
         unidad=unidad,
         fecha_devolucion__isnull=True
-    ).select_related('herramienta')
-    
-    # Herramientas disponibles para asignar (no asignadas a ninguna unidad)
-    disponibles = Herramienta.objects.exclude(
-        id__in=AsignacionHerramienta.objects.filter(
-            fecha_devolucion__isnull=True
-        ).values('herramienta_id')
-    )
+    ).select_related('herramienta', 'herramienta__categoria').order_by('herramienta__nombre')
     
     if request.method == 'POST':
-        form = AsignacionMasivaForm(disponibles, request.POST)
+        form = AsignacionMasivaForm(request.POST)
         if form.is_valid():
-            herramientas_ids = form.cleaned_data['herramientas']
-            for h_id in herramientas_ids:
-                AsignacionHerramienta.objects.create(
-                    herramienta_id=h_id,
-                    unidad=unidad,
-                    fecha_asignacion=timezone.now().date(),
-                    asignado_por=request.user
-                )
-            messages.success(request, 'Herramientas asignadas correctamente')
-            return redirect('detalle-asignacion', unidad_id=unidad_id)
+            try:
+                with transaction.atomic():
+                    for tool_id, cantidad in form.cleaned_data['selected_tools']:
+                        herramienta = Herramienta.objects.get(id=tool_id)
+                        
+                        # Verificar disponibilidad nuevamente (por si cambió)
+                        if cantidad > herramienta.cantidad_disponible:
+                            raise ValidationError(f"No hay suficientes unidades de {herramienta.nombre}")
+                        
+                        # Buscar asignación existente
+                        asignacion_existente = AsignacionHerramienta.objects.filter(
+                            herramienta=herramienta,
+                            unidad=unidad,
+                            fecha_devolucion__isnull=True
+                        ).first()
+                        
+                        if asignacion_existente:
+                            asignacion_existente.cantidad += cantidad
+                            asignacion_existente.save()
+                        else:
+                            AsignacionHerramienta.objects.create(
+                                herramienta=herramienta,
+                                unidad=unidad,
+                                cantidad=cantidad,
+                                fecha_asignacion=timezone.now().date()
+                            )
+                            
+                messages.success(request, 'Asignación completada correctamente')
+                return redirect('detalle-asignacion', unidad_id=unidad.id)
+            except Exception as e:
+                messages.error(request, f'Error durante la asignación: {str(e)}')
     else:
-        form = AsignacionMasivaForm(disponibles)
+        form = AsignacionMasivaForm()
     
-    return render(request, 'inventario/detalle_asignacion.html', {
+    context = {
+        "user": user,
+        'jerarquia': user['jerarquia'],
+        'nombres': user['nombres'],
+        'apellidos': user['apellidos'],
         'unidad': unidad,
         'asignaciones': asignaciones,
-        'form': form
-    })
+        'form': form,
+        'seccion_activa': 'asignaciones'
+    }
+    return render(request, 'inventario_herramientas/detalles_asignacion.html', context)
 
 
+def devolver_herramienta(request, asignacion_id):
+    asignacion = get_object_or_404(
+        AsignacionHerramienta,
+        pk=asignacion_id,
+        fecha_devolucion__isnull=True  # Solo permite devolver asignaciones activas
+    )
+    
+    try:
+        # Registrar la devolución
+        asignacion.fecha_devolucion = timezone.now().date()
+        asignacion.save()
+        
+        messages.success(
+            request,
+            f'Herramienta {asignacion.herramienta.nombre} devuelta correctamente'
+        )
+    except Exception as e:
+        messages.error(
+            request,
+            f'Error al devolver la herramienta: {str(e)}'
+        )
+    
+    # Redirigir al detalle de la unidad
+    return redirect('detalle-asignacion', unidad_id=asignacion.unidad.id)
 
 # 3- Auditoria y Reportes ===================================
-@login_required
-def auditoria_inventario(request):
-    # Últimos inventarios por unidad
-    ultimos_inventarios = InventarioUnidad.objects.filter(
-        id__in=InventarioUnidad.objects.values('unidad')
-        .annotate(max_id=Max('id'))
-        .values_list('id', flat=True)
-    ).select_related('unidad')
-    
-    # Alertas (herramientas no presentes en último inventario)
-    alertas = DetalleInventario.objects.filter(
-        inventario_id__in=ultimos_inventarios,
-        presente=False
-    ).select_related('herramienta', 'inventario__unidad')
-    
-    # Estadísticas
-    stats = {
-        'total_herramientas': Herramienta.objects.count(),
-        'asignadas': AsignacionHerramienta.objects.filter(
-            fecha_devolucion__isnull=True).count(),
-        'porcentaje_discrepancias': (alertas.count() / Herramienta.objects.count()) * 100 if Herramienta.objects.count() > 0 else 0
-    }
-    
-    return render(request, 'inventario/auditoria.html', {
-        'ultimos_inventarios': ultimos_inventarios,
-        'alertas': alertas,
-        'stats': stats
-    })
-
-
 # @login_required
-# def herramienta_list(request):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
+# def auditoria_inventario(request):
+#     # Últimos inventarios por unidad
+#     ultimos_inventarios = InventarioUnidad.objects.filter(
+#         id__in=InventarioUnidad.objects.values('unidad')
+#         .annotate(max_id=Max('id'))
+#         .values_list('id', flat=True)
+#     ).select_related('unidad')
     
-#     herramientas = Herramienta.objects.all()
-#     return render(request, 'inventario_herramientas/unidades_inventario.html', {
-#         "user": user,
-#         "jerarquia": user["jerarquia"],
-#         "nombres": user["nombres"],
-#         "apellidos": user["apellidos"],
-#         'herramientas': herramientas})
-
-# def herramienta_create(request):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
+#     # Alertas (herramientas no presentes en último inventario)
+#     alertas = DetalleInventario.objects.filter(
+#         inventario_id__in=ultimos_inventarios,
+#         presente=False
+#     ).select_related('herramienta', 'inventario__unidad')
     
-#     if request.method == 'POST':
-#         form = HerramientaForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Herramienta creada correctamente')
-#             return redirect('inventario_unidades')
-#     else:
-#         form = HerramientaForm()
-    
-#     return render(request, 'unidades/herramienta_form.html', {'form': form, "user": user,
-#         "jerarquia": user["jerarquia"],
-#         "nombres": user["nombres"],
-#         "apellidos": user["apellidos"],})
-
-# def herramienta_update(request, pk):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
-    
-#     herramienta = get_object_or_404(Herramienta, pk=pk)
-    
-#     if request.method == 'POST':
-#         form = HerramientaForm(request.POST, instance=herramienta)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Herramienta actualizada correctamente')
-#             return redirect('inventario_unidades')
-#     else:
-#         form = HerramientaForm(instance=herramienta)
-    
-#     return render(request, 'unidades/herramienta_form.html', {'form': form, "user": user,
-#         "jerarquia": user["jerarquia"],
-#         "nombres": user["nombres"],
-#         "apellidos": user["apellidos"],})
-
-# # Vistas para Asignaciones
-# def asignacion_list(request):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
-    
-#     asignaciones = AsignacionHerramienta.objects.filter(fecha_devolucion__isnull=True)
-    
-#     return render(request, 'unidades/asignacion.html', {
-#         "user": user,
-#         "jerarquia": user["jerarquia"],
-#         "nombres": user["nombres"],
-#         "apellidos": user["apellidos"],
-#         'asignaciones': asignaciones
-#         })
-
-# def asignacion_create(request):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
-    
-#     if request.method == 'POST':
-#         form = AsignacionForm(request.POST)
-#         if form.is_valid():
-#             try:
-#                 form.save()
-#                 messages.success(request, 'Herramienta asignada correctamente')
-#                 return redirect('asignacion-list')
-#             except Exception as e:
-#                 # Captura errores al guardar
-#                 messages.error(request, f'Error al guardar la asignación: {str(e)}')
-#         else:
-#             # Manejo seguro de errores
-#             for field, errors in form.errors.items():
-#                 for error in errors:
-#                     if field == '__all__':
-#                         messages.error(request, f'Error: {error}')
-#                     else:
-#                         field_label = form.fields[field].label if field in form.fields else field
-#                         messages.error(request, f'Error en {field_label}: {error}')
-#     else:
-#         initial = {}
-#         if 'herramienta' in request.GET:
-#             initial['herramienta'] = request.GET.get('herramienta')
-#         form = AsignacionForm(initial=initial)
-    
-#     return render(request, 'unidades/asignacion_form.html', {'form': form, "user": user,
-#         "jerarquia": user["jerarquia"],
-#         "nombres": user["nombres"],
-#         "apellidos": user["apellidos"], 'form_errors': form.errors if request.method == 'POST' else None
-# })
-
-# def asignacion_devolver(request, pk):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
-    
-#     asignacion = get_object_or_404(AsignacionHerramienta, pk=pk)
-    
-#     if request.method == 'POST':
-#         form = DevolucionHerramientaForm(request.POST, instance=asignacion)
-#         if form.is_valid():
-#             try:
-#                 asignacion = form.save(commit=False)
-#                 asignacion.fecha_devolucion = form.cleaned_data['fecha_devolucion'] or timezone.now().date()
-#                 asignacion.save()
-                
-#                 messages.success(request, 'Herramienta devuelta correctamente')
-#                 return redirect('asignacion-list')
-#             except Exception as error:
-#                 messages.error(request, f'Error al guardar la devolución: {str(error)}')
-#         else:
-#             for field, errors in form.errors.items():
-#                 for error in errors:
-#                     messages.error(request, f'Error en {form.fields[field].label}: {error}')
-#     else:
-#         form = DevolucionHerramientaForm(instance=asignacion, initial={
-#             'fecha_devolucion': timezone.now().date()
-#         })
-    
-#     return render(request, 'unidades/asignacion_devolver.html', {'form': form, 'asignacion': asignacion, "user": user,
-#         "jerarquia": user["jerarquia"],
-#         "nombres": user["nombres"],
-#         "apellidos": user["apellidos"], 'form_errors': form.errors if request.method == 'POST' else None})
-
-# # Vistas para Inventarios
-# def inventario_list(request):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
-    
-#     # Obtener parámetros de filtro
-#     filtro_unidad = request.GET.get('filtro', '')
-#     mostrar = request.GET.get('mostrar', 'ultimos')  # 'ultimos' o 'todos'
-    
-#     # Consulta base
-#     inventarios = InventarioUnidad.objects.all().order_by('-fecha_revision')
-    
-#     # Aplicar filtro por unidad si existe
-#     if filtro_unidad:
-#         inventarios = inventarios.filter(unidad__nombre_unidad=filtro_unidad)
-
-#     # Filtrar solo los últimos inventarios por unidad si se solicita
-#     if mostrar == 'ultimos':
-#         # Primero obtenemos los IDs de los últimos inventarios por unidad
-#         if filtro_unidad:
-#             # Si hay filtro por unidad, solo necesitamos el último de esa unidad específica
-#             ultimo_id = inventarios.filter(unidad__nombre_unidad=filtro_unidad) \
-#                                 .order_by('-fecha_revision') \
-#                                 .values_list('id', flat=True) \
-#                                 .first()
-#             inventarios = inventarios.filter(id=ultimo_id) if ultimo_id else inventarios.none()
-#         else:
-#             # Para todas las unidades, obtenemos los últimos IDs por unidad
-#             subquery = inventarios.order_by('unidad', '-fecha_revision') \
-#                                 .distinct('unidad') \
-#                                 .values_list('id', flat=True)
-#             inventarios = inventarios.filter(id__in=subquery)
-    
-#     # Paginación (10 elementos por página)
-#     paginator = Paginator(inventarios, 10)
-#     page_number = request.GET.get('page')
-#     page_obj = paginator.get_page(page_number)
-    
-#     # Obtener lista de unidades para el select
-#     unidades = InventarioUnidad.objects.values_list('unidad__nombre_unidad', flat=True).distinct().order_by('unidad__nombre_unidad')
-    
-#     context = {
-#         'page_obj': page_obj,
-#         'filtro': filtro_unidad,
-#         'mostrar': mostrar,
-#         'unidades': unidades,
-#         'user': user,
-#         'jerarquia': user.get('jerarquia', ''),
-#         'nombres': user.get('nombres', ''),
-#         'apellidos': user.get('apellidos', ''),
-#     }
-#     return render(request, 'unidades/lista_inventarios.html', context)
-
-# def inventario_detail_ajax(request, pk):
-#     user = request.session.get('user')
-#     if not user:
-#         return JsonResponse({'error': 'No autenticado'}, status=401)
-    
-#     inventario = get_object_or_404(InventarioUnidad, pk=pk)
-    
-#     # Preparar datos para JSON
-#     data = {
-#         'inventario': {
-#             'unidad': inventario.unidad.nombre_unidad,
-#             'fecha': inventario.fecha_revision.strftime("%d/%m/%Y"),
-#             'realizado_por': {
-#                 'id': inventario.realizado_por.id,
-#                 'nombre_completo': f"{inventario.realizado_por.jerarquia} {inventario.realizado_por.nombres} {inventario.realizado_por.apellidos}"
-#             },
-#             'observaciones': inventario.observaciones or ''
-#         },
-#         'detalles': []
+#     # Estadísticas
+#     stats = {
+#         'total_herramientas': Herramienta.objects.count(),
+#         'asignadas': AsignacionHerramienta.objects.filter(
+#             fecha_devolucion__isnull=True).count(),
+#         'porcentaje_discrepancias': (alertas.count() / Herramienta.objects.count()) * 100 if Herramienta.objects.count() > 0 else 0
 #     }
     
-#     # Obtener detalles del inventario
-#     detalles = inventario.detalleinventario_set.all().select_related('herramienta')
-#     for detalle in detalles:
-#         data['detalles'].append({
-#             'herramienta': detalle.herramienta.nombre,
-#             'presente': detalle.presente,
-#             'estado': detalle.get_estado_display(),
-#             'observaciones': detalle.observaciones or ''
-#         })
-    
-#     return JsonResponse(data)
-
-# def inventario_create(request):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
-    
-#     if request.method == 'POST':
-#         form = InventarioForm(request.POST)
-#         if form.is_valid():
-#             inventario = form.save()
-#             return redirect('inventario-detalle', pk=inventario.pk)
-#     else:
-#         form = InventarioForm()
-    
-#     return render(request, 'unidades/inventario_form.html', {'form': form, "user": user,
-#         "jerarquia": user["jerarquia"],
-#         "nombres": user["nombres"],
-#         "apellidos": user["apellidos"]})
-
-# def inventario_detail(request, pk):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
-    
-#     inventario = get_object_or_404(InventarioUnidad, pk=pk)
-    
-#     if request.method == 'POST':
-#         herramientas_ids = request.POST.getlist('herramienta_id')
-#         # Convertir a lista de booleanos, considerando que si no está marcado no viene en el POST
-#         presentes = [f'herramienta_{id}' in request.POST for id in herramientas_ids]
-#         estados = request.POST.getlist('estado')
-#         observaciones = request.POST.getlist('observaciones')
-        
-#         for i, herramienta_id in enumerate(herramientas_ids):
-#             try:
-#                 detalle, created = DetalleInventario.objects.get_or_create(
-#                     inventario=inventario,
-#                     herramienta_id=herramienta_id,
-#                     defaults={
-#                         'presente': presentes[i],
-#                         'estado': estados[i] if i < len(estados) else 'B',  # 'B' como estado por defecto
-#                         'observaciones': observaciones[i] if i < len(observaciones) else ''
-#                     }
-#                 )
-#                 if not created:
-#                     detalle.presente = presentes[i]
-#                     detalle.estado = estados[i] if i < len(estados) else 'B'
-#                     detalle.observaciones = observaciones[i] if i < len(observaciones) else ''
-#                     detalle.save()
-                    
-#             except Exception as e:
-#                 messages.error(request, f'Error al actualizar herramienta ID {herramienta_id}: {str(e)}')
-#                 continue
-        
-#         messages.success(request, 'Inventario actualizado correctamente')
-#         return redirect('inventario-list')
-        
-#     # GET request - mostrar el formulario
-#     unidad = inventario.unidad
-#     herramientas_asignadas = AsignacionHerramienta.objects.filter(
-#         unidad=unidad,
-#         fecha_devolucion__isnull=True
-#     ).select_related('herramienta')
-    
-#     detalles_existentes = {d.herramienta_id: d for d in inventario.detalleinventario_set.all()}
-    
-#     detalles = []
-#     for asignacion in herramientas_asignadas:
-#         if asignacion.herramienta_id in detalles_existentes:
-#             detalle = detalles_existentes[asignacion.herramienta_id]
-#         else:
-#             detalle = DetalleInventario(
-#                 inventario=inventario,
-#                 herramienta=asignacion.herramienta,
-#                 estado=asignacion.herramienta.estado,
-#                 presente=True
-#             )
-#         detalles.append(detalle)
-    
-#     return render(request, 'unidades/inventario_detail.html', {
-#         'inventario': inventario,
-#         'detalles': detalles,
-#         "user": user,
-#         "jerarquia": user["jerarquia"],
-#         "nombres": user["nombres"],
-#         "apellidos": user["apellidos"],
+#     return render(request, 'inventario/auditoria.html', {
+#         'ultimos_inventarios': ultimos_inventarios,
+#         'alertas': alertas,
+#         'stats': stats
 #     })
-
-# # Reportes
-# def reporte_inventario(request):
-#     user = request.session.get('user')
-#     if not user:
-#         return redirect('/')
-    
-#     unidades = Unidades.objects.all().exclude(id__in=[26, 30, 27]).order_by("id")
-#     categorias = CategoriaHerramienta.objects.all().order_by("nombre")
-    
-#     # Precalcular totales por categoría
-#     totales_categorias = {
-#         cat.id: {
-#             'total': Herramienta.objects.filter(categoria=cat).count(),
-#             'asignadas': 0  # Inicializamos
-#         } for cat in categorias
-#     }
-    
-#     # Calcular totales asignados por categoría
-#     for cat in categorias:
-#         totales_categorias[cat.id]['asignadas'] = AsignacionHerramienta.objects.filter(
-#             herramienta__categoria=cat,
-#             fecha_devolucion__isnull=True
-#         ).count()
-    
-#     data = []
-#     for unidad in unidades:
-#         asignaciones = AsignacionHerramienta.objects.filter(
-#             unidad=unidad,
-#             fecha_devolucion__isnull=True
-#         ).select_related('herramienta', 'herramienta__categoria')
-        
-#         herramientas_por_categoria = {}
-#         for cat in categorias:
-#             herramientas_por_categoria[cat.id] = {
-#                 'nombre': cat.nombre,
-#                 'asignadas': asignaciones.filter(herramienta__categoria=cat).count(),
-#                 'total': totales_categorias[cat.id]['total']
-#             }
-        
-#         data.append({
-#             'unidad': unidad,
-#             'categorias': herramientas_por_categoria,
-#             'total_asignadas': asignaciones.count()
-#         })
-
-#     # Cambiar la estructura para facilitar el acceso en templates
-#     data_para_template = []
-#     for item in data:
-#         unidad_data = {
-#             'unidad': item['unidad'],
-#             'total_asignadas': item['total_asignadas'],
-#             'categorias_lista': []
-#         }
-#         for cat in categorias:
-#             unidad_data['categorias_lista'].append(item['categorias'][cat.id])
-#         data_para_template.append(unidad_data)
-    
-#     context = {
-#         'data': data_para_template,
-#         'categorias': categorias,
-#         'totales_categorias': totales_categorias,
-#         'user': user,
-#         'jerarquia': user.get('jerarquia', ''),
-#         'nombres': user.get('nombres', ''),
-#         'apellidos': user.get('apellidos', ''),
-#     }
-#     return render(request, 'unidades/reporte_inventario.html', context)
 
 
 
 
 # ======================== Conductores ========================
-@login_required
 def conductores(request):
     user = request.session.get('user')
     if not user:
@@ -921,7 +599,6 @@ def conductores(request):
         "hoy": hoy
     })
 
-@login_required
 def agregar_conductor(request):
     user = request.session.get('user')
     if not user:
@@ -972,7 +649,6 @@ def agregar_conductor(request):
         "certificado_formset": certificado_formset,
     })
 
-@login_required
 def editar_conductor(request, id):
     user = request.session.get('user')
     if not user:

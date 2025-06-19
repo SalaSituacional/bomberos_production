@@ -2,6 +2,8 @@ from django.db import models
 from web.models import Unidades, Personal
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
+from django.db.models import Q, Sum, F
+from django.db.models.functions import Coalesce
 
 # Create your models here.
 # ========================================= MODELOS PARA EL AREA DE CONTROL DE UNIDADES =============================================================================================
@@ -51,7 +53,7 @@ class Reportes_Unidades(models.Model):
         return f"{self.servicio} - {self.fecha} {self.hora} - {self.persona_responsable}"
 
 
-# ===================================================================================================================================================================================
+# ============================================ MODELOS PARA EL AREA DE CONTROL DE HERRAMIENTAS =============================================================================================
 
 class CategoriaHerramienta(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
@@ -80,57 +82,52 @@ class Herramienta(models.Model):
     
     @property
     def cantidad_disponible(self):
-        asignadas = self.asignacionherramienta_set.filter(fecha_devolucion__isnull=True).count()
+        asignadas = self.asignaciones.filter(fecha_devolucion__isnull=True).aggregate(
+            total=Coalesce(Sum('cantidad'), 0)
+        )['total'] or 0
         return self.cantidad_total - asignadas
     
     def __str__(self):
-        return f"{self.nombre} ({self.cantidad_total})"
+        return f"{self.nombre} (Total: {self.cantidad_total}, Disp: {self.cantidad_disponible})"
 
 class AsignacionHerramienta(models.Model):
-    herramienta = models.ForeignKey(Herramienta, on_delete=models.CASCADE)
-    unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
+    herramienta = models.ForeignKey(
+        Herramienta, 
+        on_delete=models.CASCADE,
+        related_name='asignaciones'
+    )
+    unidad = models.ForeignKey(
+        Unidades, 
+        on_delete=models.CASCADE,
+        related_name='asignaciones_herramientas'
+    )
+    cantidad = models.PositiveIntegerField(default=1)  # Nuevo campo
     fecha_asignacion = models.DateField(auto_now_add=True)
     fecha_devolucion = models.DateField(null=True, blank=True)
-    responsable = models.ForeignKey(Personal, on_delete=models.CASCADE)
     observaciones = models.TextField(blank=True)
     
     class Meta:
-        unique_together = ('herramienta', 'unidad', 'fecha_devolucion')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['herramienta', 'unidad'],
+                condition=Q(fecha_devolucion__isnull=True),
+                name='unique_active_assignment'
+            )
+        ]
         verbose_name_plural = "Asignaciones de herramientas"
+        ordering = ['-fecha_asignacion']
     
     def clean(self):
-        # Validar que no se exceda la cantidad disponible
-        if not self.fecha_devolucion and self.herramienta.cantidad_disponible <= 0:
-            raise ValidationError("No hay suficientes unidades disponibles de esta herramienta")
-    
-    def __str__(self):
-        return f"{self.herramienta} → {self.unidad}"
-
-class InventarioUnidad(models.Model):
-    unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
-    fecha_revision = models.DateField(auto_now_add=True)
-    realizado_por = models.ForeignKey(Personal, on_delete=models.CASCADE)
-    observaciones = models.TextField(blank=True)
-    
-    def __str__(self):
-        return f"Inventario {self.unidad} - {self.fecha_revision}"
-
-class DetalleInventario(models.Model):
-    inventario = models.ForeignKey(InventarioUnidad, on_delete=models.CASCADE)
-    herramienta = models.ForeignKey(Herramienta, on_delete=models.PROTECT)
-    presente = models.BooleanField(default=True)
-    estado = models.CharField(max_length=1, choices=Herramienta.ESTADOS)
-    observaciones = models.TextField(blank=True)
-    
-    class Meta:
-        unique_together = ('inventario', 'herramienta')
-    
-    def __str__(self):
-        return f"{self.herramienta} en {self.inventario}"
+        if not self.pk and not self.fecha_devolucion:
+            disponibles = self.herramienta.cantidad_disponible
+            if self.cantidad > disponibles:
+                raise ValidationError(
+                    f"No hay suficientes unidades disponibles de {self.herramienta}. "
+                    f"Disponibles: {disponibles}, Solicitadas: {self.cantidad}"
+                )
 
 
-
-
+# ========================================= MODELOS PARA EL AREA DE CONTROL DE CONDUCTORES =============================================================================================
 class LicenciaConductor(models.Model):
     TIPO_LICENCIA_CHOICES = [
         ('2', '2° Segundo Grado'),
