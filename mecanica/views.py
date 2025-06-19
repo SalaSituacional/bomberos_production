@@ -22,7 +22,6 @@ from django.db.models import Q, Count, F
 from django.db import transaction
 
 # ========================= Dashboard Mecanica ========================
-@login_required
 def Dashboard_mecanica(request):
     user = request.session.get('user')
 
@@ -581,7 +580,6 @@ def devolver_herramienta(request, asignacion_id):
 
 
 # ======================== Conductores ========================
-@login_required
 def conductores(request):
     user = request.session.get('user')
     if not user:
@@ -601,7 +599,6 @@ def conductores(request):
         "hoy": hoy
     })
 
-@login_required
 def agregar_conductor(request):
     user = request.session.get('user')
     if not user:
@@ -652,7 +649,6 @@ def agregar_conductor(request):
         "certificado_formset": certificado_formset,
     })
 
-@login_required
 def editar_conductor(request, id):
     user = request.session.get('user')
     if not user:

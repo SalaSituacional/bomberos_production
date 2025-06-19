@@ -106,7 +106,7 @@ def Home(request):
                 "apellidos": encargado.apellidos,
             }
             if user.user == "Mecanica_01":
-                return redirect("/dashboard_mecanica/")
+                return redirect("/mecanica/dashboard_mecanica/")
             if user.user == "Sarp_01":
                 return redirect("/dashboard_sarp/")
             if user.user == "Bienes_00":
