@@ -117,6 +117,8 @@ async function obtenerServicios() {
             'deslizamiento': 'Deslizamiento',
             'evaluacionderiesgo': 'Evaluacion De Riesgo',
             'inpecciontalaarbol': 'Inspeccion Tala De Arbol',
+            'inundaciones': 'Inundaciones',
+            'colapsoestructural': 'Colapso Estructural',
 
             // Incendios (Estructurales, Forestales, Desechos, Vegetacion, GLP, Derrame De Combustible)
             'reignicion': 'Reignicion',
@@ -273,6 +275,9 @@ async function obtenerServicios() {
             data['Deslizamiento'] || 0,
             data['Evaluacion De Riesgo'] || 0,
             data['Inspeccion Tala De Arbol'] || 0,
+            data['Inundaciones'] || 0,
+            data['Colapso Estructural'] || 0,
+
         ];
         const totalinspeccionesazonasderiesgototales = inspeccionesazonasderiesgototales.reduce((a, b) => a + b, 0);
         document.getElementById('inspeccionesazonasderiesgototales').textContent = `(${totalinspeccionesazonasderiesgototales})`;
