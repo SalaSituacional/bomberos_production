@@ -1,5 +1,7 @@
 from django import forms
 from.models import *
+import logging
+logger = logging.getLogger(__name__)
 # from web.forms import Asignar_op_Municipios
 
 class ComercioForm(forms.ModelForm):
@@ -39,8 +41,9 @@ class SolicitudForm(forms.ModelForm):
         queryset=Municipios.objects.all(),
         required=True
     )
+    
     id_solicitud = forms.ModelChoiceField(
-        queryset=Comercio.objects.all().order_by("id_comercio"),
+        queryset=Comercio.objects.none(),  # Se sobrescribirá en __init__
         required=True,
         label="Comercio",
         error_messages={
@@ -58,10 +61,13 @@ class SolicitudForm(forms.ModelForm):
         widgets = {
             'fecha_solicitud': forms.DateInput(attrs={'type': 'date'}),
             'hora_solicitud': forms.TimeInput(attrs={'type': 'time'}, format='%H:%M'),
-            'id_solicitud': forms.Select(attrs={'class': 'form-select'}),  # Widget para el campo ForeignKey
+            'id_solicitud': forms.Select(attrs={'class': 'form-select'}),
         }
     
     def __init__(self, *args, **kwargs):
+        self.editing = kwargs.pop('editing', False)
+        self.user = kwargs.pop('user', None)  # Obtenemos el usuario de la sesión
+        
         super().__init__(*args, **kwargs)
         
         # Añadir clases CSS a los campos
@@ -74,14 +80,32 @@ class SolicitudForm(forms.ModelForm):
             elif isinstance(field, forms.CharField):
                 field.widget.attrs.update({'class': 'form-control'})
 
-        self.editing = kwargs.pop('editing', False)
-        super().__init__(*args, **kwargs)
-        
         if self.editing:
-            # Personalizaciones específicas para edición
             self.fields['id_solicitud'].disabled = True
             self.fields['fecha_solicitud'].disabled = True
-
+        
+        # Filtramos los comercios según el usuario
+        if self.user:
+            # Mapeo de jerarquías de usuarios a departamentos
+            user_jerarquia_departments = {
+                'ComandanciaJunin': 'Junin',
+                'Prevencion05': 'San Cristobal',
+                # Agrega más mapeos según necesites
+            }
+            
+            # Obtenemos el departamento basado en la jerarquía del usuario
+            department = user_jerarquia_departments.get(self.user.get('user'))
+            
+            if department:
+                self.fields['id_solicitud'].queryset = Comercio.objects.filter(
+                    departamento=department
+                ).order_by("id_comercio")
+                logger.debug(f"Filtrado comercios por departamento: {department}")
+            else:
+                # Usuario sin jerarquía específica - mostramos todos
+                self.fields['id_solicitud'].queryset = Comercio.objects.all().order_by("id_comercio")
+                logger.debug("Mostrando todos los comercios (usuario sin departamento asignado)")
+    
     def clean(self):
         cleaned_data = super().clean()
         metodo_pago = cleaned_data.get('metodo_pago')

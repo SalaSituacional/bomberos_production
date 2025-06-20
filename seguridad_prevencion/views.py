@@ -101,9 +101,22 @@ def formulario_certificado_prevencion(request):
         logger.warning('Intento de acceso no autenticado a formulario_certificado_prevencion')
         return redirect('/')
     
+    # Obtenemos los comercios (opcional, si los usas en el template)
     try:
-        comercios = Comercio.objects.all()
-        logger.debug(f'Obtenidos {len(comercios)} comercios para el formulario')
+        # Filtramos comercios según el usuario (opcional, el formulario ya lo hace)
+        department = None
+        user_jerarquia_departments = {
+            'ComandanciaJunin': 'Junin',
+            'Prevencion05': 'San Cristobal',
+        }
+        department = user_jerarquia_departments.get(user.get("user"))
+        
+        if department:
+            comercios = Comercio.objects.filter(departamento=department)
+            logger.debug(f'Obtenidos {len(comercios)} comercios para el departamento {department}')
+        else:
+            comercios = Comercio.objects.all()
+            logger.debug(f'Obtenidos todos los {len(comercios)} comercios (sin filtro)')
     except Exception as e:
         logger.error(f'Error al obtener comercios: {str(e)}')
         comercios = []
@@ -123,7 +136,8 @@ def formulario_certificado_prevencion(request):
         if not requiere_referencia:
             post_data['referencia'] = 'No Hay Referencia'
         
-        solicitud_form = SolicitudForm(post_data)
+        # Pasamos el usuario al formulario
+        solicitud_form = SolicitudForm(post_data, user=user)
         requisitos_form = RequisitosForm(post_data)
         
         if solicitud_form.is_valid() and requisitos_form.is_valid():
@@ -180,15 +194,17 @@ def formulario_certificado_prevencion(request):
             return redirect(request.path)
     
     # Manejo del GET (mostrar formulario)
+    initial_data = request.session.pop('comercio_form_data', None)
+    
     context = {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         "comercio_form": ComercioForm(),
-        "comercios": comercios,
-        "solicitud_form": SolicitudForm(request.session.pop('comercio_form_data', None)),
-        "requisitos_form": RequisitosForm(request.session.pop('comercio_form_data', None)),
+        "comercios": comercios,  # Esto es opcional, el formulario ya maneja el filtrado
+        "solicitud_form": SolicitudForm(initial=initial_data, user=user),  # Pasamos el usuario aquí
+        "requisitos_form": RequisitosForm(initial=initial_data),
     }
     
     return render(request, 'Seguridad-prevencion/formularioSolicitud.html', context)
