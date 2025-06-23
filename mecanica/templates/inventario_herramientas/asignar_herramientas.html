@@ -18,6 +18,7 @@
 
 {% block content %}
 
+
 <div class="general-dashboard">
   <div class="div-user-name username-space">
     <h3 class="division-title">Asignación de Herramientas por Unidad</h3>
@@ -39,16 +40,73 @@
   </div>
 </div>
 
-<!-- Main Content -->
 <div class="container-fluid">
   <div class="card shadow">
     <div class="card-body">
-      <div class="table-responsive">
+      <!-- Versión Laptop (2 columnas) -->
+      <div class="desktop-view">
+        <div class="tabla-en-columnas">
+          <!-- Columna 1 -->
+          <div class="columna-tabla">
+            <table class="table table-hover tabla_herramientas_inventario">
+              <thead class="thead-light">
+                <tr>
+                  <th>Unidad</th>
+                  <th>Herramientas</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for unidad in unidades|slice:":15" %}
+                <tr>
+                  <td>{{ unidad.nombre_unidad }}</td>
+                  <td><span class="badge bg-danger" style="font-size: 1.2rem;">{{ unidad.num_herramientas }}</span></td>
+                  <td>
+                    <a href="{% url 'detalle-asignacion' unidad.id %}" class="btn btn-sm btn-outline-danger">
+                      <i class="bi bi-tools"></i> Gestionar
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Columna 2 -->
+          <div class="columna-tabla">
+            <table class="table table-hover tabla_herramientas_inventario">
+              <thead class="thead-light mobile-hidden">
+                <tr>
+                  <th>Unidad</th>
+                  <th>Herramientas</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for unidad in unidades|slice:"15:30" %}
+                <tr>
+                  <td>{{ unidad.nombre_unidad }}</td>
+                  <td><span class="badge bg-danger" style="font-size: 1.2rem;">{{ unidad.num_herramientas }}</span></td>
+                  <td>
+                    <a href="{% url 'detalle-asignacion' unidad.id %}" class="btn btn-sm btn-outline-danger">
+                      <i class="bi bi-tools"></i> Gestionar
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Versión Tablet (1 tabla completa) -->
+      <div class="tablet-view">
         <table class="table table-hover tabla_herramientas_inventario">
           <thead class="thead-light">
             <tr>
               <th>Unidad</th>
-              <th>Herramientas Asignadas</th>
+              <th>Herramientas</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -56,25 +114,16 @@
             {% for unidad in unidades %}
             <tr>
               <td>{{ unidad.nombre_unidad }}</td>
+              <td><span class="badge bg-danger" style="font-size: 1.1rem;">{{ unidad.num_herramientas }}</span></td>
               <td>
-                <span class="badge bg-danger" style="font-size: 1.3rem;">
-                  {{ unidad.num_herramientas }}
-                </span>
-              </td>
-              <td>
-                <a
-                  href="{% url 'detalle-asignacion' unidad.id %}"
-                  class="btn btn-sm btn-outline-danger"
-                >
-                    <i class="bi bi-tools"></i> Gestionar
+                <a href="{% url 'detalle-asignacion' unidad.id %}" class="btn btn-sm btn-outline-danger">
+                  <i class="bi bi-tools"></i> Gestionar
                 </a>
               </td>
             </tr>
             {% empty %}
             <tr>
-              <td colspan="3" class="text-center">
-                No hay unidades registradas
-              </td>
+              <td colspan="3" class="text-center">No hay unidades registradas</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -82,13 +131,60 @@
       </div>
     </div>
   </div>
-
-  <div class="d-flex justify-content-center align-items-center mt-4">
-      <a href="{% url 'listar-herramientas' %}" class="btn btn-outline-danger" style="width: 60%;">
-          <i class="bi bi-arrow-left"></i> Volver
-      </a>
-  </div>
 </div>
+
+<br>
+<div class="d-flex justify-content-center align-items-center mb-4">
+  <a href="{% url 'listar-herramientas' %}" class="btn btn-outline-danger" style="width: 80%;">
+      <i class="bi bi-arrow-left"></i> Volver
+  </a>
+</div>
+
+<style>
+  /* Estilos base - Versión Laptop (2 columnas) */
+  .tabla-en-columnas {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .columna-tabla {
+    flex: 1;
+  }
+
+  /* Ocultar versiones no necesarias inicialmente */
+  .tablet-view {
+    display: none;
+  }
+
+  /* Tablet (768px - 991px) - Mostrar 1 sola tabla */
+  @media (min-width: 768px) and (max-width: 991px) {
+    .desktop-view {
+      display: none;
+    }
+    .tablet-view {
+      display: block;
+    }
+  }
+
+  /* Móvil (<768px) - Versión optimizada */
+  @media (max-width: 767px) {
+    .desktop-view {
+      display: none;
+    }
+    .tablet-view {
+      display: block;
+    }
+    
+    .table td, .table th {
+      padding: 0.5rem;
+    }
+    
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+</style>
 
 <!-- Footer -->
 <footer class="footer">

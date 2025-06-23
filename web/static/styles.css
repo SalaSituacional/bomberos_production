@@ -4974,7 +4974,7 @@ checkbox-styles {
   width: 100%;
 }
 .tabla_herramientas_inventario{
-  width: 100%;
+  width: 100% !important;
 }
 .tabla_asignaciones{
   width: 100%;
