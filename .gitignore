@@ -5,7 +5,7 @@ __pycache__/
 venv/
 .venv/
 # Variables de entorno
-*.env
+.env
 # Bases de datos
 db.sqlite3
 *.db
