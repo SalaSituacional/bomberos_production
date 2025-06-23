@@ -240,7 +240,7 @@ class HerramientaForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={'rows': 3}),
         }
         labels = {
-            'activo': 'Activo?',  # Cambia el texto del label
+            'activo': 'Activo',  # Cambia el texto del label
         }
 
 

@@ -56,10 +56,10 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Herramienta</th>
+                                    <th>Cantidad</th>
                                     <th>Código</th>
                                     <th>Asignada el</th>
                                     <th>Estado</th>
-                                    <th>Cantidad</th>
                                     <th class="text-end">Acciones</th>
                                 </tr>
                             </thead>
@@ -70,6 +70,7 @@
                                         <strong>{{ asignacion.herramienta.nombre }}</strong><br>
                                         <small class="text-muted">{{ asignacion.herramienta.categoria }}</small>
                                     </td>
+                                    <td>{{ asignacion.cantidad }}</td>
                                     <td>{{ asignacion.herramienta.numero_serie|default:"-" }}</td>
                                     <td>{{ asignacion.fecha_asignacion|date:"d/m/Y" }}</td>
                                     <td>
@@ -77,7 +78,6 @@
                                             {{ asignacion.herramienta.get_estado_display }}
                                         </span>
                                     </td>
-                                    <td>{{ asignacion.cantidad }}</td>
                                     <td class="text-end">
                                         {% if not asignacion.fecha_devolucion %}
                                         <form method="post" action="{% url 'devolver-herramienta' asignacion.id %}" class="d-inline">
@@ -164,7 +164,7 @@
     <br>
     <div class="d-flex justify-content-center align-items-center mb-4">
         <a href="{% url 'asignacion-unidades' %}" class="btn btn-outline-danger" style="width: 80%;">
-            <i class="fas fa-arrow-left"></i> Volver
+            <i class="bi bi-arrow-left"></i> Volver
         </a>
     </div>
 </div>
