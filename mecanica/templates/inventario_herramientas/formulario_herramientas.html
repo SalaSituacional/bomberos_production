@@ -38,19 +38,18 @@
     </section>
   </div>
 </div>
-
-
 <div class="container-fluid">
-    <div class="card">
-        <div class="card-body">
-            <form method="post" enctype="multipart/form-data">
+    <div class="card w-75 mx-auto p-2  p-3 mb-5 rounded mt-5">
+        <div class="card-body w-100">
+          <form method="post" enctype="multipart/form-data" class="">
+              <h3 class="text-center-two">Datos de la Herramienta</h3>
                 {% csrf_token %}
                 {{ form|crispy }}
-                <div class="form-group text-right">
-                    <button type="submit" class="btn btn-primary">
+                <div class="form-group text-center mx-auto p-2">
+                    <button type="submit" class="btn btn-danger w-100 mb-3">
                         <i class="fas fa-save"></i> Guardar
                     </button>
-                    <a href="{% url 'listar-herramientas' %}" class="btn btn-secondary">
+                    <a href="{% url 'listar-herramientas' %}" class="w-100 btn btn-outline-danger">
                         <i class="fas fa-times"></i> Cancelar
                     </a>
                 </div>

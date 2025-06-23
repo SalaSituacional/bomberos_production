@@ -40,7 +40,7 @@
 </div>
 
 
-<div class="container-fluid">
+<div class="container-flui">
     <div class="row mb-4 text-end">
         <div class="col d-flex justify-content-end">
             <a href="{% url 'asignacion-unidades' %}" class="btn btn-danger me-2">Asignaciones</a>
@@ -50,33 +50,38 @@
         </div>
     </div>
 
-    <!-- Filtros -->
+    <!-- filtros  -->
     <div class="card mb-4">
-        <div class="card-body">
-            <form method="get">
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="text" name="q" class="form-control" placeholder="Buscar..." value="{{ query }}">
-                    </div>
-                    <div class="col-md-4">
-                        <select name="categoria" class="form-control">
-                            <option value="">Todas las categorías</option>
-                            {% for cat in categorias %}
-                            <option value="{{ cat.id }}" {% if cat.id == categoria_seleccionada %}selected{% endif %}>
-                                {{ cat.nombre }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-danger btn-block">
-                            <i class="bi bi-funnel-fill"></i>
-                        </button>
-                    </div>
+    <div class="card-body">
+        <form method="get">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label mb-1">Buscar por Nombre/Serial:</label>
+                    <input type="text" name="q" class="form-control" placeholder="Buscar..." value="{{ query }}">
                 </div>
-            </form>
-        </div>
+                <div class="col-md-4">
+                    <label class="form-label mb-1">Buscar Categoría:</label>
+                    <select name="categoria" class="form-select">
+                        <option value="">Todas las categorías</option>
+                        {% for cat in categorias %}
+                        <option value="{{ cat.id }}" {% if cat.id == categoria_seleccionada %}selected{% endif %}>
+                            {{ cat.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-danger w-100">
+                        <i class="bi bi-funnel-fill"></i> Filtrar
+                    </button>
+                    <a href="{% url 'listar-herramientas' %}" class="btn btn-outline-danger w-100">
+                        Limpiar
+                    </a>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
 
     <!-- Tabla de herramientas -->
     <div class="card">
@@ -91,6 +96,8 @@
                             <th>Cantidad</th>
                             <th>Estado</th>
                             <th>Asignaciones</th>
+                            <th>Disponibles</th>
+                    
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -135,10 +142,10 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'editar-herramienta' herramienta.pk %}" class="btn btn-sm btn-primary" title="Editar">
+                                <a href="{% url 'editar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Editar">
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
-                                <a href="{% url 'eliminar-herramienta' herramienta.pk %}" class="btn btn-sm btn-danger" title="Eliminar">
+                                <a href="{% url 'eliminar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Eliminar">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </td>
@@ -153,7 +160,7 @@
             </div>
         </div>
     </div>
-</div>
+
 
 
 <footer class="footer">

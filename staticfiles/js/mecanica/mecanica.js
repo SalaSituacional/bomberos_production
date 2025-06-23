@@ -178,7 +178,7 @@ window.mostrarDetalles = (id) => {
 
   detalleModalTitle.textContent = `Informacion Detallada: ${conductor.personal.nombres} ${conductor.personal.apellidos}`;
   detalleModalBody.innerHTML = `
-    <div class="row mb-3 expand-card">
+    <div class="row mb-1 expand-card">
       <div class="col-md-6">
         <div class="card h-100">
           <div class="card-header card-header-modify bg-light">
@@ -219,8 +219,8 @@ window.mostrarDetalles = (id) => {
         </div>
       </div>
     </div>
-    
-    <div class="card mt-3 card-conductores-modify">
+              
+    <div class="card mt-1 card-conductores-modify">
       <div class="card-header bg-light">
         <h5><i class="bi bi-id-card"></i> Licencias</h5>
       </div>

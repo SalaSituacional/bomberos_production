@@ -4835,7 +4835,7 @@ checkbox-styles {
 }
 
 .acordion-card {
-  width: 100%;
+  width: 90%;
 }
 
 .contain-bar-pie-ven911 {
@@ -4973,8 +4973,8 @@ checkbox-styles {
 .tabla_herramientas{
   width: 100%;
 }
-.tabla_herramientas_inventario{
-  width: 100%;
+#tabla_herramientas_inventario{
+  width: 100%  !important;
 }
 .tabla_asignaciones{
   width: 100%;
@@ -5766,6 +5766,13 @@ checkbox-styles {
     }
   }
 
+  .contain-cards-acordion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
 }
 
 @media (max-width: 480px) {
@@ -6371,7 +6378,7 @@ checkbox-styles {
   .contain-cards-acordion {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 90%;
     align-items: center;
   }
   .filter-form{
@@ -7094,4 +7101,7 @@ checkbox-styles {
   .current{
     width: 100%;
   }
+}
+.text-center-two{
+  text-align: center;
 }
