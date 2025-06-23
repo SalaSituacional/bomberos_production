@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
 import dj_database_url
+from dotenv import load_dotenv  # <-- Añade esta línea
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+load_dotenv()
 
 # Esto lo estoy probando
 # BASE_DIR = Path(__file__).resolve().parent.parent / Esta es la original
@@ -13,15 +15,26 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-usf!gyb)c_93(yhk-ab2gm%&_(hlk1ough81m110qhhrn4$cvy'
+SECRET_KEY = os.environ.get('SECRET_KEY',)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Debug true significa desarrollo modo de pruebas
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS_STR = os.environ.get('ALLOWED_HOSTS', 'cuerpobomberossc.com,www.cuerpobomberossc.com,bomberos-production.onrender.com')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'cuerpobomberossc.com', 'www.cuerpobomberossc.com', 'bomberos-production.onrender.com']
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_STR.split(',') if host.strip()]
+
+
+# Conexión base de datos del Render (Sala Situacional) 2
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
+    }
+else:
+    # Configuración de base de datos por defecto (SQLite)
+    raise ValueError("La variable de entorno DatabaseURL no esta configurada. Solo PostgresSQL es soportado en este momento.")
 
 # Application definition
 
@@ -86,11 +99,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Web_App.wsgi.application'
-
-# Conexión base de datos del Render (Sala Situacional) 2
-DATABASES = {
-    'default': dj_database_url.config(default="postgresql://bomberos_dbs_user:sB0cG00nvzS11aSYoROt2wNSWPnSIDyR@dpg-ctct69btq21c7380aogg-a.oregon-postgres.render.com/bomberos_dbs")
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
