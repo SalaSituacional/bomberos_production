@@ -6,6 +6,9 @@ from django.utils.deprecation import MiddlewareMixin
 from django.utils import timezone
 from .models import RegistroPeticiones, Usuarios
 from django.http import HttpResponseForbidden
+from django.urls import resolve, NoReverseMatch # <-- Asegúrate de que estas estén aquí
+from django.http import JsonResponse
+
 
 class LogoutIfAuthenticatedMiddleware:
     def __init__(self, get_response):
@@ -88,3 +91,48 @@ class RegistroPeticionesMiddleware:
         response = self.get_response(request)
         return response
 
+# Seguridad en apis
+class PrivateApiAuthMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+        
+        # Define los NOMBRES de tus URLs de API que DEBEN SER PÚBLICAS (NO requieren autenticación).
+        # Asegúrate de que estas URLs tengan un 'name' definido en tu urls.py.
+        self.public_api_url_names = {
+        }
+        
+        self.api_url_prefixes = [
+            '/api/', # Cualquier ruta que empiece con '/api/'
+        ]
+
+    def __call__(self, request):
+        if request.path.startswith('/admin/'):
+            return self.get_response(request)
+
+        is_api_request = False
+        for prefix in self.api_url_prefixes:
+            if request.path.startswith(prefix):
+                is_api_request = True
+                break
+        
+        if not is_api_request:
+            return self.get_response(request)
+
+        url_name = None
+        try:
+            resolved_url = resolve(request.path_info)
+            url_name = resolved_url.url_name
+        except NoReverseMatch:
+            return self.get_response(request)
+        except Exception:
+            return self.get_response(request)
+
+        if url_name in self.public_api_url_names:
+            return self.get_response(request)
+
+        # CAMBIO AQUÍ: Verificar 'user' en request.session en lugar de request.user.is_authenticated
+        if 'user' not in request.session: # <-- Lógica de autenticación unificada
+            return JsonResponse({'message': 'Autenticación requerida para acceder a este recurso API.'}, status=401)
+        
+        response = self.get_response(request)
+        return response
