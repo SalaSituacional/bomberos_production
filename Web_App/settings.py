@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'web.middleware.NoCacheMiddleware',  # Ajusta esto según tu estructura
     'web.middleware.LoadingScreenMiddleware',
     'web.middleware.RegistroPeticionesMiddleware',
+    'web.middleware.PrivateApiAuthMiddleware',  # Middleware para autenticación de API privada
 ]
 
 LOGIN_URL = 'home'  # Cambia esto al nombre de tu URL de inicio de sesión
