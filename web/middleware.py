@@ -8,7 +8,6 @@ from .models import RegistroPeticiones, Usuarios
 from django.http import HttpResponseForbidden
 from django.urls import resolve, NoReverseMatch # <-- Asegúrate de que estas estén aquí
 from django.http import JsonResponse
-from django.http import Http404 # <-- ¡Importa Http404!
 
 
 class LogoutIfAuthenticatedMiddleware:
@@ -131,10 +130,9 @@ class PrivateApiAuthMiddleware:
         if url_name in self.public_api_url_names:
             return self.get_response(request)
 
-        # CAMBIO CLAVE AQUÍ: Lanza Http404 si la autenticación falla
-        if not request.user.is_authenticated:
-            # Esto hará que Django procese un error 404, como si la URL no existiera.
-            raise Http404("Recurso no encontrado o no autorizado.") 
-
+        # CAMBIO AQUÍ: Verificar 'user' en request.session en lugar de request.user.is_authenticated
+        if 'user' not in request.session: # <-- Lógica de autenticación unificada
+            return JsonResponse({'message': 'Autenticación requerida para acceder a este recurso API.'}, status=401)
+        
         response = self.get_response(request)
         return response
