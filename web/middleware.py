@@ -7,7 +7,7 @@ from django.utils import timezone
 from .models import RegistroPeticiones, Usuarios
 from django.http import HttpResponseForbidden
 from django.urls import resolve, NoReverseMatch # <-- Asegúrate de que estas estén aquí
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse # Asegúrate de importar Http404
 
 
 class LogoutIfAuthenticatedMiddleware:
@@ -132,7 +132,7 @@ class PrivateApiAuthMiddleware:
 
         # CAMBIO AQUÍ: Verificar 'user' en request.session en lugar de request.user.is_authenticated
         if 'user' not in request.session: # <-- Lógica de autenticación unificada
-            return JsonResponse({'message': 'Autenticación requerida para acceder a este recurso API.'}, status=401)
-        
+            raise Http404("No estas autenticado.")
+            
         response = self.get_response(request)
         return response
