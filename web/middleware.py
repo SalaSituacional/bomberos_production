@@ -97,42 +97,52 @@ class PrivateApiAuthMiddleware:
         self.get_response = get_response
         
         # Define los NOMBRES de tus URLs de API que DEBEN SER PÚBLICAS (NO requieren autenticación).
-        # Asegúrate de que estas URLs tengan un 'name' definido en tu urls.py.
         self.public_api_url_names = {
+            # 'nombre_de_mi_api_publica', # Ejemplo
         }
         
-        self.api_url_prefixes = [
-            '/api/', # Cualquier ruta que empiece con '/api/'
+        # Prefijos de URL que DEBEN ser protegidos por tu sistema de autenticación.
+        self.protected_prefixes = [
+            '/api/',        # Cualquier ruta que empiece con '/api/'
+            '/alpha04/',    # ¡Ahora tu panel de administración está protegido!
         ]
 
     def __call__(self, request):
-        if request.path.startswith('/admin/'):
-            return self.get_response(request)
 
-        is_api_request = False
-        for prefix in self.api_url_prefixes:
+        is_protected_request = False
+        for prefix in self.protected_prefixes:
             if request.path.startswith(prefix):
-                is_api_request = True
+                is_protected_request = True
                 break
         
-        if not is_api_request:
+        # Si la ruta no está entre los prefijos protegidos, no hacemos nada y pasamos la petición.
+        if not is_protected_request:
             return self.get_response(request)
 
+        # Intenta resolver el nombre de la URL para ver si es una URL pública por nombre.
         url_name = None
         try:
             resolved_url = resolve(request.path_info)
             url_name = resolved_url.url_name
         except NoReverseMatch:
-            return self.get_response(request)
+            # Si no se puede resolver el nombre, no es una URL pública por nombre.
+            pass 
         except Exception:
-            return self.get_response(request)
+            # Captura otras excepciones durante la resolución.
+            pass
 
+        # Si la URL es pública por nombre, permite el acceso.
         if url_name in self.public_api_url_names:
             return self.get_response(request)
 
-        # CAMBIO AQUÍ: Verificar 'user' en request.session en lugar de request.user.is_authenticated
-        if 'user' not in request.session: # <-- Lógica de autenticación unificada
-            raise Http404("No estas autenticado.")
+        # Aquí viene tu lógica de autenticación principal:
+        # Si 'user' NO está en la sesión, el usuario no está autenticado.
+        if 'user' not in request.session:
+            # Es mejor usar HttpResponseForbidden (403) para "acceso denegado"
+            # o HttpResponseUnauthorized (401) si es específicamente por falta de credenciales de autenticación.
+            # Http404 es para recursos no encontrados.
+            return HttpResponseForbidden("Acceso denegado. No estás autenticado.")
             
+        # Si el usuario está autenticado y la ruta es protegida, permite el acceso.
         response = self.get_response(request)
-        return response
+        return response 
