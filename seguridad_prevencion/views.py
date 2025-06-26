@@ -523,6 +523,7 @@ class CredencialDocumentGenerator(DocumentGenerator):
                 "font": "Times-Roman", # O la ruta a tu fuente personalizada, ej: os.path.join(settings.BASE_DIR, 'web', 'static', 'fonts', 'GreatVibes-Regular.ttf')
                 "color": (0.2, 0.2, 0.6), # Color de relleno del texto (azul oscuro)
                 "align": 1, # Alineación centrada (se maneja en _insert_centered_text)
+                "uppercase": True # Convertir a mayúsculas
             },
             "Rif_Empresarial": {
                 "size": 20,
@@ -589,7 +590,7 @@ class CredencialDocumentGenerator(DocumentGenerator):
                             text=value,
                             y_position=rect.y0, # Usar el y0 (coordenada superior) del placeholder original
                             style=styles["Nombre_Comercio"],
-                            page_width=page_width
+                            page_width=page_width,
                         )
                     else:
                         # Para otros campos que se quieren centrar horizontalmente en la página:
@@ -691,9 +692,13 @@ class CredencialDocumentGenerator(DocumentGenerator):
 
         # Inserción del texto con los estilos definidos
         try:
+            # Aplica mayúsculas si el estilo lo requiere
+            if style.get("uppercase", False):
+                text_to_measure = text_to_measure.upper()
+
             insert_params = {
                 "point": (x_center, y_pos),
-                "text": text_to_measure, # Usar el texto limpio
+                "text": text_to_measure,  # Usar el texto limpio (ya en mayúsculas si corresponde)
                 "fontsize": style["size"],
                 "color": style["color"],
                 "overlay": True,
@@ -877,14 +882,24 @@ def editar_solicitud(request, id):
     
     if request.method == 'POST':
         # Procesar el formulario enviado
-        form = SolicitudForm(request.POST, instance=solicitud)
-        requisitos_form = RequisitosForm(request.POST, instance=requisitos)
+        form = SolicitudForm(request.POST or None, instance=solicitud, editing=True, user=user)
+        requisitos_form = RequisitosForm(request.POST or None, instance=requisitos)
         
         if form.is_valid() and requisitos_form.is_valid():
             form.save()
             requisitos_form.save()
             messages.success(request, 'Solicitud actualizada correctamente')
             return redirect('certificados_prevencion')
+        else:
+            # Mostrar errores en el formulario
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+                    print(f"Error en campo '{field}': {error}")
+            for field, errors in requisitos_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+                    print(f"Error en campo '{field}': {error}")
     else:
         # Mostrar formulario con datos iniciales
         form = SolicitudForm(instance=solicitud)
