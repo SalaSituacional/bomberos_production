@@ -38,7 +38,7 @@
 <article class="container mt-4">
   <form class="card border-0 shadow-sm" id="formularioEditarSolicitudes" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="hidden" name="id_solicitud" value="{{ solicitud_id }}">
+    <!-- <input type="hidden" name="id_solicitud" value="{{ solicitud_id }}"> -->
 
     <div class="card-header bg-danger text-white">
       <div class="d-flex justify-content-between align-items-center">
@@ -197,7 +197,8 @@
                      value="{{ comercio.nombre_comercio }}" readonly>
               <label for="id_comercio_display">Comercio</label>
             </div>
-            <input type="hidden" name="id_solicitud" value="{{ form.instance.id_solicitud.id }}">
+            <!-- Con esto: -->
+            <input type="hidden" name="id_solicitud" value="{{ comercio.id_comercio }}">
           </div>
 
           <!-- Fecha y Hora -->
