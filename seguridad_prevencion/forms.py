@@ -51,6 +51,8 @@ class SolicitudForm(forms.ModelForm):
         }
     )
 
+    referencia = forms.CharField(required=False)  # ← Así se desactiva el required
+
     tipo_servicio = forms.ChoiceField(choices=TIPO_SERVICIO_CHOICES, required=False)
     tipo_representante = forms.ChoiceField(choices=TIPO_REPRESENTANTE_CHOICES, required=False)
     metodo_pago = forms.ChoiceField(choices=METODO_PAGO_CHOICES, required=False)
@@ -62,6 +64,7 @@ class SolicitudForm(forms.ModelForm):
             'fecha_solicitud': forms.DateInput(attrs={'type': 'date'}),
             'hora_solicitud': forms.TimeInput(attrs={'type': 'time'}, format='%H:%M'),
             'id_solicitud': forms.Select(attrs={'class': 'form-select'}),
+            'referencia': forms.TextInput(attrs={"required": False}),
         }
     
     def __init__(self, *args, **kwargs):
@@ -84,6 +87,15 @@ class SolicitudForm(forms.ModelForm):
             self.fields['id_solicitud'].disabled = True
             self.fields['fecha_solicitud'].disabled = True
         
+            self.fields['id_solicitud'].required = False
+
+             # Si ya tenemos una instancia, establecer el queryset inicial
+            if self.instance and self.instance.id_solicitud:
+                self.fields['id_solicitud'].queryset = Comercio.objects.filter(
+                    id_comercio=self.instance.id_solicitud.id_comercio
+                )
+    
+
         # Filtramos los comercios según el usuario
         if self.user:
             # Mapeo de jerarquías de usuarios a departamentos
