@@ -141,7 +141,7 @@ class PrivateApiAuthMiddleware:
             # Es mejor usar HttpResponseForbidden (403) para "acceso denegado"
             # o HttpResponseUnauthorized (401) si es específicamente por falta de credenciales de autenticación.
             # Http404 es para recursos no encontrados.
-            return HttpResponseForbidden("Acceso denegado. No estás autenticado.")
+            raise Http404("Acceso denegado. No estás autenticado.")
             
         # Si el usuario está autenticado y la ruta es protegida, permite el acceso.
         response = self.get_response(request)
