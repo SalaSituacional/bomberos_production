@@ -24,6 +24,7 @@ from django.db.models import Count
 from django.utils.timezone import localdate
 from django.forms.models import model_to_dict
 from django.views.decorators.http import require_http_methods
+from django.db.models import Q
 
 
 # Vista Personalizada para el error 404
@@ -126,20 +127,39 @@ def View_personal(request):
     # Obtener el usuario de la sesión
     user = request.session.get('user')
 
+    buscar_jerarquia = request.GET.get('filterJerarquia', '')
+    buscar_status = request.GET.get('filterStatus', '')
+
     # Verificar si el usuario está en la sesión
     if not user:
         return redirect('/')
 
-    # Recuperar los datos de Personal y Detalles_Personal en una sola consulta
+    # Base queryset
     personal_queryset = Personal.objects.exclude(id__in=[0, 4]).prefetch_related(
         Prefetch('detalles_personal_set', queryset=Detalles_Personal.objects.all(), to_attr='detalles')
     )
 
+    # Aplicar filtros directamente al queryset
+    if buscar_jerarquia:
+        personal_queryset = personal_queryset.filter(jerarquia__icontains=buscar_jerarquia)
+    if buscar_status:
+        personal_queryset = personal_queryset.filter(status=buscar_status)
+
     conteo = personal_queryset.count()
 
-    # Crear la lista para los datos del personal
-    personal_data = []
+    # Lista de jerarquías en el orden deseado
+    jerarquias = [
+        "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", 
+        "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", 
+        "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero"
+    ]
 
+    # Crear un mapa de jerarquía a índice para facilitar la ordenación
+    jerarquia_orden = {nombre: index for index, nombre in enumerate(jerarquias)}
+
+    # Crear la lista para los datos del personal (solo después de filtrar)
+    personal_data = []
+    
     def calcular_edad(fecha_nacimiento):
         if fecha_nacimiento:
             hoy = date.today()
@@ -148,7 +168,7 @@ def View_personal(request):
 
     # Iterar sobre las instancias de Personal para formar el diccionario de datos
     for persona in personal_queryset:
-        detalles = persona.detalles[0] if persona.detalles else None  # Acceso eficiente a los detalles relacionados
+        detalles = persona.detalles[0] if persona.detalles else None
 
         personal_data.append({
             "id": persona.id,
@@ -166,23 +186,13 @@ def View_personal(request):
             'talla_zapato': detalles.talla_zapato if detalles else None,
             'grupo_sanguineo': detalles.grupo_sanguineo if detalles else None,
             'fecha_ingreso': detalles.fecha_ingreso if detalles else None,
-            'edad': f"{calcular_edad(detalles.fecha_nacimiento)} años" if detalles else None,  # Calcular la edad
+            'edad': f"{calcular_edad(detalles.fecha_nacimiento)} años" if detalles else None,
         })
 
-    # Lista de jerarquías en el orden deseado
-    jerarquias = [
-        "General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", 
-        "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", 
-        "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero"
-    ]
-
-    # Crear un mapa de jerarquía a índice para facilitar la ordenación
-    jerarquia_orden = {nombre: index for index, nombre in enumerate(jerarquias)}
-
-    # Ordenar la lista personal_data por jerarquía utilizando la clave personalizada
+    # Ordenar la lista personal_data por jerarquía
     personal_ordenado = sorted(
         personal_data, 
-        key=lambda x: jerarquia_orden.get(x["jerarquia"], float("inf"))  # Si no está, se asigna un valor alto
+        key=lambda x: jerarquia_orden.get(x["jerarquia"], float("inf"))
     )
 
     # Manejo del formulario para agregar nuevo personal
@@ -213,12 +223,10 @@ def View_personal(request):
                 fecha_ingreso=formulario.cleaned_data["fecha_ingreso"],
             )
 
-            # Redirigir después de guardar
             return redirect("/personal/")
     else:
         formulario = FormularioRegistroPersonal(prefix='formulario')
 
-    # Renderizar la página con los datos
     return render(request, "personal.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
@@ -226,7 +234,9 @@ def View_personal(request):
         "apellidos": user["apellidos"],
         "form_personal": formulario,
         "personal": personal_ordenado,
-        "conteo": conteo
+        "conteo": conteo,
+        "filterJerarquia": buscar_jerarquia,  # Para mantener el filtro en el template
+        "filterStatus": buscar_status        # Para mantener el filtro en el template
     })
 
 @login_required
