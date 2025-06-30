@@ -65,24 +65,33 @@
     </section>
   </div>
   <div class="tool-personal">
-    <section class="accion-filter">
+    <form class="accion-filter">
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">Jerarquia:</span>
-        <input type="text" class="form-control" placeholder="Buscar Jerarquia" id="filterJerarquia">
+        <input type="text" class="form-control" placeholder="Buscar Jerarquia" id="filterJerarquia" name="filterJerarquia" value="{{ filterJerarquia|default:'' }}">
       </div>
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">Status</span>
-        <select class="form-select form-select-sm" aria-label="Small select example" id="filterStatus">
+        <select class="form-select form-select-sm" aria-label="Small select example" id="filterStatus" name="filterStatus">
           <option selected disabled>Estado</option>
-          <option value="1">Activo</option>
-          <option value="2">Jubilado</option>
-          <option value="3">Incapacitado</option>
-          <option value="4">Fallecido</option>
-          <option value="5">Cese</option>
-          <option value="6">Comision de Servicios</option>
+          <option value="Activo" {% if filterStatus == "Activo" %} selected {% endif %}>Activo</option>
+          <option value="Jubilado" {% if filterStatus == "Jubilado" %} selected {% endif %}>Jubilado</option>
+          <option value="Incapacitado" {% if filterStatus == "Incapacitado" %} selected {% endif %}>Incapacitado</option>
+          <option value="Fallecido" {% if filterStatus == "Fallecido" %} selected {% endif %}>Fallecido</option>
+          <option value="Cese" {% if filterStatus == "Cese" %} selected {% endif %}>Cese</option>
+          <option value="Comision de Servicios" {% if filterStatus == "Comision de Servicios" %} selected {% endif %}>Comision de Servicios</option>
         </select>
       </div>
-    </section>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger d-flex"> 
+          <i class="bi bi-search me-2"></i> Buscar
+        </button>
+        <a href="{% url 'personal' %}" class="btn btn-secondary d-flex align-items-center">
+          <i class="bi bi-arrow-clockwise me-2"></i> Reiniciar
+        </a>
+      </div>
+    </form>
     <section class="accion-personal">
         Personas Totales: {{ conteo }}
         <button type="button" class="btn" data-bs-toggle="modal"
