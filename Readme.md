@@ -19,7 +19,7 @@ Este proyecto es una aplicación web robusta construida con Django, diseñada pa
 
 * **Django:** El framework web principal para el backend.
 * **Python:** El lenguaje de programación base.
-* **PostgreSQL:** Base de datos para almacenar la información (SQLite para desarrollo, PostgreSQL para producción).
+* **PostgreSQL:** Base de datos para almacenar la información (PostgreSQL para producción).
 * **HTML, CSS, JavaScript:** Para la interfaz de usuario.
 * **Django Admin:** Para la gestión de datos administrativa.
 
