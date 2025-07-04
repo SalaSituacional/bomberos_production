@@ -53,9 +53,55 @@ class Detalles_Personal(models.Model):
   talla_zapato = models.TextField()
   grupo_sanguineo = models.TextField()
   fecha_ingreso = models.DateField()
+  direccion = models.TextField()
+  email = models.TextField()
+  telefono = models.TextField()
+  horario = models.TextField()
 
   def __str__(self):
     return self.personal.nombres + " -- " + str(self.fecha_nacimiento) + " -- " + self.talla_camisa + " -- " + self.talla_pantalon + " -- " + self.talla_zapato + " -- " + self.grupo_sanguineo + " -- " + str(self.fecha_ingreso)
+
+class Ascensos(models.Model):
+   personal = models.ForeignKey(Personal, on_delete=models.CASCADE)
+   gaceta = models.TextField()
+   actual = models.TextField()
+   fecha = models.DateField(default=timezone.now)
+   nuevo = models.TextField()
+
+   def __str__(self):
+      return self.personal.nombres + " -- " + self.personal.apellidos + " -- " + str(self.fecha) + " -- " + self.actual + " -- " + self.jerarquia
+
+class Familiares(models.Model):
+   personal = models.ForeignKey(Personal, on_delete=models.CASCADE)
+   nombres = models.TextField()
+   apellidos = models.TextField()
+   parentesco = models.TextField()
+   fecha_nacimiento = models.DateField()
+   cedula = models.TextField(null=True, blank=True)
+   partida_nacimiento = models.TextField(null=True, blank=True)
+
+   def __str__(self):
+      return self.nombres + " -- " + self.apellidos + " -- " + self.parentesco + " -- " + str(self.fecha_nacimiento)
+   
+class Sanciones(models.Model):
+  personal = models.ForeignKey(Personal, on_delete=models.CASCADE)
+  fecha = models.DateField(default=timezone.now)
+  sancion = models.TextField()
+  observaciones = models.TextField()
+
+  def __str__(self):
+    return f"{self.personal.nombres} {self.personal.apellidos} -- {self.fecha} -- {self.sancion} -- {self.observaciones}"
+  
+class Titulos_Academicos(models.Model):
+    personal = models.ForeignKey(Personal, on_delete=models.CASCADE)
+    titulo = models.TextField()
+    institucion = models.TextField()
+    fecha_obtencion = models.DateField(default=timezone.now)
+    numero_constancia = models.TextField()
+    hrs_academicas = models.TextField()
+
+    def __str__(self):
+        return f"{self.personal.nombres} {self.personal.apellidos} -- {self.titulo} -- {self.institucion} -- {self.fecha_obtencion} -- {self.numero_constancia} -- {self.hrs_academicas}"
 
 # Tabla de usuarios que pueden entrar a la pagina
 class Usuarios(models.Model):

@@ -61,13 +61,18 @@ urlpatterns = [
     path('login/', Home, name="home"),
     path('dashboard/', Dashboard,name='dashboard'),
     path('api/ultimo_procedimiento/', ultimo_procedimiento),
-    path('personal/', View_personal, name='personal'),
     path("api/ultimo_personal/", ultimo_personal, name="ultimo_personal"),
     path('api/personal_comandante/', personal_primer_comandante, name='personal_comandante'),
     path('prueba/', Prueba),
     path('registros/', ver_registros, name='registros'),
     path('antecedentes/', Antecedentes, name='antecedentes'),
 
+    # Personal
+    path('personal/', View_personal, name='personal'),
+    path('personal/<int:id>/', Detalles_Personal_view, name='detalles_personal'),
+    path('personal/registrar/', registrar_personal_completo, name='registrar_personal'),
+    
+    
     # SARP
     path('dashboard_sarp/', Dashboard_sarp,name='dashboard_sarp'),
     path('registros_sarp/', Registros_sarp, name='registros_sarp'),

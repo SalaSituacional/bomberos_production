@@ -212,46 +212,76 @@ class FormularioBusquedaCedula(forms.Form):
     nacionalidad = forms.ChoiceField(choices=[("V", "V"),("E", "E") ], label="Nacionalidad")
     numero_cedula = forms.CharField(max_length=20, label="Número de Cédula")
 
-class FormularioRegistroPersonal(forms.Form):
-    opc = [
-        ("", "Seleccione Una Opcion"),
-        ("General", "General"),
-        ("Coronel", "Coronel"),
-        ("Teniente Coronel", "Teniente Coronel"),
-        ("Mayor", "Mayor"),
-        ("Capitán", "Capitán"),
-        ("Primer Teniente", "Primer Teniente"),
-        ("Teniente", "Teniente"),
-        ("Sargento Mayor", "Sargento Mayor"),
-        ("Sargento Primero", "Sargento Primero"),
-        ("Sargento segundo", "Sargento segundo"),
-        ("Cabo Primero", "Cabo Primero"),
-        ("Cabo Segundo", "Cabo Segundo"),
-        ("Distinguido", "Distinguido"),
-        ("Bombero", "Bombero"),
-    ]
 
-    nombres = forms.CharField(max_length=100)
-    apellidos = forms.CharField(max_length=100)
-    nacionalidad = forms.ChoiceField(choices=[("V", "V"), ("E", "E")])
-    cedula = forms.IntegerField()
-    jerarquia = forms.ChoiceField(choices=opc, widget=forms.Select(attrs={"class": "disable-first-option"}))
-    cargo = forms.CharField()
-    fecha_nacimiento = forms.DateField(
-        label="Fecha de Nacimiento",
-        widget=forms.DateInput(attrs={'type': 'date'})
-    )
-    fecha_ingreso = forms.DateField(
-        label="Fecha de Ingreso",
-        widget=forms.DateInput(attrs={'type': 'date'})
-    )
-    sexo = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Masculino", "Masculino"), ("Femenino", "Femenino")], widget=forms.Select(attrs={"class": "disable-first-option"}))
-    rol = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Administrativo", "Administrativo"), ("Bombero", "Bombero"), ("Civil", "Civil")], widget=forms.Select(attrs={"class": "disable-first-option"}))
-    status = forms.ChoiceField(choices=[("", "Seleccione Una Opcion"), ("Activo", "Activo"), ("Jubilado", "Jubilado"), ("Incapacitado", "Incapacitado"), ("Fallecido", "Fallecido"), ("Cese", "Cese"), ("Comision de Servicios", "Comision de Servicios")], widget=forms.Select(attrs={"class": "disable-first-option"}))
-    talla_camisa = forms.CharField()
-    talla_pantalon = forms.CharField()
-    talla_zapato = forms.CharField()
-    grupo_sanguineo = forms.CharField()
+
+
+class PersonalForm(forms.ModelForm):
+    class Meta:
+        jerarquias = [
+            ("", "Seleccione una Jerarquía"),
+            ("General", "General"),
+            ("Coronel", "Coronel"),
+            ("Teniente Coronel", "Teniente Coronel"),
+            ("Mayor", "Mayor"),
+            ("Capitán", "Capitán"),
+            ("Primer Teniente", "Primer Teniente"),
+            ("Teniente", "Teniente"),
+            ("Sargento Mayor", "Sargento Mayor"),
+            ("Sargento Primero", "Sargento Primero"),
+            ("Sargento segundo", "Sargento segundo"),
+            ("Cabo Primero", "Cabo Primero"),
+            ("Cabo Segundo", "Cabo Segundo"),
+            ("Distinguido", "Distinguido"),
+            ("Bombero", "Bombero"),
+        ]
+
+        model = Personal
+        fields = '__all__' # Incluye todos los campos del modelo Personal
+        # O puedes especificar los campos que quieres:
+        # fields = ['nombres', 'apellidos', 'jerarquia', 'cargo', 'cedula', 'sexo', 'rol', 'status']
+        widgets = {
+            'nombres': forms.TextInput(attrs={'placeholder': 'Nombres Completos', 'class': 'input'}),
+            'apellidos': forms.TextInput(attrs={'placeholder': 'Apellidos del personal', 'class': 'input'}),
+            'jerarquia': forms.Select(choices=jerarquias, attrs={'class': 'disable-first-option'}),
+            'cargo': forms.TextInput(attrs={'placeholder': 'Ej: Bombero de Planta, Paramédico'}),
+            'cedula': forms.TextInput(attrs={'placeholder': 'Número de cédula'}),
+            'sexo': forms.Select(choices=[('M', 'Masculino'), ('F', 'Femenino')]),
+            'rol': forms.TextInput(attrs={'placeholder': 'Rol en la institución'}),
+            'status': forms.Select(choices=[('Activo', 'Activo'), ('Inactivo', 'Inactivo'), ('De Vacaciones', 'De Vacaciones')]),
+        }
+
+class DetallesPersonalForm(forms.ModelForm):
+    class Meta:
+        model = Detalles_Personal
+        exclude = ['personal'] # Excluye el campo 'personal' porque lo asignaremos en la vista
+        # O puedes especificar los campos que quieres:
+        # fields = ['fecha_nacimiento', 'talla_camisa', 'talla_pantalon', 'talla_zapato', 'grupo_sanguineo', 'fecha_ingreso', 'direccion', 'email', 'telefono', 'horario']
+        widgets = {
+            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_ingreso': forms.DateInput(attrs={'type': 'date'}),
+            'talla_camisa': forms.TextInput(attrs={'placeholder': 'Ej: S, M, L, XL'}),
+            'talla_pantalon': forms.TextInput(attrs={'placeholder': 'Ej: 32, 34'}),
+            'talla_zapato': forms.TextInput(attrs={'placeholder': 'Ej: 40, 42'}),
+            'grupo_sanguineo': forms.Select(choices=[('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'), ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')]),
+            'direccion': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Dirección completa'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'correo@ejemplo.com'}),
+            'telefono': forms.TextInput(attrs={'placeholder': 'Ej: 0412-1234567'}),
+            'horario': forms.TextInput(attrs={'placeholder': 'Ej: L-V 8am-4pm'}),
+        }
+
+class FamiliaresForm(forms.ModelForm):
+    class Meta:
+        model = Familiares
+        exclude = ['personal'] # Excluye el campo 'personal' porque lo asignaremos en la vista
+        # O puedes especificar los campos que quieres:
+        # fields = ['nombres', 'apellidos', 'parentesco', 'fecha_nacimiento', 'cedula', 'partida_nacimiento']
+        widgets = {
+            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
+            'parentesco': forms.TextInput(attrs={'placeholder': 'Ej: Esposa, Hijo, Padre'}),
+            'cedula': forms.TextInput(attrs={'placeholder': 'Opcional'}),
+            'partida_nacimiento': forms.TextInput(attrs={'placeholder': 'Número de partida de nacimiento (opcional)'}),
+        }
+
 
 
 # Form1
