@@ -1,0 +1,213 @@
+<div id="loadingScreen" style="display: none;" class="text-center justify-content-center">
+    <div class="text-danger">
+
+    
+    <span class="loader">
+        <!-- El hidrante ahora está dentro del truckWrapper, como el camión principal -->
+        <div class="truckWrapper">
+        <!-- Hidrante SVG (ahora el elemento principal estático en el truckWrapper) -->
+        <svg version="1.1" id="hydrantSVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" class="hydrant-svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+            <path style="fill:#FF8189;" d="M441.423,142.23c-0.808-2.923-3.951-5.314-6.983-5.314h-32.527c-3.032,0-6.175,2.39-6.982,5.314 l-7.286,26.35c-0.807,2.923,1.012,5.314,4.044,5.314h52.977c3.032,0,4.852-2.392,4.043-5.314L441.423,142.23z"></path>
+            <rect x="73.236" y="130.889" style="fill:#A4A9AD;" width="27.841" height="27.797"></rect>
+            <rect x="73.236" y="130.889" style="opacity:0.1;enable-background:new ;" width="27.841" height="12.129"></rect>
+            <rect x="140.496" y="130.889" style="fill:#A4A9AD;" width="27.841" height="27.797"></rect>
+            <rect x="140.496" y="130.889" style="opacity:0.1;enable-background:new ;" width="27.841" height="12.129"></rect>
+            <rect x="207.756" y="130.889" style="fill:#A4A9AD;" width="27.841" height="27.797"></rect>
+            <rect x="207.756" y="130.889" style="opacity:0.1;enable-background:new ;" width="27.841" height="12.129"></rect>
+            <path style="fill:#FF5959;" d="M17.386,360.827V186.259c0-15.161,12.404-27.566,27.566-27.566h422.097 c15.161,0,27.566,12.404,27.566,27.566v174.568H17.386z"></path>
+            <rect x="17.386" y="266.512" style="fill:#D1D3D3;" width="477.226" height="21.662"></rect>
+            <g>
+                <path style="fill:#A4A9AD;" d="M512,369.16c0,5.641-4.616,10.258-10.257,10.258h-23.079c-5.641,0-10.258-4.617-10.258-10.258 v-16.667c0-5.641,4.616-10.258,10.258-10.258h23.079c5.641,0,10.257,4.616,10.257,10.258V369.16z"></path>
+                <path style="fill:#A4A9AD;" d="M39.182,369.16c0,5.641-4.617,10.258-10.258,10.258H10.257C4.616,379.418,0,374.801,0,369.16 v-16.667c0-5.641,4.614-10.258,10.257-10.258h18.668c5.641,0,10.258,4.616,10.258,10.258v16.667H39.182z"></path>
+            </g>
+            <path style="opacity:0.2;enable-background:new ;" d="M198.051,360.827c0-37.078-30.059-67.136-67.136-67.136 s-67.136,30.059-67.136,67.136H198.051z"></path>
+            <circle style="fill:#333E48;" cx="130.914" cy="360.83" r="55.561"></circle>
+            <circle style="fill:#A4A9AD;" cx="130.914" cy="360.83" r="28.161"></circle>
+            <path style="opacity:0.2;enable-background:new ;" d="M448.221,360.827c0-37.078-30.059-67.136-67.136-67.136 s-67.136,30.059-67.136,67.136H448.221z"></path>
+            <circle style="fill:#333E48;" cx="381.088" cy="360.83" r="55.561"></circle>
+            <circle style="fill:#A4A9AD;" cx="381.088" cy="360.83" r="28.161"></circle>
+            <path style="fill:#D1D3D3;" d="M381.085,106.635c0-6.064-4.962-11.026-11.026-11.026H54.196c-6.064,0-11.026,4.962-11.026,11.026 v13.231c0,6.064,4.962,11.026,11.026,11.026h315.862c6.064,0,11.026-4.962,11.026-11.026V106.635z"></path>
+            <path style="fill:#333E48;" d="M386.598,228.484c0,4.852,3.969,8.821,8.821,8.821h64.198c4.852,0,8.821-3.969,8.821-8.821v-38.225 c0-4.852-3.969-8.821-8.821-8.821h-64.198c-4.852,0-8.821,3.969-8.821,8.821V228.484z"></path>
+            <path style="opacity:0.1;enable-background:new ;" d="M459.617,181.438h-64.198c-4.852,0-8.821,3.969-8.821,8.821v11.391 c0-4.852,3.969-8.821,8.821-8.821h64.198c4.852,0,8.821,3.969,8.821,8.821v-11.391C468.438,185.407,464.468,181.438,459.617,181.438 z"></path>
+            <path style="fill:#333E48;" d="M306.218,228.484c0,4.852,3.969,8.821,8.821,8.821h37.747c4.852,0,8.821-3.969,8.821-8.821v-38.225 c0-4.852-3.969-8.821-8.821-8.821h-37.747c-4.852,0-8.821,3.969-8.821,8.821V228.484z"></path>
+            <path style="opacity:0.1;enable-background:new ;" d="M352.786,181.438h-37.747c-4.852,0-8.821,3.969-8.821,8.821v11.391 c0-4.852,3.969-8.821,8.821-8.821h37.747c4.852,0,8.821,3.969,8.821,8.821v-11.391C361.607,185.407,357.639,181.438,352.786,181.438 z"></path>
+            <rect x="214.592" y="253.28" style="fill:#A4A9AD;" width="82.807" height="107.55"></rect>
+            <g>
+                <circle style="fill:#D1D3D3;" cx="239.589" cy="281.585" r="7.714"></circle>
+                <circle style="fill:#D1D3D3;" cx="272.414" cy="281.585" r="7.714"></circle>
+                <path style="fill:#D1D3D3;" d="M272.413,316.977H239.58c-4.567,0-8.27-3.703-8.27-8.27s3.703-8.27,8.27-8.27h32.833 c4.568,0,8.27,3.703,8.27,8.27S276.98,316.977,272.413,316.977z"></path>
+                <path style="fill:#D1D3D3;" d="M272.413,342.228H239.58c-4.567,0-8.27-3.703-8.27-8.27s3.703-8.27,8.27-8.27h32.833 c4.568,0,8.27,3.703,8.27,8.27S276.98,342.228,272.413,342.228z"></path>
+            </g>
+            <g>
+                <path style="fill:#FFB819;" d="M494.614,342.235h-23.603c-3.032,0-5.513-2.481-5.513-5.513v-13.974 c0-3.032,2.481-5.513,5.513-5.513h23.603V342.235z"></path>
+                <path style="fill:#FFB819;" d="M17.386,342.235h23.603c3.032,0,5.513-2.481,5.513-5.513v-13.974c0-3.032-2.481-5.513-5.513-5.513 H17.386V342.235z"></path>
+                <rect x="69.046" y="201.104" style="fill:#FFB819;" width="181.558" height="16.539"></rect>
+            </g>
+            <g>
+                <path style="fill:#D1D3D3;" d="M265.503,195.034c0-3.032-2.481-5.513-5.513-5.513h-18.763c-3.032,0-5.513,2.481-5.513,5.513v28.676 c0,3.032,2.481,5.513,5.513,5.513h18.763c3.032,0,5.513-2.481,5.513-5.513V195.034z"></path>
+                <path style="fill:#D1D3D3;" d="M83.943,195.034c0-3.032-2.481-5.513-5.513-5.513H59.667c-3.032,0-5.513,2.481-5.513,5.513v28.676 c0,3.032,2.481,5.513,5.513,5.513h18.762c3.032,0,5.513-2.481,5.513-5.513V195.034z"></path>
+            </g>
+            </g>
+        </svg>
+        </div>
+        <div class="road"></div>
+
+        <!-- Camión de bomberos SVG (ahora el elemento que se mueve en el fondo) -->
+        <svg version="1.1" id="fireTruckSVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" class="fire-truck-svg-moving">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+            <path style="fill:#A93439;" d="M288.565,11.128C288.565,5.008,283.558,0,277.437,0h-42.873c-6.121,0-11.128,5.008-11.128,11.128 v24.476c0,6.121,5.008,11.129,11.128,11.129h42.873c6.121,0,11.129-5.008,11.129-11.129V11.128z"></path>
+            <path style="fill:#FF5959;" d="M127.436,288.374c0-6.098-4.99-11.09-11.09-11.09h-12.92c-6.1,0-11.091,4.99-11.091,11.09v31.72 c0,6.101,4.991,11.091,11.091,11.091h12.919c6.1,0,11.09-4.99,11.09-11.091v-31.72H127.436z"></path>
+            <path style="fill:#A93439;" d="M153.926,265.204c0-7.291-5.965-13.256-13.256-13.256h-11.915c-7.291,0-13.256,5.965-13.256,13.256 v78.059c0,7.291,5.965,13.256,13.256,13.256h11.915c7.291,0,13.256-5.965,13.256-13.256V265.204z"></path>
+            <path style="fill:#FF5959;" d="M384.564,288.374c0-6.098,4.99-11.09,11.09-11.09h12.919c6.1,0,11.091,4.99,11.091,11.09v31.72 c0,6.101-4.991,11.091-11.091,11.091h-12.919c-6.1,0-11.09-4.99-11.09-11.091V288.374z"></path>
+            <path style="fill:#A93439;" d="M358.074,265.204c0-7.291,5.965-13.256,13.256-13.256h11.915c7.291,0,13.256,5.965,13.256,13.256 v78.059c0,7.291-5.965,13.256-13.256,13.256H371.33c-7.291,0-13.256-5.965-13.256-13.256V265.204z"></path>
+            <g>
+            <path style="fill:#FF5959;" d="M398.286,140.193c-4.609,0-8.346-3.737-8.346-8.346v-16.792c0-4.609,3.737-8.346,8.346-8.346 c4.609,0,8.346,3.737,8.346,8.346v16.792C406.632,136.457,402.895,140.193,398.286,140.193z"></path>
+            <path style="fill:#FF5959;" d="M113.715,140.193c-4.609,0-8.346-3.737-8.346-8.346v-16.792c0-4.609,3.737-8.346,8.346-8.346 c4.609,0,8.346,3.737,8.346,8.346v16.792C122.062,136.457,118.325,140.193,113.715,140.193z"></path>
+            <path style="fill:#FF5959;" d="M367.355,134.721c0-61.499-49.856-111.355-111.355-111.355 c-61.498,0-111.354,49.856-111.354,111.355H367.355z"></path>
+            <rect x="139.763" y="173.393" style="fill:#FF5959;" width="232.463" height="289.096"></rect>
+            </g>
+            <rect x="139.763" y="408.494" style="opacity:0.2;enable-background:new ;" width="232.463" height="26.708"></rect>
+            <g>
+            <path style="fill:#A93439;" d="M330.898,206.475c-4.609,0-8.346-3.737-8.346-8.346v-16.792c0-4.609,3.737-8.346,8.346-8.346 c4.609,0,8.346,3.737,8.346,8.346v16.792C339.245,202.738,335.508,206.475,330.898,206.475z"></path>
+            <path style="fill:#A93439;" d="M255.996,206.475c-4.609,0-8.346-3.737-8.346-8.346v-16.792c0-4.609,3.737-8.346,8.346-8.346 c4.609,0,8.346,3.737,8.346,8.346v16.792C264.342,202.738,260.605,206.475,255.996,206.475z"></path>
+            <path style="fill:#A93439;" d="M173.81,206.475c-4.609,0-8.346-3.737-8.346-8.346v-16.792c0-4.609,3.737-8.346,8.346-8.346 s8.346,3.737,8.346,8.346v16.792C182.157,202.738,178.42,206.475,173.81,206.475z"></path>
+            </g>
+            <rect x="139.763" y="173.393" style="opacity:0.2;enable-background:new ;" width="232.463" height="39.239"></rect>
+            <g>
+            <path style="fill:#A93439;" d="M424.795,143.777c0-10.937-8.948-19.884-19.884-19.884H107.09c-10.936,0-19.884,8.947-19.884,19.884 v20.327c0,10.936,8.948,19.883,19.884,19.883H404.91c10.936,0,19.884-8.947,19.884-19.883V143.777z"></path>
+            <path style="fill:#A93439;" d="M410.026,481.572v23.799c0,3.646-2.982,6.628-6.628,6.628H108.602c-3.646,0-6.629-2.982-6.629-6.628 v-23.799c0-13.469,10.918-24.388,24.388-24.388h259.276C399.108,457.184,410.026,468.104,410.026,481.572z"></path>
+            <circle style="fill:#A93439;" cx="256" cy="304.231" r="52.286"></circle>
+            </g>
+            <circle style="fill:#FF5959;" cx="256" cy="304.231" r="26.953"></circle>
+            <path style="fill:#A93439;" d="M385.482,412.245c0,4.284-3.505,7.79-7.79,7.79H134.308c-4.284,0-7.79-3.505-7.79-7.79v-11.963 c0-4.286,3.505-7.79,7.79-7.79h243.385c4.284,0,7.79,3.504,7.79,7.79V412.245z"></path>
+            <g style="opacity:0.2;">
+            <path d="M255.996,104.495c-4.609,0-8.346-3.737-8.346-8.346V52.007c0-4.609,3.737-8.346,8.346-8.346 c4.609,0,8.346,3.737,8.346,8.346v44.142C264.342,100.759,260.605,104.495,255.996,104.495z"></path>
+            </g>
+            <g style="opacity:0.2;">
+            <path d="M197.019,104.495c-4.609,0-8.346-3.737-8.346-8.346V73.892c0-4.609,3.737-8.346,8.346-8.346s8.346,3.737,8.346,8.346 v22.257C205.365,100.759,201.628,104.495,197.019,104.495z"></path>
+            </g>
+            <g style="opacity:0.2;">
+            <path d="M314.971,104.495c-4.609,0-8.346-3.737-8.346-8.346V73.892c0-4.609,3.737-8.346,8.346-8.346 c4.609,0,8.346,3.737,8.346,8.346v22.257C323.317,100.759,319.58,104.495,314.971,104.495z"></path>
+            </g>
+        </g>
+        </svg>
+
+    </span>
+    <h2 class="text-center text-white mt-2" style="font-size: 1.4rem;">Cargando...</h2>
+
+    </div>
+</div>
+
+<style>
+  /* Contenedor principal del loader */
+  .loader {
+    width: 400px; /* Ajusta el ancho total del loader */
+    height: 120px; /* Ajusta el alto total del loader */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Alinea los elementos a la parte inferior */
+    justify-content: center;
+    position: relative;
+    overflow: hidden; /* Para ocultar elementos que salen de los límites */
+    background-color: transparent; /* Fondo claro para el loader */
+    border-radius: 8px;
+  }
+
+  /* Contenedor del camión (ahora contiene el hidrante) */
+  .truckWrapper {
+    width: 100%; /* Ocupa todo el ancho del loader */
+    height: 200px; /* Altura del área del hidrante */
+    display: flex;
+    flex-direction: column;
+    position: absolute; /* Posicionamiento absoluto dentro del loader */
+    bottom: -65px;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Para que el hidrante no se salga al moverse (si tuviera animación) */
+  }
+
+  /* SVG del hidrante (ahora el elemento principal estático en el truckWrapper) */
+  .hydrant-svg {
+    width: 100px; /* Ajusta el ancho del hidrante */
+    height: 100%; /* Mantiene la proporción */
+    margin-bottom: 1px; /* Espacio entre el hidrante y la carretera */
+    /* No tiene animación de movimiento horizontal, solo la de suspensión si se desea */
+    animation: motion 1s linear infinite; /* Animación de suspensión */
+    position: relative; /* Para que el z-index funcione */
+    z-index: 1; /* Asegura que el hidrante esté sobre la carretera */
+  }
+
+  /* Animación de suspensión del hidrante (antes del camión) */
+  @keyframes motion {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(3px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  /* Carretera */
+  .road {
+    width: 100%;
+    height: 3px; /* Grosor de la carretera */
+    background-color: #282828; /* Color de la carretera */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 3px;
+    z-index: 1; /* Por debajo de los elementos principales */
+  }
+
+  .road::before,
+  .road::after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    background-color: #282828;
+    border-radius: 3px;
+    animation: roadAnimation 2.5s linear infinite; /* Animación de la carretera */
+  }
+
+  .road::before {
+    width: 2500px; /* Ancho de la primera marca de la carretera */
+    right: -50%;
+    border-left: 10px solid white; /* Línea blanca */
+  }
+
+  .road::after {
+    width: 250px; /* Ancho de la segunda marca de la carretera */
+    right: -70%;
+    border-left: 6px solid white; /* Línea blanca */
+  }
+
+  /* SVG del camión de bomberos (ahora el elemento que se mueve en el fondo) */
+  .fire-truck-svg-moving {
+    position: absolute;
+    bottom: 0; /* Alinea el camión con la parte inferior del loader */
+    right: -180px; /* Comienza fuera de la pantalla a la derecha (ajustado al ancho del camión) */
+    height: 35px; /* Ajusta la altura del camión */
+    width: auto; /* Mantiene la proporción */
+    animation: roadAnimation 2.5s linear infinite; /* Animación de movimiento junto con la carretera */
+    z-index: 2; /* Por debajo del hidrante principal */
+  }
+
+  /* Animación de movimiento de la carretera y los elementos del fondo */
+  @keyframes roadAnimation {
+    0% {
+      transform: translateX(0px);
+    }
+    100% {
+      transform: translateX(-600px); /* Distancia de desplazamiento para simular el movimiento */
+    }
+  }
+</style>

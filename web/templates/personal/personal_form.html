@@ -1,0 +1,448 @@
+{% if user.user == "SeRvEr" %}
+    {% include "layouts/panel_admin.html" %}
+{% elif user.user == "Sala_Situacional" %}
+    {% include "layouts/panel_sala_situacional.html" %}
+{% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
+    {% include "layouts/panel_comandancia.html" %}
+{% elif user.user == "Operaciones01" %}
+    {% include "layouts/panel_operaciones.html" %}
+{% elif user.user == "Grumae02" %}
+    {% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Rescate03" %}
+    {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Prevencion05" %}
+    {% include "layouts/panel_prevencion.html" %}
+{% elif user.user == "Serviciosmedicos06" %}
+    {% include "layouts/panel_serviciosmedicos.html" %}
+{% elif user.user == "Capacitacion07" %}
+    {% include "layouts/panel_capacitacion.html" %}
+{% elif user.user == "Enfermeria08" %}
+    {% include "layouts/panel_enfermeria.html" %}
+{% elif user.user == "Psicologia09" %}
+    {% include "layouts/panel_psicologia.html" %}
+{% endif %}
+
+{% load static %}
+
+{% block content %}
+
+<style>
+  .container { border-radius: 8px; max-width: 70%; margin: 20px auto; }
+  .errorlist { color: red; list-style-type: none; padding: 0; margin-top: 5px; }
+  .form-section {
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-left: 4px solid #0d6efd;
+  }
+  .form-section h2 {
+      margin-top: 0;
+      color: #5264AE;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #dee2e6;
+  }
+  .dynamic-form {
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid #dee2e6;
+      position: relative;
+  }
+  .add-form-btn {
+      margin-bottom: 20px;
+  }
+  .remove-form-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #dc3545;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+  }
+  .general-dashboard {
+      padding-bottom: 60px; /* Space for footer */
+  }
+
+
+
+
+  /* From Uiverse.io by satyamchaudharydev */ 
+  .form {
+    --border-before-color: rgba(221, 221, 221, 0.35);
+    --border-after-color: #b6243a;
+    position: relative;
+    padding: 0;
+  }
+  /* styling of Input */
+  .input {
+    color: #000;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background-color: transparent;
+    width: 100%;
+    box-sizing: border-box;
+    padding-inline: 0.5em;
+    padding-block: 0.7em;
+    border: none;
+    border-bottom: 1px solid var(--border-before-color);
+  }
+  /* styling of animated border */
+  .input-border {
+    position: absolute;
+    background: var(--border-after-color);
+    width: 0%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    transition: 0.3s;
+  }
+
+  .input:focus {
+    outline: none;
+  }
+
+  .input::placeholder{
+    color: #00000070;
+    font-weight: 500;
+  }
+  
+  /* here is code of animated border */
+  .input:focus ~ .input-border {
+    width: 100%;
+  }
+  /* === if you want to do animated border on typing === */
+  /* remove input:focus code and uncomment below code */
+  /* input:valid ~ .input-border{
+    width: 100%;
+  } */
+</style>
+
+<div class="general-dashboard">
+  <div class="div-user-name  username-space">
+    <h3 class="division-title">Registrar Nuevo Personal</h3>
+    <section class="user-name">
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
+      <svg
+        width="30px"
+        height="30px"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
+            fill="#000000"
+          ></path>
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
+            fill="#000000"
+          ></path>
+        </g>
+      </svg>
+    </section>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="wt-100">
+
+        <form method="post" class="needs-validation" novalidate>
+          {% csrf_token %}
+          
+          <!-- Información General -->
+          <div class="form-section">
+            <h2>Información General del Personal</h2>
+            <div class="row g-3">
+            
+              <div class="form col-md-4">
+                  {{ personal_form.nombres }}
+                  <span class="input-border"></span>
+              </div>
+
+              <div class="form col-md-4">
+                  {{ personal_form.apellidos }}
+                  <span class="input-border"></span>
+              </div>
+
+              <!-- <div class="col-md-6">
+                <label for="{{ personal_form.apellidos.id_for_label }}" class="form-label">Apellidos</label>
+                {{ personal_form.apellidos }}
+              </div> -->
+
+              <div class="col-md-4">
+                <label for="{{ personal_form.cedula.id_for_label }}" class="form-label">Cédula</label>
+                {{ personal_form.cedula }}
+              </div>
+              <div class="col-md-4">
+                <label for="{{ personal_form.jerarquia.id_for_label }}" class="form-label">Jerarquía</label>
+                {{ personal_form.jerarquia }}
+              </div>
+              <div class="col-md-4">
+                <label for="{{ personal_form.cargo.id_for_label }}" class="form-label">Cargo</label>
+                {{ personal_form.cargo }}
+              </div>
+              <div class="col-md-3">
+                <label for="{{ personal_form.sexo.id_for_label }}" class="form-label">Sexo</label>
+                {{ personal_form.sexo }}
+              </div>
+              <div class="col-md-3">
+                <label for="{{ personal_form.rol.id_for_label }}" class="form-label">Rol</label>
+                {{ personal_form.rol }}
+              </div>
+              <div class="col-md-3">
+                <label for="{{ personal_form.status.id_for_label }}" class="form-label">Status</label>
+                {{ personal_form.status }}
+              </div>
+            </div>
+          </div>
+          
+          <!-- Detalles del Personal -->
+          <div class="form-section">
+            <h2>Detalles del Personal</h2>
+            {{ formset_detalles.management_form }}
+            
+            {% for form in formset_detalles %}
+            <div class="dynamic-form">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">Fecha de Nacimiento</label>
+                  {{ form.fecha_nacimiento }}
+                </div>
+                <div class="col-md-4">
+                  <label for="{{ form.fecha_ingreso.id_for_label }}" class="form-label">Fecha de Ingreso</label>
+                  {{ form.fecha_ingreso }}
+                </div>
+                <div class="col-md-4">
+                  <label for="{{ form.grupo_sanguineo.id_for_label }}" class="form-label">Grupo Sanguíneo</label>
+                  {{ form.grupo_sanguineo }}
+                </div>
+                <div class="col-md-3">
+                  <label for="{{ form.talla_camisa.id_for_label }}" class="form-label">Talla de Camisa</label>
+                  {{ form.talla_camisa }}
+                </div>
+                <div class="col-md-3">
+                  <label for="{{ form.talla_pantalon.id_for_label }}" class="form-label">Talla de Pantalón</label>
+                  {{ form.talla_pantalon }}
+                </div>
+                <div class="col-md-3">
+                  <label for="{{ form.talla_zapato.id_for_label }}" class="form-label">Talla de Zapato</label>
+                  {{ form.talla_zapato }}
+                </div>
+                <div class="col-md-3">
+                  <label for="{{ form.horario.id_for_label }}" class="form-label">Horario</label>
+                  {{ form.horario }}
+                </div>
+                <div class="col-md-6">
+                  <label for="{{ form.direccion.id_for_label }}" class="form-label">Dirección</label>
+                  {{ form.direccion }}
+                </div>
+                <div class="col-md-3">
+                  <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                  {{ form.email }}
+                </div>
+                <div class="col-md-3">
+                  <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
+                  {{ form.telefono }}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          
+          <!-- Familiares -->
+          <div class="form-section">
+              <h2>Familiares (Opcional)</h2>
+              {{ formset_familiares.management_form }}
+              <div id="familiares-forms-container">
+                  {% for form in formset_familiares %}
+                  <div class="dynamic-form mb-3 p-3 border rounded position-relative" id="familiares-{{ forloop.counter0 }}-form">
+                      {% if forloop.counter0 > 0 or form.instance.pk %}
+                      <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-familiar-btn">
+                          <i class="bi bi-x-lg"></i>
+                      </button>
+                      {% endif %}
+                      <div class="row g-3">
+                          {% for field in form.visible_fields %}
+                          <div class="col-md-4">
+                              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                              {{ field }}
+                              {% if field.errors %}
+                              <div class="invalid-feedback d-block">
+                                  {{ field.errors }}
+                              </div>
+                              {% endif %}
+                          </div>
+                          {% endfor %}
+                      </div>
+                  </div>
+                  {% endfor %}
+              </div>
+              <button type="button" class="btn btn-outline-primary mt-2" id="add-familiar-btn">
+                  <i class="bi bi-plus-circle"></i> Agregar Familiar
+              </button>
+          </div>
+          
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg">Registrar Personal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <section class="text-reserved">
+      <h5>2024 © Cuerpo de bomberos - San Cristobal</h5>
+    </section>
+  </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('familiares-forms-container');
+    const addButton = document.getElementById('add-familiar-btn');
+    const totalForms = document.getElementById('id_familiares-TOTAL_FORMS');
+    
+    // Verificar que los elementos existen
+    if (!container || !addButton || !totalForms) {
+        console.error('Elementos no encontrados:', {
+            container: container,
+            addButton: addButton,
+            totalForms: totalForms
+        });
+        return;
+    }
+
+    // Función para actualizar índices
+    function updateFormIndices() {
+        const forms = container.querySelectorAll('.dynamic-form');
+        totalForms.value = forms.length;
+        
+        forms.forEach((form, index) => {
+            // Actualizar IDs y names de los campos
+            form.querySelectorAll('input, select, textarea').forEach(input => {
+                const name = input.name ? input.name.replace(/familiares-\d+-/, `familiares-${index}-`) : '';
+                const id = input.id ? input.id.replace(/id_familiares-\d+-/, `id_familiares-${index}-`) : '';
+                
+                if (name) input.name = name;
+                if (id) input.id = id;
+            });
+            
+            // Actualizar los labels
+            form.querySelectorAll('label').forEach(label => {
+                const forAttr = label.getAttribute('for');
+                if (forAttr) {
+                    label.setAttribute('for', forAttr.replace(/id_familiares-\d+-/, `id_familiares-${index}-`));
+                }
+            });
+        });
+    }
+
+    // Función para agregar nuevo formulario
+    function addForm() {
+        const formCount = parseInt(totalForms.value);
+        const emptyForm = container.querySelector('.dynamic-form');
+        
+        if (!emptyForm) {
+            console.error('No se encontró formulario para clonar');
+            return;
+        }
+        
+        const newForm = emptyForm.cloneNode(true);
+        newForm.id = `familiares-${formCount}-form`;
+        
+        // Limpiar valores y actualizar IDs
+        newForm.querySelectorAll('input, select, textarea').forEach(input => {
+            // No limpiar campos ocultos
+            if (input.type === 'hidden') return;
+            
+            // Actualizar nombres e IDs
+            if (input.name) input.name = input.name.replace(/familiares-\d+-/, `familiares-${formCount}-`);
+            if (input.id) input.id = input.id.replace(/id_familiares-\d+-/, `id_familiares-${formCount}-`);
+            
+            // Limpiar valores
+            if (input.type === 'checkbox' || input.type === 'radio') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+        
+        // Actualizar labels
+        newForm.querySelectorAll('label').forEach(label => {
+            const forAttr = label.getAttribute('for');
+            if (forAttr) {
+                label.setAttribute('for', forAttr.replace(/id_familiares-\d+-/, `id_familiares-${formCount}-`));
+            }
+        });
+        
+        // Agregar botón de eliminar
+        const removeBtn = newForm.querySelector('.remove-familiar-btn') || document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-familiar-btn';
+        removeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+        removeBtn.onclick = function() { removeForm(this); };
+        
+        if (!newForm.querySelector('.remove-familiar-btn')) {
+            newForm.insertBefore(removeBtn, newForm.firstChild);
+        }
+        
+        // Agregar al contenedor
+        container.appendChild(newForm);
+        updateFormIndices();
+    }
+
+    // Función para eliminar formulario
+    function removeForm(button) {
+        const form = button.closest('.dynamic-form');
+        if (!form) return;
+        
+        // Buscar campo DELETE (si existe)
+        const deleteInput = form.querySelector('input[name$="-DELETE"]');
+        
+        if (deleteInput) {
+            // Si tiene campo DELETE, marcarlo y ocultar el formulario
+            deleteInput.value = 'on';
+            form.style.display = 'none';
+        } else {
+            // Si no tiene campo DELETE, eliminar directamente
+            form.remove();
+        }
+        
+        updateFormIndices();
+    }
+
+    // Event listeners
+    addButton.addEventListener('click', addForm);
+    
+    // Asignar eventos a los botones de eliminar existentes
+    container.querySelectorAll('.remove-familiar-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            removeForm(this);
+        });
+    });
+
+    // Inicializar índices
+    updateFormIndices();
+});
+</script>
+{% endblock %}
+
