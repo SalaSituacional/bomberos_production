@@ -5339,6 +5339,13 @@ checkbox-styles {
   color: #212529;
 }
 
+.image-services-medics{
+  background-image: url("https://i.postimg.cc/kX8pX0Cv/logo-Servicios-Medicosopacity.png");
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .filter-form {
