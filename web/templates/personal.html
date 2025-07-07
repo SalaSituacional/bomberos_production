@@ -127,7 +127,7 @@
                 <td class="">{{ personal.rol }}</td>
                 <td class="">{{ personal.status }}</td>
                 <td >
-                  <a class="btn btn-danger edit-button">
+                  <a class="btn btn-danger edit-button" href="{% url 'editar_personal' personal.id %}">
                     Editar
                   </a>
                   <a class="btn btn-danger" href="{% url 'detalles_personal' personal.id %}">

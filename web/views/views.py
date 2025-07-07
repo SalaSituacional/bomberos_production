@@ -191,37 +191,65 @@ def View_personal(request):
     })
 
 
-def Detalles_Personal_view(request, id):  # 👈 Nombre de función cambiado (evita conflicto)
+def Detalles_Personal_view(request, id):
     # Obtener el usuario de la sesión
     user = request.session.get('user')
     if not user:
         return redirect('/')
 
+    persona = get_object_or_404(Personal, pk=id)
+
+    # Procesar el formulario de ascenso si es POST
+    if request.method == 'POST':
+        form = AscensoForm(request.POST)
+        if form.is_valid():
+            ascenso = form.save(commit=False)
+            ascenso.personal = persona
+            ascenso.save()
+            return redirect('detalles_personal', id=id)
+    else:
+        form = AscensoForm()
+
     # Obtener el personal y sus relaciones
     try:
         persona = Personal.objects.prefetch_related(
-            Prefetch('detalles_personal_set', to_attr='detalles'),  # 👈 Sin queryset redundante
-            Prefetch('ascensos_set', to_attr='lista_ascensos')  # 👈 Usa un nombre único
-        ).get(pk=id)  # 👈 Usar get() en lugar de filter() para evitar .exists()
+            Prefetch('detalles_personal_set', to_attr='detalles'),
+            Prefetch('ascensos_set', to_attr='lista_ascensos'),
+            Prefetch('familiares_set', to_attr='lista_familiares')
+        ).get(pk=id)
+
+        # Función para calcular edad
+        def calcular_edad(fecha_nacimiento):
+            if fecha_nacimiento:
+                today = date.today()
+                return today.year - fecha_nacimiento.year - ((today.month, today.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+            return None
+
+        # Procesar familiares con edad calculada
+        familiares_con_edad = []
+        for familiar in persona.lista_familiares:
+            familiares_con_edad.append({
+                'id': familiar.id,
+                'nombres': familiar.nombres,
+                'apellidos': familiar.apellidos,
+                'parentesco': familiar.parentesco,
+                'fecha_nacimiento': familiar.fecha_nacimiento,
+                'edad': calcular_edad(familiar.fecha_nacimiento),
+                'cedula': familiar.cedula,
+                'partida_nacimiento': familiar.partida_nacimiento
+            })
 
         # Estructurar los datos
         detalles = {
             "personal": persona,
-            "detalles": persona.detalles[0] if persona.detalles else None,  # 👈 Primer detalle
-            "ascensos": persona.lista_ascensos  if persona.lista_ascensos else None # 👈 Lista de ascensos
+            "detalles": persona.detalles[0] if persona.detalles else None,
+            "ascensos": persona.lista_ascensos,
+            "familiares": familiares_con_edad,  # Lista de familiares con edad calculada
+            "form_ascenso": form
         }
 
     except Personal.DoesNotExist:
         detalles = None
-
-    def calcular_edad(edad):
-        if edad:
-            fecha_nacimiento = edad
-            if fecha_nacimiento:
-                today = date.today()
-                edad_calculada = today.year - fecha_nacimiento.year - ((today.month, today.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
-                return edad_calculada
-        return None
 
     return render(request, "personal/detalles_personal.html", {
         "user": user,
@@ -229,8 +257,9 @@ def Detalles_Personal_view(request, id):  # 👈 Nombre de función cambiado (ev
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         "detalles": detalles,
-        "edad": calcular_edad(detalles["detalles"].fecha_nacimiento),
-        "años_servicio": calcular_edad(detalles["detalles"].fecha_ingreso),
+        "edad_personal": calcular_edad(detalles["detalles"].fecha_nacimiento) if detalles and detalles["detalles"] else None,
+        "años_servicio": calcular_edad(detalles["detalles"].fecha_ingreso) if detalles and detalles["detalles"] else None,
+        "nacionalidad": detalles["personal"].cedula[0] if detalles and detalles["personal"].cedula else None,
     })
 
 
@@ -239,15 +268,6 @@ def registrar_personal_completo(request):
     user = request.session.get('user')
     if not user:
         return redirect('/')
-
-    # Configurar los formsets
-    PersonalFormSet = inlineformset_factory(
-        Personal, 
-        Detalles_Personal, 
-        form=DetallesPersonalForm, 
-        extra=1, 
-        can_delete=False
-    )
     
     FamiliaresFormSet = inlineformset_factory(
         Personal,
@@ -260,7 +280,7 @@ def registrar_personal_completo(request):
 
     if request.method == 'POST':
         personal_form = PersonalForm(request.POST)
-        formset_detalles = PersonalFormSet(request.POST)
+        formset_detalles = DetallesPersonalForm(request.POST)
         formset_familiares = FamiliaresFormSet(request.POST, prefix='familiares')
 
         if all([
@@ -273,9 +293,8 @@ def registrar_personal_completo(request):
 
             # Guardar los detalles del personal
             detalles_instances = formset_detalles.save(commit=False)
-            for detalle in detalles_instances:
-                detalle.personal = personal_instance
-                detalle.save()
+            detalles_instances.personal = personal_instance
+            detalles_instances.save()
 
             # Guardar los familiares
             familiares_instances = formset_familiares.save(commit=False)
@@ -296,7 +315,7 @@ def registrar_personal_completo(request):
     else:
         # Método GET - mostrar formularios vacíos
         personal_form = PersonalForm()
-        formset_detalles = PersonalFormSet()
+        formset_detalles = DetallesPersonalForm()
         formset_familiares = FamiliaresFormSet(prefix='familiares')
 
     context = {
@@ -305,11 +324,91 @@ def registrar_personal_completo(request):
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         'personal_form': personal_form,
-        'formset_detalles': formset_detalles,
+        'form': formset_detalles,
         'formset_familiares': formset_familiares,
     }
     return render(request, 'personal/personal_form.html', context)
     
+
+def editar_personal(request, personal_id):
+    # Obtener el usuario de la sesión
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+    
+    # Obtener la instancia de Personal a editar
+    personal_instance = get_object_or_404(Personal, id=personal_id)
+    
+    # Obtener o crear la instancia de Detalles_Personal
+    detalles_instance, created = Detalles_Personal.objects.get_or_create(personal=personal_instance)
+    
+    # Configurar el formset para familiares
+    FamiliaresFormSet = inlineformset_factory(
+        Personal,
+        Familiares,
+        form=FamiliaresForm,
+        extra=1,
+        can_delete=True,
+        fields=('nombres', 'apellidos', 'parentesco', 'fecha_nacimiento', 'cedula', 'partida_nacimiento')
+    )
+
+    if request.method == 'POST':
+        personal_form = PersonalForm(request.POST, instance=personal_instance)
+        detalles_form = DetallesPersonalForm(request.POST, instance=detalles_instance)
+        formset_familiares = FamiliaresFormSet(request.POST, instance=personal_instance, prefix='familiares')
+
+        if all([
+            personal_form.is_valid(),
+            detalles_form.is_valid(),
+            formset_familiares.is_valid()
+        ]):
+            # Guardar el personal
+            personal_instance = personal_form.save()
+
+            # Guardar los detalles del personal
+            detalles = detalles_form.save(commit=False)
+            detalles.personal = personal_instance
+            detalles.save()
+
+            # Guardar los familiares
+            familiares_instances = formset_familiares.save(commit=False)
+            for familiar in familiares_instances:
+                # Solo asignar personal si es un nuevo registro (sin id)
+                if not familiar.id:
+                    familiar.personal = personal_instance
+                familiar.save()
+
+            # Eliminar los familiares marcados para borrar
+            for obj in formset_familiares.deleted_objects:
+                obj.delete()
+
+            messages.success(request, 'Información del personal actualizada exitosamente!')
+            return redirect('personal')
+
+        else:
+            # Mostrar errores detallados
+            for form in formset_familiares:
+                if form.errors:
+                    print(f"Errores en formulario {form.prefix}: {form.errors}")
+            messages.error(request, 'Por favor corrija los errores en el formulario.')
+    else:
+        # Método GET - mostrar formularios con datos existentes
+        personal_form = PersonalForm(instance=personal_instance)
+        detalles_form = DetallesPersonalForm(instance=detalles_instance)
+        formset_familiares = FamiliaresFormSet(instance=personal_instance, prefix='familiares')
+
+    context = {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        'personal_form': personal_form,
+        'form': detalles_form,  # Cambiado de 'form' a 'detalles_form' para mayor claridad
+        'formset_familiares': formset_familiares,
+        'editing': True,
+        'personal_id': personal_id,
+    }
+    return render(request, 'personal/personal_form.html', context)
 
 @login_required
 # Vista para el Dashboard

@@ -36,11 +36,11 @@
       border-radius: 5px;
       padding: 20px;
       margin-bottom: 30px;
-      border-left: 4px solid #0d6efd;
+      border-left: 4px solid #b6243a;
   }
   .form-section h2 {
       margin-top: 0;
-      color: #5264AE;
+      color: #b6243a;
       margin-bottom: 20px;
       padding-bottom: 10px;
       border-bottom: 1px solid #dee2e6;
@@ -66,67 +66,15 @@
       font-size: 1.2rem;
       cursor: pointer;
   }
-  .general-dashboard {
-      padding-bottom: 60px; /* Space for footer */
-  }
-
-
-
-
-  /* From Uiverse.io by satyamchaudharydev */ 
-  .form {
-    --border-before-color: rgba(221, 221, 221, 0.35);
-    --border-after-color: #b6243a;
-    position: relative;
-    padding: 0;
-  }
-  /* styling of Input */
-  .input {
-    color: #000;
-    font-weight: 700;
-    font-size: 0.9rem;
-    background-color: transparent;
-    width: 100%;
-    box-sizing: border-box;
-    padding-inline: 0.5em;
-    padding-block: 0.7em;
-    border: none;
-    border-bottom: 1px solid var(--border-before-color);
-  }
-  /* styling of animated border */
-  .input-border {
-    position: absolute;
-    background: var(--border-after-color);
-    width: 0%;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    transition: 0.3s;
-  }
-
-  .input:focus {
-    outline: none;
-  }
-
-  .input::placeholder{
-    color: #00000070;
-    font-weight: 500;
-  }
-  
-  /* here is code of animated border */
-  .input:focus ~ .input-border {
-    width: 100%;
-  }
-  /* === if you want to do animated border on typing === */
-  /* remove input:focus code and uncomment below code */
-  /* input:valid ~ .input-border{
-    width: 100%;
-  } */
 </style>
 
 <div class="general-dashboard">
   <div class="div-user-name  username-space">
+    {% if editing %}
+    <h3 class="division-title">Editar Personal</h3>
+    {% else %}
     <h3 class="division-title">Registrar Nuevo Personal</h3>
+    {% endif %}
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
       <svg
@@ -164,107 +112,218 @@
     <div class="row justify-content-center">
       <div class="wt-100">
 
-        <form method="post" class="needs-validation" novalidate>
+        <form method="post" class="needs-validation">
           {% csrf_token %}
           
           <!-- Información General -->
           <div class="form-section">
-            <h2>Información General del Personal</h2>
+            <h2>Información General</h2>
             <div class="row g-3">
-            
-              <div class="form col-md-4">
+              <!-- Nombres -->
+              <div class="col-md-6">
+                <div class="form-floating">
                   {{ personal_form.nombres }}
-                  <span class="input-border"></span>
+                  <label for="{{ personal_form.nombres.id_for_label }}" class="form-label">Nombres</label>
+                </div>
               </div>
 
-              <div class="form col-md-4">
+              <!-- Apellidos -->
+              <div class="col-md-6">
+                <div class="form-floating">
                   {{ personal_form.apellidos }}
-                  <span class="input-border"></span>
+                  <label for="{{ personal_form.apellidos.id_for_label }}" class="form-label">Apellidos</label>
+                </div>
               </div>
 
-              <!-- <div class="col-md-6">
-                <label for="{{ personal_form.apellidos.id_for_label }}" class="form-label">Apellidos</label>
-                {{ personal_form.apellidos }}
-              </div> -->
+              <!-- Cedula -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ personal_form.cedula }}
+                  <label for="{{ personal_form.cedula.id_for_label }}" class="form-label">Cedula</label>
+                  <span class="form-text text-muted" style="padding-left: .3rem; font-size: 1rem;">Ejemplo: (V-E)-123456789</span>
+                </div>
+              </div>
 
+              <!-- Fecha Nacimiento -->
               <div class="col-md-4">
-                <label for="{{ personal_form.cedula.id_for_label }}" class="form-label">Cédula</label>
-                {{ personal_form.cedula }}
+                <div class="form-floating">
+                  {{ form.fecha_nacimiento }}
+                  <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">Fecha de Nacimiento</label>
+                </div>
               </div>
+
+              <!-- Grupo Sanguineo -->
               <div class="col-md-4">
-                <label for="{{ personal_form.jerarquia.id_for_label }}" class="form-label">Jerarquía</label>
-                {{ personal_form.jerarquia }}
+                <div class="form-floating">
+                  {{ form.grupo_sanguineo }}
+                  <label for="{{ form.grupo_sanguineo.id_for_label }}" class="form-label">Grupo Sanguíneo</label>
+                </div>
               </div>
+
+              <!-- Email -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.email }}
+                  <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                </div>
+              </div>
+
+              <!-- Telefono -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.telefono }}
+                  <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
+                </div>
+              </div>
+
+              <!-- Direccion -->
+              <div class="col-md-12">
+                <div class="form-floating">
+                  {{ form.direccion }}
+                  <label for="{{ form.direccion.id_for_label }}" class="form-label">Dirección</label>
+                </div>
+              </div>
+
+              <!-- Estado Civil -->
               <div class="col-md-4">
-                <label for="{{ personal_form.cargo.id_for_label }}" class="form-label">Cargo</label>
-                {{ personal_form.cargo }}
+                <div class="form-floating">
+                  {{ form.estado_civil }}
+                  <label for="{{ form.estado_civil.id_for_label }}">Estado Civil</label>
+                </div>
               </div>
-              <div class="col-md-3">
-                <label for="{{ personal_form.sexo.id_for_label }}" class="form-label">Sexo</label>
-                {{ personal_form.sexo }}
+
+              <!-- SEXO -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ personal_form.sexo }}
+                  <label for="{{ personal_form.sexo.id_for_label }}">Sexo</label>
+                </div>
               </div>
-              <div class="col-md-3">
-                <label for="{{ personal_form.rol.id_for_label }}" class="form-label">Rol</label>
-                {{ personal_form.rol }}
+              
+              <!-- Estado -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ personal_form.status }}
+                  <label for="{{ personal_form.status.id_for_label }}">Estado</label>
+                </div>
               </div>
-              <div class="col-md-3">
-                <label for="{{ personal_form.status.id_for_label }}" class="form-label">Status</label>
-                {{ personal_form.status }}
-              </div>
+
             </div>
           </div>
           
           <!-- Detalles del Personal -->
           <div class="form-section">
-            <h2>Detalles del Personal</h2>
-            {{ formset_detalles.management_form }}
-            
-            {% for form in formset_detalles %}
+            <h2>Detalles Laborales</h2>
             <div class="dynamic-form">
               <div class="row g-3">
+
+                <!-- Rol -->
                 <div class="col-md-4">
-                  <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">Fecha de Nacimiento</label>
-                  {{ form.fecha_nacimiento }}
+                  <div class="form-floating">
+                    {{ personal_form.rol }}
+                    <label for="{{ personal_form.rol.id_for_label }}" class="form-label">Contrato</label>
+                  </div>
                 </div>
+
+                <!-- Jerarquia -->
                 <div class="col-md-4">
-                  <label for="{{ form.fecha_ingreso.id_for_label }}" class="form-label">Fecha de Ingreso</label>
-                  {{ form.fecha_ingreso }}
+                  <div class="form-floating">
+                    {{ personal_form.jerarquia }}
+                    <label for="{{ personal_form.jerarquia.id_for_label }}" class="form-label">Jerarquia</label>
+                  </div>
                 </div>
+
+                <!-- Cargo -->
                 <div class="col-md-4">
-                  <label for="{{ form.grupo_sanguineo.id_for_label }}" class="form-label">Grupo Sanguíneo</label>
-                  {{ form.grupo_sanguineo }}
+                  <div class="form-floating">
+                    {{ personal_form.cargo }}
+                    <label for="{{ personal_form.cargo.id_for_label }}" class="form-label">Cargo</label>
+                  </div>
                 </div>
-                <div class="col-md-3">
-                  <label for="{{ form.talla_camisa.id_for_label }}" class="form-label">Talla de Camisa</label>
-                  {{ form.talla_camisa }}
-                </div>
-                <div class="col-md-3">
-                  <label for="{{ form.talla_pantalon.id_for_label }}" class="form-label">Talla de Pantalón</label>
-                  {{ form.talla_pantalon }}
-                </div>
-                <div class="col-md-3">
-                  <label for="{{ form.talla_zapato.id_for_label }}" class="form-label">Talla de Zapato</label>
-                  {{ form.talla_zapato }}
-                </div>
-                <div class="col-md-3">
-                  <label for="{{ form.horario.id_for_label }}" class="form-label">Horario</label>
-                  {{ form.horario }}
-                </div>
+                
+                <!-- Fecha de Ingreso -->
                 <div class="col-md-6">
-                  <label for="{{ form.direccion.id_for_label }}" class="form-label">Dirección</label>
-                  {{ form.direccion }}
+                  <div class="form-floating">
+                    {{ form.fecha_ingreso }}
+                    <label for="{{ form.fecha_ingreso.id_for_label }}" class="form-label">Fecha de Ingreso</label>
+                  </div>
                 </div>
-                <div class="col-md-3">
-                  <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
-                  {{ form.email }}
+                
+                <!-- Horario -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.horario }}
+                    <label for="{{ form.horario.id_for_label }}" class="form-label">Horario</label>
+                  </div>
                 </div>
-                <div class="col-md-3">
-                  <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
-                  {{ form.telefono }}
+
+                <!-- Tallas -->
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ form.talla_camisa }}
+                    <label for="{{ form.talla_camisa.id_for_label }}" class="form-label">Talla de Camisa</label>
+                  </div>
                 </div>
+
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ form.talla_pantalon }}
+                    <label for="{{ form.talla_pantalon.id_for_label }}" class="form-label">Talla de Pantalón</label>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ form.talla_zapato }}
+                    <label for="{{ form.talla_zapato.id_for_label }}" class="form-label">Talla de Zapato</label>
+                  </div>
+                </div>
+                
               </div>
             </div>
-            {% endfor %}
+          </div>
+
+          <!-- Datos Fiscales -->
+          <div class="form-section">
+            <h2>Datos Fiscales</h2>
+            <div class="dynamic-form">
+              <div class="row g-3">
+
+                <!-- Banco -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.banco }}
+                    <label for="{{ form.banco.id_for_label }}" class="form-label">Banco</label>
+                  </div>
+                </div>
+
+                <!-- Numero de Cuenta -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.nro_cuenta }}
+                    <label for="{{ form.nro_cuenta.id_for_label }}" class="form-label">Numero de Cuenta</label>
+                  </div>
+                </div>
+
+                <!-- Numero de Rif -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.nro_rif }}
+                    <label for="{{ form.nro_rif.id_for_label }}" class="form-label">Numero De RIF</label>
+                    <span class="form-text text-muted" style="padding-left: .3rem; font-size: 1rem;">Ejemplo: V123456789</span>
+                  </div>
+                </div>
+                
+                <!-- Seguro Social -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.seguro_social }}
+                    <label for="{{ form.seguro_social.id_for_label }}" class="form-label">Numero Seguro Social</label>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
           </div>
           
           <!-- Familiares -->
@@ -274,34 +333,67 @@
               <div id="familiares-forms-container">
                   {% for form in formset_familiares %}
                   <div class="dynamic-form mb-3 p-3 border rounded position-relative" id="familiares-{{ forloop.counter0 }}-form">
-                      {% if forloop.counter0 > 0 or form.instance.pk %}
-                      <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-familiar-btn">
-                          <i class="bi bi-x-lg"></i>
-                      </button>
-                      {% endif %}
+                      <!-- Cabecera del formulario -->
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                          <h3 class="m-0 text-danger" style="font-size: 1.5rem;">
+                              <i class="bi bi-people-fill me-2"></i>
+                              Familiar {% if not forloop.first %}#{{ forloop.counter }}{% endif %}
+                          </h3>
+                          
+                          <!-- Control de eliminación - Solo un botón/switch por formulario -->
+                          {% if form.instance.pk %}
+                          <!-- Para registros existentes (edición) -->
+                          <div class="form-check form-switch">
+                              <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}" 
+                                    class="form-check-input" {% if form.DELETE.value %}checked{% endif %}>
+                              <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
+                                  Eliminar
+                              </label>
+                          </div>
+                          {% else %}
+                          <!-- Para nuevos registros -->
+                          <button type="button" class="btn btn-danger btn-sm remove-familiar-btn">
+                              <i class="bi bi-trash"></i> Eliminar
+                          </button>
+                          {% endif %}
+                      </div>
+                      
+                      <!-- Campos ocultos necesarios -->
+                      {{ form.id }}
+                      {{ form.personal }}
+                      
+                      <!-- Campos visibles -->
                       <div class="row g-3">
                           {% for field in form.visible_fields %}
+                          {% if field.name != "DELETE" %} <!-- Excluimos el campo DELETE de los campos visibles -->
                           <div class="col-md-4">
-                              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                              {{ field }}
-                              {% if field.errors %}
-                              <div class="invalid-feedback d-block">
-                                  {{ field.errors }}
+                              <div class="form-floating">
+                                  {{ field }}
+                                  <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                  {% if field.errors %}
+                                  <div class="invalid-feedback d-block">
+                                      {{ field.errors }}
+                                  </div>
+                                  {% endif %}
                               </div>
-                              {% endif %}
                           </div>
+                          {% endif %}
                           {% endfor %}
                       </div>
                   </div>
                   {% endfor %}
               </div>
-              <button type="button" class="btn btn-outline-primary mt-2" id="add-familiar-btn">
+              
+              <!-- Botón para agregar nuevos familiares -->
+              <button type="button" class="btn btn-outline-danger mt-2" id="add-familiar-btn">
                   <i class="bi bi-plus-circle"></i> Agregar Familiar
               </button>
           </div>
           
           <div class="text-center">
-            <button type="submit" class="btn btn-primary btn-lg">Registrar Personal</button>
+            <button type="submit" class="btn btn-danger btn-lg">
+              {% if editing %}Actualizar{% else %}Registrar{% endif %} Personal
+            </button>
           </div>
         </form>
       </div>
@@ -321,128 +413,88 @@ document.addEventListener('DOMContentLoaded', function() {
     const addButton = document.getElementById('add-familiar-btn');
     const totalForms = document.getElementById('id_familiares-TOTAL_FORMS');
     
-    // Verificar que los elementos existen
-    if (!container || !addButton || !totalForms) {
-        console.error('Elementos no encontrados:', {
-            container: container,
-            addButton: addButton,
-            totalForms: totalForms
-        });
-        return;
-    }
-
     // Función para actualizar índices
     function updateFormIndices() {
         const forms = container.querySelectorAll('.dynamic-form');
         totalForms.value = forms.length;
         
         forms.forEach((form, index) => {
-            // Actualizar IDs y names de los campos
-            form.querySelectorAll('input, select, textarea').forEach(input => {
-                const name = input.name ? input.name.replace(/familiares-\d+-/, `familiares-${index}-`) : '';
-                const id = input.id ? input.id.replace(/id_familiares-\d+-/, `id_familiares-${index}-`) : '';
-                
-                if (name) input.name = name;
-                if (id) input.id = id;
+            // Actualizar IDs, names y for attributes
+            form.querySelectorAll('input, select, textarea, label').forEach(element => {
+                ['id', 'name', 'for'].forEach(attr => {
+                    if (element.hasAttribute(attr)) {
+                        element.setAttribute(
+                            attr, 
+                            element.getAttribute(attr)
+                                .replace(/familiares-\d+-/, `familiares-${index}-`)
+                        );
+                    }
+                });
             });
             
-            // Actualizar los labels
-            form.querySelectorAll('label').forEach(label => {
-                const forAttr = label.getAttribute('for');
-                if (forAttr) {
-                    label.setAttribute('for', forAttr.replace(/id_familiares-\d+-/, `id_familiares-${index}-`));
-                }
-            });
+            // Actualizar el ID del formulario
+            form.id = `familiares-${index}-form`;
         });
     }
 
     // Función para agregar nuevo formulario
     function addForm() {
         const formCount = parseInt(totalForms.value);
-        const emptyForm = container.querySelector('.dynamic-form');
-        
-        if (!emptyForm) {
-            console.error('No se encontró formulario para clonar');
-            return;
-        }
-        
-        const newForm = emptyForm.cloneNode(true);
-        newForm.id = `familiares-${formCount}-form`;
+        const template = container.querySelector('.dynamic-form').cloneNode(true);
         
         // Limpiar valores y actualizar IDs
-        newForm.querySelectorAll('input, select, textarea').forEach(input => {
-            // No limpiar campos ocultos
-            if (input.type === 'hidden') return;
-            
-            // Actualizar nombres e IDs
-            if (input.name) input.name = input.name.replace(/familiares-\d+-/, `familiares-${formCount}-`);
-            if (input.id) input.id = input.id.replace(/id_familiares-\d+-/, `id_familiares-${formCount}-`);
-            
-            // Limpiar valores
+        template.querySelectorAll('input:not([type="hidden"]), select, textarea').forEach(input => {
+            input.value = '';
             if (input.type === 'checkbox' || input.type === 'radio') {
                 input.checked = false;
-            } else {
-                input.value = '';
             }
         });
         
-        // Actualizar labels
-        newForm.querySelectorAll('label').forEach(label => {
-            const forAttr = label.getAttribute('for');
-            if (forAttr) {
-                label.setAttribute('for', forAttr.replace(/id_familiares-\d+-/, `id_familiares-${formCount}-`));
-            }
-        });
+        // Asegurar que solo tenga el botón de eliminar (no el switch)
+        const deleteSwitch = template.querySelector('.form-check');
+        if (deleteSwitch) {
+            deleteSwitch.remove();
+        }
         
         // Agregar botón de eliminar
-        const removeBtn = newForm.querySelector('.remove-familiar-btn') || document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-familiar-btn';
-        removeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
-        removeBtn.onclick = function() { removeForm(this); };
+        const deleteBtn = template.querySelector('.remove-familiar-btn') || document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'btn btn-danger btn-sm remove-familiar-btn';
+        deleteBtn.innerHTML = '<i class="bi bi-trash"></i> Eliminar';
+        deleteBtn.onclick = function() { this.closest('.dynamic-form').remove(); updateFormIndices(); };
         
-        if (!newForm.querySelector('.remove-familiar-btn')) {
-            newForm.insertBefore(removeBtn, newForm.firstChild);
+        // Insertar el botón en la posición correcta
+        const headerDiv = template.querySelector('.d-flex');
+        if (!template.querySelector('.remove-familiar-btn')) {
+            headerDiv.appendChild(deleteBtn);
         }
         
         // Agregar al contenedor
-        container.appendChild(newForm);
+        container.appendChild(template);
         updateFormIndices();
     }
 
-    // Función para eliminar formulario
-    function removeForm(button) {
-        const form = button.closest('.dynamic-form');
-        if (!form) return;
-        
-        // Buscar campo DELETE (si existe)
-        const deleteInput = form.querySelector('input[name$="-DELETE"]');
-        
-        if (deleteInput) {
-            // Si tiene campo DELETE, marcarlo y ocultar el formulario
-            deleteInput.value = 'on';
-            form.style.display = 'none';
-        } else {
-            // Si no tiene campo DELETE, eliminar directamente
-            form.remove();
+    // Manejar el cambio en los switches de eliminación
+    container.addEventListener('change', function(e) {
+        if (e.target && e.target.matches('input[name$="-DELETE"]')) {
+            const formRow = e.target.closest('.dynamic-form').querySelector('.row');
+            if (e.target.checked) {
+                formRow.style.opacity = '0.5';
+                formRow.style.pointerEvents = 'none';
+            } else {
+                formRow.style.opacity = '1';
+                formRow.style.pointerEvents = 'auto';
+            }
         }
-        
-        updateFormIndices();
-    }
+    });
 
     // Event listeners
     addButton.addEventListener('click', addForm);
     
-    // Asignar eventos a los botones de eliminar existentes
-    container.querySelectorAll('.remove-familiar-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            removeForm(this);
-        });
-    });
-
     // Inicializar índices
     updateFormIndices();
 });
 </script>
+
 {% endblock %}
 

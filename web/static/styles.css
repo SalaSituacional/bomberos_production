@@ -4972,6 +4972,8 @@ checkbox-styles {
 
 
 
+
+/* Estilos Detalles Personal */
 .perfil-empleado {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   max-width: 80%;
@@ -5035,6 +5037,7 @@ checkbox-styles {
   flex-direction: column;
   align-items: center;
   align-self: flex-start;
+  font-size: 2.1rem;
 }
 .badge {
   padding: 5px 10px;
@@ -5058,11 +5061,10 @@ checkbox-styles {
 
 .perfil-detalles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(580px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 2rem;
 }
 .ascensos-detalles{
-  border-top: 1px solid #eee;
   margin-top: 2rem;
   width: 100%;
 }
@@ -5073,7 +5075,7 @@ checkbox-styles {
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background-color: #F5F5F5;
+  background-color: #FfFfFf;
   border-radius: .3rem;
 
   h2{
@@ -5093,8 +5095,27 @@ checkbox-styles {
   td {
     text-align: center;
     color: #555;
-    width: calc(100% / 4.2);
+    width: calc(100% / 3.5);
   }
+  div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  input{
+    align-self: center;
+    font-size: 20px;
+    color: #555; 
+    width: 75%; 
+    text-align: center;
+  }
+}
+.boton_agregar_ascenso{
+  width: 100%; display: flex; justify-content: flex-end !important; margin: 1rem; margin-top: 0;
+}
+.tabla_ascensos{
+  width: 100%;background-color: #f5f5f5; border-radius: .5rem; margin: 0;
 }
 
 .familiares-detalles{
@@ -5146,6 +5167,77 @@ checkbox-styles {
     color: #555;
   }
 }
+
+
+.family-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.family-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: white;
+}
+
+.family-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.family-card-header {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.family-card-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.family-card-body {
+  padding: 1rem;
+}
+
+.family-info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.family-info-item i {
+  margin-right: 0.8rem;
+  color: #b6243a;
+  font-size: 1.1rem;
+}
+
+.family-info-item div {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.family-card-footer {
+  padding: 0.8rem 1rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+}
+
 
 
 
@@ -5338,20 +5430,6 @@ checkbox-styles {
   background-color: #f8f9fa;
   color: #212529;
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .filter-form {
-    grid-template-columns: 1fr;
-  }
-  
-  .filter-actions {
-    height: auto;
-    justify-content: flex-start;
-    margin-top: 8px;
-  }
-}
-
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
@@ -5985,6 +6063,22 @@ checkbox-styles {
     align-items: center;
   }
 
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .filter-actions {
+    height: auto;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+
+  .family-cards-container {
+      grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {

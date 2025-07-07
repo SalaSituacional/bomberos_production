@@ -240,14 +240,14 @@ class PersonalForm(forms.ModelForm):
         # O puedes especificar los campos que quieres:
         # fields = ['nombres', 'apellidos', 'jerarquia', 'cargo', 'cedula', 'sexo', 'rol', 'status']
         widgets = {
-            'nombres': forms.TextInput(attrs={'placeholder': 'Nombres Completos', 'class': 'input'}),
-            'apellidos': forms.TextInput(attrs={'placeholder': 'Apellidos del personal', 'class': 'input'}),
-            'jerarquia': forms.Select(choices=jerarquias, attrs={'class': 'disable-first-option'}),
-            'cargo': forms.TextInput(attrs={'placeholder': 'Ej: Bombero de Planta, Paramédico'}),
-            'cedula': forms.TextInput(attrs={'placeholder': 'Número de cédula'}),
-            'sexo': forms.Select(choices=[('M', 'Masculino'), ('F', 'Femenino')]),
-            'rol': forms.TextInput(attrs={'placeholder': 'Rol en la institución'}),
-            'status': forms.Select(choices=[('Activo', 'Activo'), ('Inactivo', 'Inactivo'), ('De Vacaciones', 'De Vacaciones')]),
+            'nombres': forms.TextInput(attrs={'class': 'form-control' }),
+            'apellidos': forms.TextInput(attrs={'class': 'form-control'}),
+            'jerarquia': forms.Select(choices=jerarquias, attrs={'class': 'form-select'}),
+            'cargo': forms.TextInput(attrs={'class': 'form-control'}),
+            'cedula': forms.TextInput(attrs={'class': 'form-control'}),
+            'sexo': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('M', 'Masculino'), ('F', 'Femenino')], attrs={'class': 'form-select'}),
+            'rol': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('Bombero', 'Bombero'), ('Administrativo', 'Administrativo'), ('Civil', 'Civil')], attrs={'class': 'form-select'}),
+            'status': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('Activo', 'Activo'), ('Jubilado', 'Jubilado'), ('Incapacitado', 'Incapacitado'), ('Fallecido', 'Fallecido'), ('Cese', 'Cese (Baja)'), ('Comision de Servicios', 'Comision de Servicios')], attrs={'class': 'form-select'}),
         }
 
 class DetallesPersonalForm(forms.ModelForm):
@@ -257,16 +257,21 @@ class DetallesPersonalForm(forms.ModelForm):
         # O puedes especificar los campos que quieres:
         # fields = ['fecha_nacimiento', 'talla_camisa', 'talla_pantalon', 'talla_zapato', 'grupo_sanguineo', 'fecha_ingreso', 'direccion', 'email', 'telefono', 'horario']
         widgets = {
-            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
-            'fecha_ingreso': forms.DateInput(attrs={'type': 'date'}),
-            'talla_camisa': forms.TextInput(attrs={'placeholder': 'Ej: S, M, L, XL'}),
-            'talla_pantalon': forms.TextInput(attrs={'placeholder': 'Ej: 32, 34'}),
-            'talla_zapato': forms.TextInput(attrs={'placeholder': 'Ej: 40, 42'}),
-            'grupo_sanguineo': forms.Select(choices=[('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'), ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')]),
-            'direccion': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Dirección completa'}),
-            'email': forms.EmailInput(attrs={'placeholder': 'correo@ejemplo.com'}),
-            'telefono': forms.TextInput(attrs={'placeholder': 'Ej: 0412-1234567'}),
-            'horario': forms.TextInput(attrs={'placeholder': 'Ej: L-V 8am-4pm'}),
+            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'fecha_ingreso': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'talla_camisa': forms.TextInput(attrs={'class': 'form-control'}),
+            'talla_pantalon': forms.TextInput(attrs={'class': 'form-control'}),
+            'talla_zapato': forms.TextInput(attrs={'class': 'form-control'}),
+            'grupo_sanguineo': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'), ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')], attrs={'class': 'form-control'}),
+            'direccion': forms.Textarea(attrs={'rows': 5, 'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
+            'horario': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('8am a 4pm', '8am a 4pm'), ('24 x 48 hrs', '24 x 48 hrs')], attrs={'class': 'form-control'}),
+            'estado_civil': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('Soltero(a)', 'Soltero(a)'), ('Casado(a)', 'Casado(a)'), ('Viudo(a)', 'Viudo(a)')], attrs={'class': 'form-control'}),
+            'banco': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('Banco Venezuela', 'Banco Venezuela'), ('Banco del Tesoro', 'Banco del Tesoro'), ('Banco Sofitasa', 'Banco Sofitasa')], attrs={'class': 'form-control'}),
+            'nro_cuenta': forms.TextInput(attrs={'class': 'form-control'}),
+            'nro_rif': forms.TextInput(attrs={'class': 'form-control'}),
+            'seguro_social': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class FamiliaresForm(forms.ModelForm):
@@ -276,13 +281,24 @@ class FamiliaresForm(forms.ModelForm):
         # O puedes especificar los campos que quieres:
         # fields = ['nombres', 'apellidos', 'parentesco', 'fecha_nacimiento', 'cedula', 'partida_nacimiento']
         widgets = {
-            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
-            'parentesco': forms.TextInput(attrs={'placeholder': 'Ej: Esposa, Hijo, Padre'}),
-            'cedula': forms.TextInput(attrs={'placeholder': 'Opcional'}),
-            'partida_nacimiento': forms.TextInput(attrs={'placeholder': 'Número de partida de nacimiento (opcional)'}),
+            'nombres': forms.TextInput(attrs={'class': 'form-control'}),
+            'apellidos': forms.TextInput(attrs={'class': 'form-control'}),
+            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'parentesco': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('Esposo(a)', 'Esposo(a)'), ('Hijo(a)', 'Hijo(a)')], attrs={'class': 'form-control'}),
+            'cedula': forms.TextInput(attrs={'class': 'form-control'}),
+            'partida_nacimiento': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-
+class AscensoForm(forms.ModelForm):
+    class Meta:
+        model = Ascensos
+        fields = ['gaceta', 'fecha', 'actual', 'nuevo']
+        widgets = {
+            'fecha': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'format': 'yyyy-MM-dd'}, format='%Y-%m-%d'),
+            'gaceta': forms.TextInput(attrs={'class': 'form-control'}),
+            'actual': forms.TextInput(attrs={'class': 'form-control'}),
+            'nuevo': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
 # Form1
 class SelectorDivision(forms.Form):

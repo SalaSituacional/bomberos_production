@@ -57,6 +57,12 @@ class Detalles_Personal(models.Model):
   email = models.TextField()
   telefono = models.TextField()
   horario = models.TextField()
+  estado_civil = models.TextField()
+
+  banco = models.TextField()
+  nro_cuenta = models.TextField()
+  seguro_social = models.TextField()
+  nro_rif = models.TextField()
 
   def __str__(self):
     return self.personal.nombres + " -- " + str(self.fecha_nacimiento) + " -- " + self.talla_camisa + " -- " + self.talla_pantalon + " -- " + self.talla_zapato + " -- " + self.grupo_sanguineo + " -- " + str(self.fecha_ingreso)
@@ -69,7 +75,7 @@ class Ascensos(models.Model):
    nuevo = models.TextField()
 
    def __str__(self):
-      return self.personal.nombres + " -- " + self.personal.apellidos + " -- " + str(self.fecha) + " -- " + self.actual + " -- " + self.jerarquia
+      return self.personal.nombres + " -- " + self.personal.apellidos + " -- " + str(self.fecha) + " -- " + self.actual + " -- " + self.nuevo
 
 class Familiares(models.Model):
    personal = models.ForeignKey(Personal, on_delete=models.CASCADE)

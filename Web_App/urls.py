@@ -71,6 +71,7 @@ urlpatterns = [
     path('personal/', View_personal, name='personal'),
     path('personal/<int:id>/', Detalles_Personal_view, name='detalles_personal'),
     path('personal/registrar/', registrar_personal_completo, name='registrar_personal'),
+    path('personal/editar/<int:personal_id>/', editar_personal, name='editar_personal'),
     
     
     # SARP
