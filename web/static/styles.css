@@ -7512,22 +7512,35 @@ checkbox-styles {
   .container-media-resolution{
     max-width: 100% !important;
   }
+
+  .perfil-empleado{
+    max-width: 100%;
+  }
+  .container{
+    margin: 0 auto;
+    max-width: 100%;
+  }
   .responsive-scroll{
       width: 100%;
       overflow-x: scroll;
+      display: block !important;
     }
   .tabla_ascensos{
-      width: 150% !important;
-    }
+    width: 500% !important;
+  }
   .ascensos-container{
     width: 100%;
     justify-content: center;
     padding: 0 !important;
     td{
-      width: auto;
+      width: calc(100%/3.4);
     }
+    input{
+      font-size: 15px;
     }
+  }
 }
+
 .text-center-two{
   text-align: center;
 }
