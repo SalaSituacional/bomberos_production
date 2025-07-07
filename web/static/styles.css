@@ -6089,6 +6089,17 @@ checkbox-styles {
   .family-cards-container {
       grid-template-columns: 1fr;
   }
+  .perfil-header{
+    flex-direction: column;
+    margin: 0 auto;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    div{
+      margin: 0 auto;
+      text-align: center;
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -6714,6 +6725,39 @@ checkbox-styles {
       width: 100%;
     }
   }
+  .perfil-detalles{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .detalle-seccion{
+    width: 100%;
+    h2{
+      width: 100%;
+    }
+    .detalle-item{
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+    }
+    .ascensos-container{
+      padding: 3rem;
+      justify-content: center;
+      .boton_agregar_ascenso{
+        margin: 0;
+      }
+      td{
+        width: auto !important;
+      }
+    }
+    .responsive-scroll{
+      width: 100%;
+      overflow-x: scroll;
+    }
+    .tabla_ascensos{
+      width: 120% !important;
+    }
+  }
 }
 
 @media (max-width: 375px) {
@@ -7233,6 +7277,9 @@ checkbox-styles {
     width: 100%;
     align-items: center;
   }
+  .container-media-resolution{
+    max-width: 100% !important;
+  }
 }
 
 @media (max-width: 320px) {
@@ -7417,6 +7464,24 @@ checkbox-styles {
   .current{
     width: 100%;
   }
+  .container-media-resolution{
+    max-width: 100% !important;
+  }
+  .responsive-scroll{
+      width: 100%;
+      overflow-x: scroll;
+    }
+  .tabla_ascensos{
+      width: 150% !important;
+    }
+  .ascensos-container{
+    width: 100%;
+    justify-content: center;
+    padding: 0 !important;
+    td{
+      width: auto;
+    }
+    }
 }
 .text-center-two{
   text-align: center;
