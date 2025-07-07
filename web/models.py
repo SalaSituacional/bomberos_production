@@ -64,6 +64,8 @@ class Detalles_Personal(models.Model):
   seguro_social = models.TextField()
   nro_rif = models.TextField()
 
+  fecha_cese = models.DateField(null=True, blank=True)
+
   def __str__(self):
     return self.personal.nombres + " -- " + str(self.fecha_nacimiento) + " -- " + self.talla_camisa + " -- " + self.talla_pantalon + " -- " + self.talla_zapato + " -- " + self.grupo_sanguineo + " -- " + str(self.fecha_ingreso)
 

@@ -80,11 +80,12 @@
           {{ detalles.personal.jerarquia }}
         </p>
         <div class="estado">
-            <span class="badge {% if detalles.personal.status == 'Activo' %}activo{% else %}inactivo{% endif %}">
+            <span class="badge {% if detalles.personal.status == 'Activo' %}activo{% elif detalles.personal.status == 'Comision de servicios' or detalles.personal.status == 'Comision de Servicios' %}warning{% else %}inactivo{% endif %}">
             {% if detalles.personal.status == 'Activo' %}
               Activo
             {% else %}
-              {{ detalles.personal.status }}
+              {{ detalles.personal.status }} <br>
+              {{ detalles.detalles.fecha_cese|default:"01-01-1999" }}
             {% endif %}
           </span>
         </div>

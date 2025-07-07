@@ -5051,6 +5051,11 @@ checkbox-styles {
   color: #fff;
   font-weight: bold;
 }
+.badge.warning {
+  background-color: orange;
+  color: #fff;
+  font-weight: bold;
+}
 
 .badge.inactivo {
   background-color: #ccc;
@@ -5436,6 +5441,46 @@ checkbox-styles {
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
+}
+
+
+/* Estilos Formularios Personal */
+.container { border-radius: 8px; max-width: 70%; margin: 20px auto; }
+.errorlist { color: red; list-style-type: none; padding: 0; margin-top: 5px; }
+.form-section {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-left: 4px solid #b6243a;
+}
+.form-section h2 {
+    margin-top: 0;
+    color: #b6243a;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+.dynamic-form {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #dee2e6;
+    position: relative;
+}
+.add-form-btn {
+    margin-bottom: 20px;
+}
+.remove-form-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #dc3545;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
 }
 
 

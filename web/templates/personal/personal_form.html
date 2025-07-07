@@ -27,47 +27,6 @@
 {% load static %}
 
 {% block content %}
-
-<style>
-  .container { border-radius: 8px; max-width: 70%; margin: 20px auto; }
-  .errorlist { color: red; list-style-type: none; padding: 0; margin-top: 5px; }
-  .form-section {
-      background-color: #f8f9fa;
-      border-radius: 5px;
-      padding: 20px;
-      margin-bottom: 30px;
-      border-left: 4px solid #b6243a;
-  }
-  .form-section h2 {
-      margin-top: 0;
-      color: #b6243a;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #dee2e6;
-  }
-  .dynamic-form {
-      background-color: #fff;
-      border-radius: 5px;
-      padding: 15px;
-      margin-bottom: 15px;
-      border: 1px solid #dee2e6;
-      position: relative;
-  }
-  .add-form-btn {
-      margin-bottom: 20px;
-  }
-  .remove-form-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      color: #dc3545;
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-  }
-</style>
-
 <div class="general-dashboard">
   <div class="div-user-name  username-space">
     {% if editing %}
@@ -180,7 +139,7 @@
               <div class="col-md-12">
                 <div class="form-floating">
                   {{ form.direccion }}
-                  <label for="{{ form.direccion.id_for_label }}" class="form-label">Dirección</label>
+                  <label for="{{ form.direccion.id_for_label }}" class="form-label" style="font-size: 1rem;">Dirección</label>
                 </div>
               </div>
 
@@ -205,6 +164,30 @@
                 <div class="form-floating">
                   {{ personal_form.status }}
                   <label for="{{ personal_form.status.id_for_label }}">Estado</label>
+                </div>
+              </div>
+              
+
+              <div class="col-md-12 mb-3" id="fechaCeseContainer" style="display: none;">
+                <div class="d-flex align-items-center">
+                  <!-- Badge informativo - 50% ancho -->
+                  <div class="w-50 pe-3">  <!-- pe-3 para espacio entre elementos -->
+                    <span class="badge bg-danger text-white rounded-pill d-flex align-items-center p-3 py-2 w-100 justify-content-center">
+                      <i class="bi bi-info-circle me-2"></i>
+                      <p class="m-0">
+                        Ingrese la fecha de:
+                        <small class="text-white">Retiro, Cese o Fallecimiento</small>
+                      </p>
+                    </span>
+                  </div>
+                  
+                  <!-- Campo de fecha - 50% ancho -->
+                  <div class="w-50">
+                    <div class="form-floating">
+                      {{ form.fecha_cese }}
+                      <label for="{{ form.fecha_cese.id_for_label }}">Fecha de Terminación</label>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -351,10 +334,12 @@
                               </label>
                           </div>
                           {% else %}
-                          <!-- Para nuevos registros -->
-                          <button type="button" class="btn btn-danger btn-sm remove-familiar-btn">
+                            <!-- Para nuevos registros -->
+                            {% if not forloop.first %}
+                            <button type="button" class="btn btn-danger btn-sm remove-familiar-btn">
                               <i class="bi bi-trash"></i> Eliminar
-                          </button>
+                            </button>
+                            {% endif %}
                           {% endif %}
                       </div>
                       
@@ -407,94 +392,6 @@
   </footer>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('familiares-forms-container');
-    const addButton = document.getElementById('add-familiar-btn');
-    const totalForms = document.getElementById('id_familiares-TOTAL_FORMS');
-    
-    // Función para actualizar índices
-    function updateFormIndices() {
-        const forms = container.querySelectorAll('.dynamic-form');
-        totalForms.value = forms.length;
-        
-        forms.forEach((form, index) => {
-            // Actualizar IDs, names y for attributes
-            form.querySelectorAll('input, select, textarea, label').forEach(element => {
-                ['id', 'name', 'for'].forEach(attr => {
-                    if (element.hasAttribute(attr)) {
-                        element.setAttribute(
-                            attr, 
-                            element.getAttribute(attr)
-                                .replace(/familiares-\d+-/, `familiares-${index}-`)
-                        );
-                    }
-                });
-            });
-            
-            // Actualizar el ID del formulario
-            form.id = `familiares-${index}-form`;
-        });
-    }
-
-    // Función para agregar nuevo formulario
-    function addForm() {
-        const formCount = parseInt(totalForms.value);
-        const template = container.querySelector('.dynamic-form').cloneNode(true);
-        
-        // Limpiar valores y actualizar IDs
-        template.querySelectorAll('input:not([type="hidden"]), select, textarea').forEach(input => {
-            input.value = '';
-            if (input.type === 'checkbox' || input.type === 'radio') {
-                input.checked = false;
-            }
-        });
-        
-        // Asegurar que solo tenga el botón de eliminar (no el switch)
-        const deleteSwitch = template.querySelector('.form-check');
-        if (deleteSwitch) {
-            deleteSwitch.remove();
-        }
-        
-        // Agregar botón de eliminar
-        const deleteBtn = template.querySelector('.remove-familiar-btn') || document.createElement('button');
-        deleteBtn.type = 'button';
-        deleteBtn.className = 'btn btn-danger btn-sm remove-familiar-btn';
-        deleteBtn.innerHTML = '<i class="bi bi-trash"></i> Eliminar';
-        deleteBtn.onclick = function() { this.closest('.dynamic-form').remove(); updateFormIndices(); };
-        
-        // Insertar el botón en la posición correcta
-        const headerDiv = template.querySelector('.d-flex');
-        if (!template.querySelector('.remove-familiar-btn')) {
-            headerDiv.appendChild(deleteBtn);
-        }
-        
-        // Agregar al contenedor
-        container.appendChild(template);
-        updateFormIndices();
-    }
-
-    // Manejar el cambio en los switches de eliminación
-    container.addEventListener('change', function(e) {
-        if (e.target && e.target.matches('input[name$="-DELETE"]')) {
-            const formRow = e.target.closest('.dynamic-form').querySelector('.row');
-            if (e.target.checked) {
-                formRow.style.opacity = '0.5';
-                formRow.style.pointerEvents = 'none';
-            } else {
-                formRow.style.opacity = '1';
-                formRow.style.pointerEvents = 'auto';
-            }
-        }
-    });
-
-    // Event listeners
-    addButton.addEventListener('click', addForm);
-    
-    // Inicializar índices
-    updateFormIndices();
-});
-</script>
-
+<script src="{% static 'js/personal/formularios_personal.js' %}"></script>
 {% endblock %}
 
