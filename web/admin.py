@@ -4,6 +4,12 @@ from .models import *
 # Register your models here.
 admin.site.register(Usuarios)
 admin.site.register(Personal)
+admin.site.register(Detalles_Personal)
+admin.site.register(Ascensos)
+admin.site.register(Familiares)
+admin.site.register(Titulos_Academicos)
+admin.site.register(Sanciones)
+
 admin.site.register(Tipos_Procedimientos)
 admin.site.register(Procedimientos)
 admin.site.register(Tipo_Institucion)

@@ -1,0 +1,357 @@
+{% if user.user == "SeRvEr" %}
+    {% include "layouts/panel_admin.html" %}
+{% elif user.user == "Sala_Situacional" %}
+    {% include "layouts/panel_sala_situacional.html" %}
+{% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
+    {% include "layouts/panel_comandancia.html" %}
+{% elif user.user == "Operaciones01" %}
+    {% include "layouts/panel_operaciones.html" %}
+{% elif user.user == "Grumae02" %}
+    {% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Rescate03" %}
+    {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Prevencion05" %}
+    {% include "layouts/panel_prevencion.html" %}
+{% elif user.user == "Serviciosmedicos06" %}
+    {% include "layouts/panel_serviciosmedicos.html" %}
+{% elif user.user == "Capacitacion07" %}
+    {% include "layouts/panel_capacitacion.html" %}
+{% elif user.user == "Enfermeria08" %}
+    {% include "layouts/panel_enfermeria.html" %}
+{% elif user.user == "Psicologia09" %}
+    {% include "layouts/panel_psicologia.html" %}
+{% endif %}
+
+{% load static %}
+
+{% block content %}
+<div class="general-dashboard">
+  <div class="div-user-name  username-space">
+    <h3 class="division-title">Informacion del {{detalles.personal.jerarquia}} {{ detalles.personal.nombres.split|first }} {{ detalles.personal.apellidos.split|first }}</h3>
+    <section class="user-name">
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
+      <svg
+        width="30px"
+        height="30px"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
+            fill="#000000"
+          ></path>
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
+            fill="#000000"
+          ></path>
+        </g>
+      </svg>
+    </section>
+  </div>
+
+  <br>
+  <section class="perfil-empleado w-100">
+  <div class="container w-100">
+    <div class="perfil-header">
+      <div class="foto-perfil">
+        <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#494c4e" d="M9 0a9 9 0 0 0-9 9 8.654 8.654 0 0 0 .05.92 9 9 0 0 0 17.9 0A8.654 8.654 0 0 0 18 9a9 9 0 0 0-9-9zm5.42 13.42c-.01 0-.06.08-.07.08a6.975 6.975 0 0 1-10.7 0c-.01 0-.06-.08-.07-.08a.512.512 0 0 1-.09-.27.522.522 0 0 1 .34-.48c.74-.25 1.45-.49 1.65-.54a.16.16 0 0 1 .03-.13.49.49 0 0 1 .43-.36l1.27-.1a2.077 2.077 0 0 0-.19-.79v-.01a2.814 2.814 0 0 0-.45-.78 3.83 3.83 0 0 1-.79-2.38A3.38 3.38 0 0 1 8.88 4h.24a3.38 3.38 0 0 1 3.1 3.58 3.83 3.83 0 0 1-.79 2.38 2.814 2.814 0 0 0-.45.78v.01a2.077 2.077 0 0 0-.19.79l1.27.1a.49.49 0 0 1 .43.36.16.16 0 0 1 .03.13c.2.05.91.29 1.65.54a.49.49 0 0 1 .25.75z"></path> </g></svg>
+      </div>
+      <div class="info-basica">
+        <h1>{{ detalles.personal.nombres }} {{ detalles.personal.apellidos }}</h1>
+        <p class="cargo">{{ detalles.personal.cargo }}</p>
+        <p class="jerarquia">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#FFD700" viewBox="0 0 24 24" style="vertical-align:middle; margin-right:5px;">
+            <path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.77 7.82 20 9 12.91l-5-3.64 5.91-.01z"/>
+          </svg>
+          {{ detalles.personal.jerarquia }}
+        </p>
+        <div class="estado">
+            <span class="badge {% if detalles.personal.status == 'Activo' %}activo{% elif detalles.personal.status == 'Comision de servicios' or detalles.personal.status == 'Comision de Servicios' %}warning{% else %}inactivo{% endif %}">
+            {% if detalles.personal.status == 'Activo' %}
+              Activo
+            {% else %}
+              {{ detalles.personal.status }} <br>
+              {{ detalles.detalles.fecha_cese|default:"01-01-1999" }}
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <div class="grupo-sanguineo">
+        <span>Grupo Sanguíneo</span>
+        <span><i><b>{{ detalles.detalles.grupo_sanguineo }}</b></i></span>
+      </div>
+    </div>
+
+    <div class="perfil-detalles">
+      <div class="detalle-seccion">
+        <h2><i class="bi bi-file-person"></i>  Información Personal</h2>
+        <div class="detalle-item">
+          <span class="detalle-label">Nacionalidad: </span>
+          {% if nacionalidad == 'V' %}
+          <span class="detalle-valor">Venezolano(a)</span>
+          {% else %}
+          <span class="detalle-valor">Extranjero(a)</span>
+          {% endif %}
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Identificación: </span>
+          <span class="detalle-valor">{{ detalles.personal.cedula }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Fecha Nacimiento: </span>
+          <span class="detalle-valor">{{ detalles.detalles.fecha_nacimiento|date:"d-m-Y" }} ({{edad_personal}} años)</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Género:</span>
+          <span class="detalle-valor">{{ detalles.personal.sexo }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Estado Civil:</span>
+          <span class="detalle-valor">{{ detalles.detalles.estado_civil }}</span>
+        </div>
+
+        <div class="detalle-item">
+          <span class="detalle-label">Email:</span>
+          <span class="detalle-valor">{{ detalles.detalles.email }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Teléfono:</span>
+          <span class="detalle-valor">{{ detalles.detalles.telefono }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Dirección:</span>
+          <span class="detalle-valor">{{ detalles.detalles.direccion }}</span>
+        </div>
+      </div>
+
+      <div class="detalle-seccion">
+        <h2><i class="bi bi-briefcase"></i>  Información Laboral</h2>
+        <div class="detalle-item">
+          <span class="detalle-label">Jerarquia:</span>
+          <span class="detalle-valor">{{ detalles.personal.jerarquia }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Cargo:</span>
+          <span class="detalle-valor">{{ detalles.personal.cargo }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Fecha Ingreso:</span>
+          <span class="detalle-valor">{{ detalles.detalles.fecha_ingreso|date:"d-m-Y" }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Años de Servicio:</span>
+          <span class="detalle-valor">{{ años_servicio }} años</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Contrato:</span>
+          <span class="detalle-valor">{{ detalles.personal.rol }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Horario:</span>
+          <span class="detalle-valor">{{ detalles.detalles.horario }}</span>
+        </div>
+      </div>
+
+      <div class="detalle-seccion">
+        <h2><i class="bi bi-bank"></i>  Datos Fiscales</h2>
+        <div class="detalle-item">
+          <span class="detalle-label">Número De RIF:</span>
+          <span class="detalle-valor">{{ detalles.detalles.nro_rif }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Banco (Nro de Cuenta):</span>
+          <span class="detalle-valor">{{ detalles.detalles.banco }} ({{ detalles.detalles.nro_cuenta }})</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Número de Seguro Social:</span>
+          <span class="detalle-valor">{{ detalles.detalles.seguro_social }}</span>
+        </div>
+      </div>
+      
+      <div class="detalle-seccion">
+        <h2><i class="bi bi-person-lines-fill"></i> Medidas de Ropa</h2> <!-- Silueta humana -->
+        <div class="detalle-item">
+          <span class="detalle-label">Talla de Camisa:</span>
+          <span class="detalle-valor"><i>{{ detalles.detalles.talla_camisa }}</i></span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Talla de Pantalón:</span>
+          <span class="detalle-valor"><i>{{ detalles.detalles.talla_pantalon }}</i></span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">Talla de Zapatos:</span>
+          <span class="detalle-valor"><i>{{ detalles.detalles.talla_zapato }}</i></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ascensos-detalles">
+      <div class="ascensos-container">
+          <h2><i class="bi bi-chevron-double-up"></i>   Lista de Ascensos</h2>
+
+          <div class="boton_agregar_ascenso">
+              <button id="toggleFormBtn" class="btn btn-danger" type="button">
+                  Agregar Nuevo Ascenso
+              </button>
+          </div>
+
+          <!-- Tabla de ascensos -->
+          <div class="w-100 responsive-scroll">
+              <table class="tabla_ascensos">
+                  <thead>
+                      <tr>
+                          <th><i class="bi bi-newspaper"></i>  Gaceta</th>
+                          <th><i class="bi bi-calendar-event"></i>  Fecha</th>
+                          <th><i class="bi bi-award"></i>  Jerarquía</th>
+                          <th><i class="bi bi-tools"></i>  Acciones</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <!-- Filas de datos existentes -->
+                      {% for ascenso in detalles.ascensos %}
+                      <tr>
+                          <td>{{ ascenso.gaceta }}</td>
+                          <td>{{ ascenso.fecha|date:"m-d-Y" }}</td>
+                          <td>De {{ ascenso.actual }} a {{ ascenso.nuevo }}</td>
+                          <td></td>
+                      </tr>
+                      {% empty %}
+                      <tr>
+                          <td colspan="4" class="text-center">No hay ascensos registrados</td>
+                      </tr>
+                      {% endfor %}
+
+
+                      <!-- Fila del formulario (inicialmente oculta) -->
+                      <tr id="formRow" style="display: none;">
+                          <form method="post" action="{% url 'detalles_personal' id=detalles.personal.id %}">
+                              {% csrf_token %}
+                              <td>
+                                <div>
+                                  <input type="text" 
+                                        class="form-control border-0 border-bottom rounded-3 shadow-none" 
+                                        id="id_gaceta" 
+                                        name="gaceta" 
+                                        placeholder="Gaceta" 
+                                        value="{{ detalles.form_ascenso.gaceta.value|default_if_none:'' }}">
+                                </div>
+                              </td>
+                              <td>
+                                <div>
+                                  <input type="date" class="form-control border-0 border-bottom rounded-3 shadow-none"id="id_fecha" name="fecha" placeholder="fecha" value="{{ detalles.form_ascenso.fecha.value|date:'Y-m-d' }}">
+                                </div>
+                              </td>
+                              <td>
+                                  <div class="d-flex gap-2">
+                                      <input type="text" class="form-control border-0 border-bottom rounded-3 shadow-none"id="id_actual" name="actual" placeholder="De" value="{{ detalles.form_ascenso.actual.value|default_if_none:'' }}">
+                                      <span class="align-self-center">a</span>
+                                      <input type="text" class="form-control border-0 border-bottom rounded-3 shadow-none" id="id_nuevo" name="nuevo" placeholder="A" value="{{ detalles.form_ascenso.nuevo.value|default_if_none:'' }}">
+                                  </div>
+                              </td>
+                              <td class="align-middle">
+                                  <div class="d-flex justify-content-center gap-2">
+                                      <button type="submit" class="btn btn-danger btn-sm">✓</button>
+                                      <button type="button" class="btn btn-secondary btn-sm cancel-form">✗</button>
+                                  </div>
+                              </td>
+                          </form>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+      </div>
+    </div>
+
+    <div class="familiares-detalles">
+      <div class="familiares-container detalle-seccion">
+        <h2><i class="bi bi-people-fill me-2"></i>Información Familiar</h2>
+        <br>
+        <div class="card-body">
+              {% if detalles.familiares %}
+              <div class="family-cards-container">
+                  {% for familiar in detalles.familiares %}
+                  <div class="family-card">
+                      <div class="family-card-header">
+                          <h4><i class="bi bi-people-fill me-2"></i> {{ familiar.nombres }} {{ familiar.apellidos }}</h4>
+                          <span class="badge bg-danger">{{ familiar.parentesco }}</span>
+                      </div>
+                      <div class="family-card-body">
+                          <div class="family-info-item">
+                              <i class="bi bi-calendar-event"></i>
+                              <div>
+                                  <span class="info-label">Fecha Nacimiento:</span>
+                                  <span>{{ familiar.fecha_nacimiento|date:"d/m/Y" }}</span>
+                              </div>
+                          </div>
+                          <div class="family-info-item">
+                              <i class="bi bi-person-badge"></i>
+                              <div>
+                                  <span class="info-label">Edad:</span>
+                                  <span>{{ familiar.edad }} años</span>
+                              </div>
+                          </div>
+                          {% if familiar.cedula %}
+                          <div class="family-info-item">
+                              <i class="bi bi-credit-card"></i>
+                              <div>
+                                  <span class="info-label">Cédula:</span>
+                                  <span>{{ familiar.cedula }}</span>
+                              </div>
+                          </div>
+                          {% endif %}
+                          {% if familiar.partida_nacimiento %}
+                          <div class="family-info-item">
+                              <i class="bi bi-file-text"></i>
+                              <div>
+                                  <span class="info-label">Partida Nacimiento:</span>
+                                  <span>{{ familiar.partida_nacimiento }}</span>
+                              </div>
+                          </div>
+                          {% endif %}
+                      </div>
+                  </div>
+                  {% endfor %}
+              </div>
+              {% else %}
+              <div class="alert alert-info">
+                  No se han registrado familiares.
+              </div>
+              {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <br>
+    <a class="btn btn-danger" href="{% url 'personal' %}">
+      <i class="bi bi-arrow-left"></i> Volver
+    </a>
+  </div>
+
+</section>
+
+ <footer class="footer">
+    <section class="text-reserved">
+        <h5>2024 © Cuerpo de bomberos - San Cristobal</h>
+    </section>
+ </footer>
+</div>
+
+<script src="{% static 'js/personal/detalles_personal.js' %}"></script>
+
+{% endblock %}
+

@@ -1,0 +1,398 @@
+{% if user.user == "SeRvEr" %}
+    {% include "layouts/panel_admin.html" %}
+{% elif user.user == "Sala_Situacional" %}
+    {% include "layouts/panel_sala_situacional.html" %}
+{% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
+    {% include "layouts/panel_comandancia.html" %}
+{% elif user.user == "Operaciones01" %}
+    {% include "layouts/panel_operaciones.html" %}
+{% elif user.user == "Grumae02" %}
+    {% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Rescate03" %}
+    {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Prevencion05" %}
+    {% include "layouts/panel_prevencion.html" %}
+{% elif user.user == "Serviciosmedicos06" %}
+    {% include "layouts/panel_serviciosmedicos.html" %}
+{% elif user.user == "Capacitacion07" %}
+    {% include "layouts/panel_capacitacion.html" %}
+{% elif user.user == "Enfermeria08" %}
+    {% include "layouts/panel_enfermeria.html" %}
+{% elif user.user == "Psicologia09" %}
+    {% include "layouts/panel_psicologia.html" %}
+{% endif %}
+
+{% load static %}
+
+{% block content %}
+<div class="general-dashboard">
+  <div class="div-user-name  username-space">
+    {% if editing %}
+    <h3 class="division-title">Editar Personal</h3>
+    {% else %}
+    <h3 class="division-title">Registrar Nuevo Personal</h3>
+    {% endif %}
+    <section class="user-name">
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
+      <svg
+        width="30px"
+        height="30px"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g
+          id="SVGRepo_tracerCarrier"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></g>
+        <g id="SVGRepo_iconCarrier">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
+            fill="#000000"
+          ></path>
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
+            fill="#000000"
+          ></path>
+        </g>
+      </svg>
+    </section>
+  </div>
+
+  <div class="container container-media-resolution">
+    <div class="row justify-content-center">
+      <div class="w-100">
+
+        <form method="post" class="needs-validation">
+          {% csrf_token %}
+          
+          <!-- Información General -->
+          <div class="form-section">
+            <h2>Información General</h2>
+            <div class="row g-3">
+              <!-- Nombres -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ personal_form.nombres }}
+                  <label for="{{ personal_form.nombres.id_for_label }}" class="form-label">Nombres</label>
+                </div>
+              </div>
+
+              <!-- Apellidos -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ personal_form.apellidos }}
+                  <label for="{{ personal_form.apellidos.id_for_label }}" class="form-label">Apellidos</label>
+                </div>
+              </div>
+
+              <!-- Cedula -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ personal_form.cedula }}
+                  <label for="{{ personal_form.cedula.id_for_label }}" class="form-label">Cedula</label>
+                  <span class="form-text text-muted" style="padding-left: .3rem; font-size: 1rem;">Ejemplo: (V-E)-123456789</span>
+                </div>
+              </div>
+
+              <!-- Fecha Nacimiento -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ form.fecha_nacimiento }}
+                  <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">Fecha de Nacimiento</label>
+                </div>
+              </div>
+
+              <!-- Grupo Sanguineo -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ form.grupo_sanguineo }}
+                  <label for="{{ form.grupo_sanguineo.id_for_label }}" class="form-label">Grupo Sanguíneo</label>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.email }}
+                  <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                </div>
+              </div>
+
+              <!-- Telefono -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.telefono }}
+                  <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
+                </div>
+              </div>
+
+              <!-- Direccion -->
+              <div class="col-md-12">
+                <div class="form-floating">
+                  {{ form.direccion }}
+                  <label for="{{ form.direccion.id_for_label }}" class="form-label" style="font-size: 1rem;">Dirección</label>
+                </div>
+              </div>
+
+              <!-- Estado Civil -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ form.estado_civil }}
+                  <label for="{{ form.estado_civil.id_for_label }}">Estado Civil</label>
+                </div>
+              </div>
+
+              <!-- SEXO -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ personal_form.sexo }}
+                  <label for="{{ personal_form.sexo.id_for_label }}">Sexo</label>
+                </div>
+              </div>
+              
+              <!-- Estado -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ personal_form.status }}
+                  <label for="{{ personal_form.status.id_for_label }}">Estado</label>
+                </div>
+              </div>
+              
+
+              <div class="col-md-12 mb-3" id="fechaCeseContainer" style="display: none;">
+                <div class="d-flex align-items-center">
+                  <!-- Badge informativo - 50% ancho -->
+                  <div class="w-50 pe-3">  <!-- pe-3 para espacio entre elementos -->
+                    <span class="badge bg-danger text-white rounded-pill d-flex align-items-center p-3 py-2 w-100 justify-content-center">
+                      <i class="bi bi-info-circle me-2"></i>
+                      <p class="m-0">
+                        Ingrese la fecha de:
+                        <small class="text-white">Retiro, Cese o Fallecimiento</small>
+                      </p>
+                    </span>
+                  </div>
+                  
+                  <!-- Campo de fecha - 50% ancho -->
+                  <div class="w-50">
+                    <div class="form-floating">
+                      {{ form.fecha_cese }}
+                      <label for="{{ form.fecha_cese.id_for_label }}">Fecha de Terminación</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          
+          <!-- Detalles del Personal -->
+          <div class="form-section">
+            <h2>Detalles Laborales</h2>
+            <div class="dynamic-form">
+              <div class="row g-3">
+
+                <!-- Rol -->
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ personal_form.rol }}
+                    <label for="{{ personal_form.rol.id_for_label }}" class="form-label">Contrato</label>
+                  </div>
+                </div>
+
+                <!-- Jerarquia -->
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ personal_form.jerarquia }}
+                    <label for="{{ personal_form.jerarquia.id_for_label }}" class="form-label">Jerarquia</label>
+                  </div>
+                </div>
+
+                <!-- Cargo -->
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ personal_form.cargo }}
+                    <label for="{{ personal_form.cargo.id_for_label }}" class="form-label">Cargo</label>
+                  </div>
+                </div>
+                
+                <!-- Fecha de Ingreso -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.fecha_ingreso }}
+                    <label for="{{ form.fecha_ingreso.id_for_label }}" class="form-label">Fecha de Ingreso</label>
+                  </div>
+                </div>
+                
+                <!-- Horario -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.horario }}
+                    <label for="{{ form.horario.id_for_label }}" class="form-label">Horario</label>
+                  </div>
+                </div>
+
+                <!-- Tallas -->
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ form.talla_camisa }}
+                    <label for="{{ form.talla_camisa.id_for_label }}" class="form-label">Talla de Camisa</label>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ form.talla_pantalon }}
+                    <label for="{{ form.talla_pantalon.id_for_label }}" class="form-label">Talla de Pantalón</label>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-floating">
+                    {{ form.talla_zapato }}
+                    <label for="{{ form.talla_zapato.id_for_label }}" class="form-label">Talla de Zapato</label>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+
+          <!-- Datos Fiscales -->
+          <div class="form-section">
+            <h2>Datos Fiscales</h2>
+            <div class="dynamic-form">
+              <div class="row g-3">
+
+                <!-- Banco -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.banco }}
+                    <label for="{{ form.banco.id_for_label }}" class="form-label">Banco</label>
+                  </div>
+                </div>
+
+                <!-- Numero de Cuenta -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.nro_cuenta }}
+                    <label for="{{ form.nro_cuenta.id_for_label }}" class="form-label">Numero de Cuenta</label>
+                  </div>
+                </div>
+
+                <!-- Numero de Rif -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.nro_rif }}
+                    <label for="{{ form.nro_rif.id_for_label }}" class="form-label">Numero De RIF</label>
+                    <span class="form-text text-muted" style="padding-left: .3rem; font-size: 1rem;">Ejemplo: V123456789</span>
+                  </div>
+                </div>
+                
+                <!-- Seguro Social -->
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    {{ form.seguro_social }}
+                    <label for="{{ form.seguro_social.id_for_label }}" class="form-label">Numero Seguro Social</label>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+          
+          <!-- Familiares -->
+          <div class="form-section">
+              <h2>Familiares (Opcional)</h2>
+              {{ formset_familiares.management_form }}
+              <div id="familiares-forms-container">
+                  {% for form in formset_familiares %}
+                  <div class="dynamic-form mb-3 p-3 border rounded position-relative" id="familiares-{{ forloop.counter0 }}-form">
+                      <!-- Cabecera del formulario -->
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                          <h3 class="m-0 text-danger" style="font-size: 1.5rem;">
+                              <i class="bi bi-people-fill me-2"></i>
+                              Familiar {% if not forloop.first %}#{{ forloop.counter }}{% endif %}
+                          </h3>
+                          
+                          <!-- Control de eliminación - Solo un botón/switch por formulario -->
+                          {% if form.instance.pk %}
+                          <!-- Para registros existentes (edición) -->
+                          <div class="form-check form-switch">
+                              <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}" 
+                                    class="form-check-input" {% if form.DELETE.value %}checked{% endif %}>
+                              <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
+                                  Eliminar
+                              </label>
+                          </div>
+                          {% else %}
+                            <!-- Para nuevos registros -->
+                            {% if not forloop.first %}
+                            <button type="button" class="btn btn-danger btn-sm remove-familiar-btn">
+                              <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                            {% endif %}
+                          {% endif %}
+                      </div>
+                      
+                      <!-- Campos ocultos necesarios -->
+                      {{ form.id }}
+                      {{ form.personal }}
+                      
+                      <!-- Campos visibles -->
+                      <div class="row g-3">
+                          {% for field in form.visible_fields %}
+                          {% if field.name != "DELETE" %} <!-- Excluimos el campo DELETE de los campos visibles -->
+                          <div class="col-md-4">
+                              <div class="form-floating">
+                                  {{ field }}
+                                  <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                  {% if field.errors %}
+                                  <div class="invalid-feedback d-block">
+                                      {{ field.errors }}
+                                  </div>
+                                  {% endif %}
+                              </div>
+                          </div>
+                          {% endif %}
+                          {% endfor %}
+                      </div>
+                  </div>
+                  {% endfor %}
+              </div>
+              
+              <!-- Botón para agregar nuevos familiares -->
+              <button type="button" class="btn btn-outline-danger mt-2" id="add-familiar-btn">
+                  <i class="bi bi-plus-circle"></i> Agregar Familiar
+              </button>
+          </div>
+          
+          <div class="text-center">
+            <button type="submit" class="btn btn-danger btn-lg">
+              {% if editing %}Actualizar{% else %}Registrar{% endif %}
+            </button>
+            <a href="{% url 'personal' %}" class="btn btn-danger btn-lg">Volver</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <section class="text-reserved">
+      <h5>2024 © Cuerpo de bomberos - San Cristobal</h5>
+    </section>
+  </footer>
+</div>
+
+<script src="{% static 'js/personal/formularios_personal.js' %}"></script>
+{% endblock %}
+

@@ -93,11 +93,10 @@
       </div>
     </form>
     <section class="accion-personal">
-        Personas Totales: {{ conteo }}
-        <button type="button" class="btn" data-bs-toggle="modal"
-        data-bs-target="#modal-info">
-<svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>plus-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000"> <path d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z" id="plus-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
-        </button>
+        Personal Total: {{ conteo }}
+        <a href="{% url 'registrar_personal' %}" class="btn">
+          <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>plus-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000"> <path d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z" id="plus-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
+        </a>
     </section>
   </div>
  <!-- tabla -->
@@ -111,13 +110,6 @@
             <th>Jerarquía</th>
             <th>Cargo</th>
             <th>Cédula</th>
-            <th>Edad</th>
-            <th>Fecha de Ingreso</th>
-            <th>Grupo Sanguíneo</th>
-            <th>Sexo</th>
-            <th>Talla Camisa</th>
-            <th>Talla Pantalón</th>
-            <th>Talla Zapato</th>
             <th>Rol</th>
             <th>Status</th>
             <th>Acciones</th>
@@ -126,25 +118,21 @@
     <tbody>
         {% for personal in personal %}
              <tr>
-                <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ personal.nombres }}</td>
-                <td>{{ personal.apellidos }}</td>
-                <td>{{ personal.jerarquia }}</td>
-                <td>{{ personal.cargo }}</td>
-                <td>{{ personal.cedula }}</td>
-                <td>{{ personal.edad|default:"" }}</td>
-                <td>{{ personal.fecha_ingreso|default:"" }}</td>
-                <td>{{ personal.grupo_sanguineo|default:"" }}</td>
-                <td>{{ personal.sexo }}</td>
-                <td>{{ personal.talla_camisa|default:"" }}</td>
-                <td>{{ personal.talla_pantalon|default:"" }}</td>
-                <td>{{ personal.talla_zapato|default:"" }}</td>
-                <td>{{ personal.rol }}</td>
-                <td>{{ personal.status }}</td>
-                <td>
-                  <button class="btn btn-danger edit-button" data-id="{{ personal.id }}" data-bs-toggle="modal" data-bs-target="#modal-mod">
+                <th scope="row" class="">{{ forloop.counter }}</th>
+                <td class="">{{ personal.nombres }}</td>
+                <td class="">{{ personal.apellidos }}</td>
+                <td class="">{{ personal.jerarquia }}</td>
+                <td class="">{{ personal.cargo }}</td>
+                <td class="">{{ personal.cedula }}</td>
+                <td class="">{{ personal.rol }}</td>
+                <td class="">{{ personal.status }}</td>
+                <td >
+                  <a class="btn btn-danger edit-button" href="{% url 'editar_personal' personal.id %}">
                     Editar
-                  </button>
+                  </a>
+                  <a class="btn btn-danger" href="{% url 'detalles_personal' personal.id %}">
+                    Detalles
+                  </a>
                 </td>
             </tr>
         {% endfor %}
@@ -159,204 +147,6 @@
   
   </div>
 </div>  
-<!-- div general-dashboard fin -->
-<div class="modal fade personal_modal" tabindex="-1" id="modal-info">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content modal-content-two">
-      <div class="modal-header header-dashboard-two">
-        <section class="title-icon">
-          <img
-            src="{% static 'assets/logo bomberos 2.svg' %}"
-            alt="Logo de bomberos"
-          />
-          <h2>Cuerpo de Bomberos</h2>
-        </section>
-      </div>
-      <div class="modal-body modal-body-two modal-body-three">
-        <section class="info-modal personal-register" id="info_modal">
-          <h2>Registrar Personal</h2>
-            <form action="" method="post">
-              {% csrf_token %}
-              <div class="form-style form_personal" id="form_general">{{ form_personal.as_div }}</div>
-              <!-- Boton Enviar -->
-              <div class="modal-footer modal-footer-personal">
-                <button type="submit" id="button_submit" class="btn btn-danger btn-center">
-                  Aceptar
-                </button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                  Cerrar
-                </button>
-              </div>
-            </form>
-        </section>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade personal_modal" tabindex="-1" id="modal-mod">
-  <div class="modal-dialog modal-xl ">
-    <div class="modal-content modal-content-two">
-      <div class="modal-header header-dashboard-two">
-        <section class="title-icon">
-          <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo de bomberos" />
-          <h2>Cuerpo de Bomberos</h2>
-        </section>
-      </div>
-      <div class="modal-body modal-body-two modal-body-three">
-        <section class="info-modal personal-register" id="info_modal">
-          <h2>Editar Personal</h2>
-          <form action="{% url 'edit_personal' %}" method="POST">
-            <div class="form-style form_personal">
-              {% csrf_token %}
-
-              <!-- Campo oculto para el ID -->
-              <input type="hidden" name="personal_id" id="id_persona" />
-
-              <!-- Campo de Nombres -->
-              <div bis_skin_checked="1">
-                <label for="id_nombres">Nombres:</label>
-                <input type="text" name="formulario-nombres" maxlength="50" required="" id="id_nombres">
-              </div>
-
-              <!-- Campo de Apellidos -->
-              <div bis_skin_checked="1">
-                <label for="id_apellidos">Apellidos:</label>
-                <input type="text" name="formulario-apellidos" maxlength="50" required="" id="id_apellidos">
-              </div>
-
-              <!-- Campo de Nacionalidad -->
-              <div bis_skin_checked="1">
-                <label for="id_nacionalidad">Nacionalidad:</label>
-                <select name="formulario-nacionalidad" id="id_nacionalidad">
-                  <option value="V">V</option>
-                  <option value="E">E</option>
-                </select>
-              </div>
-
-              <!-- Campo de Cedula -->
-              <div bis_skin_checked="1">
-                <label for="id_cedula">Cedula:</label>
-                <input type="number" name="formulario-cedula" required="" id="id_cedula">
-              </div>
-
-              <!-- Campo de Jerarquia -->
-              <div bis_skin_checked="1">
-                <label for="id_jerarquia">Jerarquia:</label>
-                <select name="formulario-jerarquia" class="disable-first-option" required="" id="id_jerarquia">
-                  <option value="" selected="">Seleccione Una Opcion</option>
-                  <option value="General">General</option>
-                  <option value="Coronel">Coronel</option>
-                  <option value="Teniente Coronel">Teniente Coronel</option>
-                  <option value="Mayor">Mayor</option>
-                  <option value="Capitán">Capitán</option>
-                  <option value="Primer Teniente">Primer Teniente</option>
-                  <option value="Teniente">Teniente</option>
-                  <option value="Sargento Mayor">Sargento Mayor</option>
-                  <option value="Sargento Primero">Sargento Primero</option>
-                  <option value="Sargento segundo">Sargento segundo</option>
-                  <option value="Cabo Primero">Cabo Primero</option>
-                  <option value="Cabo Segundo">Cabo Segundo</option>
-                  <option value="Distinguido">Distinguido</option>
-                  <option value="Bombero">Bombero</option>
-                </select>
-              </div>
-
-              <!-- Campo de Cargo -->
-              <div bis_skin_checked="1">
-                <label for="id_cargo">Cargo:</label>
-                <input type="text" name="formulario-cargo" maxlength="50" required="" id="id_cargo">
-              </div>
-
-              <!-- Campo de Fecha de Nacimiento -->
-              <div bis_skin_checked="1">
-                <label for="id_fecha_nacimiento">Fecha de Nacimiento:</label>
-                <input type="date" name="formulario-fecha_nacimiento" required="" id="id_fecha_nacimiento">
-              </div>
-
-              <!-- Campo de Fecha de Ingreso -->
-              <div bis_skin_checked="1">
-                <label for="id_fecha_ingreso">Fecha de Ingreso:</label>
-                <input type="date" name="formulario-fecha_ingreso" required="" id="id_fecha_ingreso">
-              </div>
-
-              <!-- Campo de Sexo -->
-              <div bis_skin_checked="1">
-                <label for="id_sexo">Sexo:</label>
-                <select name="formulario-sexo" class="disable-first-option" required="" id="id_sexo">
-                  <option value="" selected="">Seleccione Una Opcion</option>
-                  <option value="Masculino">Masculino</option>
-                  <option value="Femenino">Femenino</option>
-                </select>
-              </div>
-
-              <!-- Campo de Rol -->
-              <div bis_skin_checked="1">
-                <label for="id_rol">Rol:</label>
-                <select name="formulario-rol" class="disable-first-option" required="" id="id_rol">
-                  <option value="" selected="">Seleccione Una Opcion</option>
-                  <option value="Administrativo">Administrativo</option>
-                  <option value="Bombero">Bombero</option>
-                  <option value="Civil">Civil</option>
-                </select>
-              </div>
-
-              <!-- Campo de Status -->
-              <div bis_skin_checked="1">
-                <label for="id_status">Status:</label>
-                <select name="formulario-status" class="disable-first-option" required="" id="id_status">
-                  <option value="" selected="" disabled>Seleccione Una Opcion</option>
-                  <option value="Activo">Activo</option>
-                  <option value="Jubilado">Jubilado</option>
-                  <option value="Incapacitado">Incapacitado</option>
-                  <option value="Fallecido">Fallecido</option>
-                  <option value="Cese">Cese (Baja) </option>
-                  <option value="Comision de servicios">Comision de Servicios</option>
-                </select>      
-              </div>
-
-              <!-- Campo de Talla de Camisa -->
-              <div bis_skin_checked="1">
-                <label for="id_talla_camisa">Talla de Camisa:</label>
-                <input type="text" name="formulario-talla_camisa" maxlength="50" required="" id="id_talla_camisa">
-              </div>
-  
-              <!-- Campo de Talla de Pantalon -->
-              <div bis_skin_checked="1">
-                <label for="id_talla_pantalon">Talla de Pantalon:</label>
-                <input type="text" name="formulario-talla_pantalon" maxlength="50" required="" id="id_talla_pantalon">
-              </div>
-  
-              <!-- Campo de Talla de Zapato -->
-              <div bis_skin_checked="1">
-                <label for="id_talla_zapatos">Talla de Zapatos:</label>
-                <input type="text" name="formulario-talla_zapatos" maxlength="50" required="" id="id_talla_zapatos">
-              </div>
-  
-              <!-- Campo de Grupo Sanguineo -->
-              <div bis_skin_checked="1">
-                <label for="id_grupo_sanguineo">Grupo Sanguineo:</label>
-                <input type="text" name="formulario-grupo_sanguineo" maxlength="50" required="" id="id_grupo_sanguineo">
-              </div>
-            </div>
-
-
-
-              <!-- Boton Enviar -->
-              <div class="modal-footer modal-footer-personal" bis_skin_checked="1">
-                <button type="submit" id="button_submit" class="btn btn-danger btn-center">
-                  Aceptar
-                </button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                  Cerrar
-                </button>
-              </div>
-          </form>
-        </section>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- Notificación Personal -->
 <div id="notificacionPersonal" class="noti-container hidden" style="z-index: 2;">
@@ -387,7 +177,6 @@
 </footer>
 </div>
 
-<script src="{% static 'js/modificar_personal.js' %}"></script>
 <script src="{% static 'js/export_excel/excel_personal.js' %}"></script>
 <script src="{% static 'js/notificacion_personal.js' %}"></script>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
