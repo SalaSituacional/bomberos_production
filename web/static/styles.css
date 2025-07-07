@@ -802,7 +802,7 @@ checkbox-styles {
   position: fixed;
   bottom: 20px;
   left: 20px;
-  width: 320px;
+  width: 300px;
   background: linear-gradient(135deg, #b6243a, #d66e7e);
   /* Degradado azul */
   color: white;
@@ -828,7 +828,7 @@ checkbox-styles {
 #cerrar-procedimiento {
   position: absolute;
   top: 5px;
-  right: 10px;
+  right: 10px;  
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
@@ -2937,7 +2937,7 @@ checkbox-styles {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.856);
   z-index: 999999999;
   display: flex;
   align-items: center;
@@ -5430,6 +5430,16 @@ checkbox-styles {
   background-color: #f8f9fa;
   color: #212529;
 }
+
+.image-services-medics{
+  background-image: url("https://i.postimg.cc/kX8pX0Cv/logo-Servicios-Medicosopacity.png");
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+
+
 /* ------------------------------- Media querys ------------------------------------------ */
 
 @media (min-width: 1400px) {
