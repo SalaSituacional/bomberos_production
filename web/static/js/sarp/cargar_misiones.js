@@ -1,6 +1,6 @@
 async function actualizarMisiones() {
   try {
-    const response = await fetchWithLoader("/api/estadisticas-misiones/");
+    const response = await fetchWithLoader(ApiEstadisticasMisiones);
     const data = await response;
 
     // Actualizar valores en la UI
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", actualizarMisiones);
 
 document.addEventListener("DOMContentLoaded", async function () {
     try {
-        const response = await fetchWithLoader("/api/ultimo_reporte/");
+        const response = await fetchWithLoader(ApiUltimoReporte);
         const data = await response;
 
         const card = document.getElementById("ultimo-reporte-card");

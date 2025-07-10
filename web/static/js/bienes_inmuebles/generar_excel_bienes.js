@@ -1,5 +1,3 @@
-let mesExcel = "";
-
 // Función para descargar el archivo Excel con todos los bienes municipales
 function descargarExcelBienes() {
   fetch(`/generar-excel-bienesmunicipales/`) // Eliminamos el parámetro mes

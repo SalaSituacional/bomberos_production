@@ -2,7 +2,7 @@ let paginaActual = 1;
 const vuelosPorPagina = 15; // Número de registros por página
 
 async function cargarVuelos(pagina = 1) {
-  let response = await fetchWithLoader(`/api/vuelos/?page=${pagina}&limit=5`); // Establecer limit=5
+  let response = await fetchWithLoader(`${ApiVuelos}?page=${pagina}&limit=5`); // Establecer limit=5
   let data = await response;
 
   let tabla = document.getElementById("tabla-vuelos");
