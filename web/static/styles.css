@@ -1,3 +1,17 @@
+/* body::before {
+  content: "Viewport: " attr(data-viewport);
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+  padding: 5px;
+  z-index: 9999;
+} */
+
+
+/*#region Fuentes*/
+
 /* ******************** Fonts ******************** */
 @import url("https://fonts.googleapis.com/css2?family=Secular+One&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Kanit:wght@400;800&display=swap");
@@ -50,134 +64,10 @@
   --Alata: "Alata", sans-serif:
 }
 
-/*  esto es para los contenedores div
-    background-color: #f8f9fa;
-    border: thin solid #afafaf; */
+/*#endregion*/
 
-/* ******************** Fluid Design ******************** */
 
-/* @link https://utopia.fyi/type/calculator?c=320,17,1.125,1920,20,1.333,6,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l */
-:root {
-  --step--2: clamp(0.7rem, calc(0.87rem + -0.14vw), 0.84rem);
-  --step--1: clamp(0.94rem, calc(0.95rem + -0.01vw), 0.94rem);
-  --step-0: clamp(1.06rem, calc(1.03rem + 0.19vw), 1.25rem);
-  --step-1: clamp(1.2rem, calc(1.1rem + 0.47vw), 1.67rem);
-  --step-2: clamp(1.35rem, calc(1.17rem + 0.88vw), 2.22rem);
-  --step-3: clamp(1.51rem, calc(1.22rem + 1.45vw), 2.96rem);
-  --step-4: clamp(1.7rem, calc(1.25rem + 2.25vw), 3.95rem);
-  --step-5: clamp(1.91rem, calc(1.25rem + 3.35vw), 5.26rem);
-  --step-6: clamp(2.15rem, calc(1.18rem + 4.86vw), 7.01rem);
-}
-
-/* ******************** Custom Properties ******************** */
-:root {
-  /*
-    MediaQueries
-      sm - 0px - 0em
-      md - 768px - 48em
-      lg - 992px - 62em
-      xl - 1200px - 75em
-  */
-  --container-sm: 48em;
-  --container-md: 62em;
-  --container-lg: 75em;
-
-  --main-top: 2rem;
-  --main-bottom: 2rem;
-
-  --font-primary: "PT Sans", Avenir, system-ui, sans-serif;
-  --font-logo: "Raleway", sans-serif;
-  --font-logo-black: "Raleway Black", sans-serif;
-  --font-code: "Roboto Mono", Consolas;
-
-  --color-primary: #e7562e;
-  --color-secondary: #e7762e;
-  --color-svg-bg: #2b3a42;
-
-  --color-light-bg: #fcfcfc;
-  --color-light-bg-alt: #f7f7f7;
-  --color-light-bg-opacity: rgba(255, 255, 255, 0.85);
-  --color-light-text: #202225;
-  --color-light-link: #08c;
-  --color-light-contrast: #eee;
-
-  --color-dark-bg: #20252c;
-  --color-dark-bg-alt: #202b38;
-  --color-dark-bg-opacity: rgba(0, 0, 0, 0.7);
-  --color-dark-text: #fcfcfc;
-  --color-dark-link: #73cffa;
-  --color-dark-contrast: #3c4654;
-
-  /*        style dashboard             */
-  --color-main-dashboard: #f5f5f5;
-  --color-header-dashboard: #b6243a;
-  --color-button: #b6243a;
-  --color-general-dashboard: #f3f3f3;
-
-  --gradient-primary: linear-gradient(45deg,
-      var(--color-primary),
-      var(--color-secondary));
-  --gradient-link: linear-gradient(45deg,
-      var(--color-dark-link),
-      var(--color-light-link));
-  --bs-bg-opacity: 0;
-}
-
-/* ******************** User Prefers ******************** */
-
-/* ******************** Animations ******************** */
-
-@keyframes bounce {
-  40% {
-    transform: scale(1.4);
-  }
-
-  60% {
-    transform: scale(0.8);
-  }
-
-  80% {
-    transform: scale(1.2);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-.bounce {
-  animation: bounce 0.4s linear;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-.pulse {
-  animation: pulse 1.5s linear infinite;
-}
-
-@keyframes scroll-image {
-  0% {
-    opacity: 0;
-    scale: 25%;
-  }
-
-  100% {
-    opacity: 1;
-    scale: 100%;
-  }
-}
+/* #region FORMATEO */
 
 /* ******************** Reset CSS ******************** */
 
@@ -195,7 +85,7 @@ html {
 
 body {
   margin: 0;
-  padding: 0;
+  padding: 0 !important;
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -349,6 +239,144 @@ th {
   text-align: left;
 }
 
+/* #endregion */
+
+
+/*  #region Fluid Design */
+
+/* ******************** Fluid Design ******************** */
+
+/* @link https://utopia.fyi/type/calculator?c=320,17,1.125,1920,20,1.333,6,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l */
+:root {
+  --step--2: clamp(0.7rem, calc(0.87rem + -0.14vw), 0.84rem);
+  --step--1: clamp(0.94rem, calc(0.95rem + -0.01vw), 0.94rem);
+  --step-0: clamp(1.06rem, calc(1.03rem + 0.19vw), 1.25rem);
+  --step-1: clamp(1.2rem, calc(1.1rem + 0.47vw), 1.67rem);
+  --step-2: clamp(1.35rem, calc(1.17rem + 0.88vw), 2.22rem);
+  --step-3: clamp(1.51rem, calc(1.22rem + 1.45vw), 2.96rem);
+  --step-4: clamp(1.7rem, calc(1.25rem + 2.25vw), 3.95rem);
+  --step-5: clamp(1.91rem, calc(1.25rem + 3.35vw), 5.26rem);
+  --step-6: clamp(2.15rem, calc(1.18rem + 4.86vw), 7.01rem);
+}
+
+/* #endregion */
+
+
+/* #region CustomProperties */
+
+/* ******************** Custom Properties ******************** */
+:root {
+  /*
+    MediaQueries
+      sm - 0px - 0em
+      md - 768px - 48em
+      lg - 992px - 62em
+      xl - 1200px - 75em
+  */
+  --container-sm: 48em;
+  --container-md: 62em;
+  --container-lg: 75em;
+
+  --main-top: 2rem;
+  --main-bottom: 2rem;
+
+  --font-primary: "PT Sans", Avenir, system-ui, sans-serif;
+  --font-logo: "Raleway", sans-serif;
+  --font-logo-black: "Raleway Black", sans-serif;
+  --font-code: "Roboto Mono", Consolas;
+
+  --color-primary: #e7562e;
+  --color-secondary: #e7762e;
+  --color-svg-bg: #2b3a42;
+
+  --color-light-bg: #fcfcfc;
+  --color-light-bg-alt: #f7f7f7;
+  --color-light-bg-opacity: rgba(255, 255, 255, 0.85);
+  --color-light-text: #202225;
+  --color-light-link: #08c;
+  --color-light-contrast: #eee;
+
+  --color-dark-bg: #20252c;
+  --color-dark-bg-alt: #202b38;
+  --color-dark-bg-opacity: rgba(0, 0, 0, 0.7);
+  --color-dark-text: #fcfcfc;
+  --color-dark-link: #73cffa;
+  --color-dark-contrast: #3c4654;
+
+  /*        style dashboard             */
+  --color-main-dashboard: #f5f5f5;
+  --color-header-dashboard: #b6243a;
+  --color-button: #b6243a;
+  --color-general-dashboard: #f3f3f3;
+
+  --gradient-primary: linear-gradient(45deg,
+      var(--color-primary),
+      var(--color-secondary));
+  --gradient-link: linear-gradient(45deg,
+      var(--color-dark-link),
+      var(--color-light-link));
+  --bs-bg-opacity: 0;
+}
+
+/* #endregion */
+
+
+/* #region Animations */
+
+/* ******************** Animations ******************** */
+
+@keyframes bounce {
+  40% {
+    transform: scale(1.4);
+  }
+
+  60% {
+    transform: scale(0.8);
+  }
+
+  80% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.bounce {
+  animation: bounce 0.4s linear;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation: pulse 1.5s linear infinite;
+}
+
+@keyframes scroll-image {
+  0% {
+    opacity: 0;
+    scale: 25%;
+  }
+
+  100% {
+    opacity: 1;
+    scale: 100%;
+  }
+}
+
 /* ******************** Animate Details ******************** */
 
 @keyframes accordion-open {
@@ -438,6 +466,10 @@ summary>* {
     scroll-margin-top: 4rem;
   }
 }
+/* #endregion */
+
+
+/* #region Utilities */
 
 /* ******************** Utilities ******************** */
 .line {
@@ -447,25 +479,26 @@ summary>* {
   border: 1px solid #b6243a;
   background-color: black;
 }
+/* #endregion */
 
-/* =============================== Media Querys ========================================== */
 
+/* #region Login */
 
-/* ******************** Components UI ******************** */
-
-/********************Login************/
-
+/* ******************** Login ******************** */
+/* ==================== */
+/* ESTILOS BASE (MOBILE FIRST) y Altura Por default */
+/* ==================== */
 .img-background {
   width: 100%;
   height: 100vh;
   background-image: url(../static/assets/background-login.png) !important;
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: 50%;
   margin: 0 auto;
   filter: blur(3px);
   position: absolute;
 }
-
 .title-login {
   position: relative;
   bottom: 0.1rem;
@@ -473,23 +506,18 @@ summary>* {
   color: #fff;
   font: var(--kanit-regular);
   font-weight: 800;
-  font-size: 3rem;
+  font-size: 2.2rem;
   margin: 0;
   filter: drop-shadow(100 10 10 10 #000);
-
-  h1 {
-    border: 4px solid black;
-  }
+  line-height: 1.4;
 }
-
 .login-form {
   width: 100%;
   height: 100vh;
   position: absolute;
 }
-
 .form-items {
-  width: 40%;
+  width: 90%;
   height: 100vh;
   margin: 0 auto;
   display: flex;
@@ -498,8 +526,8 @@ summary>* {
 }
 
 .form-content {
-  width: 18rem;
-  height: 20rem;
+  width: 100%;
+  height: 50vh;
   background-color: #ffffff3a;
   border: 0.2px solid #ffffff7a;
   border-radius: 1rem;
@@ -511,7 +539,6 @@ summary>* {
   img {
     width: 7rem;
     height: auto;
-    position: absolute;
     top: 9rem;
   }
 }
@@ -522,7 +549,7 @@ summary>* {
   margin: 0.5rem 0.5rem;
 
   input {
-    border-radius: 20px;
+    border-radius: .8rem;
     outline: none;
     border: none;
     padding: 0.3rem;
@@ -568,7 +595,7 @@ summary>* {
 
 .icons-footer {
   position: absolute;
-  bottom: 2rem;
+  bottom: 1rem;
   width: 100%;
   height: auto;
 }
@@ -584,90 +611,26 @@ summary>* {
 
   img {
     margin: 1rem;
-    width: 4rem;
+    width: 3rem;
     height: auto;
     border-radius: 10px;
   }
 }
 
-
-checkbox-styles {
-  width: 2rem !important;
-  height: auto;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.checkbox-styles input[type="checkbox"] {
-  margin-left: 1rem;
-  width: 1rem;
-  height: 1.5rem;
-  border: 2px solid #6c7385;
-  /* Color vinotinto */
-  background-color: #fff;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-.checkbox-styles input[type="checkbox"]:checked::before {
-  z-index: 9;
-  content: "";
-  position: absolute;
-  top: 0px;
-  left: 7px;
-  width: 10px;
-  height: 18px;
-  border: solid white;
-  border-width: 0 4px 4px 0;
-  /* border-radius: .3rem; */
-  transform: rotate(45deg);
-}
-
-.checkbox-styles input[type="checkbox"]:checked::after {
-  content: "";
-  position: absolute;
-  top: -5px;
-  left: -3px;
-  width: 40px;
-  height: 40px;
-  background-color: #08c;
-  /* Color vinotinto */
-  /* border-width: 0 6px 6px 0; */
-  /* border-radius: .3rem; */
-  /* transform: rotate(45deg); */
-}
-
-.checkbox-styles label {
-  margin-left: 8px;
-  cursor: pointer;
-}
+/* #endregion */
 
 
-.flex-row {
-  width: 20rem !important;
-  padding: 1rem;
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center !important;
-  /* Alineación vertical centrada */
-  justify-content: space-around !important;
-  /* Alineación horizontal centrada */
-}
+/* #region NavBar */
 
-/********************** Diseño dashboard *****************/
 .header-dashboard {
   width: 100%;
-  height: auto;
+  height: 8vh;
   background-color: var(--color-header-dashboard);
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   align-items: center;
   padding: 0.2rem;
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 10;
 }
@@ -676,26 +639,31 @@ checkbox-styles {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-left: 1rem;
 
   img {
-    width: 3rem;
+    width: 2rem;
     height: auto;
-    margin-left: 2rem;
+    margin-right: .5rem;
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-family: var(--secular-one);
     color: #fff;
     margin: 0;
   }
 
-  h2 {
-    font-size: 2rem;
+  /* h2 {
+    font-size: 1.2rem;
     font-family: var(--secular-one);
     color: #fff;
     margin: 0;
+  } */
+  btn{
+    width: 1.4rem;
+  }
+  svg{
+    width: 2rem;
   }
 }
 
@@ -706,9 +674,10 @@ checkbox-styles {
   align-content: center;
 
   img {
-    width: 2.2rem;
+    width: 2rem;
     height: auto;
     margin: 0.5rem;
+    padding-right: 0.5rem;
   }
 
   img:nth-child(2) {
@@ -783,6 +752,43 @@ checkbox-styles {
   }
 }
 
+/* Navbar */
+.offcanvas-title {
+  font-family: var(--secular-one);
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.offcanvas-header {
+  background-color: var(--color-header-dashboard);
+  color: #fff;
+  height: 3.68rem;
+}
+
+.offcanvas-body ul li {
+  font-size: 1.2rem;
+}
+
+.dropdown-menu li a {
+  font-size: 1rem;
+}
+
+.btn-close {
+  fill: #fff;
+  filter: invert(1);
+  opacity: 100;
+}
+
+.size-nav {
+  width: 320px !important;
+}
+
+
+/* #endregion */
+
+
+/* #region Dashboard */
+
 /*********** Estilos panel principal de estadisticas ************/
 .general-dashboard {
   display: flex;
@@ -793,18 +799,19 @@ checkbox-styles {
   height: auto;
   width: 100%;
   overflow-y: hidden;
-  margin: 2rem;
   margin: 0 auto;
+  margin-top: calc(8vh - 16px);
 }
 
+/* Modal */
 /* Estilos base de la tarjeta */
 #ultimo-procedimiento-card {
   position: fixed;
   bottom: 20px;
-  left: 20px;
+  left: calc(100%/2 - 150px);
   width: 300px;
+  height: 50vh;
   background: linear-gradient(135deg, #b6243a, #d66e7e);
-  /* Degradado azul */
   color: white;
   padding: 20px;
   border-radius: 12px;
@@ -815,7 +822,6 @@ checkbox-styles {
   opacity: 0;
   z-index: 1000;
   overflow: hidden;
-  font-family: "Arial", sans-serif;
 }
 
 /* Mostrar la tarjeta con animación */
@@ -879,19 +885,38 @@ checkbox-styles {
 
 
 
+/* Logo de Arriba que tiene el nombre de usuario */
 .div-user-name {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 2rem;
+  padding-right: 0rem;
 }
+/* Titulo seccion */
+.div-user-name{
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.division-title {
+  text-align: center;
+  font-size: 1.2rem;
+  width: 90%;
+  margin: 0;
+  background-color: #fff;
+  border-radius: 10px;
+  height: auto;
+  padding: 0.5rem;
+  margin-bottom: .8rem;
+}
+
 
 .username-space {
   justify-content: space-between;
 }
 
 .user-name {
-  width: auto;
+  width: 100%;
   height: auto;
   background-color: #ffffff;
   border: thin solid #dcdcdcdb;
@@ -900,657 +925,119 @@ checkbox-styles {
   align-items: center;
   justify-content: space-evenly;
   align-self: center;
-  margin: 0.5rem;
   padding: 0.4rem;
+  margin: .1rem;
+  margin-bottom: .5rem;
+  margin-top: .5rem;
 
   p {
     margin: 0;
     width: auto;
     height: auto;
-    font-size: 1.1rem;
+    font-size: .70rem;
+  }
+  span{
+    font-weight: bold;
   }
 }
 
-.title-stadist-parroquies {
-  display: flex;
-  width: 40%;
-  padding: 1rem;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  height: auto;
-  justify-content: center;
-  background-color: #ffffff;
-  margin: 0 auto;
-  margin-top: 4rem;
-
-  h4 {
-    text-align: center;
-    font-size: 1rem;
-    margin: 0;
-    padding: 0;
-  }
-}
-
-.title-procediments {
-  width: auto;
-  height: auto;
-  padding: 0;
-  margin: 0;
-  margin-top: 2rem;
-}
-
-.stadist-parroquies {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  width: 50%;
-  height: auto;
-  background-color: #f0f0f06a;
-  border: thin solid #969696db;
-  border-radius: 50px;
-  padding: 1rem;
-}
-
-/****************** componentes reutilizables **************/
-.btn-mod {
-  width: 10%;
-}
-
-.modal-content {
-  width: auto;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-content: center;
-  padding: 2rem;
-}
-
-/*************** styles divisiones *******************/
-
-.procedures_record {
-  margin: 0 auto;
-  height: auto;
-  margin: 0;
-  padding: 0;
-}
-
-.title_procedures_record {
-  text-align: center;
-  font-size: 1.8rem;
-  margin: 1rem;
-}
-
-.data_form>form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 80%;
-  height: auto;
-  margin: 0 auto;
-}
-
-.data_form form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 5rem;
-  padding: 0;
-
-  button {
-    margin: 1rem;
-    background-color: var(--color-button);
-    color: #fff;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 14px;
-    width: 8rem;
-  }
-
-  button:hover {
-    background-color: #75202d;
-    transition: 0.1s all ease-in-out;
-  }
-
-  h4 {
-    margin-bottom: 1.5rem;
-    font-size: 1.6rem;
-    text-align: center;
-  }
-}
-
-.form-style {
-  background-color: #ffffff;
-  border: thin solid #cbcbcb;
-  width: 80%;
-  height: auto;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  border-radius: 2rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  padding: 0.8rem;
-  margin: 0 auto;
-
-  div {
-    display: flex;
-    width: auto;
-    height: auto;
-    flex-direction: column;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    margin: 1.4rem;
-    padding-bottom: 1rem;
-    font-family: var(--sofia-sans);
-    font-size: 1rem;
-  }
-
-  label {
-    font-weight: 600;
-  }
-
-  select {
-    width: 20rem;
-    height: 2.5rem;
-    padding: 0.5rem;
-    border-radius: 15px;
-    outline: none;
-  }
-
-  input {
-    width: 20rem;
-    height: 2.5rem;
-    padding: 1rem;
-    border-radius: 15px;
-    outline: none;
-    border: thin solid rgb(114, 114, 114);
-  }
-}
-
-.position {
-  position: relative;
-  bottom: 10px;
-}
-
-.modal-content {
-  padding: 0;
-}
-
-/**************** estilos de tablas ********************/
-
-.table-responsive-sm {
-  overflow-y: scroll;
-  width: 95%;
-  padding: 0.5rem;
-  height: 60vh;
-  margin: 2rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  margin: 0 auto;
-}
-
-.table {
-  margin: 0 auto;
-  width: 100%;
-  background-color: #ffffff;
-  border: thin solid #ffffff;
-
-  td {
-    font-family: var(--sofia-sans);
-  }
-
-  th {
-    text-align: center;
-    font-size: 1.1rem;
-  }
-
-  tbody tr {
-    text-align: center;
-    vertical-align: middle;
-  }
-
-  tbody td {
-    text-align: center;
-    border-bottom: 0.1px solid rgb(156, 156, 156);
-    font-size: 0.9rem;
-  }
-}
-
-.icons-accion {
-  width: 18rem;
-  padding: 0;
-
-  button {
-    margin: 1rem;
-    width: 50px;
-    height: 60px;
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    margin-bottom: .5rem;
-  }
-}
-
-.icons-accion-two {
-  width: 10rem;
-  padding: 0;
-
-  button {
-    margin: 1rem;
-    width: 50px;
-    height: 60px;
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    margin-bottom: .5rem;
-  }
-}
-
-.section-filter {
-  width: 95%;
-  height: auto;
-  padding: 0.4rem;
-  padding-top: 2rem;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  background-color: #ffffff;
-  border: thin solid #ffffff;
-  margin: 0 auto;
-  border-radius: 10px;
-  flex-wrap: wrap;
-  font-size: 1.2rem;
-}
-
-.filter-search {
-  display: flex;
-  width: auto;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-
-  input {
-    border-radius: 5px;
-    outline: none;
-    border: thin solid #b7b7b7;
-    width: 18rem;
-    height: 2.5rem;
-    margin: 0.5rem;
-  }
-}
-
-.filter-search-prevention {
-  display: flex;
-  width: auto;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-
-  input {
-    border-radius: 5px;
-    outline: none;
-    border: thin solid #b7b7b7;
-    width: 18rem;
-    height: 2.5rem;
-    margin: 0.5rem;
-  }
-
-  select {
-    border-radius: 5px;
-    outline: none;
-    border: thin solid #b7b7b7;
-    width: 18rem;
-    height: 2.5rem;
-    margin: 0.5rem;
-  }
-
-  svg {
-    width: 25px;
-    height: 25px;
-  }
-}
-
-.totals-procediments {
-  width: 50%;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.z-index {
-  z-index: 2;
-}
-
-.infoProcedimientos {
-  padding: 0;
-  margin: 0;
-  height: 20vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  p {
-    text-align: start;
-    margin: 0;
-  }
-
-  h5 {
-    margin: 0;
-    padding: 0;
-  }
-}
-
-.style-delete {
-  height: 16rem;
-}
-
-.general-dashboard ul {
-  visibility: visible;
-  display: none;
-}
-
-.modal-header {
-  flex-direction: column-reverse;
-  justify-content: center;
-  /* background-color: var(--color-header-dashboard); */
-  /* width: 100%; */
-  /* color: #FFF; */
-  padding: 1.2rem;
-}
-
-.modal-title {
-  margin: 0;
-}
-
-.graphic-statistics {
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  width: 80%;
-  height: 50vh;
-  background-color: #ffffff;
-  border: thin solid #ffffff;
-  border-radius: 15px;
-  padding: 0;
-}
-
-.char {
-  width: 100%;
-}
-
-.modal-header {
-  width: auto;
-  height: auto;
-  align-items: center;
-  justify-content: space-around;
-}
-
-.modal-header-info {
-  justify-content: center;
-  background-color: var(--color-header-dashboard);
-  width: 100%;
-  color: #FFF;
-  padding: 1.2rem;
-}
-
-.body-information {
-  padding: 1rem !important;
-}
-
-.header-dashboard-two {
-  width: 100%;
-  height: 4.5rem;
-  padding: 0;
-  background-color: var(--color-header-dashboard);
-  display: flex;
-
-  .title-icon {
-    height: auto;
-
-    h1 {
-      margin: 0;
-
-      h1 {
-        margin: 0;
-      }
-    }
-  }
-}
-
-.modal-content-two {
-  width: auto;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-content: center;
-}
-
-.modal-body {
-  width: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-
-  h4 {
-    margin: 1rem;
-  }
-}
-
-.modal-body-two {
-  padding: 1rem;
-  width: auto;
-  height: auto;
-}
-
-.modal-body-three {
-  padding: 0;
-  width: 90%;
-}
-
-.fixed-width {
-  width: 150px;
-  /* Ancho fijo */
-  max-width: 150px;
-  /* Limitar el ancho máximo */
-  white-space: nowrap;
-  /* Evitar el salto de línea */
-  overflow: hidden;
-  /* Ocultar el contenido que sobresale */
-  text-overflow: ellipsis;
-  /* Mostrar puntos suspensivos (...) */
-}
-
-.info-modal {
-  position: relative;
-  width: 80%;
-  display: flex;
-  text-align: start;
-  align-content: center;
-  flex-direction: column;
-  padding-top: 2rem;
-
-  p {
-    font-size: 1.1rem;
-    margin: 0.3rem;
-    max-width: 100%;
-  }
-
-  h4 {
-    text-align: center;
-    font-size: 1.5rem;
-    margin: 0;
-    padding: 0.4rem;
-    width: 100%;
-    border-bottom: 3px solid var(--color-header-dashboard);
-  }
-}
-
-.section-left {
-  section {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    max-height: 30rem;
-  }
-}
-
-.offcanvas-title {
-  font-family: var(--secular-one);
-  font-size: 1.5rem;
-  margin: 0;
-}
-
-.offcanvas-header {
-  background-color: var(--color-header-dashboard);
-  color: #fff;
-  height: 3.68rem;
-}
-
-.offcanvas-body ul li {
-  font-size: 1.2rem;
-}
-
-.dropdown-menu li a {
-  font-size: 1rem;
-}
-
-.btn-close {
-  fill: #fff;
-  filter: invert(1);
-  opacity: 100;
-}
-
-.division-title {
-  text-align: center;
-  font-size: 1.5rem;
-  margin: 0;
-  background-color: #fff;
-  border-radius: 10px;
-  width: auto;
-  height: auto;
-  padding: 0.5rem;
-  margin-left: 2rem;
-}
-
-.config-modal-delete {
-  width: 100%;
-  background-color: var(--color-button);
-  color: #fff;
-}
-
-.modal-delete {
-  width: 100% !important;
-}
-
-.body-delete {
-  padding: 1rem;
-}
-
-.size-nav {
-  width: 320px !important;
-}
-
-/*------------------------ estadisticas -----------------------------------*/
-.column-one {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-
-.div-analytics {
-  margin: 0 auto;
-  width: auto;
-  height: auto;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  padding-bottom: 2rem;
-  padding-top: 0.1rem;
-}
-
-.analitics-filters {
-  width: 90%;
-  margin: 0 auto;
-  background-color: #ffffff;
-  border: thin solid #ffffff;
-  border-radius: 30px;
-}
-
-.position-end {
-  height: auto;
-  width: auto;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  align-content: center;
-  margin: 0;
-  padding: 0;
-
-  div {
-    padding: 1rem;
-  }
-
-  span {
-    font-weight: 700;
-  }
-}
-
-.progress-bar {
-  width: auto;
-  height: auto;
-  display: flex;
-  align-content: center;
-  flex-direction: column;
-  justify-content: space-between;
-
-  p {
-    width: 12rem;
-    padding: 0;
-    margin: 0;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Contenedor que tiene las cards de la estadistica por divisiones  */
 .procediments-contain {
-  width: 90%;
+  width: 100%;
   height: auto;
-  margin: 0 auto;
+  margin: 1rem 0;
   display: flex;
   background-color: #ffffff;
   border: thin solid #ffffff;
   flex-direction: column;
   justify-content: flex-start;
   border-radius: 20px;
-  margin-bottom: 1rem;
   text-align: center;
   flex-wrap: wrap;
 }
 
+
+/* Titulo de la grafica anual */
+.title-stadist-parroquies {
+  display: flex;
+  width: 100%;
+  padding: 1rem;  
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  height: auto;
+  justify-content: center;
+  background-color: #ffffff;
+  margin: 0 auto;
+  margin-top: 1rem;
+
+  h4 {
+    text-align: center;
+    font-size: 1rem;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Titulo para la estadistica de las cards por divisiones */
+.title-procediments {
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+
+/*------------------------ estadisticas -----------------------------------*/
+
+/* Estilos de las barras de porcentajes dsahboard */
+.div-analytics {
+  margin: 0 auto;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  padding-bottom: 2rem;
+  padding-top: 0.1rem;
+}
+
+.analitics-filters {
+  width: 100%;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: thin solid #ffffff;
+}
+.analitics-filters .position-end{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.progress-bar {
+  width: 90%;
+  height: auto;
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+  justify-content: space-between;
+
+  p {
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+
+/* Estilos seccion cards de procedimientos por division */
 .items-list {
   text-align: center;
-  width: auto;
+  width: 80%;
   height: auto;
   margin: 0 auto;
   height: auto;
@@ -1576,8 +1063,8 @@ checkbox-styles {
 
 .items-list li {
   /* background-color: #f8f8f8; */
-  margin: 1rem;
-  width: 14rem;
+  margin: 1rem 0rem;
+  width: 100%;
   height: auto;
   border-radius: 10px;
   font-size: 1.5rem;
@@ -1628,6 +1115,18 @@ checkbox-styles {
   color: #fff;
 }
 
+.items-row {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: center;
+  flex-wrap: wrap;
+  height: auto;
+}
+
+
+
+/* estilos cards de procedimientos por parroquia */
 .items-cards {
   display: flex;
   justify-content: center;
@@ -1639,46 +1138,6 @@ checkbox-styles {
   margin-bottom: 2.5rem;
 }
 
-.card-new {
-  display: flex;
-  width: 100%;
-  height: auto;
-  margin: 0 auto;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: stretch;
-  flex-wrap: wrap;
-}
-
-.items-row {
-  display: flex;
-  flex-direction: row;
-  align-items: start;
-  justify-content: center;
-  flex-wrap: wrap;
-  height: auto;
-}
-
-.card-mecanic {
-  display: flex;
-  justify-content: center;
-  width: 15rem;
-  height: auto;
-  box-shadow: 1px 1px 10px rgb(146, 146, 146);
-  text-align: start;
-  margin: 1rem 2rem;
-  padding: 1rem;
-  font-family: var(--sofia-sans);
-  color: #FFF;
-  border-radius: 10px;
-
-  span {
-    font-size: 1.5rem;
-    margin: .4rem;
-  }
-
-}
-
 .card-parroquies {
   display: flex;
   align-items: center;
@@ -1688,14 +1147,15 @@ checkbox-styles {
   flex-wrap: wrap;
   padding: 0;
   margin: 0;
-  width: 11rem;
+  width: 100%;
   height: auto;
   border-radius: 20px;
   font-family: var(--sofia-sans);
+  margin-top: 1rem;
 
   p {
-    font-size: 1.4rem;
-    margin: 0.5rem;
+    font-size: 1.5rem;
+    margin: 0rem;
     width: 100%;
   }
 
@@ -1705,7 +1165,7 @@ checkbox-styles {
     color: #fff;
     font-size: 2rem;
     height: auto;
-    width: 64%;
+    width: 60%;
   }
 }
 
@@ -1733,49 +1193,12 @@ checkbox-styles {
   background-color: #fec545;
 }
 
-.style-two {
-  width: 14rem;
-}
-
-.disp-none {
-  display: none;
-}
-
-.non-visible {
-  display: none;
-}
-
-.visible {
-  display: block;
-}
-
 .items-parroquies ol {
   list-style: none;
 }
 
-.display-row {
-  display: flex;
-  flex-direction: row !important;
-  justify-content: center;
 
-  h4 {
-    width: 100% !important;
-  }
-}
-
-.detalles_lesionados {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start !important;
-  margin: 0.5rem;
-  width: auto !important;
-
-  div {
-    width: 19.4rem;
-    margin: 0.5rem;
-  }
-}
-
+/* Estilos del Footer */
 .footer {
   width: 100%;
   height: auto;
@@ -1830,56 +1253,593 @@ checkbox-styles {
   color: var(--bs-cyan);
 }
 
-.contain-dates {
-  width: 95%;
-  height: auto;
+
+/* Estilos para grafica anual */
+.graphic-statistics {
   display: flex;
+  justify-content: center;
   flex-direction: column;
-  justify-content: space-evenly;
-  align-content: center;
-  align-items: center;
+  width: 100%;
+  height: 45vh;
   background-color: #ffffff;
   border: thin solid #ffffff;
-  padding: 1rem;
-  border-radius: 20px;
-  margin: 0 auto;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  border-radius: 0;
+  padding: 0;
 }
 
-.buttons-items {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  margin: 0 auto;
-  width: 100%;
+/* #endregion */
 
-  button {
-    display: flex;
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-    border: none;
-    padding: 0.5rem;
-    margin: 1rem;
-    border-radius: 5px;
-    width: 12rem;
+
+/* #region Formulario Procedimientos */
+
+  /* Titulo */
+  .procedures_record {
+    margin: 0 auto;
     height: auto;
-    font-size: 1rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .title_procedures_record {
+    text-align: center;
+    font-size: 1.8rem;
+    margin: 1rem;
+  }
+
+  /* Estilos Generales para el Formulario */
+  .data_form {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f06a;
+    border-radius: 20px;
+  }
+
+  .data_form form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 5rem;
+    padding: 0rem;
+  }
+
+  .data_form form button {
+    margin: 1rem;
     background-color: var(--color-button);
     color: #fff;
-    font-family: var(--kanit-regular);
+    padding: 0.5rem;
+    border: none;
+    border-radius: 14px;
+    width: 8rem;
   }
 
-  button:hover {
-    background-color: rgb(151, 0, 0);
+  .data_form form button:hover {
+    background-color: #75202d;
+    transition: 0.1s all ease-in-out;
   }
 
-  input {
-    margin: .5rem;
-    width: 60% !important;
+  .data_form form h4 {
+    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+    text-align: center;
+  }
+  .data_form .form-container .form-floating label {
+    font-size: 1.2rem;
+    color: var(--color-button);
+  }
+  .data_form .form-container .form-floating input:focus,
+  .data_form .form-container .form-floating select:focus {
+    border: 1px solid var(--color-button);
+    box-shadow: 0 0 5px var(--color-button);
+  }
+
+  .form-container{
+    width: 100%;
+    flex-direction: column;
+    background-color: #ffffff;
+    border: thin solid #cbcbcb;
+    padding: 1rem;
+  }
+  .form-container2{
+    width: 100%;
+    flex-direction: column;
+  }
+  .form-container3{
+    width: 100%;
+    flex-direction: column;
+  }
+  .form-container-margin{
+    margin-top: 1rem;
+  }
+  .form-check-procedimientos-container{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    
+    label{
+      margin-left : .5rem;
+    }
+
+    .form-check-input:checked{
+      background-color: var(--color-button);
+      border-color: var(--color-button);
+    }
+  }
+  .form-container3 .form-check-procedimientos-container{
+    justify-content: center;
+    margin-left: 0.5rem;
+  }
+  .form-check-procedimientos{
+    margin: 0 !important;
+  }
+  .disp-none {
+    display: none;
+  }
+
+/* #endregion */
+
+
+/* #region Filtrados Para las Tablas Divisiones */
+
+  /* Area de filtrado */
+/* Contenedor principal */
+.filter-container {
+  width: 100%;
+  background-color: #fff;
+  padding: 1rem;
+  margin: 0;
+  margin-bottom: 30px;
+}
+
+/* Estadísticas */
+.filter-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .5rem;
+}
+
+.stat-box {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.stat-badge {
+  display: inline-block;
+  background-color: #b6243a;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.9em;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+/* Formulario */
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+
+  margin: 0 auto;
+}
+
+.filter-group {
+  width: 100%; /* Evita desbordamiento */
+  margin-bottom: 10px;
+}
+
+/* Input flotante */
+.floating-input, .floating-select {
+  position: relative;
+}
+
+.floating-input input, 
+.floating-select select {
+  width: 100%;
+  padding: 16px 12px 4px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.floating-input input:focus, 
+.floating-select select:focus {
+  outline: none;
+  border-color: #b6243a;
+  box-shadow: 0 0 5px var(--color-button);
+}
+
+.floating-input label, 
+.floating-select label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label,
+.floating-select select:focus + label,
+.floating-select select:not([value=""]) + label {
+  top: 4px;
+  font-size: 0.7rem;
+  color: #b6243a;
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+
+.filter-actions {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  /* height: 56px; Altura consistente con los inputs */
+}
+
+.filter-button, .clear-button {
+  width: 40%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-button {
+  background-color: #b6243a;
+  color: white;
+  border: none;
+}
+
+.filter-button:hover {
+  background-color: #88091c;
+}
+
+.clear-button {
+  background-color: transparent;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.clear-button:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.image-services-medics{
+  background-image: url("https://i.postimg.cc/kX8pX0Cv/logo-Servicios-Medicosopacity.png");
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* #endregion */
+
+
+/* #region Tablas Divisiones Y General */
+  /**************** estilos de tablas ********************/
+
+.table-responsive-sm {
+  overflow-y: hidden;
+  width: 100%;
+  margin: 2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  margin: 0 auto;
+}
+
+.table {
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: thin solid #ffffff;
+
+  td {
+    font-family: var(--sofia-sans);
+  }
+
+  th {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  tbody tr {
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 0.1px solid rgb(156, 156, 156);
+  }
+
+  tbody td {
+    text-align: center;
+    font-size: 0.9rem;
   }
 }
+
+.icons-accion {
+  width: 150px;
+  margin: 0;
+  width: auto;
+  padding: 0;
+
+  button {
+    width: 50px;
+    height: 60px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0rem 0.5rem;
+  }
+}
+
+.table {
+  table-layout: fixed;
+  /* table-layout: fixed; */
+  /* Esto asegura que las columnas respeten el ancho definido */
+}
+
+
+/* CSS para columnas de ancho fijo (1/12) con texto desbordado */
+.fixed-width-auto{
+  width: 100px;
+}
+.fixed-width-iconos{
+  width: 230px;
+}
+.fixed-width {
+  /* Usamos un ancho proporcional para las celdas */
+  /* Nota: 'table-layout: fixed' en la tabla es necesario para que esto funcione */
+  width: 150px; 
+  
+  /* Configuración de desbordamiento (los 3 puntos) */
+  white-space: nowrap; 
+  overflow: hidden;    
+  text-overflow: ellipsis; 
+}
+
+/* #endregion */
+
+
+/* #region Paginacion Tablas Divisiones y General */
+
+/* Seccion de filtrado y paginacion para las tablas */
+.pagination {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-links {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.current {
+  text-align: center;
+  width: 100%;
+  margin: 0 10px;
+  font-weight: bold;
+  color: #454545;
+}
+
+/* #endregion */
+
+
+/* #region Filtrado Para Generar Excel Tabla Divisiones y General */
+  /* Filtrado para el excel */
+  .contain-dates {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    border: thin solid #ffffff;
+    margin: 0 auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .titulo-exportaciones-excel{
+    margin: .2rem;
+    margin-top: .8rem;
+    font-size: 1.1rem;
+    color: #454545;
+  }
+
+
+
+  .filter-search {
+    display: flex;
+    flex-wrap: wrap;
+    width: 95%;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: hidden;
+
+    input[type="month"] {
+      flex: none;
+      outline: none;
+      border: thin solid #b6bbba;
+      border-top: none;
+      width: 100% !important;
+      border-bottom-left-radius: 10px !important;
+      border-bottom-right-radius: 10px !important;
+      margin-left: 0 !important;
+      margin-bottom: 1rem;
+    }
+    button{
+      border-radius: 10px !important;
+    }
+  }
+
+  .input-group-text{
+    width: 100%;
+    border-radius: 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px !important;
+    border: thin solid #b6bbba;
+    border-bottom: thin solid #d3dad8;
+  }
+
+/* #endregion */
+
+
+/* #region Ventanas Modales Informacion y eliminar Tabla Divisiones Y General */
+
+/* Modal de Eliminar */
+.infoProcedimientos {
+  padding: 0;
+  margin: 0;
+  height: 20vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 16rem;
+
+  p {
+    text-align: start;
+    margin: 0;
+  }
+
+  h5 {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.modal-title {
+  margin: 0;
+}
+
+.config-modal-delete {
+  width: 100%;
+  background-color: var(--color-button);
+  color: #fff;
+}
+.config-modal-delete + .modal-body {
+  padding: 1rem;
+}
+
+/* Estilos para la cabecera */
+.header-dashboard-two {
+  width: 100%;
+  height: 4.5rem;
+  padding: 0;
+  background-color: var(--color-header-dashboard);
+  display: flex;
+  color: #fff;
+  align-items: center;
+  justify-content: space-around;
+
+  .title-icon {
+    height: auto;
+
+    h1 {
+      margin: 0;
+
+      h1 {
+        margin: 0;
+      }
+    }
+  }
+}
+
+
+.modal-body-two {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+
+  h4 {
+    margin: 1rem;
+  }
+}
+
+
+.info-modal {
+  position: relative;
+  width: calc(100% - 1rem);
+  display: flex;
+  text-align: start;
+  align-content: center;
+  flex-direction: column;
+  padding-top: 1rem;
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  h4 {
+    text-align: center;
+    font-size: 1.3rem;
+    margin: 0;
+    padding: 0.4rem;
+    width: 100%;
+    border-bottom: 3px solid var(--color-header-dashboard);
+  }
+}
+
+.section-left {
+  section {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    max-height: 30rem;
+  }
+}
+/* #endregion */
+
+
+
+/****************** componentes reutilizables **************/
+
+/* .modal-content {
+  width: auto;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  padding: 2rem;
+} */
 
 /*--------------------------- estilos de estadisticas -------------------------------------*/
 
@@ -3517,7 +3477,7 @@ checkbox-styles {
 }
 
 /* Estilos generales del formulario */
-  .parte-a {
+  /* .parte-a {
     background-color: #f8f9fa;
     padding: 25px;
     border-radius: 8px;
@@ -3531,10 +3491,9 @@ checkbox-styles {
     padding-bottom: 10px;
     border-bottom: 2px solid #e9ecef;
     font-weight: 600;
-  }
+  } */
 
-  /* Estilos para los grupos de formulario */
-  .form-group {
+  /* .form-group {
     margin-bottom: 20px;
   }
 
@@ -3543,10 +3502,10 @@ checkbox-styles {
     margin-bottom: 8px;
     font-weight: 500;
     color: #495057;
-  }
+  } */
 
   /* Estilos para inputs y selects */
-  .form-control, .form-select {
+  /* .form-control, .form-select {
     width: 100%;
     padding: 10px 15px;
     border: 1px solid #ced4da;
@@ -3560,23 +3519,23 @@ checkbox-styles {
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     outline: none;
-  }
+  } */
 
   /* Estilo especial para campos deshabilitados */
-  .form-control:disabled, .form-select:disabled {
+  /* .form-control:disabled, .form-select:disabled {
     background-color: #e9ecef;
     color: #6c757d;
     cursor: not-allowed;
-  }
+  } */
 
   /* Estilo para campos requeridos */
-  .form-group.required label:after {
+  /* .form-group.required label:after {
     content: " *";
     color: #dc3545;
-  }
+  } */
 
   /* Estilo para campos activos (como el de referencia) */
-  .campo-activo {
+  /* .campo-activo {
     position: relative;
   }
 
@@ -3588,20 +3547,20 @@ checkbox-styles {
   .campo-activo .form-control, .campo-activo .form-select {
     border-left: 3px solid #28a745;
     padding-left: 12px;
-  }
+  } */
 
   /* Estilo para campos inactivos */
-  .campo-inactivo label {
+  /* .campo-inactivo label {
     color: #6c757d;
   }
 
   .campo-inactivo .form-control, .campo-inactivo .form-select {
     background-color: #f8f9fa;
     color: #6c757d;
-  }
+  } */
 
   /* Estilo para los botones */
-  .buttons-solicitud {
+  /* .buttons-solicitud {
     display: flex;
     gap: 15px;
     justify-content: flex-end;
@@ -3623,26 +3582,25 @@ checkbox-styles {
     background-color: #c82333;
     border-color: #bd2130;
     transform: translateY(-2px);
-  }
+  } */
 
   /* Estilo para selects con primera opción deshabilitada */
-  .disable-first-option option:first-child {
+  /* .disable-first-option option:first-child {
     color: #6c757d;
-  }
+  } */
 
   /* Grid layout para campos que podrían estar en línea */
-  @media (min-width: 768px) {
+  /* @media (min-width: 768px) {
     .form-row {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 20px;
     }
-  }
+  } */
 
 
 /* Estilos para el Autocompletado */
-/* Estilos para el autocompletado */
-  .select-autocomplete {
+  /* .select-autocomplete {
     position: relative;
     width: 100%;
   }
@@ -3685,10 +3643,10 @@ checkbox-styles {
     top: 50%;
     transform: translateY(-50%);
     color: #6c757d;
-  }
+  } */
   
   /* Ocultar el select original pero mantenerlo para el formulario */
-  .hidden-select {
+  /* .hidden-select {
     display: none;
   }
 
@@ -3698,10 +3656,10 @@ checkbox-styles {
     border-radius: 4px;
     margin-top: 5px;
     transition: all 0.3s ease;
-}
+} */
 
 /* Para el estado de validación */
-.cedula-valida {
+/* .cedula-valida {
     color: #28a745;
     background-color: #e8f5e9;
 }
@@ -3735,11 +3693,11 @@ checkbox-styles {
 .text-center {
     color: #6c757d;
     font-size: 0.9rem;
-}
+} */
 
 /* Estilos personalizados para el formulario */
-.section-filter .input-group-text {
-  min-width: 80px; /* Ancho mínimo para las etiquetas */
+/* .section-filter .input-group-text {
+  min-width: 80px;
   justify-content: center;
 }
 
@@ -3748,9 +3706,9 @@ checkbox-styles {
 }
 
 .section-filter .btn {
-  white-space: nowrap; /* Evita que el texto del botón se rompa */
-}
-.section-filter .input-group-text {
+  white-space: nowrap;
+} */
+/* .section-filter .input-group-text {
   min-width: 80px;
   justify-content: center;
   background-color: #dc3545 !important;
@@ -3779,7 +3737,7 @@ checkbox-styles {
 .form-check-input:checked{
   background-color: #b6243a;
   border-color: #b6243a;
-}
+} */
 
 /* Filtros */
 
@@ -3969,24 +3927,6 @@ checkbox-styles {
 
 .card-gallery {
   width: 30%;
-}
-
-.card-parroquies {
-  height: 9rem;
-  width: 15rem;
-
-  span {
-    border-radius: inherit;
-    width: 40%;
-  }
-}
-
-.progress-bar {
-  width: 28%;
-
-  p {
-    align-self: center;
-  }
 }
 
 .form_personal div {
@@ -4709,7 +4649,7 @@ checkbox-styles {
   overflow: scroll;
 }
 
-.form-check {
+/* .form-check {
   width: 100%;
   display: flex;
   align-items: center;
@@ -4721,7 +4661,7 @@ checkbox-styles {
     padding: 0;
     margin: 0;
   }
-}
+} */
 
 #confirmDeleteModal {
   position: fixed;
@@ -4904,25 +4844,7 @@ checkbox-styles {
 
 
 
-/* Seccion de filtrado y paginacion para las tablas */
-.pagination {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
 
-.step-links {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.current {
-    margin: 0 10px;
-    font-weight: bold;
-}
 
 .tabla-general-procedimientos{
   width: 100%;
@@ -5312,159 +5234,10 @@ checkbox-styles {
 
 
 
-.icons-accion {
-  width: auto;
-  display: flex;
-  margin: 0;
-  justify-content: space-between;
-}
 
-/* Contenedor principal */
-.filter-container {
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  margin: 0 auto;
-  margin-bottom: 30px;
-  width: 95%;
-}
 
-/* Estadísticas */
-.filter-stats {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: .5rem;
-}
 
-.stat-box {
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 0.95rem;
-}
 
-.stat-badge {
-  display: inline-block;
-  background-color: #b6243a;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.9em;
-  font-weight: bold;
-  margin-left: 4px;
-}
-
-/* Formulario */
-.filter-form {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  width: 65%;
-
-  margin: 0 auto;
-}
-
-.filter-group {
-  min-width: 22%; /* Evita desbordamiento */
-}
-
-/* Input flotante */
-.floating-input, .floating-select {
-  position: relative;
-}
-
-.floating-input input, 
-.floating-select select {
-  width: 100%;
-  padding: 16px 12px 4px;
-  font-size: 1rem;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  background-color: white;
-  transition: all 0.2s;
-}
-
-.floating-input input:focus, 
-.floating-select select:focus {
-  outline: none;
-  border-color: #b6243a;
-  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
-}
-
-.floating-input label, 
-.floating-select label {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  font-size: 0.85rem;
-  color: #6c757d;
-  pointer-events: none;
-  transition: all 0.2s;
-}
-
-.floating-input input:focus + label,
-.floating-input input:not(:placeholder-shown) + label,
-.floating-select select:focus + label,
-.floating-select select:not([value=""]) + label {
-  top: 4px;
-  font-size: 0.7rem;
-  color: #b6243a;
-}
-
-.input-hint {
-  font-size: 0.75rem;
-  color: #6c757d;
-  margin-top: 4px;
-  padding-left: 4px;
-}
-
-/* Botones */
-.filter-actions {
-  display: flex;
-  /* gap: 8px; */
-  align-items: flex-end;
-  /* height: 56px; Altura consistente con los inputs */
-}
-
-.filter-button, .clear-button {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filter-button {
-  background-color: #b6243a;
-  color: white;
-  border: none;
-}
-
-.filter-button:hover {
-  background-color: #88091c;
-}
-
-.clear-button {
-  background-color: transparent;
-  color: #6c757d;
-  border: 1px solid #dee2e6;
-}
-
-.clear-button:hover {
-  background-color: #f8f9fa;
-  color: #212529;
-}
-
-.image-services-medics{
-  background-image: url("https://i.postimg.cc/kX8pX0Cv/logo-Servicios-Medicosopacity.png");
-  background-size: contain;
-  background-position: center center;
-  background-repeat: no-repeat;
-}
 
 
 /* Estilos Formularios Personal */
@@ -5510,7 +5283,7 @@ checkbox-styles {
 
 /* ------------------------------- Media querys ------------------------------------------ */
 
-@media (min-width: 1400px) {
+/* @media (min-width: 1400px) {
   .inicial-carrousel-one {
     height: 40rem;
   }
@@ -5538,8 +5311,6 @@ checkbox-styles {
   .to-capacitation {
     background-position: center 65px;
   }
-
-  /* Psicologia */
   .to-psicologa {
     background-position: center 60px;
   }
@@ -5552,7 +5323,6 @@ checkbox-styles {
     }
   }
 
-  /* information */
   .to-information {
     background-repeat: no-repeat;
     background-position: center center;
@@ -5571,7 +5341,6 @@ checkbox-styles {
     font-size: 4rem;
   }
 
-  /* Sistema */
   .form-style {
     div {
       width: 80%;
@@ -5590,9 +5359,9 @@ checkbox-styles {
   .form_personal {
     width: 100%;
   }
-}
+} */
 
-@media (max-width: 1366px) {
+/* @media (max-width: 1366px) {
   .icon-to-title {
     margin: 0;
   }
@@ -5631,7 +5400,6 @@ checkbox-styles {
     background-position: -20px 60px;
   }
 
-  /* Psicologia */
   .to-psicologa {
     background-position: center 60px;
   }
@@ -5644,7 +5412,6 @@ checkbox-styles {
     }
   }
 
-  /* information */
   .to-information {
     background-repeat: no-repeat;
     background-position: center center;
@@ -5666,9 +5433,9 @@ checkbox-styles {
   .form_personal {
     width: 100%;
   }
-}
+} */
 
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
   .icon-to-title {
     margin: 0;
   }
@@ -5677,9 +5444,9 @@ checkbox-styles {
     margin: 0;
     width: 15%;
   }
-}
+} */
 
-@media (max-width: 990px) {
+/* @media (max-width: 990px) {
   .navbar-collapse {
     order: 1;
   }
@@ -5689,7 +5456,6 @@ checkbox-styles {
     width: 25%;
   }
 
-  /* information */
   .to-information {
     background-repeat: no-repeat;
     background-position: center center;
@@ -5702,9 +5468,9 @@ checkbox-styles {
   .modal-xl {
     max-width: 80% !important;
   }
-}
+} */
 
-@media (max-width: 800px) {
+/* @media (max-width: 800px) {
   .nav {
     max-width: 100%;
   }
@@ -5811,7 +5577,6 @@ checkbox-styles {
     text-align: center;
   }
 
-  /* Seccion GLP */
   .text-inter {
     margin: 0;
 
@@ -5840,7 +5605,6 @@ checkbox-styles {
   .content-image {
     width: 90%;
 
-    /* height: 12rem; */
     img {
       border-radius: 2rem;
     }
@@ -5858,7 +5622,6 @@ checkbox-styles {
     background-position: -320px 65px;
   }
 
-  /* Psicologia */
   .to-psicologa {
     background-position: center 60px;
   }
@@ -5871,13 +5634,11 @@ checkbox-styles {
     }
   }
 
-  /* information */
   .to-information {
     background-repeat: no-repeat;
     background-position: center center;
   }
 
-  /* Captacion */
   .title-information-section {
     margin-top: 9rem
   }
@@ -5888,7 +5649,6 @@ checkbox-styles {
     }
   }
 
-  /* ZOEDAN */
   .information-aboutme {
     h3 {
       font-size: 2rem;
@@ -5915,7 +5675,6 @@ checkbox-styles {
     height: auto;
   }
 
-  /* Contacto */
   .to-contact {
     background-size: cover;
     background-position: -270px;
@@ -5954,7 +5713,6 @@ checkbox-styles {
     bottom: 12rem;
   }
 
-  /*Loginn  */
   .link-to-back {
     width: 3rem;
 
@@ -5986,12 +5744,10 @@ checkbox-styles {
     height: 5rem;
   }
 
-  /* Galeria */
   .card-gallery {
     width: 85%;
   }
 
-  /* SISTEMA */
   .items-row {
     width: 80%;
     margin: 0 auto;
@@ -6097,10 +5853,10 @@ checkbox-styles {
     width: 100%;
     padding: 0;
   }
-}
+} */
 
 /* Responsividad adicional */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .section-filter .input-group-text {
     min-width: 70px;
     font-size: 0.85rem;
@@ -6141,9 +5897,10 @@ checkbox-styles {
     align-items: center;
   }
 
-}
+} */
+
 /* Responsive */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .filter-form {
     grid-template-columns: 1fr;
   }
@@ -6168,9 +5925,9 @@ checkbox-styles {
       text-align: center;
     }
   }
-}
+} */
 
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .nav-item {
     width: 45%;
     text-align: center;
@@ -6241,7 +5998,6 @@ checkbox-styles {
   }
 
   .segundo .contain-comand .two-comand {
-    /* Estilos */
     order: -1;
   }
 
@@ -6282,7 +6038,6 @@ checkbox-styles {
     text-align: center;
   }
 
-  /* Seccion GLP */
   .text-inter {
     margin: 0;
 
@@ -6311,7 +6066,6 @@ checkbox-styles {
   .content-image {
     width: 90%;
 
-    /* height: 12rem; */
     img {
       border-radius: 2rem;
     }
@@ -6329,12 +6083,11 @@ checkbox-styles {
     background-position: center 40px;
   }
 
-  /*  Seguridad y Prevencion */
+
   .to-prevencion {
     background-position: -280px 40px;
   }
 
-  /* Capacitacion */
   .to-capacitation {
     background-position: -400px 130px;
   }
@@ -6343,7 +6096,6 @@ checkbox-styles {
     width: 100%;
   }
 
-  /* Psicologia */
   .to-psicologa {
     background-position: center 130px;
   }
@@ -6356,13 +6108,13 @@ checkbox-styles {
     }
   }
 
-  /* information */
+
   .to-information {
     background-repeat: no-repeat;
     background-position: -350px center;
   }
 
-  /* Captacion */
+
   .title-information-section {
     margin-top: 9rem
   }
@@ -6373,7 +6125,7 @@ checkbox-styles {
     }
   }
 
-  /* ZOEDAN */
+
   .information-aboutme {
     h3 {
       font-size: 2rem;
@@ -6400,7 +6152,7 @@ checkbox-styles {
     height: auto;
   }
 
-  /* Contacto */
+
   .to-contact {
     background-size: cover;
     background-position: -270px;
@@ -6439,7 +6191,7 @@ checkbox-styles {
     bottom: 12rem;
   }
 
-  /*Loginn  */
+
   .icons {
     img {
       width: 3rem;
@@ -6473,7 +6225,7 @@ checkbox-styles {
     background-position: -250px;
   }
 
-  /* SISTEMA */
+
   .user-name {
     p {
       font-size: 1rem
@@ -6854,11 +6606,9 @@ checkbox-styles {
       font-size: 15px;
     }
   }
-}
+} */
 
-@media (max-width: 375px) {
-
-  /* Blog e Inicio */
+/* @media (max-width: 375px) {
   .nav {
     width: 100%;
   }
@@ -6929,7 +6679,6 @@ checkbox-styles {
   }
 
   .segundo .contain-comand .two-comand {
-    /* Estilos */
     order: -1;
   }
 
@@ -6970,7 +6719,6 @@ checkbox-styles {
     text-align: center;
   }
 
-  /* Seccion GLP */
   .text-inter {
     margin: 0;
 
@@ -6999,8 +6747,6 @@ checkbox-styles {
 
   .content-image {
     width: 90%;
-
-    /* height: 12rem; */
     img {
       border-radius: 2rem;
     }
@@ -7014,22 +6760,18 @@ checkbox-styles {
     margin: 1.5rem auto;
   }
 
-  /* Brigada */
   .to-brigate {
     background-position: center 40px;
   }
 
-  /*  sERVICIOS mEDICOS */
   .to-services-medicos {
     background-position: right top;
   }
 
-  /*  Seguridad y Prevencion */
   .to-prevencion {
     background-position: -280px 40px;
   }
 
-  /* Capacitacion */
   .to-capacitation {
     background-position: -400px 130px;
   }
@@ -7038,7 +6780,6 @@ checkbox-styles {
     width: 100%;
   }
 
-  /* Psicologia */
   .to-psicologa {
     background-position: center 130px;
   }
@@ -7051,13 +6792,11 @@ checkbox-styles {
     }
   }
 
-  /* information */
   .to-information {
     background-repeat: no-repeat;
     background-position: -400px center;
   }
 
-  /* Captacion */
   .title-information-section {
     margin-top: 9rem
   }
@@ -7068,7 +6807,6 @@ checkbox-styles {
     }
   }
 
-  /* ZOEDAN */
   .information-aboutme {
     h3 {
       font-size: 2rem;
@@ -7092,7 +6830,6 @@ checkbox-styles {
     height: auto;
   }
 
-  /*Loginn  */
   .icons {
     img {
       width: 3.5rem;
@@ -7121,8 +6858,6 @@ checkbox-styles {
     position: absolute;
     bottom: 0;
   }
-
-  /* SISTEMA */
 
   .card-parroquies {
     width: 45%;
@@ -7376,9 +7111,9 @@ checkbox-styles {
   .container-media-resolution{
     max-width: 100% !important;
   }
-}
+} */
 
-@media (max-width: 320px) {
+/* @media (max-width: 320px) {
   .icon-to-title {
     justify-content: center;
   }
@@ -7594,7 +7329,12 @@ checkbox-styles {
     flex-direction: column;
     gap: 1;
   }
-}
+  .noti-container,
+  .noti-container-comandante{
+    width: 90%;
+    left: 5px;
+  }
+} */
 
 .text-center-two{
   text-align: center;

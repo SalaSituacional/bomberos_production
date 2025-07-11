@@ -378,7 +378,7 @@ class Comision_Uno(forms.Form):
     cedula_oficial = forms.CharField(max_length=60, required=False)
     nro_unidad = forms.CharField(max_length=60, required=False)
     nro_cuadrante = forms.CharField(max_length=60, required=False)
-    agregar = forms.BooleanField(required=False, label="Agregar Segunda Comision Presente")
+    agregar = forms.BooleanField(required=False, label="Agregar Segunda Comision")
 
 class Comision_Dos(forms.Form):
     comision = forms.ChoiceField(choices=Asignar_op_Comsion, required=False, widget=forms.Select(attrs={"class": "disable-first-option"}))
@@ -389,7 +389,7 @@ class Comision_Dos(forms.Form):
     nro_unidad = forms.CharField(max_length=60, required=False)
     nro_cuadrante = forms.CharField(max_length=60, required=False)
 
-    agregar = forms.BooleanField(required=False, label="Agregar Tercera Comision Presente")
+    agregar = forms.BooleanField(required=False, label="Agregar Tercera Comision")
 
 class Comision_Tres(forms.Form):
     comision = forms.ChoiceField(choices=Asignar_op_Comsion, required=False, widget=forms.Select(attrs={"class": "disable-first-option"}))

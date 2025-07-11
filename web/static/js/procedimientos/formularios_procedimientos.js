@@ -850,8 +850,7 @@ document
         break;
       case "14":
         let select_vivienda = document
-          .getElementById("evaluacion_riesgo")
-          .querySelector(".form-style > div:nth-of-type(2)");
+          .getElementById("evaluacion_riesgo");
         select_vivienda.style.display = "none";
         requiredFalse();
         showElements(["evaluacion_riesgo"]);

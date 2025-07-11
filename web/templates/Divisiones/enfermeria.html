@@ -147,18 +147,18 @@
   <div class="table-responsive-sm">
     <table class="table table-hover tabla-enfermeria" id="data-table">
       <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Division</th>
-          <th scope="col">Dependencia</th>
-          <th scope="col">Jefe de Area</th>
-          <th scope="col">Parroquia</th>
-          <th scope="col">Municipio</th>
-          <th scope="col">Direccion</th>
-          <th scope="col">Fecha</th>
-          <th scope="col">Hora</th>
-          <th scope="col">Tipo de Proc.</th>
-          <th scope="col">Acciones</th>
+        <tr">
+          <th scope="col" class="fixed-width-auto">#</th>
+          <th scope="col" class="fixed-width">Division</th>
+          <th scope="col" class="fixed-width">Dependencia</th>
+          <th scope="col" class="fixed-width">Jefe de Area</th>
+          <th scope="col" class="fixed-width">Parroquia</th>
+          <th scope="col" class="fixed-width">Municipio</th>
+          <th scope="col" class="fixed-width">Direccion</th>
+          <th scope="col" class="fixed-width-auto">Fecha</th>
+          <th scope="col" class="fixed-width-auto">Hora</th>
+          <th scope="col" class="fixed-width">Tipo de Proc.</th>
+          <th scope="col" class="fixed-width-iconos">Acciones</th>
         </tr>
       </thead>
       <tbody class="table-group-divider">
@@ -167,17 +167,14 @@
         {% for row in datos %}
         <tr>
           <!-- prettier-ignore -->
-          <th scope="row" class="fixed-width">{{ forloop.counter }}</th>
-          <!-- prettier-ignore -->
+          <th scope="row" class="fixed-width-auto">{{ forloop.counter }}</th>
           <td class="fixed-width">{{ row.id_division.division }}</td>
-          <td class="fixed-width">{{ row.dependencia }}</td>
-          {% if row.solicitante_externo == "" %}
           <!-- prettier-ignore -->
-          <td class="fixed-width">{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{ row.id_solicitante.apellidos.split|first }}</td>
-          {% else %}
+          <td class="fixed-width">{{ row.dependencia }}</td>
           <!-- prettier-ignore -->
           <td class="fixed-width">{{ row.solicitante_externo }}</td>
-          {% endif %} {% if row.id_parroquia.parroquia != "Sin Registro" %}
+          <!-- prettier-ignore -->
+          {% if row.id_parroquia.parroquia != "Sin Registro" %}
           <td class="fixed-width">{{ row.id_parroquia.parroquia }}</td>
           {% else %}
           <td class="fixed-width">Otros Municipios</td>
@@ -185,10 +182,10 @@
           <!-- prettier-ignore -->
           <td class="fixed-width">{{ row.id_municipio.municipio }}</td>
           <td class="fixed-width">{{ row.direccion }}</td>
-          <td class="fixed-width">{{ row.fecha|date:"d-m-Y" }}</td>
-          <td class="fixed-width">{{ row.hora }}</td>
+          <td class="fixed-width-auto">{{ row.fecha|date:"d-m-Y" }}</td>
+          <td class="fixed-width-auto">{{ row.hora }}</td>
           <td class="fixed-width">{{ row.id_tipo_procedimiento.tipo_procedimiento }}</td>
-          <td class="icons-accion">
+          <td class="icons-accion fixed-width-iconos">
             
             {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
             <!-- NO TOCAR BOTON ELIMINAR-->
@@ -292,27 +289,43 @@
     </table>
   </div>
 
+  <!-- Después de tu tabla existente -->
   <div class="pagination">
       <span class="step-links">
           {% if datos.has_previous %}
               <a href="?page=1{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
-                class="btn btn-danger">&laquo; Primera</a>
+                class="btn btn-secondary">&laquo;</a>
               <a href="?page={{ datos.previous_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
-                class="btn btn-danger">Anterior</a>
+                class="btn btn-danger">&lsaquo;</a>
+          {% else %}
+              <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+                &laquo;
+              </a>
+              <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+                &lsaquo;
+              </a>  
           {% endif %}
 
-          <span class="current">
-              Página {{ datos.number }} de {{ datos.paginator.num_pages }}.
-          </span>
 
           {% if datos.has_next %}
               <a href="?page={{ datos.next_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
-                class="btn btn-danger">Siguiente</a>
+                class="btn btn-danger">&rsaquo;</a>
               <a href="?page={{ datos.paginator.num_pages }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
-                class="btn btn-danger">Última &raquo;</a>
+                class="btn btn-secondary">&raquo;</a>
+          {% else %}
+              <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+                &rsaquo;
+              </a>
+              <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+                &rsaquo;
+              </a>  
           {% endif %}
       </span>
+      <span class="current">
+          Página {{ datos.number }} de {{ datos.paginator.num_pages }}.
+      </span>
   </div>
+
 
   {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' or user.user == 'Comandancia' or user.user == '2dacomandancia' %}
   <div class="contain-dates">
