@@ -73,7 +73,7 @@
 
 .cards-stadists select {
     width: 100%; 
-    border-radius: 10px;
+    border-radius: 5px;
     font-size: 1rem; 
     font-family: var(--sofia-sans);
     border-color: #b4b4b4;
@@ -93,7 +93,9 @@
     padding: 0.5rem;
 }
 
-
+.form-select-sm{
+  border-radius: 0;
+}
 
 
 
@@ -146,6 +148,13 @@
     padding: 0.8rem; /* Aumentado padding para más espacio */
     margin-bottom: 1rem; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
+}
+
+.accordion-item .accordion-body{
+  padding: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+
 }
 
 /* Gráficos de barra */
@@ -205,33 +214,6 @@
     align-items: center;
     padding: 0.5rem; 
 }
-
-/* Tabla y lista */
-.table_100width {
-    width: 100%;
-}
-
-.link-to-back {
-    z-index: 1000;
-    display: flex;
-    width: 100%;
-    height: auto;
-    color: white;
-    font-family: var(--kanit-regular);
-    padding: 0.5rem;
-    align-items: center;
-    justify-content: flex-start;
-
-    a {
-        padding-left: 0.5rem; 
-        font-size: 1rem; /* Ajuste de tamaño de fuente para el enlace */
-    }
-
-    a:hover {
-        transform: scale(1.1);
-    }
-}
-
 /* Secciones de mes y tarjetas */
 .section-month {
     width: 100%; /* Asegura que ocupe el 100% en móvil */
@@ -246,8 +228,6 @@
 
 .month-style {
     margin-top: 1rem;
-    padding: 0.2rem;
-    border-radius: 20px;
     width: 100%; /* Ocupa el 100% del contenedor */
     box-sizing: border-box;
 }
@@ -269,7 +249,25 @@
 }
 
 .accordion-button {
-    font-size: 1rem; 
+    font-size: 1rem;
+}
+.accordion-button:not(.collapsed){
+  background-color: var(--color-button);
+  color: #fff;
+
+  
+}
+
+.accordion-button:not(.collapsed)::after{
+  filter: invert(1);
+}
+
+
+.accordion-button:focus{
+  background-color: var(--color-button);
+  border-color: none;
+  color: #fff;
+  box-shadow: 0.5px 0.5px 5px var(--color-button);
 }
 
 .items-list-procediments {
@@ -401,56 +399,6 @@
     width: 100%; /* Ocupa todo el ancho */
     box-sizing: border-box;
     font-size: 1rem; /* Ajuste de tamaño de fuente */
-}
-
-/* Media Query para pantallas más grandes (opcional, si quieres un diseño diferente en desktop) */
-@media (min-width: 768px) {
-    .content-stadist {
-        flex-direction: row; /* Vuelve a poner en fila en pantallas más grandes */
-        flex-wrap: wrap;
-        justify-content: space-around;
-    }
-
-    .stadist-rows {
-        overflow-x: hidden; /* Deshabilita el scroll horizontal en desktop si no es necesario */
-        flex-wrap: wrap; /* Permite que las tarjetas se envuelvan en varias filas */
-        justify-content: center; /* Centra las tarjetas */
-        gap: 1.5rem; /* Más espacio entre tarjetas en desktop */
-        padding: 1.5rem;
-    }
-
-    .cards-stadist-rows {
-        width: calc(50% - 1.5rem); /* Dos columnas en desktop */
-        max-width: 450px; /* Limita el ancho máximo de las tarjetas */
-    }
-
-    .chart-canvas-wrapper {
-        height: 350px; /* Altura mayor para gráficas en desktop */
-    }
-    
-    .stadist-column {
-        width: 48%; /* Dos columnas para estas secciones en desktop */
-    }
-
-    .tool-personal, .accion-filter, .accion-personal {
-        flex-direction: row; /* Vuelve a poner en fila en desktop */
-        justify-content: space-around;
-        width: 90%; /* Ancho ajustado para desktop */
-    }
-
-    .accion-filter div, .accion-personal a, .accion-personal button {
-        margin: 1rem; /* Más margen en desktop */
-    }
-    .accion-personal {
-        justify-content: flex-end; /* Alinea a la derecha en desktop */
-    }
-
-    .bartwo {
-        width: 70%; /* Ancho para esta sección en desktop */
-    }
-    .select-bar, .btn-bar {
-        width: auto; /* Ancho automático para estos elementos en desktop */
-    }
 }
 
 /* Anchuras */

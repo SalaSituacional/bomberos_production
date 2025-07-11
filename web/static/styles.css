@@ -617,6 +617,28 @@ summary>* {
   }
 }
 
+.link-to-back {
+    z-index: 1000;
+    display: flex;
+    width: 100%;
+    height: auto;
+    color: white;
+    font-family: var(--kanit-regular);
+    padding: 0.5rem;
+    align-items: center;
+    justify-content: flex-start;
+
+    a {
+        padding-left: 0.5rem; 
+        font-size: 1rem; /* Ajuste de tamaño de fuente para el enlace */
+    }
+
+    a:hover {
+        transform: scale(1.1);
+    }
+}
+
+
 /* #endregion */
 
 
