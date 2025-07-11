@@ -86,17 +86,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const colors = [
-  "#F25C54",   // Rojo coral
-  "#1A6FB9",  // Azul fuerte
-  "#FFCC5C",  // Amarillo cálido
-  "#B0BEC5",  // Gris suave
-  "#FF9A00",  // Naranja brillante
-  "#4ECDC4",  // Verde aqua
-  "#2E8BC0",  // Azul claro
-  "#FF6B6B",  // Rojo vibrante
-  "#5ABF80"  // Verde menta
+  "#F25C54", // Rojo coral
+  "#1A6FB9", // Azul fuerte
+  "#FFCC5C", // Amarillo cálido
+  "#B0BEC5", // Gris suave
+  "#FF9A00", // Naranja brillante
+  "#4ECDC4", // Verde aqua
+  "#2E8BC0", // Azul claro
+  "#FF6B6B", // Rojo vibrante
+  "#5ABF80", // Verde menta
 ];
-
 
 // Graficas de tortas ===================================================================================================================================================
 
@@ -105,6 +104,57 @@ const colors = [
 // Función genérica para crear o actualizar gráficos
 function createOrUpdateChart(ctx, chart, type, labels, data) {
   if (chart) chart.destroy(); // Destruir gráfico previo si existe
+
+  const canvasElement = ctx.canvas;
+  // Eliminar atributos width y height del HTML para que Chart.js y CSS tomen el control
+  canvasElement.removeAttribute('width');
+  canvasElement.removeAttribute('height');
+  
+  // Definir tamaños de fuente dinámicos basados en el ancho de la ventana
+  const isMobile = window.innerWidth <= 376;
+  const datalabelsFontSize = isMobile ? 14 : 21.5; // Reducido para móvil
+  const legendFontSize = isMobile ? 12 : 20; // Reducido para móvil
+  const ticksFontSize = isMobile ? 10 : 15; // Reducido para móvil
+
+  // Obtener el ancho del contenedor padre para calcular el ancho del canvas
+  // Asegúrate de que el parentElement exista antes de acceder a clientWidth
+  const parentWidth = canvasElement.parentElement ? canvasElement.parentElement.clientWidth : window.innerWidth;
+  const desiredHeight = isMobile ? 250 : 350; // Altura fija para móvil, altura un poco mayor para escritorio
+
+  // Establecer las dimensiones de renderizado del canvas y sus estilos de visualización
+  canvasElement.width = parentWidth;
+  canvasElement.height = desiredHeight;
+  canvasElement.style.width = `${parentWidth}px`;
+  canvasElement.style.height = `${desiredHeight}px`;
+
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false, // Permite que el canvas se ajuste libremente
+    plugins: {
+      datalabels: {
+        color: 'white',
+        font: {
+          size: datalabelsFontSize,
+        },
+        formatter: (value, context) => {
+          // Formateo para mostrar el valor y porcentaje en gráficos de pastel/donas
+          const dataset = context.chart.data.datasets[0];
+          const total = dataset.data.reduce((sum, num) => sum + num, 0);
+          const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0; // Evitar división por cero
+          return `${value} (${percentage}%)`;
+        },
+      },
+    },
+    // Ajustes de diseño para evitar que se vea colapsado
+    layout: {
+      padding: {
+        left: isMobile ? 10 : 20,
+        right: isMobile ? 10 : 20,
+        top: isMobile ? 10 : 20,
+        bottom: isMobile ? 10 : 20,
+      }
+    }
+  };
 
   if (type === "polarArea") {
     return new Chart(ctx, {
@@ -121,6 +171,7 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
         ],
       },
       options: {
+        ...commonOptions, // Incluir opciones comunes
         scales: {
           r: {
             min: 0,
@@ -130,22 +181,32 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
               callback: function (data) {
                 return Math.round(data);
               },
+              font: {
+                size: ticksFontSize, // Aplicar tamaño de fuente dinámico
+              }
             },
+            pointLabels: { // Etiquetas de los puntos en el área polar
+                font: {
+                    size: ticksFontSize, // Aplicar tamaño de fuente dinámico
+                }
+            }
           },
         },
         plugins: {
-          datalabels: {
-            color: 'white',
-            font: {
-              size: 21.5, // Tamaño de fuente más grande
+            ...commonOptions.plugins, // Mantener datalabels
+            legend: {
+                display: true,
+                labels: {
+                    font: {
+                        size: legendFontSize, // Aplicar tamaño de fuente dinámico
+                    },
+                },
             },
-          },
         },
       },
       plugins: [ChartDataLabels], // Habilitar el plugin
     });
-  }
-  else {
+  } else { // Para tipos 'pie' y 'doughnut'
     return new Chart(ctx, {
       type: type,
       data: {
@@ -160,19 +221,16 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
         ],
       },
       options: {
+        ...commonOptions, // Incluir opciones comunes
         plugins: {
+          ...commonOptions.plugins, // Mantener datalabels
           legend: {
             display: true,
+            position: isMobile ? 'bottom' : 'right', // Posición de la leyenda más adecuada para móvil
             labels: {
               font: {
-                size: 20,
+                size: legendFontSize, // Aplicar tamaño de fuente dinámico
               },
-            },
-          },
-          datalabels: {
-            color: 'white',
-            font: {
-              size: 21.5, // Tamaño de fuente más grande
             },
           },
         },
@@ -297,24 +355,44 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   ];
 
+  // Referencias para los gráficos de pastel/donas/polar
+  const chartRefs = {};
+
   // Inicializar gráficos según la configuración
   chartConfigs.forEach((config) => {
     const { selectElement, monthPicker, ctxId, endpoint, type, labelField, valueField, defaultOption } = config;
-    const chartRef = { chart: null };
+    
+    // Almacenar la referencia del gráfico en un objeto para poder destruirlo y recrearlo
+    chartRefs[ctxId] = { chart: null };
 
     // Establecer valor por defecto
-    selectElement.value = selectElement.options[defaultOption].value;
+    if (selectElement && selectElement.options[defaultOption]) {
+      selectElement.value = selectElement.options[defaultOption].value;
+    }
 
-    selectElement.addEventListener("change", () =>
-      updateChart(endpoint, ctxId, selectElement, monthPicker, chartRef, type, labelField, valueField)
-    );
+    if (selectElement) {
+      selectElement.addEventListener("change", () =>
+        updateChart(endpoint, ctxId, selectElement, monthPicker, chartRefs[ctxId], type, labelField, valueField)
+      );
+    }
 
-    monthPicker.addEventListener("change", () =>
-      updateChart(endpoint, ctxId, selectElement, monthPicker, chartRef, type, labelField, valueField)
-    );
+    if (monthPicker) {
+      monthPicker.addEventListener("change", () =>
+        updateChart(endpoint, ctxId, selectElement, monthPicker, chartRefs[ctxId], type, labelField, valueField)
+      );
+    }
 
     // Cargar gráfica inicial
-    updateChart(endpoint, ctxId, selectElement, monthPicker, chartRef, type, labelField, valueField);
+    updateChart(endpoint, ctxId, selectElement, monthPicker, chartRefs[ctxId], type, labelField, valueField);
+  });
+
+  // Escuchar el evento de redimensionamiento de la ventana para todos los gráficos
+  window.addEventListener("resize", () => {
+    chartConfigs.forEach((config) => {
+      const { selectElement, monthPicker, ctxId, endpoint, type, labelField, valueField } = config;
+      // Re-renderizar el gráfico con los nuevos tamaños de fuente
+      updateChart(endpoint, ctxId, selectElement, monthPicker, chartRefs[ctxId], type, labelField, valueField);
+    });
   });
 });
 
@@ -323,7 +401,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
   let chart; // Declarar chart fuera de las funciones para que sea accesible
-  const ctx6 = document.getElementById("bar").getContext("2d");
+  const ctx6 = document.getElementById("bar")?.getContext("2d"); // Usar optional chaining por si el elemento no existe
+
+  if (!ctx6) {
+    console.warn("Canvas 'bar' no encontrado, omitiendo inicialización del gráfico de barras.");
+    return; // Salir si el canvas no existe
+  }
 
   // Función para obtener datos de la API con la función fetchWithLoader
   async function fetchDivisiones(mes = "") {
@@ -349,7 +432,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Extrae divisiones y totales para la gráfica
   function obtenerDivisiones(data) {
-    return Object.entries(data).map(([division, detalles]) => ({
+    return Object.entries(data).map((
+      [division, detalles]) => ({
       division,
       count: detalles.total || 0,
     }));
@@ -368,7 +452,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const labels = divisiones.map((item) => item.division);
     const values = divisiones.map((item) => item.count);
 
-    const fontSize = window.innerWidth < 376 ? 10 : 15; // Tamaño dinámico de fuente
+    const canvasElement = ctx6.canvas;
+    // Eliminar atributos width y height del HTML para que Chart.js y CSS tomen el control
+    canvasElement.removeAttribute('width');
+    canvasElement.removeAttribute('height');
+
+    // Definir tamaños de fuente dinámicos basados en el ancho de la ventana
+    const isMobile = window.innerWidth <= 376;
+    const ticksFontSize = isMobile ? 10 : 15; // Tamaño dinámico de fuente para ejes
+    const datalabelsFontSize = isMobile ? 16 : 26; // Tamaño dinámico de fuente para datalabels
+
+    // Obtener el ancho del contenedor padre para calcular el ancho del canvas
+    const parentWidth = canvasElement.parentElement ? canvasElement.parentElement.clientWidth : window.innerWidth;
+    const desiredHeight = isMobile ? 250 : 350; // Altura fija para móvil, altura un poco mayor para escritorio
+
+    // Establecer las dimensiones de renderizado del canvas y sus estilos de visualización
+    canvasElement.width = parentWidth;
+    canvasElement.height = desiredHeight;
+    canvasElement.style.width = `${parentWidth}px`;
+    canvasElement.style.height = `${desiredHeight}px`;
 
     // Destruir el gráfico existente si ya está creado
     if (chart) {
@@ -392,30 +494,57 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false, // Permite que el canvas se ajuste sin forzar tamaño
         plugins: {
           legend: { display: false },
           datalabels: {
             color: 'white',
             font: {
-              size: 26, // Tamaño de fuente a px
+              size: datalabelsFontSize, // Tamaño de fuente dinámico
+            },
+            formatter: (value, context) => {
+              // Personalización de los números
+              const dataset = context.chart.data.datasets[0];
+              const total = dataset.data.reduce((sum, num) => sum + num, 0);
+
+              // Personalización: Formato como porcentaje
+              const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : 0; // Evitar división por cero
+
+              // Personalización: Texto adicional
+              return `${value} (${percentage}%)`; // Retorna el valor y porcentaje
             },
           },
         },
         scales: {
-          x: { ticks: { font: { size: fontSize } } },
-          y: { ticks: { font: { size: fontSize + 3 } } }, // Incremento para el eje Y
+          x: {
+            ticks: {
+              font: {
+                size: ticksFontSize, // Aplicar tamaño de fuente dinámico
+              },
+            },
+            grid: {
+              display: false // Ocultar líneas de la cuadrícula en el eje X
+            }
+          },
+          y: {
+            ticks: {
+              font: {
+                size: ticksFontSize + 3, // Incremento para el eje Y
+              },
+            },
+            grid: {
+              display: false // Ocultar líneas de la cuadrícula en el eje Y
+            }
+          },
         },
-      },
-      formatter: (value, context) => {
-        // Personalización de los números
-        const dataset = context.chart.data.datasets[0];
-        const total = dataset.data.reduce((sum, num) => sum + num, 0);
-
-        // Personalización: Formato como porcentaje
-        const percentage = ((value / total) * 100).toFixed(2);
-
-        // Personalización: Texto adicional
-        return `$${value} \n(${percentage}%)`; // Retorna el valor en dólares y porcentaje
+        layout: {
+          padding: {
+            left: isMobile ? 5 : 20,
+            right: isMobile ? 5 : 20,
+            top: isMobile ? 10 : 20,
+            bottom: isMobile ? 10 : 20,
+          }
+        }
       },
       plugins: [ChartDataLabels], // Habilitar el plugin
     });
@@ -446,10 +575,15 @@ document.addEventListener("DOMContentLoaded", function () {
 // Grafica de Barras Horizontal=======================================================================================================================================================
 document.addEventListener("DOMContentLoaded", function () {
   let chart; // Mantener la referencia del gráfico para actualizarlo
-  const ctx7 = document.getElementById("bar-horizontal").getContext("2d");
+  const ctx7 = document.getElementById("bar-horizontal")?.getContext("2d"); // Usar optional chaining por si el elemento no existe
 
-  // Definir colores para las barras
-  const colors = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"];
+  if (!ctx7) {
+    console.warn("Canvas 'bar-horizontal' no encontrado, omitiendo inicialización del gráfico de barras horizontal.");
+    return; // Salir si el canvas no existe
+  }
+
+  // Definir colores para las barras (si son diferentes a los globales)
+  // const colors = ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"]; // Usar los colores globales si no hay una razón para cambiarlos
 
   // Función para obtener datos de la API
   async function fetchDivisionesHorizontal(mes = "") {
@@ -490,16 +624,32 @@ document.addEventListener("DOMContentLoaded", function () {
     const labels = procedimientos.map(item => item.tipo_procedimiento);
     const values = procedimientos.map(item => item.count);
 
-    const fontSize = window.innerWidth < 376 ? 10 : 15; // Tamaño de fuente dinámico
+    const canvasElement = ctx7.canvas;
+    // Eliminar atributos width y height del HTML para que Chart.js y CSS tomen el control
+    canvasElement.removeAttribute('width');
+    canvasElement.removeAttribute('height');
+
+    // Definir tamaños de fuente dinámicos basados en el ancho de la ventana
+    const isMobile = window.innerWidth <= 376;
+    const ticksFontSize = isMobile ? 12 : 16; // Tamaño dinámico de fuente para etiquetas del eje Y
+    const datalabelsFontSize = isMobile ? 12 : 14; // Tamaño dinámico de fuente para datalabels
+
+    // Obtener el ancho del contenedor padre para calcular el ancho del canvas
+    const parentWidth = canvasElement.parentElement ? canvasElement.parentElement.clientWidth : window.innerWidth;
+    const desiredHeight = isMobile ? (labels.length * 40 + 80) : (labels.length * 30 + 100); // Altura dinámica basada en el número de etiquetas
+
+    // Establecer las dimensiones de renderizado del canvas y sus estilos de visualización
+    canvasElement.width = parentWidth;
+    canvasElement.height = desiredHeight;
+    canvasElement.style.width = `${parentWidth}px`;
+    canvasElement.style.height = `${desiredHeight}px`;
+
 
     // Destruir el gráfico si ya existe
     if (chart) {
       chart.destroy();
     }
 
-    // Crear la gráfica
-    // Crear la gráfica
-    // Crear la gráfica
     // Crear la gráfica
     chart = new Chart(ctx7, {
       type: "bar",
@@ -516,30 +666,43 @@ document.addEventListener("DOMContentLoaded", function () {
         ],
       },
       options: {
-        indexAxis: 'y',
+        indexAxis: 'y', // Eje horizontal
         responsive: true,
         maintainAspectRatio: false, // Permite que el canvas se ajuste sin forzar tamaño
         plugins: {
-          legend: { display: false },
+          legend: { display: false }, // No mostrar leyenda
           datalabels: {
             color: 'white',
-            font: { size: 14 }, // Tamaño más grande para mejorar visibilidad
-            formatter: (value) => `${value}`,
+            font: { size: datalabelsFontSize }, // Tamaño dinámico para datalabels
+            formatter: (value) => `${value}`, // Mostrar solo el valor
           },
         },
         layout: {
-          padding: { top: 20, bottom: 20 }, // Espaciado para mejorar la distribución
+          padding: {
+            left: isMobile ? 5 : 20, // Reducir padding en móvil
+            right: isMobile ? 5 : 20,
+            top: isMobile ? 5 : 20,
+            bottom: isMobile ? 5 : 20,
+          },
         },
         scales: {
-          x: { display: false },
+          x: {
+            display: false, // Ocultar eje X
+            beginAtZero: true, // Asegurar que el eje X comience en cero
+            max: Math.max(...values) * 1.1, // Ajustar el máximo del eje X para que los datalabels no se corten
+          },
           y: {
-            ticks: { font: { size: 16 } },
+            ticks: {
+              font: { size: ticksFontSize }, // Tamaño dinámico para etiquetas del eje Y
+            },
+            grid: {
+              display: false // Ocultar líneas de la cuadrícula en el eje Y
+            }
           },
         },
       },
       plugins: [ChartDataLabels], // Habilitar el plugin
     });
-
   }
   // Función para inicializar los datos y la gráfica
   async function init() {
@@ -549,7 +712,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Manejar el cambio del input de mes
-  document.getElementById("month-picker-9").addEventListener("change", async (event) => {
+  document.getElementById("month-picker-9")?.addEventListener("change", async (event) => { // Optional chaining
     const mesSeleccionado = event.target.value;
     const data = await fetchDivisionesHorizontal(mesSeleccionado);
     updateCards(data);

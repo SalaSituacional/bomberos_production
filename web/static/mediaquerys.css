@@ -1,6 +1,457 @@
+/*--------------------------- estilos de estadisticas -------------------------------------*/
+
+.stadist-rows{
+ width: 100%;
+    background-color: #f0f0f0; /* Un gris muy claro para el fondo del carrusel */
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: nowrap; /* CRUCIAL: Evita que los elementos salten de línea */
+    overflow-x: auto; /* Habilita el desplazamiento horizontal */
+    overflow-y: hidden; /* Oculta el desplazamiento vertical */
+    padding: 1rem; /* Espaciado interno para que las tarjetas no toquen los bordes */
+    gap: 1rem; /* Espacio entre las tarjetas del carrusel */
+    -webkit-overflow-scrolling: touch; /* Suaviza el desplazamiento en iOS */
+    scroll-snap-type: x mandatory; /* Opcional: para que las tarjetas se "enganchen" al desplazarse */
+}
+
+/* Tarjetas individuales del Carrusel (cards-stadist-rows) */
+.cards-stadist-rows {
+    display: flex;
+    flex-direction: column; /* Apila el contenido de la tarjeta verticalmente */
+    justify-content: flex-start; /* Alinea el contenido al inicio de la tarjeta */
+    align-items: center;
+    align-content: center;
+    
+    /* CRUCIAL: Definir un ancho fijo para cada tarjeta en el carrusel */
+    flex-shrink: 0; /* Evita que las tarjetas se encojan */
+    width: 100%; /* Ocupa casi todo el ancho en móvil (100% - 2*padding de stadist-rows) */
+    min-width: 300px; /* Asegura un tamaño mínimo para la tarjeta */
+    max-width: 350px; /* Limita el ancho en pantallas más grandes para el carrusel */
+    
+    height: 1000px !important; /* La altura se ajusta al contenido */
+    scroll-snap-align: start; /* Opcional: para que las tarjetas se "enganchen" al inicio */
+}
+
+
+.cards-stadists {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ocupa el 100% del cards-stadist-rows */
+    height: 100%; /* La altura se ajusta al contenido */
+    border: thin solid #ffffff; /* Borde blanco (invisible si el fondo es blanco) */
+    background-color: #fff; /* Fondo blanco para las tarjetas */
+    border-radius: 10px; /* Bordes redondeados */
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 0.5rem; /* Espaciado interno */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para destacar las tarjetas */
+    padding: .5rem;
+}
+
+.chart-canvas-wrapper{
+  width: 100%; 
+    height: 600px; /* Altura fija para el área de la gráfica */
+    position: relative; /* Necesario para la responsividad de Chart.js */
+    margin-bottom: 0.5rem; /* Espacio entre la gráfica y los controles */
+
+  canvas{
+     width: 100% !important; 
+    height: 100% !important; /* El canvas ocupará el 100% del alto de su contenedor */
+    max-width: 100%; 
+    box-sizing: border-box; 
+  }
+}
+
+/* Fuentes y Selects */
+.cards-stadists p {
+    font-family: var(--kanit-regular);
+    font-size: 1rem; 
+    padding: 0.5rem;
+    margin: 0;
+    text-align: center;
+}
+
+.cards-stadists select {
+    width: 100%; 
+    border-radius: 10px;
+    font-size: 1rem; 
+    font-family: var(--sofia-sans);
+    border-color: #b4b4b4;
+    box-sizing: border-box;
+    margin-top: 0.5rem; 
+}
+
+/* Contenedor principal de estadísticas */
+.content-stadist {
+    width: 100%; 
+    height: auto;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center; 
+    margin: 0;
+    padding: 0.5rem;
+}
 
 
 
+
+
+
+
+
+/* Columnas de estadísticas (se ajustan a 100% en móvil) */
+.stadist-column {
+    display: flex;
+    width: 100%; 
+    height: auto;
+    flex-direction: column;
+}
+
+.cards-stadist-column {
+    width: 100%;
+    height: auto;
+    border: thin solid #ffffff;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 0.5rem;
+    margin-bottom: 1rem; 
+}
+
+
+
+
+
+
+
+
+
+
+/* Columnas de estadísticas (se ajustan a 100% en móvil) */
+.stadist-column {
+    display: flex;
+    width: 100%; 
+    height: auto;
+    flex-direction: column;
+    padding: 0.5rem; /* Añadir padding para espaciado interno */
+    box-sizing: border-box;
+}
+
+.cards-stadist-column {
+    width: 100%;
+    height: auto;
+    border: thin solid #ffffff;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 0.8rem; /* Aumentado padding para más espacio */
+    margin-bottom: 1rem; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
+}
+
+/* Gráficos de barra */
+.graphic-bar {
+    width: 100%; 
+    margin: 0 auto;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem; /* Espaciado interno */
+    box-sizing: border-box;
+}
+
+.barts {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.bar-graphic {
+    background-color: #fff;
+    border: thin solid #ffffff;
+    border-radius: 20px;
+    padding: 1rem; 
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
+}
+
+/* Gráficos de barra horizontal */
+.barts-horizontal {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.bar-graphic-horizontal {
+    background-color: #fff;
+    border: thin solid #ffffff;
+    border-radius: 20px;
+    padding: 1rem;
+    width: 100%;
+    height: auto; 
+    min-height: 300px; /* Altura mínima para la gráfica horizontal */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
+}
+
+.graphic-bar-horizontal {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem; 
+}
+
+/* Tabla y lista */
+.table_100width {
+    width: 100%;
+}
+
+.link-to-back {
+    z-index: 1000;
+    display: flex;
+    width: 100%;
+    height: auto;
+    color: white;
+    font-family: var(--kanit-regular);
+    padding: 0.5rem;
+    align-items: center;
+    justify-content: flex-start;
+
+    a {
+        padding-left: 0.5rem; 
+        font-size: 1rem; /* Ajuste de tamaño de fuente para el enlace */
+    }
+
+    a:hover {
+        transform: scale(1.1);
+    }
+}
+
+/* Secciones de mes y tarjetas */
+.section-month {
+    width: 100%; /* Asegura que ocupe el 100% en móvil */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column; /* Apila verticalmente */
+    justify-content: center;
+    align-items: center; /* Centra los elementos */
+    padding: 0.5rem; /* Espaciado general */
+    box-sizing: border-box;
+}
+
+.month-style {
+    margin-top: 1rem;
+    padding: 0.2rem;
+    border-radius: 20px;
+    width: 100%; /* Ocupa el 100% del contenedor */
+    box-sizing: border-box;
+}
+
+.card-month {
+    margin-top: 0.8rem; /* Ajustado margen superior */
+    width: 100%; 
+    padding: 0.5rem; 
+    box-sizing: border-box;
+    background-color: #fff; /* Fondo blanco */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+.card-month input {
+    width: 100%; 
+    box-sizing: border-box;
+    font-size: 1rem; /* Ajuste de tamaño de fuente */
+}
+
+.accordion-button {
+    font-size: 1rem; 
+}
+
+.items-list-procediments {
+    list-style: disc;
+
+    li {
+        font-size: 1rem; 
+        text-align: start;
+        padding: 0.2rem; 
+
+        li {
+            list-style: circle;
+            font-size: 0.9rem; /* Sub-lista más pequeña */
+        }
+    }
+}
+
+.btn-graphic {
+    margin-top: 1rem; 
+    width: 100%; 
+    box-sizing: border-box;
+    padding: 0.75rem; 
+    font-size: 1rem; /* Ajuste de tamaño de fuente del botón */
+}
+
+/* Herramientas de personal (tool-personal) */
+.tool-personal {
+    width: 100%; 
+    height: auto;
+    padding: 0.8rem; /* Aumentado padding */
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column; /* Apila elementos verticalmente */
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    background-color: #ffffff;
+    border: thin solid #ffffff;
+    margin: 0 auto;
+    border-radius: 10px;
+    flex-wrap: wrap;
+    font-size: 1rem; /* Ajuste de tamaño de fuente */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+.margin-span {
+    margin: 0 .4rem; /* Ajustado margen */
+}
+
+/* Filtros y acciones */
+.accion-filter {
+    width: 100%; 
+    display: flex;
+    flex-direction: column; /* Apila verticalmente */
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0.5rem; /* Espaciado interno */
+
+    div {
+        margin: 0.5rem; 
+    }
+}
+
+.accion-personal {
+    width: 100%; 
+    display: flex;
+    flex-direction: column; /* Apila verticalmente */
+    align-items: center;
+    align-content: center;
+    justify-content: center; 
+    text-align: center;
+    padding: 0.5rem; /* Espaciado interno */
+
+    p {
+        margin: 0;
+        font-size: 1rem; /* Ajuste de tamaño de fuente */
+    }
+
+    a,
+    button {
+        margin: 0.5rem; 
+        transform: scale(1); 
+        font-size: 1rem; /* Ajuste de tamaño de fuente para botones/enlaces */
+    }
+
+    a,
+    button:hover {
+        transform: scale(1.1);
+        transition: 0.1s ease-in-out all;
+    }
+
+    a {
+        font-size: 1.2rem; /* Tamaño de fuente para iconos de enlace */
+    }
+}
+
+/* Gráficos de barra inferiores */
+.bartwo {
+    width: 100%; 
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    border: thin solid #ffffff;
+    background-color: #fff;
+    border-radius: 0px 0px 20px 20px; /* Mantener solo bordes inferiores redondeados */
+    align-items: center;
+    align-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+    padding: 0.8rem; /* Espaciado interno */
+}
+
+.select-bar {
+    padding: 0.5rem; 
+    width: 100%; /* Ocupa todo el ancho */
+    box-sizing: border-box;
+
+    select {
+        margin: 0;
+        width: 100%; /* Asegura que el select ocupe todo el ancho */
+        font-size: 1rem; /* Ajuste de tamaño de fuente */
+    }
+}
+
+.btn-bar {
+    padding: 0.5rem; 
+    width: 100%; /* Ocupa todo el ancho */
+    box-sizing: border-box;
+    font-size: 1rem; /* Ajuste de tamaño de fuente */
+}
+
+/* Media Query para pantallas más grandes (opcional, si quieres un diseño diferente en desktop) */
+@media (min-width: 768px) {
+    .content-stadist {
+        flex-direction: row; /* Vuelve a poner en fila en pantallas más grandes */
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .stadist-rows {
+        overflow-x: hidden; /* Deshabilita el scroll horizontal en desktop si no es necesario */
+        flex-wrap: wrap; /* Permite que las tarjetas se envuelvan en varias filas */
+        justify-content: center; /* Centra las tarjetas */
+        gap: 1.5rem; /* Más espacio entre tarjetas en desktop */
+        padding: 1.5rem;
+    }
+
+    .cards-stadist-rows {
+        width: calc(50% - 1.5rem); /* Dos columnas en desktop */
+        max-width: 450px; /* Limita el ancho máximo de las tarjetas */
+    }
+
+    .chart-canvas-wrapper {
+        height: 350px; /* Altura mayor para gráficas en desktop */
+    }
+    
+    .stadist-column {
+        width: 48%; /* Dos columnas para estas secciones en desktop */
+    }
+
+    .tool-personal, .accion-filter, .accion-personal {
+        flex-direction: row; /* Vuelve a poner en fila en desktop */
+        justify-content: space-around;
+        width: 90%; /* Ancho ajustado para desktop */
+    }
+
+    .accion-filter div, .accion-personal a, .accion-personal button {
+        margin: 1rem; /* Más margen en desktop */
+    }
+    .accion-personal {
+        justify-content: flex-end; /* Alinea a la derecha en desktop */
+    }
+
+    .bartwo {
+        width: 70%; /* Ancho para esta sección en desktop */
+    }
+    .select-bar, .btn-bar {
+        width: auto; /* Ancho automático para estos elementos en desktop */
+    }
+}
 
 /* Anchuras */
 /* ==================== */
