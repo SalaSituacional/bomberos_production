@@ -29,6 +29,7 @@ from seguridad_prevencion.urls import *
 from junin.urls import *
 from sarp.urls import *
 from mecanica.urls import *
+from bienes_municipales.urls import *
 
 #Se crean las rutas que se podran visitar en la aplicacion web.
 urlpatterns = [
@@ -38,6 +39,8 @@ urlpatterns = [
     path('junin/', include('junin.urls')),
     path('mecanica/', include('mecanica.urls')),
     path('sarp/', include('sarp.urls')),
+    path('bienesMunicipales/', include('bienes_municipales.urls')),
+
 
     # Admin
     path('alpha04/', admin.site.urls),
@@ -77,16 +80,6 @@ urlpatterns = [
     path('personal/editar/<int:personal_id>/', editar_personal, name='editar_personal'),
     
     
-    # Bienes Municipales
-    path('dashboard_bienes/', Dashboard_bienes,name='dashboard_bienes'),
-    path('inventario_bienes/', Inventario_bienes,name='inventario_bienes'),
-    path('registro_bienes/', Registros_bienes,name='registro_inventario'),
-    path('api/bienes/', listar_bienes, name='api_bienes'),
-    path('reasignar-bien/', reasignar_bien, name='reasignar_bien'),
-    path('cambiar-bien/', cambiar_estado_bienes, name='cambiar_estado_bien'),
-    path('eliminar-bien/', eliminar_bien, name='eliminar_bien'),
-    path('api/historial-bien/<str:bien_id>/', historial_bien_api, name='historial_bien_api'),
-    path('api/verificar-identificador/', verificar_identificador, name='verificar_identificador'),
 
     # Tablas
     path('tablageneral/', tabla_general, name="tabla_general"),
@@ -140,5 +133,4 @@ urlpatterns = [
     path('descargar-excel-prevencion/', generar_excel_prevencion, name='descargar_excel_prevencion'),
     path('descargar-excel-enfermeria/', generar_excel_enfermeria, name='descargar_excel_enfermeria'),
     path('descargar-excel-operacional/', generar_excel_operacional, name='descargar_excel_operacional'),
-    path('generar-excel-bienesmunicipales/', generar_excel_bienes_municipales, name='generar_excel_bienesmunicipales'),
 ]

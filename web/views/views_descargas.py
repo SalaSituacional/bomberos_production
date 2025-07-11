@@ -2098,33 +2098,3 @@ def generar_excel_reportes_unidades(request):
     json_data = df.to_json(orient='records', date_format='iso')
 
     return JsonResponse(json.loads(json_data), safe=False)
-
-def generar_excel_bienes_municipales(request):
-    bienes = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by('-fecha_registro')
-    data = []
-
-    for bien in bienes:
-        movimientos = MovimientoBien.objects.filter(bien=bien).select_related('nueva_dependencia', 'ordenado_por').order_by('-fecha_orden')
-        movimientos_data = [
-            {
-                'nueva_dependencia': movimiento.nueva_dependencia.nombre,
-                'nuevo_departamento': movimiento.nuevo_departamento,
-                'ordenado_por': str(movimiento.ordenado_por),  # Asegúrate de que esto sea serializable
-                'fecha_orden': movimiento.fecha_orden.isoformat(),
-            }
-            for movimiento in movimientos
-        ]
-
-        data.append({
-            'identificador': bien.identificador,
-            'descripcion': bien.descripcion,
-            'cantidad': bien.cantidad,
-            'dependencia': bien.dependencia.nombre,
-            'departamento': bien.departamento,
-            'responsable': str(bien.responsable) if bien.responsable else "Sin asignar",
-            'fecha_registro': bien.fecha_registro.isoformat(),
-            'estado_actual': bien.estado_actual,
-            'movimientos': movimientos_data,
-        })
-
-    return JsonResponse(data, safe=False)
