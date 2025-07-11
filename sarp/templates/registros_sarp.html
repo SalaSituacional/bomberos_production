@@ -7,8 +7,8 @@
 {% elif user.user == "Sarp_01"%}
 {% include "layouts/panel_sarp.html" %}
 {% endif %}
-
 {% load static %}
+{% load crispy_forms_tags %} {# Carga las etiquetas de Crispy Forms #}
 
 {% block content %}
 <div class="general-dashboard">
@@ -120,16 +120,15 @@
     <button class="btn btn-danger" id="siguiente">Siguiente</button>
 </div>
 
-
-  <div class="contain-dates">
-    <h4 class="title-procediments">Exportar Reportes</h4>
-    <br>
-    <section class="buttons-items input-group mb-3 filter-search">
-      <span class="input-group-text"><b> Seleccionar Mes:</b></span>
-      <input type="month" class="form-control fecha_manual" name="" id="mes_excel">
-      <button id="exportarExcel" class="btn btn-danger download-link" disabled>Exportar .xls</button>
-    </section>
-  </div>
+<div class="contain-dates">
+  <h4 class="title-procediments">Exportar Reportes</h4>
+  <br>
+  <section class="buttons-items input-group mb-3 filter-search">
+    <span class="input-group-text"><b> Seleccionar Mes:</b></span>
+    <input type="month" class="form-control fecha_manual" name="" id="mes_excel">
+    <button id="exportarExcel" class="btn btn-danger download-link" disabled>Exportar .xls</button>
+  </section>
+</div>
 
 </div>
 
@@ -148,7 +147,7 @@
         <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
           <form action="{% url 'registrar_dron' %}" method="POST" id="form-new-drones">
             {% csrf_token %}
-            {{ formularioDrones }}
+            {{ formularioDrones |crispy }}
             <div class="buttons-reportes">
               <button type="submit" class="btn btn-danger" id="confirmarEliminar">
                 Agregar
@@ -170,9 +169,20 @@
     <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+  const ApiVuelos = "{% url 'api_vuelos' %}";
+  const REPORTE_BASE_URL_PLACEHOLDER = "{% url 'reporte' '0000' %}";
+  const BUSCAR_VUELO_BASE_URL_PLACEHOLDER = "{% url 'buscar_vuelo_por_id' '0000' %}";
+  const EDITAR_REPORTE_BASE_URL_PLACEHOLDER = "{% url 'editar_reporte' '0000' %}";
+  const EliminarVueloBaseUrlPlaceholder = "{% url 'api_eliminar_vuelo' '0000' %}";
+  const FormularioSarp = "{% url 'formularios_sarp' %}";
+  const GenerarExcelReportesSarpUrl = "{% url 'generar_excel_sarp' %}";
+
+</script>
 
 <script src="{% static 'js/sarp/data_tables.js' %}"></script>
-<script src="{% static 'js/sarp/obtener_info_excel.js' %}"></script>
+<script src="{% static 'js/sarp/obtener_info_table.js' %}"></script>
 <script src="{% static 'js/sarp/editar_reporte.js' %}"></script>
 <script src="{% static 'js/sarp/eliminar_reporte.js' %}"></script>
 <script src="{% static 'js/sarp/generar_excel_sarp.js' %}"></script>

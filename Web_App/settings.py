@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     "seguridad_prevencion",
     "junin",
     "mecanica",
+    "sarp",
+    
 ]
 
 MIDDLEWARE = [

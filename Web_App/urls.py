@@ -27,6 +27,8 @@ handler404 = custom_404_view
 from ven911.urls import *
 from seguridad_prevencion.urls import *
 from junin.urls import *
+from sarp.urls import *
+from mecanica.urls import *
 
 #Se crean las rutas que se podran visitar en la aplicacion web.
 urlpatterns = [
@@ -35,6 +37,7 @@ urlpatterns = [
     path('seguridad_prevencion/', include('seguridad_prevencion.urls')),
     path('junin/', include('junin.urls')),
     path('mecanica/', include('mecanica.urls')),
+    path('sarp/', include('sarp.urls')),
 
     # Admin
     path('alpha04/', admin.site.urls),
@@ -74,19 +77,6 @@ urlpatterns = [
     path('personal/editar/<int:personal_id>/', editar_personal, name='editar_personal'),
     
     
-    # SARP
-    path('dashboard_sarp/', Dashboard_sarp,name='dashboard_sarp'),
-    path('registros_sarp/', Registros_sarp, name='registros_sarp'),
-    path('formularios_sarp/', Formularios_sarp, name='formularios_sarp'),
-    path('registrar_dron/', registrar_drones, name="registrar_dron"),
-    path('api/vuelos/', api_vuelos, name="api_vuelos"),  # API en formato JSON
-    path('reporte/<str:id_vuelo>/', obtener_reporte, name='reporte'),
-    path('editar_reporte/<str:id_vuelo>/', editar_reporte, name='obtener_reporte'),
-    path("api/eliminar_vuelo/<str:id_vuelo>/", api_eliminar_vuelo, name="api_eliminar_vuelo"),
-    path('api/estadisticas-misiones/', obtener_estadisticas_misiones, name="estadisticas-misiones"),
-    path('api/ultimo_reporte/', obtener_ultimo_reporte),
-    path('api/buscar_vuelo/<str:vuelo_id>/', buscar_vuelo_por_id, name='buscar_vuelo_por_id'),
-
     # Bienes Municipales
     path('dashboard_bienes/', Dashboard_bienes,name='dashboard_bienes'),
     path('inventario_bienes/', Inventario_bienes,name='inventario_bienes'),
@@ -150,6 +140,5 @@ urlpatterns = [
     path('descargar-excel-prevencion/', generar_excel_prevencion, name='descargar_excel_prevencion'),
     path('descargar-excel-enfermeria/', generar_excel_enfermeria, name='descargar_excel_enfermeria'),
     path('descargar-excel-operacional/', generar_excel_operacional, name='descargar_excel_operacional'),
-    path('generar-excel-reportes-sarp/', generar_excel_reportes_sarp, name='generar_excel_sarp'),
-    path('generar-excel-bienesmunicipales/', generar_excel_bienes_municipales, name='generar_excel_sarp'),
+    path('generar-excel-bienesmunicipales/', generar_excel_bienes_municipales, name='generar_excel_bienesmunicipales'),
 ]

@@ -2099,36 +2099,6 @@ def generar_excel_reportes_unidades(request):
 
     return JsonResponse(json.loads(json_data), safe=False)
 
-def generar_excel_reportes_sarp(request):
-    mes_str = request.GET.get('mes', None)
-
-    # Obtener todos los reportes relacionados a los vuelos
-    vuelos = Registro_Vuelos.objects.select_related('id_dron', 'id_operador').order_by('-fecha', '-hora_despegue')
-
-    # Filtrar por mes si está especificado
-    if mes_str:
-        try:
-            mes = int(mes_str.split('-')[1])
-            vuelos = [vuelo for vuelo in vuelos if vuelo.fecha.month == mes]
-        except (ValueError, IndexError):
-            return JsonResponse({'error': 'Formato de mes incorrecto'}, status=400)
-
-    # Construir los datos necesarios para enviar al frontend
-    data = []
-
-    for vuelo in vuelos:
-        data.append({
-            'fecha': vuelo.fecha.isoformat(),
-            'hora': vuelo.hora_despegue.isoformat(),
-            'encargado': vuelo.id_operador.nombres if vuelo.id_operador else "Sin asignar",
-            'descripcion': vuelo.observaciones_vuelo,
-            'tipo_mision': vuelo.tipo_mision,
-        })
-
-    # Convertir a JSON y responder
-    json_data = json.dumps(data, ensure_ascii=False)
-    return JsonResponse(json.loads(json_data), safe=False)
-
 def generar_excel_bienes_municipales(request):
     bienes = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by('-fecha_registro')
     data = []
