@@ -1,13 +1,17 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, get_object_or_404  
+from django.core.paginator import Paginator
+from django.utils.timezone import now
+import json
+import io
+import fitz  # PyMuPDF
 from .forms import *
 from .models import *
 from .urls import *
 
-@login_required
-# Vista para el Dashboard
 def Dashboard_bienes(request):
     # Filtrar bienes por estado y contar el total de cada uno
     bienes_buenos = BienMunicipal.objects.filter(estado_actual="Bueno").count()
@@ -135,7 +139,6 @@ def listar_bienes(request):
 
     return JsonResponse(data)
 
-
 def reasignar_bien(request):
     if request.method == 'POST':
         form = MovimientoBienForm(request.POST)
@@ -162,7 +165,7 @@ def reasignar_bien(request):
             bien.departamento = nuevo_departamento
             bien.save()
 
-            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+            return redirect('inventarioBienes')  # Cambia esta ruta al destino deseado
 
     else:
         form = MovimientoBienForm()
@@ -189,7 +192,7 @@ def cambiar_estado_bienes(request):
             bien.estado_actual = nuevo_estado
             bien.save()
 
-            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+            return redirect('inventarioBienes')  # Cambia esta ruta al destino deseado
 
     else:
         form = CambiarEstadoBienForm()
@@ -199,7 +202,7 @@ def eliminar_bien(request):
     bien_id = request.POST.get('bien_id')
     bien = get_object_or_404(BienMunicipal, identificador=bien_id)
     bien.delete()
-    return redirect('/inventario_bienes/')  # Cambia a la vista que quieras recargar
+    return redirect('inventarioBienes')  # Cambia a la vista que quieras recargar
 
 def historial_bien_api(request, bien_id):
     bien = BienMunicipal.objects.get(identificador=bien_id)
@@ -231,7 +234,6 @@ def verificar_identificador(request):
     identificador = request.GET.get("identificador", "")
     existe = BienMunicipal.objects.filter(identificador=identificador).exists()
     return JsonResponse({"existe": existe})
-
 
 def generar_excel_bienes_municipales(request):
     bienes = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by('-fecha_registro')

@@ -22,13 +22,13 @@ from .views import *
 urlpatterns = [
     # Bienes Municipales
     # renderizado
-    path('dashboard_bienes/', Dashboard_bienes,name='dashboard_bienes'),
-    path('inventario_bienes/', Inventario_bienes,name='inventario_bienes'),
-    path('registro_bienes/', Registros_bienes,name='registro_inventario'),
+    path('dashboard_bienes/', Dashboard_bienes,name='dashboardBienes'),
+    path('inventario_bienes/', Inventario_bienes,name='inventarioBienes'),
+    path('registro_bienes/', Registros_bienes,name='registroInventario'),
     # funciones crud
-    path('reasignar-bien/', reasignar_bien, name='reasignar_bien'),
-    path('cambiar-bien/', cambiar_estado_bienes, name='cambiar_estado_bien'),
-    path('eliminar-bien/', eliminar_bien, name='eliminar_bien'),
+    path('reasignar-bien/', reasignar_bien, name='reasignarBien'),
+    path('cambiar-bien/', cambiar_estado_bienes, name='cambiarEstadoBien'),
+    path('eliminar-bien/', eliminar_bien, name='eliminarBien'),
     # APIs internas
     path('api/bienes/', listar_bienes, name='api_bienes'),
     path('api/historial-bien/<str:bien_id>/', historial_bien_api, name='historial_bien_api'),

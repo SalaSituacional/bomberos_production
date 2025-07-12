@@ -111,7 +111,7 @@ def Home(request):
             elif user.user == "Sarp_01":
                 return redirect("/sarp/dashboard_sarp/")
             elif user.user == "Bienes_00":
-                return redirect("/bienesMunicipales/dashboard_bienes/")
+                return redirect("/bienes_municipales/dashboard_bienes/")
             elif user.user == "Ven_911":
                 return redirect("/ven911/home/")
             elif user.user == "ComandanciaJunin":
