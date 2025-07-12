@@ -629,7 +629,7 @@ summary>* {
     justify-content: flex-start;
 
     a {
-        padding-left: 0.5rem; 
+        padding-left: 0.5rem;
         font-size: 1rem; /* Ajuste de tamaño de fuente para el enlace */
     }
 
@@ -638,6 +638,50 @@ summary>* {
     }
 }
 
+.modal-content-login{
+  width: 100%;
+
+  .modal-header{
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    padding-left: 0;
+    padding-right: 0;
+    border: 0;
+  }
+  .modal-title {
+    border-bottom: medium solid #b6243a;
+    padding: 1rem;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  .modal-body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    padding-bottom: 1rem;
+
+    h4{
+      margin: 0;
+    }
+  }
+
+  .modal-footer{
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border: 0;
+    width: fit-content;
+    margin: 0 auto;
+    border-top: medium solid #b6243a;
+
+  }
+  button{
+    cursor: pointer;
+  }
+}
 
 /* #endregion */
 
@@ -856,7 +900,7 @@ summary>* {
 #cerrar-procedimiento {
   position: absolute;
   top: 5px;
-  right: 10px;  
+  right: 10px;
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
@@ -983,7 +1027,7 @@ summary>* {
 .title-stadist-parroquies {
   display: flex;
   width: 100%;
-  padding: 1rem;  
+  padding: 1rem;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   height: auto;
@@ -1382,7 +1426,7 @@ summary>* {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    
+
     label{
       margin-left : .5rem;
     }
@@ -1465,7 +1509,7 @@ summary>* {
   position: relative;
 }
 
-.floating-input input, 
+.floating-input input,
 .floating-select select {
   width: 100%;
   padding: 16px 12px 4px;
@@ -1476,14 +1520,14 @@ summary>* {
   transition: all 0.2s;
 }
 
-.floating-input input:focus, 
+.floating-input input:focus,
 .floating-select select:focus {
   outline: none;
   border-color: #b6243a;
   box-shadow: 0 0 5px var(--color-button);
 }
 
-.floating-input label, 
+.floating-input label,
 .floating-select label {
   position: absolute;
   top: 12px;
@@ -1633,12 +1677,12 @@ summary>* {
 .fixed-width {
   /* Usamos un ancho proporcional para las celdas */
   /* Nota: 'table-layout: fixed' en la tabla es necesario para que esto funcione */
-  width: 150px; 
-  
+  width: 150px;
+
   /* Configuración de desbordamiento (los 3 puntos) */
-  white-space: nowrap; 
-  overflow: hidden;    
-  text-overflow: ellipsis; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* #endregion */
@@ -1850,6 +1894,487 @@ summary>* {
 /* #endregion */
 
 
+/* #region Estadisticas */
+
+/*--------------------------- estilos de estadisticas -------------------------------------*/
+
+.stadist-rows{
+ width: 100%;
+  background-color: #f0f0f0; /* Un gris muy claro para el fondo del carrusel */
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: nowrap; /* CRUCIAL: Evita que los elementos salten de línea */
+  overflow-x: auto; /* Habilita el desplazamiento horizontal */
+  overflow-y: hidden; /* Oculta el desplazamiento vertical */
+  padding: 1rem; /* Espaciado interno para que las tarjetas no toquen los bordes */
+  padding-left: 0rem;
+  padding-right: 0rem;
+  gap: 1rem; /* Espacio entre las tarjetas del carrusel */
+  -webkit-overflow-scrolling: touch; /* Suaviza el desplazamiento en iOS */
+  scroll-snap-type: x mandatory; /* Opcional: para que las tarjetas se "enganchen" al desplazarse */
+}
+
+/* Tarjetas individuales del Carrusel (cards-stadist-rows) */
+.cards-stadist-rows {
+    display: flex;
+    flex-direction: column; /* Apila el contenido de la tarjeta verticalmente */
+    justify-content: flex-start; /* Alinea el contenido al inicio de la tarjeta */
+    align-items: center;
+    align-content: center;
+
+    /* CRUCIAL: Definir un ancho fijo para cada tarjeta en el carrusel */
+    flex-shrink: 0; /* Evita que las tarjetas se encojan */
+    width: 100%; /* Ocupa casi todo el ancho en móvil (100% - 2*padding de stadist-rows) */
+    min-width: 100%; /* Asegura un tamaño mínimo para la tarjeta */
+
+    height: 130vh !important; /* La altura se ajusta al contenido */
+    scroll-snap-align: start; /* Opcional: para que las tarjetas se "enganchen" al inicio */
+}
+
+
+.cards-stadists {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ocupa el 100% del cards-stadist-rows */
+    height: 100%; /* La altura se ajusta al contenido */
+    border: thin solid #ffffff; /* Borde blanco (invisible si el fondo es blanco) */
+    background-color: #fff; /* Fondo blanco para las tarjetas */
+    border-radius: 10px; /* Bordes redondeados */
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 0.5rem; /* Espaciado interno */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para destacar las tarjetas */
+    padding: .5rem;
+}
+
+.chart-canvas-wrapper{
+  width: 100%;
+    height: 100%; /* Altura fija para el área de la gráfica */
+    position: relative; /* Necesario para la responsividad de Chart.js */
+    margin-bottom: 0.5rem; /* Espacio entre la gráfica y los controles */
+
+  canvas{
+     width: 100% !important;
+    height: 100% !important; /* El canvas ocupará el 100% del alto de su contenedor */
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* Fuentes y Selects */
+.cards-stadists p {
+    font-size: 1rem;
+    padding: 0.5rem;
+    margin: 0;
+    text-align: center;
+}
+
+.cards-stadists select {
+    width: 100%;
+    border-radius: 5px;
+    font-size: 1rem;
+    border-color: #b4b4b4;
+    box-sizing: border-box;
+    margin-top: 0.5rem;
+}
+
+/* Contenedor principal de estadísticas */
+.content-stadist {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0.5rem;
+}
+
+.form-select-sm{
+  border-radius: 0;
+}
+
+/* Columnas de estadísticas (se ajustan a 100% en móvil) */
+.stadist-column {
+    display: flex;
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    padding: 0rem; /* Añadir padding para espaciado interno */
+    box-sizing: border-box;
+}
+
+.cards-stadist-column {
+    width: 100%;
+    height: auto;
+    border: thin solid #ffffff;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 0.8rem; /* Aumentado padding para más espacio */
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
+}
+
+.accordion-item .accordion-body{
+  padding: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+
+}
+/* Estilos del Acordeon */
+.accordion-button {
+    font-size: 1rem;
+}
+.accordion-button:not(.collapsed){
+  background-color: var(--color-button);
+  color: #fff;
+}
+.accordion-button:not(.collapsed)::after{
+  filter: invert(1);
+}
+.accordion-button:focus{
+  background-color: var(--color-button);
+  border-color: none;
+  color: #fff;
+  box-shadow: 0.5px 0.5px 5px var(--color-button);
+}
+.items-list-procediments {
+    list-style: disc;
+    li {
+        font-size: 1rem;
+        text-align: start;
+        padding: 0.2rem;
+        li {
+            list-style: circle;
+            font-size: 0.9rem; /* Sub-lista más pequeña */
+        }
+    }
+}
+
+/* Secciones de mes y tarjetas */
+.section-month {
+    width: 100%; /* Asegura que ocupe el 100% en móvil */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column; /* Apila verticalmente */
+    justify-content: center;
+    align-items: center; /* Centra los elementos */
+    padding: 0.5rem; /* Espaciado general */
+    box-sizing: border-box;
+}
+
+.month-style {
+    margin-top: 1rem;
+    width: 100%; /* Ocupa el 100% del contenedor */
+    box-sizing: border-box;
+}
+
+.card-month {
+    margin-top: 0.8rem; /* Ajustado margen superior */
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    background-color: #fff; /* Fondo blanco */
+    border-radius: 10px;
+}
+.card-month input {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem; /* Ajuste de tamaño de fuente */
+}
+
+/* Gráficos de barra inferiores */
+.bartwo {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    border: thin solid #ffffff;
+    background-color: #fff;
+    border-radius: 0px 0px 20px 20px; /* Mantener solo bordes inferiores redondeados */
+    align-items: center;
+    align-content: center;
+    padding: 0.8rem; /* Espaciado interno */
+}
+/* Boton para exportar excel */
+.btn-graphic {
+    margin-top: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem;
+    font-size: 1rem; /* Ajuste de tamaño de fuente del botón */
+}
+
+
+/* Gráficos de barra */
+.title-bar{
+  width: 100%;
+  text-align: center;
+}
+.graphic-bar {
+    width: 100%;
+    margin: 0 auto;
+    height: 70vh;
+    display: flex;
+    box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+}
+.barts {
+    min-width: 750px;
+    min-height: 100%;
+    display: flex;
+    margin: 0 auto;
+}
+.bar-graphic {
+    background-color: #fff;
+    border: thin solid #ffffff;
+    padding: 1rem;
+    width: 100% !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
+}
+
+
+/* Gráficos de barra horizontal */
+.graphic-bar-horizontal {
+    width: 100%;
+    min-height: 70vh;
+    margin: 0 auto;
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory; /* Permite el desplazamiento horizontal con "enganche" */
+}
+.barts-horizontal {
+    min-width: 640px !important;
+    min-height: 100% !important;
+    display: flex;
+    margin: 0 auto;
+}
+
+.bar-graphic-horizontal {
+    background-color: #fff;
+    border: thin solid #ffffff;
+    padding: 0rem;
+    width: 640px;
+    min-height: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
+}
+
+
+/* Select Para la barra horizontal */
+.select-bar {
+    padding: 0.5rem;
+    width: 100%; /* Ocupa todo el ancho */
+    box-sizing: border-box;
+
+    select {
+        margin: 0;
+        width: 100%; /* Asegura que el select ocupe todo el ancho */
+        font-size: 1rem; /* Ajuste de tamaño de fuente */
+    }
+}
+.btn-bar {
+    padding: 0.5rem;
+    width: 100%; /* Ocupa todo el ancho */
+    box-sizing: border-box;
+    font-size: 1rem; /* Ajuste de tamaño de fuente */
+}
+
+
+/* #endregion */
+
+
+/* #region Notificaciones Area Personal */  
+  .noti-container {
+    position: fixed;
+    bottom: 20px;
+    left: calc(100% / 2 - 155px);
+    background: #f0f9ff;
+    border-left: 5px solid #b6243a;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    width: 310px;
+    padding: .7rem;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateY(-30px);
+    transition: all 0.5s ease;
+  }
+
+  .noti-container.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .noti-container.hidden {
+    display: none;
+  }
+
+  #noti-emoji {
+    font-size: 28px;
+  }
+
+  #noti-titulo {
+    font-size: 16px;
+    color: #0b4e84;
+  }
+
+  #noti-mensaje {
+    font-size: 14px;
+  }
+
+  /* ----------------------------------------------------- */
+
+  .noti-container-comandante {
+    position: fixed;
+    bottom: 20px;
+    left: calc(100% / 2 - 155px);
+    background: #f0f9ff;
+    border-left: 5px solid #b6243a;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: flex-start;
+    width: 310px;
+    padding: .7rem;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateY(-30px);
+    transition: all 0.5s ease;
+  }
+
+  .noti-container-comandante.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .noti-container-comandante.hidden {
+    display: none;
+  }
+
+  .noti-content {
+    flex: 1;
+  }
+
+  .noti-info {
+    /* background: #f9f9f9; */
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    margin-top: 8px;
+    color: #333;
+    line-height: 1.4;
+  }
+
+  .noti-info p {
+    margin: 6px 0;
+  }
+/* #endregion */
+
+
+/* #region Area del Instagram */
+  /********** instagram public ******/
+.modal-public-instagram {
+  position: fixed;
+  z-index: 9999999;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content-instagram {
+  display: flex;
+  background-color: #fefefe;
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.close {
+  color: var(--color-button);
+  float: right;
+  font-size: 50px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: rgb(82, 0, 0);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+
+.feed-instagram {
+  margin: 0 auto;
+  height: auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  padding: 1.5rem;
+  flex-direction: column;
+
+  h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+}
+
+.form-instagram {
+  width: 100%;
+  height: 4rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.form-feed-instagram {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+  input{
+    padding: .5rem;
+  }
+  button {
+    padding: .5rem;
+    margin-top: .5rem;
+    width: 100%;
+  }
+}
+
+.instagram-embed{
+  width: 100%;
+  display: flex;
+  background-color: #fefefe;
+  margin-top: 1rem;
+  flex-direction: column;
+  gap: 1rem;
+
+  padding: 1rem;
+
+  .instagram-media{
+    min-width: 100% !important;
+  }
+}
+/* #endregion */
 
 /****************** componentes reutilizables **************/
 
@@ -1881,28 +2406,10 @@ summary>* {
   background-color: yellow;
 }
 
-.title-bar {
-  width: 40%;
-  height: auto;
-  margin: 0 auto;
-  text-align: center;
-
-  h3 {
-    height: auto;
-    padding: 0;
-    margin: 0;
-  }
-}
 
 .modal-procediment-register {
   top: 15rem;
 }
-
-/* 
-.table-personal {
-  width: 150%;
-} */
-
 /* ------------------------------------------------------------------------------------------------------------------------------- */
 /* blog style */
 .nav {
@@ -2719,80 +3226,6 @@ summary>* {
   height: 60rem;
 }
 
-/********** instagram public ******/
-.modal-public-instagram {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content-instagram {
-  display: flex;
-  background-color: #fefefe;
-  border-radius: 20px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  max-width: 800px;
-}
-
-.close {
-  color: var(--color-button);
-  float: right;
-  font-size: 50px;
-  font-weight: bold;
-
-}
-
-.close:hover,
-.close:focus {
-  color: rgb(82, 0, 0);
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.feed-instagram {
-  margin: 0 auto;
-  height: auto;
-  width: 80%;
-  display: flex;
-  align-items: center;
-  align-content: center;
-  padding: 2rem;
-  flex-direction: column;
-
-  h3 {
-    text-align: center;
-  }
-}
-
-.form-instagram {
-  width: 100%;
-  height: 4rem;
-  display: flex;
-  justify-content: space-around;
-}
-
-.form-feed-instagram {
-  display: flex;
-  justify-content: space-around;
-
-  button {
-    width: 20rem;
-  }
-}
-
 .alert-light {
   display: flex;
   flex-direction: column;
@@ -2898,16 +3331,6 @@ summary>* {
   width: 100%;
 }
 
-/* #cargar_mas_btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-} */
-
 #cargar_mas_btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
@@ -2917,9 +3340,6 @@ summary>* {
   width: 100%;
 }
 
-.fecha_manual {
-  width: 50%;
-}
 
 /* ********************Estilos Seccion de Prevencino (Solicitudes)******************************** */
 .request-prevencion {
@@ -3340,7 +3760,7 @@ summary>* {
     position: relative;
     width: 100%;
   }
-  
+
   .select-autocomplete input {
     width: 100%;
     padding: 10px 15px;
@@ -3348,7 +3768,7 @@ summary>* {
     border-radius: 4px;
     font-size: 14px;
   }
-  
+
   .select-autocomplete .dropdown {
     position: absolute;
     top: 100%;
@@ -3363,16 +3783,16 @@ summary>* {
     z-index: 1000;
     display: none;
   }
-  
+
   .select-autocomplete .dropdown-item {
     padding: 8px 15px;
     cursor: pointer;
   }
-  
+
   .select-autocomplete .dropdown-item:hover {
     background-color: #f8f9fa;
   }
-  
+
   .select-autocomplete .search-icon {
     position: absolute;
     right: 10px;
@@ -3380,7 +3800,7 @@ summary>* {
     transform: translateY(-50%);
     color: #6c757d;
   } */
-  
+
   /* Ocultar el select original pero mantenerlo para el formulario */
   /* .hidden-select {
     display: none;
@@ -3675,24 +4095,6 @@ summary>* {
   }
 }
 
-.table {
-  width: 170%;
-}
-
-.table-modify {
-  margin: 0 auto;
-  width: 100%;
-}
-
-.content-stadist {
-  flex-direction: column;
-}
-
-.stadist-column {
-  width: 80%;
-  margin: 2rem auto;
-  order: -1;
-}
 
 .barts {
   height: 560px;
@@ -3990,7 +4392,7 @@ summary>* {
   margin-top: 1rem;
 }
 
-/* 
+/*
 .form-new-drones {
   width: ;
 } */
@@ -4071,99 +4473,6 @@ summary>* {
   background: rgba(255, 255, 255, 0.4);
 }
 
-.noti-container {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background: #f0f9ff;
-  border-left: 5px solid #2196f3;
-  color: #333;
-  padding: 12px 16px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 280px;
-  max-width: 400px;
-  font-family: "Segoe UI", sans-serif;
-  z-index: 10000;
-  opacity: 0;
-  transform: translateY(-30px);
-  transition: all 0.5s ease;
-}
-
-.noti-container.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.noti-container.hidden {
-  display: none;
-}
-
-#noti-emoji {
-  font-size: 28px;
-}
-
-#noti-titulo {
-  font-size: 16px;
-  color: #0b4e84;
-}
-
-#noti-mensaje {
-  font-size: 14px;
-}
-
-/* ----------------------------------------------------- */
-
-.noti-container-comandante {
-  position: fixed;
-  bottom: 30px;
-  left: 30px;
-  background-color: #F5F5F5;
-  border-left: 5px solid #2196f3;
-  color: #333;
-  padding: 20px 25px;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-  max-width: 380px;
-  width: 100%;
-  z-index: 9999;
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  transition: all 0.4s ease;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.noti-container-comandante.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.noti-container-comandante.hidden {
-  display: none;
-}
-
-.noti-content {
-  flex: 1;
-}
-
-.noti-info {
-  /* background: #f9f9f9; */
-  padding: 12px 15px;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  margin-top: 8px;
-  color: #333;
-  line-height: 1.4;
-}
-
-.noti-info p {
-  margin: 6px 0;
-}
 
 .is-invalid {
   border-color: red;
@@ -4569,9 +4878,9 @@ summary>* {
   border-radius: 20px;
 }
 
-.table-width-100 {
+/* .table-width-100 {
   width: 100%;
-}
+} */
 
 
 
@@ -4582,7 +4891,7 @@ summary>* {
 
 
 
-.tabla-general-procedimientos{
+/* .tabla-general-procedimientos{
   width: 100%;
 }
 .table-personal{
@@ -4623,7 +4932,7 @@ summary>* {
 }
 .tabla_asignaciones{
   width: 100%;
-}
+} */
 
 
 
@@ -4749,7 +5058,7 @@ summary>* {
     margin-bottom: 1rem;
     color: #444;
     border-bottom: 1px solid #ddd;
-  } 
+  }
   th{
     text-align: center;
     color: #444;
@@ -4769,8 +5078,8 @@ summary>* {
   input{
     align-self: center;
     font-size: 20px;
-    color: #555; 
-    width: 75%; 
+    color: #555;
+    width: 75%;
     text-align: center;
   }
 }
@@ -4788,7 +5097,7 @@ summary>* {
 .familiares-container {
   margin-top: 2rem;
   padding: 1rem;
-  
+
   h2{
     text-align: center;
     color: #444;
@@ -4924,7 +5233,7 @@ summary>* {
   display: flex;
   align-items: center;
   font-size: 1.1rem;
-  
+
 }
 
 .detalle-label {
@@ -5597,18 +5906,18 @@ summary>* {
     min-width: 70px;
     font-size: 0.85rem;
   }
-  
+
   .section-filter .btn i {
     margin-right: 0 !important;
   }
-  
+
   .section-filter .btn span {
     display: none;
   }
   .section-filter .col-md-auto {
     margin-bottom: 10px;
   }
-  
+
   .section-filter .btn i {
     margin-right: 0.3rem;
   }
@@ -5640,7 +5949,7 @@ summary>* {
   .filter-form {
     grid-template-columns: 1fr;
   }
-  
+
   .filter-actions {
     height: auto;
     justify-content: flex-start;
@@ -6313,9 +6622,9 @@ summary>* {
     .tabla_ascensos{
       width: 120% !important;
     }
-    
+
   }
-  
+
   .perfil-empleado{
     max-width: 100%;
   }
@@ -7024,7 +7333,7 @@ summary>* {
   .chart-pie-ven911{
     margin-bottom: 6rem;
   }
-  
+
   .step-links{
     flex-direction: column;
   }

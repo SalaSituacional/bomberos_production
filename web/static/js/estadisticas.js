@@ -111,15 +111,15 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
   canvasElement.removeAttribute('height');
   
   // Definir tamaños de fuente dinámicos basados en el ancho de la ventana
-  const isMobile = window.innerWidth <= 376;
-  const datalabelsFontSize = isMobile ? 14 : 21.5; // Reducido para móvil
-  const legendFontSize = isMobile ? 12 : 20; // Reducido para móvil
-  const ticksFontSize = isMobile ? 10 : 15; // Reducido para móvil
+  const isMobile = window.innerWidth <= 650;
+  const datalabelsFontSize = isMobile ? 14 : 18.5; // Reducido para móvil
+  const legendFontSize = isMobile ? 12 : 18; // Reducido para móvil
+  const ticksFontSize = isMobile ? 10 : 13; // Reducido para móvil
 
   // Obtener el ancho del contenedor padre para calcular el ancho del canvas
   // Asegúrate de que el parentElement exista antes de acceder a clientWidth
   const parentWidth = canvasElement.parentElement ? canvasElement.parentElement.clientWidth : window.innerWidth;
-  const desiredHeight = isMobile ? 250 : 350; // Altura fija para móvil, altura un poco mayor para escritorio
+  const desiredHeight = isMobile ? 250 : 360; // Altura fija para móvil, altura un poco mayor para escritorio
 
   // Establecer las dimensiones de renderizado del canvas y sus estilos de visualización
   canvasElement.width = parentWidth;
@@ -140,8 +140,7 @@ function createOrUpdateChart(ctx, chart, type, labels, data) {
           // Formateo para mostrar el valor y porcentaje en gráficos de pastel/donas
           const dataset = context.chart.data.datasets[0];
           const total = dataset.data.reduce((sum, num) => sum + num, 0);
-          const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0; // Evitar división por cero
-          return `${value} (${percentage}%)`;
+          return `${value}`;
         },
       },
     },
@@ -460,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Definir tamaños de fuente dinámicos basados en el ancho de la ventana
     const isMobile = window.innerWidth <= 376;
     const ticksFontSize = isMobile ? 10 : 15; // Tamaño dinámico de fuente para ejes
-    const datalabelsFontSize = isMobile ? 16 : 26; // Tamaño dinámico de fuente para datalabels
+    const datalabelsFontSize = isMobile ? 12 : 14; // Reducido para mejor visibilidad fuera de la barra
 
     // Obtener el ancho del contenedor padre para calcular el ancho del canvas
     const parentWidth = canvasElement.parentElement ? canvasElement.parentElement.clientWidth : window.innerWidth;
@@ -498,9 +497,12 @@ document.addEventListener("DOMContentLoaded", function () {
         plugins: {
           legend: { display: false },
           datalabels: {
-            color: 'white',
+            color: 'black', // Cambiado a negro para visibilidad fuera de la barra
+            anchor: 'end', // Anclado al final de la barra
+            align: 'end', // Alineado al final del ancla (arriba de la barra)
+            offset: 4, // Pequeño desplazamiento para separar del borde de la barra
             font: {
-              size: datalabelsFontSize, // Tamaño de fuente dinámico
+              size: datalabelsFontSize, // Aplicar tamaño de fuente dinámico
             },
             formatter: (value, context) => {
               // Personalización de los números
@@ -541,7 +543,7 @@ document.addEventListener("DOMContentLoaded", function () {
           padding: {
             left: isMobile ? 5 : 20,
             right: isMobile ? 5 : 20,
-            top: isMobile ? 10 : 20,
+            top: isMobile ? 20 : 30, // Aumentar padding superior para los labels
             bottom: isMobile ? 10 : 20,
           }
         }
@@ -570,6 +572,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Inicializar al cargar la página
   init();
 });
+
 
 
 // Grafica de Barras Horizontal=======================================================================================================================================================
@@ -672,15 +675,23 @@ document.addEventListener("DOMContentLoaded", function () {
         plugins: {
           legend: { display: false }, // No mostrar leyenda
           datalabels: {
-            color: 'white',
+            color: 'black', // Cambiado a negro para visibilidad fuera de la barra
+            anchor: 'end', // Anclado al final de la barra
+            align: 'end', // Alineado al final del ancla (fuera de la barra)
+            offset: 4, // Pequeño desplazamiento para separar del borde de la barra
             font: { size: datalabelsFontSize }, // Tamaño dinámico para datalabels
-            formatter: (value) => `${value}`, // Mostrar solo el valor
+            formatter: (value, context) => {
+              const dataset = context.chart.data.datasets[0];
+              const total = dataset.data.reduce((sum, num) => sum + num, 0);
+              const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : 0;
+              return `${value} (${percentage}%)`;
+            },
           },
         },
         layout: {
           padding: {
             left: isMobile ? 5 : 20, // Reducir padding en móvil
-            right: isMobile ? 5 : 20,
+            right: isMobile ? 25 : 40, // Aumentar padding a la derecha para los labels
             top: isMobile ? 5 : 20,
             bottom: isMobile ? 5 : 20,
           },
@@ -689,7 +700,7 @@ document.addEventListener("DOMContentLoaded", function () {
           x: {
             display: false, // Ocultar eje X
             beginAtZero: true, // Asegurar que el eje X comience en cero
-            max: Math.max(...values) * 1.1, // Ajustar el máximo del eje X para que los datalabels no se corten
+            max: Math.max(...values) * 1.2, // Ajustar el máximo del eje X para que los datalabels no se corten
           },
           y: {
             ticks: {

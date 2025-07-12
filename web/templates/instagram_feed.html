@@ -10,6 +10,7 @@
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
+      <h3 class="division-title">Feed De Instagram</h3>
       <section class="user-name" >
         <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
         <svg
@@ -43,6 +44,7 @@
       </section>
     </div>
   </div>
+
   <div class="feed-instagram">
     <h3>Feed de Publicaciones de Instagram</h3>
     <!-- Formulario para Agregar Nueva URL -->
@@ -58,46 +60,92 @@
         />
         <button type="submit" class="btn btn-danger">Agregar Publicación</button>
       </form>
+    </div>  
   </div>
+
+  <div class="instagram-embed">
+    {% for post in posts %}
+      <blockquote class="instagram-media" data-instgrm-permalink="{{ post.url }}" data-instgrm-version="13"></blockquote>
+    {% empty %}
+      <p>No hay publicaciones de Instagram disponibles.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Después de tu tabla de posts -->
+<div class="pagination">
+    <span class="step-links">
+        {% if posts.has_previous %}
+            <a href="?page=1" class="btn btn-secondary">&laquo;</a>
+            <a href="?page={{ posts.previous_page_number }}" class="btn btn-danger">&lsaquo;</a>
+        {% else %}
+            <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+                &laquo;
+            </a>
+            <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+                &lsaquo;
+            </a>  
+        {% endif %}
+
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}" class="btn btn-danger">&rsaquo;</a>
+            <a href="?page={{ posts.paginator.num_pages }}" class="btn btn-secondary">&raquo;</a>
+        {% else %}
+            <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+                &rsaquo;
+            </a>
+            <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+                &raquo;
+            </a>  
+        {% endif %}
+    </span>
+    <span class="current">
+        Página {{ posts.number }} de {{ posts.paginator.num_pages }}.
+    </span>
 </div>
-    <!-- Modal de Confirmación -->
-    <div id="successModal" class="modal-public-instagram" style="display: none;">
-        <div class="modal-content-instagram">
-          <p>¡Publicacion Agregada Exitosamente!</p>
-          <button class="btn btn-danger" onclick="closeModal()"> 
-            Cerrar
-          </button>
-        </div>
+
+  <!-- Modal de Confirmación -->
+  <div id="successModal" class="modal-public-instagram" style="display: none;">
+    <div class="modal-content-instagram">
+      <p>¡Publicacion Agregada Exitosamente!</p>
+      <button class="btn btn-danger" onclick="closeModal()"> 
+        Cerrar
+      </button>
     </div>
+  </div>
 
-    <script>
-        // Función para mostrar la ventana modal
-        function showModal() {
-            document.getElementById('successModal').style.display = 'block';
-        }
-    
-        // Función para cerrar la ventana modal
-        function closeModal() {
-            document.getElementById('successModal').style.display = 'none';
-        }
-    
-        // Definir una variable de JavaScript según la variable Django 'success'
-        const isSuccess = "{{ success|yesno:'true,false' }}";
-    
-        // Si isSuccess es "true", mostrar el modal
-        if (isSuccess === "true") {
-            showModal();
-        }
-    </script>
+  <script>
+    // Función para mostrar la ventana modal
+    function showModal() {
+      document.getElementById('successModal').style.display = 'flex';
+    }
 
-      <!-- Script de Incrustación de Instagram -->
-      <script>
-        // Reprocesar el script de Instagram después de que se cargue la página
-        window.onload = function () {
-          window.instgrm.Embeds.process();
-        };
-      </script>
-      <script async src="https://www.instagram.com/embed.js"></script>
+    // Función para cerrar la ventana modal
+    function closeModal() {
+      document.getElementById('successModal').style.display = 'none';
+    }
+
+    // Función para obtener parámetros de la URL
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // Si el parámetro 'success' en la URL es 'true', mostrar el modal
+    if (getUrlParameter('success') === "True") {
+      showModal();
+    }
+  </script>
+
+  <!-- Script de Incrustación de Instagram -->
+  <script>
+    // Reprocesar el script de Instagram después de que se cargue la página
+    window.onload = function () {
+      window.instgrm.Embeds.process();
+    };
+  </script>
+  <script async src="https://www.instagram.com/embed.js"></script>
   
   <footer class="footer">
     <section class="text-reserved">

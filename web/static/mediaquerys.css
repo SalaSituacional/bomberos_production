@@ -1,124 +1,3 @@
-/*--------------------------- estilos de estadisticas -------------------------------------*/
-
-.stadist-rows{
- width: 100%;
-    background-color: #f0f0f0; /* Un gris muy claro para el fondo del carrusel */
-    border-radius: 10px;
-    display: flex;
-    flex-wrap: nowrap; /* CRUCIAL: Evita que los elementos salten de línea */
-    overflow-x: auto; /* Habilita el desplazamiento horizontal */
-    overflow-y: hidden; /* Oculta el desplazamiento vertical */
-    padding: 1rem; /* Espaciado interno para que las tarjetas no toquen los bordes */
-    gap: 1rem; /* Espacio entre las tarjetas del carrusel */
-    -webkit-overflow-scrolling: touch; /* Suaviza el desplazamiento en iOS */
-    scroll-snap-type: x mandatory; /* Opcional: para que las tarjetas se "enganchen" al desplazarse */
-}
-
-/* Tarjetas individuales del Carrusel (cards-stadist-rows) */
-.cards-stadist-rows {
-    display: flex;
-    flex-direction: column; /* Apila el contenido de la tarjeta verticalmente */
-    justify-content: flex-start; /* Alinea el contenido al inicio de la tarjeta */
-    align-items: center;
-    align-content: center;
-    
-    /* CRUCIAL: Definir un ancho fijo para cada tarjeta en el carrusel */
-    flex-shrink: 0; /* Evita que las tarjetas se encojan */
-    width: 100%; /* Ocupa casi todo el ancho en móvil (100% - 2*padding de stadist-rows) */
-    min-width: 300px; /* Asegura un tamaño mínimo para la tarjeta */
-    max-width: 350px; /* Limita el ancho en pantallas más grandes para el carrusel */
-    
-    height: 1000px !important; /* La altura se ajusta al contenido */
-    scroll-snap-align: start; /* Opcional: para que las tarjetas se "enganchen" al inicio */
-}
-
-
-.cards-stadists {
-    display: flex;
-    flex-direction: column;
-    width: 100%; /* Ocupa el 100% del cards-stadist-rows */
-    height: 100%; /* La altura se ajusta al contenido */
-    border: thin solid #ffffff; /* Borde blanco (invisible si el fondo es blanco) */
-    background-color: #fff; /* Fondo blanco para las tarjetas */
-    border-radius: 10px; /* Bordes redondeados */
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 0.5rem; /* Espaciado interno */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para destacar las tarjetas */
-    padding: .5rem;
-}
-
-.chart-canvas-wrapper{
-  width: 100%; 
-    height: 600px; /* Altura fija para el área de la gráfica */
-    position: relative; /* Necesario para la responsividad de Chart.js */
-    margin-bottom: 0.5rem; /* Espacio entre la gráfica y los controles */
-
-  canvas{
-     width: 100% !important; 
-    height: 100% !important; /* El canvas ocupará el 100% del alto de su contenedor */
-    max-width: 100%; 
-    box-sizing: border-box; 
-  }
-}
-
-/* Fuentes y Selects */
-.cards-stadists p {
-    font-family: var(--kanit-regular);
-    font-size: 1rem; 
-    padding: 0.5rem;
-    margin: 0;
-    text-align: center;
-}
-
-.cards-stadists select {
-    width: 100%; 
-    border-radius: 5px;
-    font-size: 1rem; 
-    font-family: var(--sofia-sans);
-    border-color: #b4b4b4;
-    box-sizing: border-box;
-    margin-top: 0.5rem; 
-}
-
-/* Contenedor principal de estadísticas */
-.content-stadist {
-    width: 100%; 
-    height: auto;
-    display: flex;
-    flex-direction: column; 
-    justify-content: center;
-    align-items: center; 
-    margin: 0;
-    padding: 0.5rem;
-}
-
-.form-select-sm{
-  border-radius: 0;
-}
-
-
-
-
-
-
-/* Columnas de estadísticas (se ajustan a 100% en móvil) */
-.stadist-column {
-    display: flex;
-    width: 100%; 
-    height: auto;
-    flex-direction: column;
-}
-
-.cards-stadist-column {
-    width: 100%;
-    height: auto;
-    border: thin solid #ffffff;
-    background-color: #fff;
-    border-radius: 20px;
-    padding: 0.5rem;
-    margin-bottom: 1rem; 
-}
 
 
 
@@ -129,277 +8,7 @@
 
 
 
-/* Columnas de estadísticas (se ajustan a 100% en móvil) */
-.stadist-column {
-    display: flex;
-    width: 100%; 
-    height: auto;
-    flex-direction: column;
-    padding: 0.5rem; /* Añadir padding para espaciado interno */
-    box-sizing: border-box;
-}
 
-.cards-stadist-column {
-    width: 100%;
-    height: auto;
-    border: thin solid #ffffff;
-    background-color: #fff;
-    border-radius: 20px;
-    padding: 0.8rem; /* Aumentado padding para más espacio */
-    margin-bottom: 1rem; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
-}
-
-.accordion-item .accordion-body{
-  padding: 0;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-
-}
-
-/* Gráficos de barra */
-.graphic-bar {
-    width: 100%; 
-    margin: 0 auto;
-    height: auto;
-    display: flex;
-    justify-content: center;
-    padding: 0.5rem; /* Espaciado interno */
-    box-sizing: border-box;
-}
-
-.barts {
-    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-}
-
-.bar-graphic {
-    background-color: #fff;
-    border: thin solid #ffffff;
-    border-radius: 20px;
-    padding: 1rem; 
-    width: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
-}
-
-/* Gráficos de barra horizontal */
-.barts-horizontal {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-}
-
-.bar-graphic-horizontal {
-    background-color: #fff;
-    border: thin solid #ffffff;
-    border-radius: 20px;
-    padding: 1rem;
-    width: 100%;
-    height: auto; 
-    min-height: 300px; /* Altura mínima para la gráfica horizontal */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para estilo de tarjeta */
-}
-
-.graphic-bar-horizontal {
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5rem; 
-}
-/* Secciones de mes y tarjetas */
-.section-month {
-    width: 100%; /* Asegura que ocupe el 100% en móvil */
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column; /* Apila verticalmente */
-    justify-content: center;
-    align-items: center; /* Centra los elementos */
-    padding: 0.5rem; /* Espaciado general */
-    box-sizing: border-box;
-}
-
-.month-style {
-    margin-top: 1rem;
-    width: 100%; /* Ocupa el 100% del contenedor */
-    box-sizing: border-box;
-}
-
-.card-month {
-    margin-top: 0.8rem; /* Ajustado margen superior */
-    width: 100%; 
-    padding: 0.5rem; 
-    box-sizing: border-box;
-    background-color: #fff; /* Fondo blanco */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
-}
-
-.card-month input {
-    width: 100%; 
-    box-sizing: border-box;
-    font-size: 1rem; /* Ajuste de tamaño de fuente */
-}
-
-.accordion-button {
-    font-size: 1rem;
-}
-.accordion-button:not(.collapsed){
-  background-color: var(--color-button);
-  color: #fff;
-
-  
-}
-
-.accordion-button:not(.collapsed)::after{
-  filter: invert(1);
-}
-
-
-.accordion-button:focus{
-  background-color: var(--color-button);
-  border-color: none;
-  color: #fff;
-  box-shadow: 0.5px 0.5px 5px var(--color-button);
-}
-
-.items-list-procediments {
-    list-style: disc;
-
-    li {
-        font-size: 1rem; 
-        text-align: start;
-        padding: 0.2rem; 
-
-        li {
-            list-style: circle;
-            font-size: 0.9rem; /* Sub-lista más pequeña */
-        }
-    }
-}
-
-.btn-graphic {
-    margin-top: 1rem; 
-    width: 100%; 
-    box-sizing: border-box;
-    padding: 0.75rem; 
-    font-size: 1rem; /* Ajuste de tamaño de fuente del botón */
-}
-
-/* Herramientas de personal (tool-personal) */
-.tool-personal {
-    width: 100%; 
-    height: auto;
-    padding: 0.8rem; /* Aumentado padding */
-    padding-top: 1rem;
-    display: flex;
-    flex-direction: column; /* Apila elementos verticalmente */
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    background-color: #ffffff;
-    border: thin solid #ffffff;
-    margin: 0 auto;
-    border-radius: 10px;
-    flex-wrap: wrap;
-    font-size: 1rem; /* Ajuste de tamaño de fuente */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
-}
-
-.margin-span {
-    margin: 0 .4rem; /* Ajustado margen */
-}
-
-/* Filtros y acciones */
-.accion-filter {
-    width: 100%; 
-    display: flex;
-    flex-direction: column; /* Apila verticalmente */
-    justify-content: center;
-    align-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 0.5rem; /* Espaciado interno */
-
-    div {
-        margin: 0.5rem; 
-    }
-}
-
-.accion-personal {
-    width: 100%; 
-    display: flex;
-    flex-direction: column; /* Apila verticalmente */
-    align-items: center;
-    align-content: center;
-    justify-content: center; 
-    text-align: center;
-    padding: 0.5rem; /* Espaciado interno */
-
-    p {
-        margin: 0;
-        font-size: 1rem; /* Ajuste de tamaño de fuente */
-    }
-
-    a,
-    button {
-        margin: 0.5rem; 
-        transform: scale(1); 
-        font-size: 1rem; /* Ajuste de tamaño de fuente para botones/enlaces */
-    }
-
-    a,
-    button:hover {
-        transform: scale(1.1);
-        transition: 0.1s ease-in-out all;
-    }
-
-    a {
-        font-size: 1.2rem; /* Tamaño de fuente para iconos de enlace */
-    }
-}
-
-/* Gráficos de barra inferiores */
-.bartwo {
-    width: 100%; 
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    margin: 0 auto;
-    border: thin solid #ffffff;
-    background-color: #fff;
-    border-radius: 0px 0px 20px 20px; /* Mantener solo bordes inferiores redondeados */
-    align-items: center;
-    align-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
-    padding: 0.8rem; /* Espaciado interno */
-}
-
-.select-bar {
-    padding: 0.5rem; 
-    width: 100%; /* Ocupa todo el ancho */
-    box-sizing: border-box;
-
-    select {
-        margin: 0;
-        width: 100%; /* Asegura que el select ocupe todo el ancho */
-        font-size: 1rem; /* Ajuste de tamaño de fuente */
-    }
-}
-
-.btn-bar {
-    padding: 0.5rem; 
-    width: 100%; /* Ocupa todo el ancho */
-    box-sizing: border-box;
-    font-size: 1rem; /* Ajuste de tamaño de fuente */
-}
 
 /* Anchuras */
 /* ==================== */
@@ -445,6 +54,17 @@
   /* #region Formulario Procedimientos */
     .form-container{
       padding: 1rem .5rem;
+    }
+  /* #endregion */
+
+  /* #region Notificaicones Area Personal */
+    .noti-container {
+      left: calc(100% / 2 - 170px);
+      width: 340px;
+    }
+    .noti-container-comandante {
+      left: calc(100% / 2 - 170px);
+      width: 340px;
     }
   /* #endregion */
 }
@@ -506,6 +126,17 @@
       margin-bottom: .8rem;
     }
   }
+  /* #endregion */
+
+  /* #region Notificaicones Area Personal */
+    .noti-container {
+      left: calc(100% / 2 - 210px);
+      width: 420px;
+    }
+    .noti-container-comandante {
+      left: calc(100% / 2 - 210px);
+      width: 420px;
+    }
   /* #endregion */
 }
 
@@ -654,6 +285,80 @@
 
   /* #endregion */
 
+  /* #region Estadisticas */
+  .bar-graphic-horizontal{
+    padding: .1rem;
+    padding-right: .5rem;
+    width: 580px !important;
+    margin: 0 auto;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+  }
+  .bartwo{
+    width: 578px;
+  }
+
+  .barts-horizontal{
+    min-width: 600px !important;
+  }
+  .cards-stadist-rows{
+    height: 110vh !important;
+  }
+  .cards-stadists{
+    width: 90%;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+  }
+  /* #endregion */
+
+  /* #region Notificaicones Area Personal */
+    .noti-container {
+      left: 20px;
+    }
+    .noti-container-comandante {
+      left: 20px;
+    }
+  /* #endregion */
+
+  /* #region Instagram */
+    .form-instagram{
+      width: 100%;
+      height: auto;
+    }
+    .form-feed-instagram{
+      flex-wrap: nowrap;
+      width: 80%;
+
+      button{
+        padding: .7rem;
+        margin: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+      
+      input{
+        padding: .7rem;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+
+    .modal-content-instagram{
+      width: 60%;
+    }
+    .instagram-embed{
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding: 0;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      justify-content: space-evenly;
+
+      .instagram-media{
+        min-width: 40% !important;
+      }
+    }
+  /* #endregion */
 }
 
 /* ==================== */
@@ -751,6 +456,54 @@
   }
 
   /* #endregion */
+
+ /* #region Estadisticas */
+  .bar-graphic-horizontal{
+    padding: 0rem; 
+    padding-right: .5rem;
+    width: 95% !important;
+    margin: 0 auto;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+  }
+  .bartwo{
+    width: 95%;
+  }
+
+  .barts-horizontal{
+    min-width: 100% !important;
+  }
+  .barts{
+    min-width: 95%;
+  }
+
+  .cards-stadist-rows{
+    height: 100vh !important;
+  }
+  .cards-stadists{
+    width: 90%;
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+
+    select{
+      width: 80%;
+    }
+    .card-month{
+      width: 80%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    input{
+      width: 100%;
+      margin: 0 auto;
+    }
+    .btn-graphic {
+      width: 80%;
+      margin: .1rem;
+    }
+  }
+  /* #endregion */
+
 }
 
 /* ==================== */
@@ -844,6 +597,39 @@
 
   /* #endregion */
 
+  /* #region Estadisticas */
+    .cards-stadist-column{
+      width: 70%;
+      margin: 0 auto;
+    }
+    .section-month{
+      width: 90%;
+      margin: 0 auto;
+    }
+    .bar-graphic{
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    .cards-stadist-rows{
+      height: 90vh !important;
+    }
+    .cards-stadists{
+      width: 70%;
+    }
+  /* #endregion */
+
+  /* #region Instagram */
+    .form-feed-instagram{
+      width: 60%;
+    }
+
+    .instagram-embed{
+      .instagram-media{
+        min-width: 31% !important;
+      }
+    }
+  /* #endregion */
+
 }
 
 /* ==================== */
@@ -880,7 +666,6 @@
   }
 
   /* #endregion */
-
 
   /* #region Dashboard */
 
@@ -930,6 +715,55 @@
       }
     }
   /* #endregion */
+
+  /* #region Estadisticas */
+    .content-stadist{
+      flex-direction: row-reverse;
+      align-items: flex-start;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .stadist-column{
+      margin: 0;
+      margin-left: 1rem;
+    }
+
+    .cards-stadist-column{
+      width: 100%;
+      
+      border-radius: 0;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+    .cards-stadists{
+      border-radius: 0;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    .stadist-rows{
+      padding: 0;
+    }
+    
+    .cards-stadists{
+      width: 100%;
+    }
+  /* #endregion */
+
+  /* #region Instagram */
+
+    .modal-content-instagram{
+      width: 40%;
+    }
+
+    .instagram-embed{
+      .instagram-media{
+        min-width: 31% !important;
+      }
+    }
+  /* #endregion */
+
 }
 
 /* ==================== */
@@ -1039,8 +873,23 @@
       width: 85%;
     } */
   /* #endregion */
-}
 
+  /* #region Instagram */
+  .form-feed-instagram{
+    width: 50%;
+  }
+
+  .modal-content-instagram{
+    width: 40%;
+  }
+
+  .instagram-embed{
+    .instagram-media{
+      min-width: 30% !important;
+    }
+  }
+  /* #endregion */
+}
 
 
 
@@ -1454,3 +1303,76 @@
   align-content: center;
 } */
 
+/* .margin-span {
+    margin: 0 .4rem;
+} */
+
+
+/* Herramientas de personal (tool-personal) */
+/* .tool-personal {
+    width: 100%; 
+    height: auto;
+    padding: 0.8rem;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    background-color: #ffffff;
+    border: thin solid #ffffff;
+    margin: 0 auto;
+    border-radius: 10px;
+    flex-wrap: wrap;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+} */
+
+
+/* Filtros y acciones */
+/* .accion-filter {
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0.5rem; 
+    div {
+        margin: 0.5rem; 
+    }
+}
+
+.accion-personal {
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center; 
+    text-align: center;
+    padding: 0.5rem; 
+
+    p {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    a,
+    button {
+        margin: 0.5rem; 
+        transform: scale(1); 
+        font-size: 1rem;
+    }
+
+    a,
+    button:hover {
+        transform: scale(1.1);
+        transition: 0.1s ease-in-out all;
+    }
+
+    a {
+        font-size: 1.2rem;
+    }
+} */

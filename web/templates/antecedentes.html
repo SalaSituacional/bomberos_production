@@ -65,47 +65,65 @@
     </div>
 </div>
 
-<div class="section-filter">
+<div class="filter-container">
     <!-- buscar_cedula.html -->
-<form method="get" class="form-control">
-<!-- {{ form.as_div }} -->
-<section class="filter-search">
-  <span class="input-group-text" id="basic-addon1"><b> Nacionalidad: </b> </span>
-  <select id="nacionalidad" name="nacionalidad" class="form-select">
-    <option value="V">V</option>
-    <option value="E">E</option>
+  <form method="get" class="filter-form">
 
-  </select>
-  <span class="input-group-text" id="basic-addon1"><b> Numero de cedula: </b> </span>
-  <input
-    class="form-control"
-    type="search"
-    name="numero_cedula"
-    id="cedula"
-    placeholder=""
-  />
-    <!-- Input para seleccionar el trimestre -->
-  <button type="submit" class="btn btn-danger">Buscar</button>
-</section>
-</form>
+    <div class="filter-group">
+      <div class="form-floating">
+        <select id="nacionalidad" name="nacionalidad" class="form-select">
+          <option value="V">V</option>
+          <option value="E">E</option>
+        </select>
+        <label id="basic-addon1">Nacionalidad: </label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="form-floating">
+        <input
+          type="search"
+          class="form-control"
+          name="numero_cedula"
+          id="cedula"
+        />
+        <label for="cedula">Numero de cedula: </label>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="filter-actions">
+      <button type="submit" class="filter-button" title="Filtrar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+        </svg>
+      </button>
+      {% if filtro_parroquia or filtro_procedimiento or filtro_trimestre %}
+        <a href="{% url 'antecedentes' %}" class="clear-button" title="Limpiar filtros">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+
+  </form>
 </div>
 
 <div class="table-responsive-sm">
     <table class="table table-hover" id="data-table">
       <thead>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Division</th>
-          <th scope="col">Nombres</th>
-          <th scope="col">Apellidos</th>
-          <th scope="col">Cedula</th>
-          <th scope="col">Parroquia</th>
-          <th scope="col">Municipio</th>
-          <th scope="col">Direccion</th>
-          <th scope="col">Fecha</th>
-          <th scope="col">Hora</th>
-          <th scope="col">Tipo de procedimiento</th>
-          <th scope="col">Acciones</th>
+          <th scope="col" class="fixed-width-auto">#</th>
+          <th scope="col" class="fixed-width">Division</th>
+          <th scope="col" class="fixed-width">Nombres</th>
+          <th scope="col" class="fixed-width">Apellidos</th>
+          <th scope="col" class="fixed-width">Cedula</th>
+          <th scope="col" class="fixed-width">Direccion</th>
+          <th scope="col" class="fixed-width-auto">Fecha</th>
+          <th scope="col" class="fixed-width-auto">Hora</th>
+          <th scope="col" class="fixed-width">Tipo de procedimiento</th>
+          <th scope="col" class="fixed-width-iconos">Acciones</th>
         </tr>
       </thead>
       <tbody class="table-group-divider">
@@ -113,27 +131,19 @@
         {% for row in datos %}
         <tr>
           <!-- prettier-ignore -->
-          <th scope="row">{{ forloop.counter }}</th>
+          <th scope="row" class="fixed-width-auto">{{ forloop.counter }}</th>
           <!-- prettier-ignore -->
-          <td> {{ row.procedimiento.id_division.division }}</td>
-          <td> {{ row.detalles.nombres }}</td>
+          <td class="fixed-width"> {{ row.procedimiento.id_division.division }}</td>
+          <td class="fixed-width"> {{ row.detalles.nombres }}</td>
           <!-- prettier-ignore -->
-          <td>{{ row.detalles.apellidos }}</td>
+          <td class="fixed-width">{{ row.detalles.apellidos }}</td>
           <!-- prettier-ignore -->
-          <td>{{ row.detalles.cedula }}</td>
-          <!-- prettier-ignore -->
-          {% if row.procedimiento.id_parroquia.parroquia != "Sin Registro" %}
-          <td>{{ row.procedimiento.id_parroquia.parroquia }}</td>
-          {% else %}
-          <td>Otros Municipios</td>
-          {% endif %}
-          <!-- prettier-ignore -->
-          <td>{{ row.procedimiento.id_municipio.municipio }}</td>
+          <td class="fixed-width">{{ row.detalles.cedula }}</td>
           <td class="fixed-width">{{ row.procedimiento.direccion }}</td>
-          <td>{{ row.procedimiento.fecha|date:"d-m-Y" }}</td>
-          <td>{{ row.procedimiento.hora }}</td>
-          <td>{{ row.procedimiento.id_tipo_procedimiento.tipo_procedimiento }}</td>
-          <td class="icons-accion">
+          <td class="fixed-width-auto">{{ row.procedimiento.fecha|date:"d-m-Y" }}</td>
+          <td class="fixed-width-auto">{{ row.procedimiento.hora }}</td>
+          <td class="fixed-width">{{ row.procedimiento.id_tipo_procedimiento.tipo_procedimiento }}</td>
+          <td class="icons-accion fixed-width-iconos">
             <!-- NO TOCAR Boton informacion-->
             <button
               type="button"
