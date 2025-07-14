@@ -208,9 +208,9 @@ class PersonalForm(forms.ModelForm):
             'jerarquia': forms.Select(choices=jerarquias, attrs={'class': 'form-select'}),
             'cargo': forms.TextInput(attrs={'class': 'form-control'}),
             'cedula': forms.TextInput(attrs={'class': 'form-control'}),
-            'sexo': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('M', 'Masculino'), ('F', 'Femenino')], attrs={'class': 'form-select'}),
+            'sexo': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('Masculino', 'Masculino'), ('Femenino', 'Femenino')], attrs={'class': 'form-select'}),
             'rol': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('Bombero', 'Bombero'), ('Administrativo', 'Administrativo'), ('Civil', 'Civil')], attrs={'class': 'form-select'}),
-            'status': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('Activo', 'Activo'), ('Jubilado', 'Jubilado'), ('Incapacitado', 'Incapacitado'), ('Fallecido', 'Fallecido'), ('Cese', 'Cese (Baja)'), ('Comision de Servicios', 'Comision de Servicios')], attrs={'class': 'form-select'}),
+            'status': forms.Select(choices=[('', 'Seleccione Una Opcion'), ('Activo', 'Activo'), ('Jubilado', 'Jubilado'), ('Incapacitado', 'Incapacitado'), ('Fallecido', 'Fallecido'), ('Cese', 'Cese (Baja)'), ('Comision de servicios', 'Comision de servicios')], attrs={'class': 'form-select'}),
         }
 
 class DetallesPersonalForm(forms.ModelForm):

@@ -1905,7 +1905,7 @@ summary>* {
 /*--------------------------- estilos de estadisticas -------------------------------------*/
 
 .stadist-rows{
- width: 100%;
+  width: 100%;
   background-color: #f0f0f0; /* Un gris muy claro para el fondo del carrusel */
   border-radius: 10px;
   display: flex;
@@ -1918,6 +1918,8 @@ summary>* {
   gap: 1rem; /* Espacio entre las tarjetas del carrusel */
   -webkit-overflow-scrolling: touch; /* Suaviza el desplazamiento en iOS */
   scroll-snap-type: x mandatory; /* Opcional: para que las tarjetas se "enganchen" al desplazarse */
+
+  margin-bottom: 2.2rem;
 }
 
 /* Tarjetas individuales del Carrusel (cards-stadist-rows) */
@@ -2149,7 +2151,7 @@ summary>* {
     min-height: 70vh;
     margin: 0 auto;
     display: flex;
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory; /* Permite el desplazamiento horizontal con "enganche" */
 }
