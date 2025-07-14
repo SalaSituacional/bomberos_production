@@ -1446,6 +1446,12 @@ summary>* {
   .disp-none {
     display: none;
   }
+  #form_comisionoes {
+    width: 100%;
+  }
+  #detalles-form {
+    width: 100%;
+  }
 
 /* #endregion */
 
@@ -2376,6 +2382,139 @@ summary>* {
 }
 /* #endregion */
 
+
+/* #region Formulario Personal */
+  /* Estilos Formularios Personal */
+.container-personal-form { 
+  width: 100%;
+  margin: 0 auto;
+
+  .w-100{
+    padding: 0;
+  }
+  .row{
+    width: 100%;
+    margin: 0 !important;
+  }
+}
+.container-personal-form .form-floating label{
+  color: #b6243a !important;
+  font-size: .9rem;
+}
+.container-personal-form .form-floating span{
+  font-size: .9rem;
+}
+.fecha-cese-input{
+  padding: 0;
+}
+.fecha-cese-input>div{
+  flex-direction: column;
+
+  div{
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  span{
+    flex-direction: column;
+    border-radius: 0 !important;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    font-size: .7rem;
+  }
+  small{
+    font-size: .7rem;
+  }
+  p{
+    padding-top: .5rem;
+  }
+}
+.errorlist { 
+  color: red;
+  list-style-type: none;
+  padding: 0;
+  margin-top: 5px;
+}
+
+.form-section {
+    background-color: #f8f9fa;
+    border-radius: 0px;
+    padding: 10px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #b6243a;
+}
+.form-section h2 {
+    margin-top: 0;
+    color: #b6243a;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+.dynamic-form {
+    border-radius: 0px !important;
+    background-color: transparent !important;
+    padding: 10px 0 !important;
+    margin-bottom: 15px !important;
+    border: none !important;
+    border-bottom: 3px solid #b6243a !important;
+    position: relative;
+}
+.add-form-btn {
+    margin-bottom: 20px;
+}
+.remove-form-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #dc3545;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+
+/* En tu archivo CSS principal */
+.is-valid {
+    border-color: #198754 !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.is-invalid2 {
+    border-color: #dc3545 !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+/* #endregion */
+
+
+/* #region Loader */
+  #loadingScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.856);
+    z-index: 999999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+/* #endregion */
+
 /****************** componentes reutilizables **************/
 
 /* .modal-content {
@@ -2389,27 +2528,10 @@ summary>* {
 } */
 
 
-
-.personal-register {
-  h2 {
-    margin: 0;
-    padding: 1.5rem;
-    text-align: center;
-  }
-}
-
-.modal-footer-personal {
-  justify-content: center;
-}
-
 .highlight {
   background-color: yellow;
 }
 
-
-.modal-procediment-register {
-  top: 15rem;
-}
 /* ------------------------------------------------------------------------------------------------------------------------------- */
 /* blog style */
 .nav {
@@ -3133,20 +3255,6 @@ summary>* {
   opacity: 20%;
 }
 
-/* Bloquear interacción con el sitio */
-#loadingScreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.856);
-  z-index: 999999999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .carousel-item {
   img {
     margin-bottom: 10rem;
@@ -3323,22 +3431,31 @@ summary>* {
   flex-direction: column;
 }
 
-#form_comisionoes {
-  width: 100%;
-}
 
-#detalles-form {
-  width: 100%;
-}
 
-#cargar_mas_btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
 
-.modify-width {
-  width: 100%;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* ********************Estilos Seccion de Prevencino (Solicitudes)******************************** */
@@ -3632,268 +3749,9 @@ summary>* {
     opacity: 1;
 }
 
-/* Estilos generales del formulario */
-  /* .parte-a {
-    background-color: #f8f9fa;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-  }
-
-  .parte-a h2 {
-    color: #2c3e50;
-    margin-bottom: 25px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e9ecef;
-    font-weight: 600;
-  } */
-
-  /* .form-group {
-    margin-bottom: 20px;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #495057;
-  } */
-
-  /* Estilos para inputs y selects */
-  /* .form-control, .form-select {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    background-color: #fff;
-  }
-
-  .form-control:focus, .form-select:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    outline: none;
-  } */
-
-  /* Estilo especial para campos deshabilitados */
-  /* .form-control:disabled, .form-select:disabled {
-    background-color: #e9ecef;
-    color: #6c757d;
-    cursor: not-allowed;
-  } */
-
-  /* Estilo para campos requeridos */
-  /* .form-group.required label:after {
-    content: " *";
-    color: #dc3545;
-  } */
-
-  /* Estilo para campos activos (como el de referencia) */
-  /* .campo-activo {
-    position: relative;
-  }
-
-  .campo-activo label {
-    color: #2c3e50;
-    font-weight: 600;
-  }
-
-  .campo-activo .form-control, .campo-activo .form-select {
-    border-left: 3px solid #28a745;
-    padding-left: 12px;
-  } */
-
-  /* Estilo para campos inactivos */
-  /* .campo-inactivo label {
-    color: #6c757d;
-  }
-
-  .campo-inactivo .form-control, .campo-inactivo .form-select {
-    background-color: #f8f9fa;
-    color: #6c757d;
-  } */
-
-  /* Estilo para los botones */
-  /* .buttons-solicitud {
-    display: flex;
-    gap: 15px;
-    justify-content: flex-end;
-  }
-
-  .btn.registrar {
-    padding: 10px 25px;
-    border-radius: 4px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-
-  .btn-danger.registrar {
-    background-color: #dc3545;
-    border-color: #dc3545;
-  }
-
-  .btn-danger.registrar:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-    transform: translateY(-2px);
-  } */
-
-  /* Estilo para selects con primera opción deshabilitada */
-  /* .disable-first-option option:first-child {
-    color: #6c757d;
-  } */
-
-  /* Grid layout para campos que podrían estar en línea */
-  /* @media (min-width: 768px) {
-    .form-row {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-  } */
 
 
-/* Estilos para el Autocompletado */
-  /* .select-autocomplete {
-    position: relative;
-    width: 100%;
-  }
 
-  .select-autocomplete input {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-
-  .select-autocomplete .dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    max-height: 200px;
-    overflow-y: auto;
-    background: white;
-    border: 1px solid #ced4da;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-    z-index: 1000;
-    display: none;
-  }
-
-  .select-autocomplete .dropdown-item {
-    padding: 8px 15px;
-    cursor: pointer;
-  }
-
-  .select-autocomplete .dropdown-item:hover {
-    background-color: #f8f9fa;
-  }
-
-  .select-autocomplete .search-icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6c757d;
-  } */
-
-  /* Ocultar el select original pero mantenerlo para el formulario */
-  /* .hidden-select {
-    display: none;
-  }
-
-  .mensaje-cedula {
-    font-size: 0.85rem;
-    padding: 3px 8px;
-    border-radius: 4px;
-    margin-top: 5px;
-    transition: all 0.3s ease;
-} */
-
-/* Para el estado de validación */
-/* .cedula-valida {
-    color: #28a745;
-    background-color: #e8f5e9;
-}
-
-.cedula-invalida {
-    color: #dc3545;
-    background-color: #f8d7da;
-}
-
-.pagination-container {
-    margin: 20px 0;
-}
-
-.pagination {
-    margin-bottom: 10px;
-}
-
-.page-item.active .page-link {
-    background-color: #dc3545;
-    border-color: #dc3545;
-}
-
-.page-link {
-    color: #dc3545;
-}
-
-.page-link:hover {
-    color: #a71d2a;
-}
-
-.text-center {
-    color: #6c757d;
-    font-size: 0.9rem;
-} */
-
-/* Estilos personalizados para el formulario */
-/* .section-filter .input-group-text {
-  min-width: 80px;
-  justify-content: center;
-}
-
-.section-filter .form-control:read-only {
-  background-color: #f8f9fa;
-}
-
-.section-filter .btn {
-  white-space: nowrap;
-} */
-/* .section-filter .input-group-text {
-  min-width: 80px;
-  justify-content: center;
-  background-color: #dc3545 !important;
-  border-right: none;
-  color: white;
-}
-
-.section-filter .form-control {
-  border-left: none;
-}
-
-.section-filter .badge {
-  font-size: 0.9rem;
-  padding: 0.5em 0.75em;
-}
-
-.form-floating input {
-        padding-top: 2rem !important;
-        padding-bottom: .5rem !important;
-    }
-    .form-floating select{
-        padding-top: 2rem !important;
-        padding-bottom: .5rem !important;
-    }
-
-.form-check-input:checked{
-  background-color: #b6243a;
-  border-color: #b6243a;
-} */
 
 /* Filtros */
 
@@ -4474,9 +4332,9 @@ summary>* {
 }
 
 
-.is-invalid {
+/* .is-invalid {
   border-color: red;
-}
+} */
 
 .cerrar-noti {
   background: transparent;
@@ -4694,19 +4552,6 @@ summary>* {
   overflow: scroll;
 }
 
-/* .form-check {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
-
-  input {
-    padding: 0;
-    margin: 0;
-  }
-} */
 
 #confirmDeleteModal {
   position: fixed;
@@ -4878,451 +4723,8 @@ summary>* {
   border-radius: 20px;
 }
 
-/* .table-width-100 {
-  width: 100%;
-} */
 
 
-
-
-
-
-
-
-
-
-/* .tabla-general-procedimientos{
-  width: 100%;
-}
-.table-personal{
-  width: 100%;
-}
-.tabla-operaciones {
-  width: 100%;
-}
-.tabla-rescate {
-  width: 100%;
-}
-.tabla-prehospitalaria {
-  width: 100%;
-}
-.tabla-grumae{
-  width: 100%;
-}
-.tabla-prevencion{
-  width: 100%;
-}
-.tabla-capacitacion{
-  width: 100%;
-}
-.tabla-enfermeria{
-  width: 100%;
-}
-.tabla-serviciosmedicos{
-  width: 100%;
-}
-.tabla-psicologia{
-  width: 100%;
-}
-.tabla_herramientas{
-  width: 100%;
-}
-#tabla_herramientas_inventario{
-  width: 100%  !important;
-}
-.tabla_asignaciones{
-  width: 100%;
-} */
-
-
-
-
-
-
-
-/* Estilos Detalles Personal */
-.perfil-empleado {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 80%;
-  margin: 0 auto;
-  padding: 1.5rem;
-  background-color: #fff;
-  border-radius: .5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.perfil-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 3rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
-  justify-content: space-between;
-}
-
-.foto-perfil {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-right: 2rem;
-  border: 4px solid #f5f5f5;
-}
-
-.img-perfil {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.info-basica{
-  flex: 1;
-}
-
-.info-basica h1 {
-  margin: 0;
-  color: #333;
-  font-size: 1.8rem;
-}
-
-.cargo {
-  font-size: 1.5rem;
-  color: #555;
-  margin: 5px 0;
-}
-
-.jerarquia {
-  color: #777;
-  font-size: 1.3rem;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-.grupo-sanguineo{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-self: flex-start;
-  font-size: 2.1rem;
-}
-.badge {
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.badge.activo {
-  background-color: #28a745;
-  color: #fff;
-  font-weight: bold;
-}
-.badge.warning {
-  background-color: orange;
-  color: #fff;
-  font-weight: bold;
-}
-
-.badge.inactivo {
-  background-color: #ccc;
-  color: #888;
-  font-style: italic;
-  opacity: 0.7;
-}
-
-.perfil-detalles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 2rem;
-}
-.ascensos-detalles{
-  margin-top: 2rem;
-  width: 100%;
-}
-.ascensos-container {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  background-color: #FfFfFf;
-  border-radius: .3rem;
-
-  h2{
-    width: 100%;
-    text-align: center;
-    border-radius: 0.3rem;
-    margin: 0;
-    margin-bottom: 1rem;
-    color: #444;
-    border-bottom: 1px solid #ddd;
-  }
-  th{
-    text-align: center;
-    color: #444;
-    font-weight: bold;
-  }
-  td {
-    text-align: center;
-    color: #555;
-    width: calc(100% / 3.5);
-  }
-  div{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-  input{
-    align-self: center;
-    font-size: 20px;
-    color: #555;
-    width: 75%;
-    text-align: center;
-  }
-}
-.boton_agregar_ascenso{
-  width: 100%; display: flex; justify-content: flex-end !important; margin: 1rem; margin-top: 0;
-}
-.tabla_ascensos{
-  width: 100%;background-color: #f5f5f5; border-radius: .5rem; margin: 0;
-}
-
-.familiares-detalles{
-  margin-top: 2rem;
-  width: 100%;
-}
-.familiares-container {
-  margin-top: 2rem;
-  padding: 1rem;
-
-  h2{
-    text-align: center;
-    color: #444;
-    margin: 0;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-  }
-
-  .family-card {
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 1.3rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .family-card h3 {
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.4rem;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .family-card p {
-    margin: 5px 0;
-    color: #555;
-  }
-
-  .family-card strong {
-    color: #555;
-  }
-}
-
-
-.family-cards-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
-
-.family-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background-color: white;
-}
-
-.family-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.family-card-header {
-  background-color: #f8f9fa;
-  padding: 1rem;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.family-card-header h4 {
-  margin: 0;
-  color: #333;
-  font-size: 1.1rem;
-}
-
-.family-card-body {
-  padding: 1rem;
-}
-
-.family-info-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.8rem;
-}
-
-.family-info-item i {
-  margin-right: 0.8rem;
-  color: #b6243a;
-  font-size: 1.1rem;
-}
-
-.family-info-item div {
-  display: flex;
-  flex-direction: column;
-}
-
-.info-label {
-  font-size: 0.8rem;
-  color: #6c757d;
-}
-
-.family-card-footer {
-  padding: 0.8rem 1rem;
-  background-color: #f8f9fa;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: space-between;
-}
-
-
-
-
-.detalle-seccion {
-  background-color: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 6px;
-}
-
-.detalle-seccion h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: #444;
-  font-size: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
-}
-
-.detalle-item {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  font-size: 1.1rem;
-
-}
-
-.detalle-label {
-  font-weight: bold;
-  color: #666;
-  margin-right: .3rem;
-}
-
-.detalle-valor {
-  color: #333;
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-/* En tu archivo CSS principal */
-.is-valid {
-    border-color: #198754 !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") !important;
-    background-repeat: no-repeat;
-    background-position: right calc(0.375em + 0.1875rem) center;
-    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-}
-
-.is-invalid2 {
-    border-color: #dc3545 !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e") !important;
-    background-repeat: no-repeat;
-    background-position: right calc(0.375em + 0.1875rem) center;
-    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
-}
-
-.invalid-feedback {
-    display: block;
-    color: #dc3545;
-    font-size: 0.875em;
-    margin-top: 0.25rem;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Estilos Formularios Personal */
-.container { border-radius: 8px; max-width: 70%; margin: 20px auto; }
-.errorlist { color: red; list-style-type: none; padding: 0; margin-top: 5px; }
-.form-section {
-    background-color: #f8f9fa;
-    border-radius: 5px;
-    padding: 20px;
-    margin-bottom: 30px;
-    border-left: 4px solid #b6243a;
-}
-.form-section h2 {
-    margin-top: 0;
-    color: #b6243a;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #dee2e6;
-}
-.dynamic-form {
-    background-color: #fff;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border: 1px solid #dee2e6;
-    position: relative;
-}
-.add-form-btn {
-    margin-bottom: 20px;
-}
-.remove-form-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    color: #dc3545;
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-}
 
 
 
