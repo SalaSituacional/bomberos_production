@@ -7,13 +7,16 @@ from django.contrib import messages
 from ..forms import *
 from ..models import *
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.db.models import Case, When
-from datetime import timezone as dt_timezone
+from datetime import timezone as dt_timezone  # Importar el timezone de datetime
+from django.utils import timezone
 from django.http import JsonResponse
-from datetime import datetime
-from datetime import timedelta
+import instaloader
+import time
+from datetime import timezone as dt_timezone
+from django.utils import timezone
+from django.shortcuts import render, redirect
 from django.utils.timezone import make_aware
 from django.db.models import Prefetch
 from datetime import date
@@ -25,6 +28,7 @@ from django.utils.timezone import localdate
 from django.forms.models import model_to_dict
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Vista Personalizada para el error 404
@@ -45,21 +49,44 @@ def logout(request):
     request.session.flush()  # Eliminar todos los datos de la sesión
     return redirect('/login/')
 
+
+
 def get_instagram_post_date(url):
     L = instaloader.Instaloader()
-
-    # Extraer el shortcode de la URL
-    shortcode = url.split("/p/")[-1].split("/")[0]
-
+    
+    # Configuración para evitar bloqueos
+    L.request_timeout = 120
+    L.sleep = True
+    L.delay_requests = True
+    L.max_connection_attempts = 3
+    
     try:
-        # Obtener la publicación usando el shortcode
-        post = instaloader.Post.from_shortcode(L.context, shortcode)
-        naive_datetime = post.date_utc  # Asumiendo que `post.date_utc` es el valor sin zona horaria
-        # Convertir la fecha sin zona horaria a UTC
-        fecha_publicacion = timezone.make_aware(naive_datetime, dt_timezone.utc)
-        return fecha_publicacion
+        # Extracción del shortcode
+        if 'instagram.com/p/' in url:
+            shortcode = url.split('instagram.com/p/')[1].split('/')[0]
+        elif 'instagram.com/reel/' in url:
+            shortcode = url.split('instagram.com/reel/')[1].split('/')[0]
+        else:
+            return None
+
+        # Intento con reintentos
+        for attempt in range(3):
+            try:
+                post = instaloader.Post.from_shortcode(L.context, shortcode)
+                post_date = post.date
+                
+                # Convertir a datetime con timezone si es necesario
+                if post_date.tzinfo is None:
+                    post_date = timezone.make_aware(post_date, dt_timezone.utc)
+                    
+                return post_date
+            except Exception as e:
+                print(f"Intento {attempt + 1} fallido: {str(e)}")
+                time.sleep(5)
+                
+        return None
     except Exception as e:
-        print(f"Error al obtener la publicación: {e}")
+        print(f"Error final: {str(e)}")
         return None
 
 def instagram_feed(request):
@@ -67,26 +94,49 @@ def instagram_feed(request):
     if not user:
         return redirect('/')
 
-    success = False  # Variable para indicar si se ha agregado correctamente
+    # Obtener todos los posts ordenados por fecha
+    posts_list = InstagramPost.objects.all().order_by('-fecha')
+    
+    # Configurar paginación (15 items por página)
+    paginator = Paginator(posts_list, 12)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
 
     if request.method == 'POST':
-        url = request.POST.get('url')
+        url = request.POST.get('url', '').strip()
         if url:
+            if not any(x in url for x in ['instagram.com/p/', 'instagram.com/reel/']):
+                return render(request, 'instagram_feed.html', {
+                    **base_context(user),
+                    'posts': posts  # Usamos el objeto paginado
+                })
+            
             fecha_publicacion = get_instagram_post_date(url)
             if fecha_publicacion:
                 InstagramPost.objects.create(url=url, fecha=fecha_publicacion)
-                success = True  # Ahora success indica éxito sin redireccionar
-
-    posts = InstagramPost.objects.all().order_by('-fecha')
+                # Redirigir para evitar reenvío del formulario
+                return redirect('/instagram/?success=True')
+            else:
+                return render(request, 'instagram_feed.html', {
+                    **base_context(user),
+                    'error_message': "No se pudo obtener la fecha. ¿El post es público?",
+                    'posts': posts  # Usamos el objeto paginado
+                })
 
     return render(request, 'instagram_feed.html', {
+        **base_context(user),
+        'posts': posts  # Objeto paginado
+    })
+
+def base_context(user):
+    return {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        'posts': posts,
-        'success': success,  # Asegurarse de que success esté en el contexto
-    })
+        "apellidos": user["apellidos"]
+    }
+
+
 
 # Vista de la Ventana Inicial (Login)
 @never_cache
@@ -129,6 +179,7 @@ def View_personal(request):
 
     buscar_jerarquia = request.GET.get('filterJerarquia', '')
     buscar_status = request.GET.get('filterStatus', '')
+    buscar_rol = request.GET.get('filterRol', '')
 
     # Verificar si el usuario está en la sesión
     if not user:
@@ -142,6 +193,8 @@ def View_personal(request):
         personal_queryset = personal_queryset.filter(jerarquia__icontains=buscar_jerarquia)
     if buscar_status:
         personal_queryset = personal_queryset.filter(status=buscar_status)
+    if buscar_rol:
+        personal_queryset = personal_queryset.filter(rol=buscar_rol)
 
     conteo = personal_queryset.count()
 
@@ -187,7 +240,8 @@ def View_personal(request):
         "personal": personal_ordenado,
         "conteo": conteo,
         "filterJerarquia": buscar_jerarquia,  # Para mantener el filtro en el template
-        "filterStatus": buscar_status        # Para mantener el filtro en el template
+        "filterStatus": buscar_status,        # Para mantener el filtro en el template
+        "filterRol": buscar_rol                # Para mantener el filtro en el template
     })
 
 
@@ -2316,55 +2370,61 @@ def ver_registros(request):
     if not user:
         return redirect('/')
 
-        # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-        # Convierte la fecha cargada a un objeto datetime "aware"
-    if fecha_carga:
-        fecha_inicio = make_aware(datetime.strptime(fecha_carga, "%Y-%m-%d"))
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
-
-
     # Filtrar procedimientos según la fecha
-    registros = RegistroPeticiones.objects.filter(
-        fecha_hora__gte=fecha_inicio,
-        fecha_hora__lt=fecha_fin
-    ).order_by('-fecha_hora')
+    registros = RegistroPeticiones.objects.all().order_by('-fecha_hora')
 
-    # Convertir el QuerySet en una lista de diccionarios
-    procedimientos = list(
-        registros.values(
-            "usuario__user",  # Nombre del usuario relacionado
-            "url",
-            "fecha_hora"
-        )
-    )
+    # Configuración de paginación
+    page = request.GET.get('page', 1) # Obtener el número de página de la URL, por defecto 1
+    paginator = Paginator(registros, 15) # Mostrar 10 registros por página
 
-    # Formatear las fechas en el backend
-    for procedimiento in procedimientos:
-        procedimiento['fecha_hora'] = procedimiento['fecha_hora'].strftime("%d/%m/%Y, %H:%M")
+    try:
+        registros_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        # Si el parámetro de página no es un entero, entregar la primera página.
+        registros_paginados = paginator.page(1)
+    except EmptyPage:
+        # Si la página está fuera de rango (ej. 9999), entregar la última página de resultados.
+        registros_paginados = paginator.page(paginator.num_pages)
 
+    # Convertir el QuerySet paginado en una lista de diccionarios
+    # Solo procesamos los objetos de la página actual
+    procedimientos_para_template = []
+    for registro in registros_paginados:
+        procedimientos_para_template.append({
+            "usuario__user": registro.usuario.user,
+            "url": registro.url,
+            "fecha_hora": registro.fecha_hora.strftime("%d/%m/%Y, %H:%M")
+        })
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(registros.values(
-            "usuario__user",
-            "url",
-            "fecha_hora",
-        ))
+    if request.method == 'POST':  # Verificar si es una solicitud AJAX
+        # Para solicitudes AJAX, serializamos solo los datos de la página actual
+        procedimientos_ajax = []
+        for registro in registros_paginados:
+            procedimientos_ajax.append({
+                "usuario__user": registro.usuario.user,
+                "url": registro.url,
+                "fecha_hora": registro.fecha_hora.strftime("%d/%m/%Y, %H:%M") # Formatear para JSON
+            })
+        
+        # Devolver los datos paginados y la información de paginación
+        return JsonResponse({
+            'procedimientos': procedimientos_ajax,
+            'num_pages': paginator.num_pages, # Total de páginas
+            'current_page': registros_paginados.number, # Página actual
+            'has_next': registros_paginados.has_next(),
+            'has_previous': registros_paginados.has_previous(),
+            'next_page_number': registros_paginados.next_page_number() if registros_paginados.has_next() else None,
+            'previous_page_number': registros_paginados.previous_page_number() if registros_paginados.has_previous() else None,
+        })
 
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
-
-    return render(request, 'ver_registros.html', {'registros': procedimientos,
-                                                  "user": user,
-                                                  "jerarquia": user["jerarquia"],
-                                                  "nombres": user["nombres"],
-                                                  "apellidos": user["apellidos"],
-                                                  })
+    return render(request, 'ver_registros.html', {
+        'registros': procedimientos_para_template, # Pasamos la lista formateada para la primera carga
+        'datos': registros_paginados, # Pasamos el objeto paginador para la navegación
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
 
 def Antecedentes(request):
     datos_combinados = []
@@ -4672,5 +4732,3 @@ def View_Procedimiento_Editar(request):
         "comision_tres": datos_comision_tres,
         "form_brigada": form_brigada,
         })
-
-# ========================================================================================= Vistas Para el Area de Inventario de Unidades =====================================================

@@ -32,7 +32,7 @@
     {% if editing %}
     <h3 class="division-title">Editar Personal</h3>
     {% else %}
-    <h3 class="division-title">Registrar Nuevo Personal</h3>
+    <h3 class="division-title">Registrar Personal</h3>
     {% endif %}
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
@@ -67,7 +67,7 @@
     </section>
   </div>
 
-  <div class="container container-media-resolution">
+  <div class="container-personal-form">
     <div class="row justify-content-center">
       <div class="w-100">
 
@@ -168,7 +168,7 @@
               </div>
               
 
-              <div class="col-md-12 mb-3" id="fechaCeseContainer" style="display: none;">
+              <div class="col-md-12 mb-3 fecha-cese-input" id="fechaCeseContainer" style="display: none;">
                 <div class="d-flex align-items-center">
                   <!-- Badge informativo - 50% ancho -->
                   <div class="w-50 pe-3">  <!-- pe-3 para espacio entre elementos -->
@@ -197,115 +197,111 @@
           <!-- Detalles del Personal -->
           <div class="form-section">
             <h2>Detalles Laborales</h2>
-            <div class="dynamic-form">
-              <div class="row g-3">
+            <div class="row g-3">
 
-                <!-- Rol -->
-                <div class="col-md-4">
-                  <div class="form-floating">
-                    {{ personal_form.rol }}
-                    <label for="{{ personal_form.rol.id_for_label }}" class="form-label">Contrato</label>
-                  </div>
+              <!-- Rol -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ personal_form.rol }}
+                  <label for="{{ personal_form.rol.id_for_label }}" class="form-label">Contrato</label>
                 </div>
-
-                <!-- Jerarquia -->
-                <div class="col-md-4">
-                  <div class="form-floating">
-                    {{ personal_form.jerarquia }}
-                    <label for="{{ personal_form.jerarquia.id_for_label }}" class="form-label">Jerarquia</label>
-                  </div>
-                </div>
-
-                <!-- Cargo -->
-                <div class="col-md-4">
-                  <div class="form-floating">
-                    {{ personal_form.cargo }}
-                    <label for="{{ personal_form.cargo.id_for_label }}" class="form-label">Cargo</label>
-                  </div>
-                </div>
-                
-                <!-- Fecha de Ingreso -->
-                <div class="col-md-6">
-                  <div class="form-floating">
-                    {{ form.fecha_ingreso }}
-                    <label for="{{ form.fecha_ingreso.id_for_label }}" class="form-label">Fecha de Ingreso</label>
-                  </div>
-                </div>
-                
-                <!-- Horario -->
-                <div class="col-md-6">
-                  <div class="form-floating">
-                    {{ form.horario }}
-                    <label for="{{ form.horario.id_for_label }}" class="form-label">Horario</label>
-                  </div>
-                </div>
-
-                <!-- Tallas -->
-                <div class="col-md-4">
-                  <div class="form-floating">
-                    {{ form.talla_camisa }}
-                    <label for="{{ form.talla_camisa.id_for_label }}" class="form-label">Talla de Camisa</label>
-                  </div>
-                </div>
-
-                <div class="col-md-4">
-                  <div class="form-floating">
-                    {{ form.talla_pantalon }}
-                    <label for="{{ form.talla_pantalon.id_for_label }}" class="form-label">Talla de Pantalón</label>
-                  </div>
-                </div>
-
-                <div class="col-md-4">
-                  <div class="form-floating">
-                    {{ form.talla_zapato }}
-                    <label for="{{ form.talla_zapato.id_for_label }}" class="form-label">Talla de Zapato</label>
-                  </div>
-                </div>
-                
               </div>
+
+              <!-- Jerarquia -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ personal_form.jerarquia }}
+                  <label for="{{ personal_form.jerarquia.id_for_label }}" class="form-label">Jerarquia</label>
+                </div>
+              </div>
+
+              <!-- Cargo -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ personal_form.cargo }}
+                  <label for="{{ personal_form.cargo.id_for_label }}" class="form-label">Cargo</label>
+                </div>
+              </div>
+              
+              <!-- Fecha de Ingreso -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.fecha_ingreso }}
+                  <label for="{{ form.fecha_ingreso.id_for_label }}" class="form-label">Fecha de Ingreso</label>
+                </div>
+              </div>
+              
+              <!-- Horario -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.horario }}
+                  <label for="{{ form.horario.id_for_label }}" class="form-label">Horario</label>
+                </div>
+              </div>
+
+              <!-- Tallas -->
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ form.talla_camisa }}
+                  <label for="{{ form.talla_camisa.id_for_label }}" class="form-label">Talla de Camisa</label>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ form.talla_pantalon }}
+                  <label for="{{ form.talla_pantalon.id_for_label }}" class="form-label">Talla de Pantalón</label>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-floating">
+                  {{ form.talla_zapato }}
+                  <label for="{{ form.talla_zapato.id_for_label }}" class="form-label">Talla de Zapato</label>
+                </div>
+              </div>
+              
             </div>
           </div>
 
           <!-- Datos Fiscales -->
           <div class="form-section">
             <h2>Datos Fiscales</h2>
-            <div class="dynamic-form">
-              <div class="row g-3">
+            <div class="row g-3">
 
-                <!-- Banco -->
-                <div class="col-md-6">
-                  <div class="form-floating">
-                    {{ form.banco }}
-                    <label for="{{ form.banco.id_for_label }}" class="form-label">Banco</label>
-                  </div>
+              <!-- Banco -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.banco }}
+                  <label for="{{ form.banco.id_for_label }}" class="form-label">Banco</label>
                 </div>
-
-                <!-- Numero de Cuenta -->
-                <div class="col-md-6">
-                  <div class="form-floating">
-                    {{ form.nro_cuenta }}
-                    <label for="{{ form.nro_cuenta.id_for_label }}" class="form-label">Numero de Cuenta</label>
-                  </div>
-                </div>
-
-                <!-- Numero de Rif -->
-                <div class="col-md-6">
-                  <div class="form-floating">
-                    {{ form.nro_rif }}
-                    <label for="{{ form.nro_rif.id_for_label }}" class="form-label">Numero De RIF</label>
-                    <span class="form-text text-muted" style="padding-left: .3rem; font-size: 1rem;">Ejemplo: V123456789</span>
-                  </div>
-                </div>
-                
-                <!-- Seguro Social -->
-                <div class="col-md-6">
-                  <div class="form-floating">
-                    {{ form.seguro_social }}
-                    <label for="{{ form.seguro_social.id_for_label }}" class="form-label">Numero Seguro Social</label>
-                  </div>
-                </div>
-                
               </div>
+
+              <!-- Numero de Cuenta -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.nro_cuenta }}
+                  <label for="{{ form.nro_cuenta.id_for_label }}" class="form-label">Numero de Cuenta</label>
+                </div>
+              </div>
+
+              <!-- Numero de Rif -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.nro_rif }}
+                  <label for="{{ form.nro_rif.id_for_label }}" class="form-label">Numero De RIF</label>
+                  <span class="form-text text-muted" style="padding-left: .3rem; font-size: 1rem;">Ejemplo: V123456789</span>
+                </div>
+              </div>
+              
+              <!-- Seguro Social -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {{ form.seguro_social }}
+                  <label for="{{ form.seguro_social.id_for_label }}" class="form-label">Numero Seguro Social</label>
+                </div>
+              </div>
+              
             </div>
           </div>
           

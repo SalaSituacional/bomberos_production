@@ -49,10 +49,10 @@
     <table class="table table-hover" style="max-width: 100%;" id="data-table">
       <thead>
         <tr>
-            <th scope="col">#</th>
-            <th>Usuario</th>
-            <th>URL</th>
-            <th>Fecha y Hora</th>
+            <th scope="col" class="fixed-width-auto">#</th>
+            <th class="fixed-width">Usuario</th>
+            <th class="fixed-width">URL</th>
+            <th class="fixed-width">Fecha y Hora</th>
         </tr>
       </thead>
       <tbody class="table-group-divider">
@@ -60,10 +60,10 @@
         {% for registro in registros %}
         <tr>
           <!-- prettier-ignore -->
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ registro.usuario__user }}</td>
-            <td>{{ registro.url }}</td>
-            <td>{{ registro.fecha_hora }}</td>
+            <th scope="row" class="fixed-width-auto">{{ forloop.counter }}</th>
+            <td class="fixed-width">{{ registro.usuario__user }}</td>
+            <td class="fixed-width">{{ registro.url }}</td>
+            <td class="fixed-width">{{ registro.fecha_hora }}</td>
         </tr>
         <!-- prettier-ignore -->
         {% endfor %}
@@ -72,12 +72,42 @@
     </table>
   </div>
 
-  <div class="contain-dates">
-    <section class="buttons-items">
-      <button id="cargar_mas_btn" class="btn btn-danger">Cargar Registros</button>
-    </section>
-  
-  </div>
+<!-- Después de tu tabla existente -->
+<div class="pagination">
+    <span class="step-links">
+        {% if datos.has_previous %}
+            <a href="?page=1{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+              class="btn btn-secondary">&laquo;</a>
+            <a href="?page={{ datos.previous_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+              class="btn btn-danger">&lsaquo;</a>
+        {% else %}
+            <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+              &laquo;
+            </a>
+            <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+              &lsaquo;
+            </a>  
+        {% endif %}
+
+
+        {% if datos.has_next %}
+            <a href="?page={{ datos.next_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+              class="btn btn-danger">&rsaquo;</a>
+            <a href="?page={{ datos.paginator.num_pages }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+              class="btn btn-secondary">&raquo;</a>
+        {% else %}
+            <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+              &rsaquo;
+            </a>
+            <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+              &rsaquo;
+            </a>  
+        {% endif %}
+    </span>
+    <span class="current">
+        Página {{ datos.number }} de {{ datos.paginator.num_pages }}.
+    </span>
+</div>
 
 <footer class="footer">
     <section class="text-reserved">
@@ -86,5 +116,4 @@
   </footer>
   <!-- Script final  -->
   <script src="{% static 'js/info_modal.js' %}"></script>
-  <script src="{% static 'js/cargar_mas_registros.js' %}"></script>
 {% endblock %}
