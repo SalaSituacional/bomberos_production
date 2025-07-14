@@ -118,7 +118,7 @@
         </div>
         <div class="detalle-item">
           <span class="detalle-label">Género:</span>
-          <span class="detalle-valor">{{ detalles.personal.sexo }}</span>
+          <span class="detalle-valor">{% if detalles.personal.sexo == 'M' %}Masculino{% else %}Femenino{% endif %}</span>
         </div>
         <div class="detalle-item">
           <span class="detalle-label">Estado Civil:</span>
@@ -199,6 +199,11 @@
         </div>
       </div>
     </div>
+    <div class="mensaje-ayuda">
+      <span>Para ver más información, deslice a la derecha</span>
+      <i class="bi bi-arrow-right-circle"></i>
+    </div>
+    
 
     <div class="ascensos-detalles">
       <div class="ascensos-container">
@@ -211,24 +216,24 @@
           </div>
 
           <!-- Tabla de ascensos -->
-          <div class="w-100 responsive-scroll">
+          <div class="w-100 tabla-ascensos-container">
               <table class="tabla_ascensos">
                   <thead>
                       <tr>
-                          <th><i class="bi bi-newspaper"></i>  Gaceta</th>
-                          <th><i class="bi bi-calendar-event"></i>  Fecha</th>
-                          <th><i class="bi bi-award"></i>  Jerarquía</th>
-                          <th><i class="bi bi-tools"></i>  Acciones</th>
+                          <th class=""><i class="bi bi-newspaper"></i>  Gaceta</th>
+                          <th class=""><i class="bi bi-calendar-event"></i>  Fecha</th>
+                          <th class=""><i class="bi bi-award"></i>  Jerarquía</th>
+                          <th class=""><i class="bi bi-tools"></i>  Acciones</th>
                       </tr>
                   </thead>
                   <tbody>
                       <!-- Filas de datos existentes -->
                       {% for ascenso in detalles.ascensos %}
                       <tr>
-                          <td>{{ ascenso.gaceta }}</td>
-                          <td>{{ ascenso.fecha|date:"m-d-Y" }}</td>
-                          <td>De {{ ascenso.actual }} a {{ ascenso.nuevo }}</td>
-                          <td></td>
+                          <td class="">{{ ascenso.gaceta }}</td>
+                          <td class="">{{ ascenso.fecha|date:"m-d-Y" }}</td>
+                          <td class="">{{ ascenso.actual }} a {{ ascenso.nuevo }}</td>
+                          <td class=""></td>
                       </tr>
                       {% empty %}
                       <tr>
@@ -258,9 +263,42 @@
                               </td>
                               <td>
                                   <div class="d-flex gap-2">
-                                      <input type="text" class="form-control border-0 border-bottom rounded-3 shadow-none"id="id_actual" name="actual" placeholder="De" value="{{ detalles.form_ascenso.actual.value|default_if_none:'' }}">
+                                    <select name="actual" id="id_actual" class="form-select border-0 border-bottom rounded-3 shadow-none">
+                                        <option value="" selected="">Seleccione una Jerarquía</option>
+                                        <option value="General">General</option>
+                                        <option value="Coronel">Coronel</option>
+                                        <option value="Teniente Coronel">Teniente Coronel</option>
+                                        <option value="Mayor">Mayor</option>
+                                        <option value="Capitán">Capitán</option>
+                                        <option value="Primer Teniente">Primer Teniente</option>
+                                        <option value="Teniente">Teniente</option>
+                                        <option value="Sargento Mayor">Sargento Mayor</option>
+                                        <option value="Sargento Primero">Sargento Primero</option>
+                                        <option value="Sargento segundo">Sargento segundo</option>
+                                        <option value="Cabo Primero">Cabo Primero</option>
+                                        <option value="Cabo Segundo">Cabo Segundo</option>
+                                        <option value="Distinguido">Distinguido</option>
+                                        <option value="Bombero">Bombero</option>
+                                    </select>
+                                      <!-- <input type="text" class="form-control border-0 border-bottom rounded-3 shadow-none"id="id_actual" name="actual" placeholder="De" value="{{ detalles.form_ascenso.actual.value|default_if_none:'' }}"> -->
                                       <span class="align-self-center">a</span>
-                                      <input type="text" class="form-control border-0 border-bottom rounded-3 shadow-none" id="id_nuevo" name="nuevo" placeholder="A" value="{{ detalles.form_ascenso.nuevo.value|default_if_none:'' }}">
+                                    <select name="nuevo" id="id_nuevo" class="form-select border-0 border-bottom rounded-3 shadow-none">
+                                      <option value="" selected="">Seleccione una Jerarquía</option>
+                                      <option value="General">General</option>
+                                      <option value="Coronel">Coronel</option>
+                                      <option value="Teniente Coronel">Teniente Coronel</option>
+                                      <option value="Mayor">Mayor</option>
+                                      <option value="Capitán">Capitán</option>
+                                      <option value="Primer Teniente">Primer Teniente</option>
+                                      <option value="Teniente">Teniente</option>
+                                      <option value="Sargento Mayor">Sargento Mayor</option>
+                                      <option value="Sargento Primero">Sargento Primero</option>
+                                      <option value="Sargento segundo">Sargento segundo</option>
+                                      <option value="Cabo Primero">Cabo Primero</option>
+                                      <option value="Cabo Segundo">Cabo Segundo</option>
+                                      <option value="Distinguido">Distinguido</option>
+                                    </select>
+                                      <!-- <input type="text" class="form-control border-0 border-bottom rounded-3 shadow-none" id="id_nuevo" name="nuevo" placeholder="A" value="{{ detalles.form_ascenso.nuevo.value|default_if_none:'' }}"> -->
                                   </div>
                               </td>
                               <td class="align-middle">
@@ -278,68 +316,74 @@
     </div>
 
     <div class="familiares-detalles">
-      <div class="familiares-container detalle-seccion">
+      <div class="familiares-container">
         <h2><i class="bi bi-people-fill me-2"></i>Información Familiar</h2>
         <br>
         <div class="card-body">
-              {% if detalles.familiares %}
-              <div class="family-cards-container">
-                  {% for familiar in detalles.familiares %}
-                  <div class="family-card">
-                      <div class="family-card-header">
-                          <h4><i class="bi bi-people-fill me-2"></i> {{ familiar.nombres }} {{ familiar.apellidos }}</h4>
-                          <span class="badge bg-danger">{{ familiar.parentesco }}</span>
-                      </div>
-                      <div class="family-card-body">
-                          <div class="family-info-item">
-                              <i class="bi bi-calendar-event"></i>
-                              <div>
-                                  <span class="info-label">Fecha Nacimiento:</span>
-                                  <span>{{ familiar.fecha_nacimiento|date:"d/m/Y" }}</span>
-                              </div>
-                          </div>
-                          <div class="family-info-item">
-                              <i class="bi bi-person-badge"></i>
-                              <div>
-                                  <span class="info-label">Edad:</span>
-                                  <span>{{ familiar.edad }} años</span>
-                              </div>
-                          </div>
-                          {% if familiar.cedula %}
-                          <div class="family-info-item">
-                              <i class="bi bi-credit-card"></i>
-                              <div>
-                                  <span class="info-label">Cédula:</span>
-                                  <span>{{ familiar.cedula }}</span>
-                              </div>
-                          </div>
-                          {% endif %}
-                          {% if familiar.partida_nacimiento %}
-                          <div class="family-info-item">
-                              <i class="bi bi-file-text"></i>
-                              <div>
-                                  <span class="info-label">Partida Nacimiento:</span>
-                                  <span>{{ familiar.partida_nacimiento }}</span>
-                              </div>
-                          </div>
-                          {% endif %}
-                      </div>
-                  </div>
-                  {% endfor %}
-              </div>
-              {% else %}
-              <div class="alert alert-info">
-                  No se han registrado familiares.
-              </div>
-              {% endif %}
+            {% if detalles.familiares %}
+            <div class="family-cards-container">
+                {% for familiar in detalles.familiares %}
+                <div class="family-card">
+                    <div class="family-card-header">
+                        <h4><i class="bi bi-people-fill me-2"></i> {{ familiar.nombres }} {{ familiar.apellidos }}</h4>
+                        <span class="badge bg-danger">{{ familiar.parentesco }}</span>
+                    </div>
+                    <div class="family-card-body">
+                        <div class="family-info-item">
+                            <i class="bi bi-calendar-event"></i>
+                            <div>
+                                <span class="info-label">Fecha Nacimiento:</span>
+                                <span>{{ familiar.fecha_nacimiento|date:"d/m/Y" }}</span>
+                            </div>
+                        </div>
+                        <div class="family-info-item">
+                            <i class="bi bi-person-badge"></i>
+                            <div>
+                                <span class="info-label">Edad:</span>
+                                <span>{{ familiar.edad }} años</span>
+                            </div>
+                        </div>
+                        {% if familiar.cedula %}
+                        <div class="family-info-item">
+                            <i class="bi bi-credit-card"></i>
+                            <div>
+                                <span class="info-label">Cédula:</span>
+                                <span>{{ familiar.cedula }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if familiar.partida_nacimiento %}
+                        <div class="family-info-item">
+                            <i class="bi bi-file-text"></i>
+                            <div>
+                                <span class="info-label">Partida Nacimiento:</span>
+                                <span>{{ familiar.partida_nacimiento }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No se han registrado familiares.
+            </div>
+            {% endif %}
         </div>
+      </div>
+      <div class="mensaje-ayuda">
+        <span>Para ver más información, deslice a la derecha</span>
+        <i class="bi bi-arrow-right-circle"></i>
       </div>
     </div>
 
     <br>
-    <a class="btn btn-danger" href="{% url 'personal' %}">
-      <i class="bi bi-arrow-left"></i> Volver
-    </a>
+    <div class="boton-volver-personal">
+      <a class="btn btn-danger" href="{% url 'personal' %}">
+        <i class="bi bi-arrow-left"></i> Volver
+      </a>
+    </div>
   </div>
 
 </section>
