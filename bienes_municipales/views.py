@@ -11,6 +11,9 @@ import fitz  # PyMuPDF
 from .forms import *
 from .models import *
 from .urls import *
+from web.models import Personal
+from web.forms import Asignar_ops_Personal
+
 
 def Dashboard_bienes(request):
     # Filtrar bienes por estado y contar el total de cada uno
@@ -47,7 +50,6 @@ def Dashboard_bienes(request):
         "count_estacion03": estacion03,
     })
 
-@login_required
 def Registros_bienes(request):
     user = request.session.get('user')
 
@@ -72,7 +74,7 @@ def Registros_bienes(request):
                 fecha_registro=data['fecha_registro'],
                 estado_actual=data['estado_actual']
             )
-            return redirect("inventario_bienes")
+            return redirect("inventarioBienes")
         else:
             return JsonResponse({"errores": form.errors}, status=400)
     
@@ -148,7 +150,11 @@ def reasignar_bien(request):
 
             nueva_dependencia = form.cleaned_data['nueva_dependencia']
             nuevo_departamento = form.cleaned_data['nuevo_departamento']
-            ordenado_por = form.cleaned_data['ordenado_por']
+            
+            ordenado_por_id = form.cleaned_data['ordenado_por'] 
+            
+            ordenado_por_instance = get_object_or_404(Personal, pk=ordenado_por_id)
+
             fecha_orden = form.cleaned_data['fecha_orden']
 
             # Guardar el movimiento
@@ -156,7 +162,7 @@ def reasignar_bien(request):
                 bien=bien,
                 nueva_dependencia=nueva_dependencia,
                 nuevo_departamento=nuevo_departamento,
-                ordenado_por=ordenado_por,
+                ordenado_por=ordenado_por_instance, # ¡Ahora pasamos la instancia de Personal!
                 fecha_orden=fecha_orden
             )
 

@@ -1,25 +1,44 @@
 let paginaActual = 1;
-const porPagina = 15;
+const porPagina = 15; // This variable isn't directly used in the fetch URL,
+                      // but it's good to keep if you plan to implement
+                      // client-side pagination logic.
 
 // Cargar bienes y actualizar tabla
 function cargarBienes(pagina = 1) {
   const filtro = document.getElementById("filterid")?.value.trim();
-  const url = filtro
-    ? `/api/bienes/?identificador=${encodeURIComponent(filtro)}`
-    : `/api/bienes/?page=${pagina}`;
+  let url = new URL(API_BIENES_URL, window.location.origin); // Use URL constructor for better URL building
 
-  fetchWithLoader(url)
+  if (filtro) {
+    url.searchParams.append('identificador', filtro);
+  } else {
+    url.searchParams.append('page', pagina);
+  }
+
+  fetchWithLoader(url.toString()) // Convert URL object to string
     .then((data) => {
+      // Check if data.bienes exists and is an array
       if (!data || !Array.isArray(data.bienes)) {
-        throw new Error("Respuesta inesperada del servidor.");
+        throw new Error("Respuesta inesperada del servidor o formato de datos incorrecto.");
       }
 
-      
       const tbody = document.querySelector("#tablaBienes tbody");
+      // Clear existing rows
       tbody.innerHTML = "";
-      
-      
 
+      if (data.bienes.length === 0 && !filtro) {
+        // Display "No data" message only if no filter is applied and no bienes are found
+        const noDataRow = `<tr><td colspan='10'>No se encontraron bienes.</td></tr>`;
+        tbody.insertAdjacentHTML("beforeend", noDataRow);
+        actualizarPaginacion(0, 0); // Disable pagination
+        return;
+      } else if (data.bienes.length === 0 && filtro) {
+        // Display "No matching bienes" message if filter is applied and no bienes are found
+        const noResultsRow = `<tr><td colspan='10'>No Existen Bienes Asociados A Este Identificador.</td></tr>`;
+        tbody.insertAdjacentHTML("beforeend", noResultsRow);
+        actualizarPaginacion(0, 0); // Disable pagination
+        return;
+      }
+      
       data.bienes.forEach((bien) => {
         const fila = `
           <tr data-identificador="${bien.identificador}" data-departamento="${bien.departamento}">
@@ -32,13 +51,13 @@ function cargarBienes(pagina = 1) {
             <td>${bien.responsable}</td>
             <td>${bien.fecha_registro}</td>
             <td>${bien.estado_actual}</td>
-              <td>
+            <td>
               <button class="btn" data-bien-id="${bien.identificador}" data-bs-toggle="modal" data-bs-target="#modalReasignarBien">
                 <svg width="35px" height="40px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M810.7 938.7H213.3c-17.3 0-34-3.4-49.9-10.1-15.2-6.4-29-15.7-40.7-27.5-11.7-11.7-21-25.4-27.4-40.7-6.7-15.8-10.1-32.6-10.1-49.8V213.3c0-17.2 3.4-34 10.1-49.8 6.4-15.2 15.7-29 27.5-40.7 11.7-11.7 25.4-20.9 40.7-27.4 15.8-6.7 32.5-10.1 49.8-10.1h597.3c17.3 0 34 3.4 49.9 10.1 15.2 6.4 29 15.7 40.7 27.5 11.7 11.7 21 25.4 27.4 40.7 6.7 15.8 10.1 32.6 10.1 49.8V320c0 23.6-19.1 42.7-42.7 42.7s-42.7-19.1-42.7-42.7V213.3c0-5.8-1.1-11.4-3.4-16.6-2.1-5.1-5.2-9.6-9.1-13.5-4-4-8.5-7-13.6-9.2-5.2-2.2-10.8-3.3-16.6-3.3H213.3c-5.8 0-11.4 1.1-16.6 3.3-5.1 2.2-9.7 5.2-13.6 9.1-4 4-7.1 8.5-9.2 13.6-2.2 5.3-3.4 10.9-3.4 16.6v597.3c0 5.8 1.1 11.4 3.4 16.6 2.1 5.1 5.2 9.6 9.1 13.5 4 4 8.5 7 13.6 9.2 5.2 2.2 10.8 3.3 16.6 3.3h597.3c5.8 0 11.4-1.1 16.6-3.3 5.1-2.2 9.7-5.2 13.6-9.1 4-4 7.1-8.5 9.2-13.6 2.2-5.3 3.4-10.9 3.4-16.6V704c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v106.7c0 17.2-3.4 34-10.1 49.8-6.4 15.2-15.7 29-27.5 40.7-11.7 11.7-25.4 20.9-40.7 27.4-15.7 6.7-32.5 10.1-49.7 10.1z" fill="#3688FF"></path><path d="M768 682.7c-10.9 0-21.8-4.2-30.2-12.5-16.7-16.7-16.7-43.7 0-60.3l97.8-97.8-97.8-97.8c-16.7-16.7-16.7-43.7 0-60.3 16.7-16.7 43.7-16.7 60.3 0l128 128c16.7 16.7 16.7 43.7 0 60.3l-128 128c-8.3 8.2-19.2 12.4-30.1 12.4z" fill="#5F6379"></path><path d="M896 554.7H512c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h384c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7z" fill="#5F6379"></path></g></svg>
               </button>
 
               <button class="btn" data-bien-id="${bien.identificador}" data-estado-actual="${bien.estado_actual}" data-bs-toggle="modal" data-bs-target="#modalCambiarEstado">
-              <svg width="35px" height="40px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M533 1024l-147.7-84.8-136.4 78.3h-11.3c-17.3 0-34.2-3.4-50.1-10.1-15.3-6.5-29.1-15.7-40.8-27.6-11.7-11.7-21-25.5-27.5-40.8-6.7-15.9-10.1-32.7-10.1-50.1V128.5c0-17.4 3.4-34.2 10.1-50.1 6.5-15.3 15.8-29.1 27.6-40.8 11.7-11.8 25.5-21 40.8-27.5C203.3 3.4 220.2 0 237.5 0h590.9c17.3 0 34.2 3.4 50.1 10.1 15.3 6.5 29.1 15.7 40.8 27.6 11.7 11.7 21 25.5 27.5 40.8 6.7 15.9 10.1 32.7 10.1 50.1V889c0 17.4-3.4 34.2-10.1 50.1-6.5 15.3-15.8 29.1-27.6 40.8-11.7 11.8-25.5 21-40.8 27.5-15.8 6.7-32.7 10.1-50 10.1h-11.3l-136.4-78.3L533 1024z m147.7-182.6l157.2 90.3c2.5-0.6 5-1.4 7.5-2.4 5.2-2.2 9.9-5.4 13.9-9.4 4.1-4.1 7.2-8.7 9.4-14 2.3-5.3 3.4-11.1 3.4-17V128.5c0-5.9-1.1-11.7-3.4-17-2.2-5.2-5.4-9.9-9.4-13.9-4.1-4.1-8.7-7.2-13.9-9.4-5.4-2.3-11.1-3.4-17-3.4H237.5c-5.9 0-11.6 1.1-17 3.4-5.2 2.2-9.9 5.4-13.9 9.4-4.1 4.1-7.2 8.7-9.4 14-2.3 5.3-3.4 11.1-3.4 17V889c0 5.9 1.1 11.7 3.4 17 2.2 5.2 5.4 9.9 9.4 13.9 4.1 4.1 8.7 7.2 13.9 9.4 2.4 1 4.9 1.8 7.5 2.4l157.2-90.3L533 926.2l147.7-84.8z" fill="#3688FF"></path><path d="M490.6 310.9H321c-23.4 0-42.4-19-42.4-42.4s19-42.4 42.4-42.4h169.6c23.4 0 42.4 19 42.4 42.4s-19 42.4-42.4 42.4zM702.5 487.6H321c-23.4 0-42.4-19-42.4-42.4s19-42.4 42.4-42.4h381.6c23.4 0 42.4 19 42.4 42.4-0.1 23.4-19 42.4-42.5 42.4z" fill="#5F6379"></path></g></svg>
+              <svg width="35px" height="40px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M533 1024l-147.7-84.8-136.4 78.3h-11.3c-17.3 0-34.2-3.4-50.1-10.1-15.3-6.5-29.1-15.7-40.8-27.6-11.7-11.7-21-25.5-27.5-40.8-6.7-15.9-10.1-32.7-10.1-50.1V128.5c0-17.4 3.4-34.2 10.1-50.1 6.5-15.3 15.8-29.1 27.6-40.8 11.7-11.8 25.5-21 40.8-27.5C203.3 3.4 220.2 0 237.5 0h590.9c17.3 0 34.2 3.4 50.1 10.1 15.3 6.5 29.1 15.7 40.8 27.6 11.7-11.7 21-25.5 27.5-40.8 6.7-15.9 10.1-32.7 10.1-50.1V889c0 17.4-3.4 34.2-10.1 50.1-6.5 15.3-15.8 29.1-27.6 40.8-11.7 11.8-25.5-21-40.8-27.5-15.8 6.7-32.7 10.1-50 10.1h-11.3l-136.4-78.3L533 1024z m147.7-182.6l157.2 90.3c2.5-0.6 5-1.4 7.5-2.4 5.2-2.2 9.9-5.4 13.9-9.4 4.1-4.1 7.2-8.7 9.4-14 2.3-5.3 3.4-11.1 3.4-17V128.5c0-5.9-1.1-11.7-3.4-17-2.2-5.2-5.4-9.9-9.4-13.9-4.1-4.1-8.7-7.2-13.9-9.4-5.4-2.3-11.1-3.4-17-3.4H237.5c-5.9 0-11.6 1.1-17 3.4-5.2 2.2-9.9 5.4-13.9 9.4-4.1-4.1-7.2-8.7-9.4-14-2.3-5.3-3.4-11.1-3.4-17V889c0 5.9 1.1 11.7 3.4 17 2.2 5.2 5.4 9.9 9.4 13.9 4.1 4.1 8.7 7.2 13.9 9.4 2.4 1 4.9 1.8 7.5 2.4l157.2-90.3L533 926.2l147.7-84.8z" fill="#3688FF"></path><path d="M490.6 310.9H321c-23.4 0-42.4-19-42.4-42.4s19-42.4 42.4-42.4h169.6c23.4 0 42.4 19 42.4 42.4s-19 42.4-42.4 42.4zM702.5 487.6H321c-23.4 0-42.4-19-42.4-42.4s19-42.4 42.4-42.4h381.6c23.4 0 42.4 19 42.4 42.4-0.1 23.4-19 42.4-42.5 42.4z" fill="#5F6379"></path></g></svg>
               </button>
             
               <button class="btn" data-bs-toggle="modal" data-bs-target="#modalHistorialBien" data-bien-id="${bien.identificador}"> 
@@ -85,11 +104,11 @@ function cargarBienes(pagina = 1) {
       console.error("Error al cargar bienes:", error);
 
       const tbody = document.querySelector("#tablaBienes tbody");
-      tbody.innerHTML = "";
+      tbody.innerHTML = ""; // Clear the table
 
-      const fila = "<tr><td colspan='10'>No Existen Bienes Asociados A Este Identificador</td></tr>"
-
-      tbody.insertAdjacentHTML("beforeend", fila);
+      const errorMessageRow = `<tr><td colspan='10'>Error al cargar los datos. Por favor, inténtelo de nuevo.</td></tr>`;
+      tbody.insertAdjacentHTML("beforeend", errorMessageRow);
+      actualizarPaginacion(0, 0); // Disable pagination on error
     });
 }
 
@@ -119,9 +138,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const filtroInput = document.getElementById("filterid");
   if (filtroInput) {
-    filtroInput.addEventListener("blur", () => {
-      paginaActual = 1;
+    filtroInput.addEventListener("blur", () => { // Using 'blur' for when the input loses focus
+      paginaActual = 1; // Reset to first page on filter change
       cargarBienes(paginaActual);
+    });
+
+    // You might also want to add an 'input' event listener for real-time filtering
+    // or a 'keypress' event listener for pressing Enter
+    filtroInput.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault(); // Prevent form submission if input is part of a form
+        paginaActual = 1;
+        cargarBienes(paginaActual);
+      }
     });
   }
 });
