@@ -34,18 +34,6 @@
   </div>
 </div>
 
-<!-- Mensajes de Django con botón de cerrar -->
-{% if messages %}
-<div class="alert-messages">
-    {% for message in messages %}
-    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-        {{ message }}
-        <button class="close-btn" onclick="this.parentElement.style.animation='fadeOut 0.3s forwards'">×</button>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
-
 <!-- Formulario Solicitud -->
 <article class="content-form">
   <form class="form-control" id="formularioCrearSolicitudes" method="POST">
@@ -53,11 +41,12 @@
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <section class="parte-b">
+     <section class="parte-b">
       <h2 class="h6 mb-3 text-danger d-flex align-items-center">
         <i class="bi bi-file-check-fill me-2"></i> Requisitos de Solicitud
       </h2>
-      
+
+      {% if not editing %}
       <article class="comerce-contain">
         <label for="add_comercio">Agregar Comercio</label>
         <button type="button" id="add_comercio" class="btn btn-danger agg_comercio" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@fat">
@@ -70,83 +59,79 @@
           </svg>
         </button>
       </article>
+      {% endif %}
 
       <div class="row g-3">
-        <!-- Cédula de Identidad -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <div class="card-body">
               <div class="form-check form-switch mb-2">
                 <label class="form-check-label fw-bold" for="id_cedula_identidad">Cédula de Identidad</label>
-                <input type="checkbox" name="cedula_identidad" id="id_cedula_identidad" class="form-check-input">
+                {{ requisitos_form.cedula_identidad }} {# Usa el campo del formulario de requisitos #}
               </div>
               <div class="mb-3">
                 <label class="form-label small text-muted" for="id_cedula_vencimiento">Vencimiento</label>
-                <input type="date" name="cedula_vencimiento" id="id_cedula_vencimiento" class="form-control">
+                {{ requisitos_form.cedula_vencimiento }} {# Usa el campo del formulario de requisitos #}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- RIF Representante -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <div class="card-body">
               <div class="form-check form-switch mb-2">
                 <label class="form-check-label fw-bold" for="id_rif_representante">RIF Representante</label>
-                <input type="checkbox" name="rif_representante" id="id_rif_representante" class="form-check-input">
+                {{ requisitos_form.rif_representante }}
               </div>
               <div class="mb-3">
                 <label class="form-label small text-muted" for="id_rif_representante_vencimiento">Vencimiento</label>
-                <input type="date" name="rif_representante_vencimiento" id="id_rif_representante_vencimiento" class="form-control">
+                {{ requisitos_form.rif_representante_vencimiento }}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- RIF Comercio -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <div class="card-body">
               <div class="form-check form-switch mb-2">
                 <label class="form-check-label fw-bold" for="id_rif_comercio">RIF Comercio</label>
-                <input type="checkbox" name="rif_comercio" id="id_rif_comercio" class="form-check-input">
+                {{ requisitos_form.rif_comercio }}
               </div>
               <div class="mb-3">
                 <label class="form-label small text-muted" for="id_rif_comercio_vencimiento">Vencimiento</label>
-                <input type="date" name="rif_comercio_vencimiento" id="id_rif_comercio_vencimiento" class="form-control">
+                {{ requisitos_form.rif_comercio_vencimiento }}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Documento de Propiedad -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <div class="card-body">
               <div class="form-check form-switch mb-2">
                 <label class="form-check-label fw-bold" for="id_documento_propiedad">Documento de Propiedad</label>
-                <input type="checkbox" name="documento_propiedad" id="id_documento_propiedad" class="form-check-input">
+                {{ requisitos_form.documento_propiedad }}
               </div>
               <div class="mb-3">
                 <label class="form-label small text-muted" for="id_documento_propiedad_vencimiento">Vencimiento</label>
-                <input type="date" name="documento_propiedad_vencimiento" id="id_documento_propiedad_vencimiento" class="form-control">
+                {{ requisitos_form.documento_propiedad_vencimiento }}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Cédula Catastral -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <div class="card-body">
               <div class="form-check form-switch mb-2">
                 <label class="form-check-label fw-bold" for="id_cedula_catastral">Cédula Catastral</label>
-                <input type="checkbox" name="cedula_catastral" id="id_cedula_catastral" class="form-check-input">
+                {{ requisitos_form.cedula_catastral }}
               </div>
               <div class="mb-3">
                 <label class="form-label small text-muted" for="id_cedula_catastral_vencimiento">Vencimiento</label>
-                <input type="date" name="cedula_catastral_vencimiento" id="id_cedula_catastral_vencimiento" class="form-control">
+                {{ requisitos_form.cedula_catastral_vencimiento }}
               </div>
             </div>
           </div>
@@ -154,49 +139,45 @@
 
         <div class="col-md-6 col-lg-4"></div>
 
-        <!-- Permiso Anterior -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <div class="card-body">
               <div class="form-check form-switch">
                 <label class="form-check-label fw-bold" for="id_permiso_anterior">Permiso Anterior</label>
-                <input type="checkbox" name="permiso_anterior" id="id_permiso_anterior" class="form-check-input">
+                {{ requisitos_form.permiso_anterior }}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Registro Comercio -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <div class="card-body">
               <div class="form-check form-switch">
                 <label class="form-check-label fw-bold" for="id_registro_comercio">Registro de Comercio</label>
-                <input type="checkbox" name="registro_comercio" id="id_registro_comercio" class="form-check-input">
+                {{ requisitos_form.registro_comercio }}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Carta Autorización -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <div class="card-body">
               <div class="form-check form-switch">
                 <label class="form-check-label fw-bold" for="id_carta_autorizacion">Carta de Autorización</label>
-                <input type="checkbox" name="carta_autorizacion" id="id_carta_autorizacion" class="form-check-input">
+                {{ requisitos_form.carta_autorizacion }}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Plano Bomberil -->
         <div class="col-md-6 col-lg-4">
           <div class="card h-100">
             <div class="card-body">
               <div class="form-check form-switch">
                 <label class="form-check-label fw-bold" for="id_plano_bomberil">Plano Bomberil</label>
-                <input type="checkbox" name="plano_bomberil" id="id_plano_bomberil" class="form-check-input">
+                {{ requisitos_form.plano_bomberil }}
               </div>
             </div>
           </div>
@@ -205,187 +186,248 @@
     </section>
 
     <section class="parte-a">
-    <h3 class="h6 mb-3 text-danger d-flex align-items-center">
-      <i class="bi bi-card-checklist me-2"></i> Datos de la Solicitud
-    </h3>
+      <h3 class="h6 mb-3 text-danger d-flex align-items-center">
+        <i class="bi bi-card-checklist me-2"></i> Datos de la Solicitud
+      </h3>
 
-    <div class="row g-3">
-      <!-- Comercio -->
-      <div class="col-md-6">
-        <div class="form-floating select-autocomplete">
-            <input type="text" id="comercio-search" class="form-control" autocomplete="nope" required>
-            <i class="bi bi-search search-icon"></i>
-            <div class="dropdown" id="comercio-dropdown"></div>
-            <!-- Mantenemos el select original pero oculto -->
-            <select name="id_solicitud" class="hidden-select" id="id_id_solicitud" required>
-              <option value="" disabled selected>Seleccione un comercio</option>
-              {% for value, label in solicitud_form.fields.id_solicitud.choices %}
+      <div class="row g-3">
+        <div class="col-md-6">
+            <div class="form-floating select-autocomplete">
+                <input type="text" id="comercio-search" class="form-control" autocomplete="nope" required
+                        {% if editing %}
+                          value="{% if solicitud.id_solicitud %}{{ solicitud.id_solicitud.id_comercio }}{% endif %}"
+                          readonly
+                        {% else %}
+                          value=""
+                        {% endif %}
+                >
+                <i class="bi bi-search search-icon"></i>
+                <div class="dropdown" id="comercio-dropdown"></div>
+                <select name="id_solicitud" class="hidden-select" id="id_id_solicitud" required>
+                    <option value="" disabled {% if not editing or not solicitud_form.instance.id_solicitud %}selected{% endif %}>Seleccione un comercio</option>
+                    {% for value, label in solicitud_form.fields.id_solicitud.choices %}
+                      {% if value %}
+                        <option value="{{ value }}" 
+                                {% if editing and solicitud_form.instance.id_solicitud and solicitud_form.instance.id_solicitud.pk|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}
+                        >{{ label }}</option>
+                      {% endif %}
+                    {% endfor %}
+                </select>
+                <label for="id_id_solicitud">Comercio</label>
+                {% if solicitud_form.id_solicitud.errors %}
+                    <div class="alert alert-danger mt-1">{{ solicitud_form.id_solicitud.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="date" name="fecha_solicitud" class="form-control" id="id_fecha_solicitud" required
+                  value="{% if editing %}{{ solicitud.fecha_solicitud|date:'Y-m-d' }}{% endif %}">
+            <label for="id_fecha_solicitud">Fecha de Solicitud</label>
+            {% if solicitud_form.fecha_solicitud.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.fecha_solicitud.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="time" name="hora_solicitud" class="form-control" id="id_hora_solicitud" required
+                  value="{% if editing %}{{ solicitud.hora_solicitud|time:'H:i' }}{% endif %}">
+            <label for="id_hora_solicitud">Hora de Solicitud</label>
+            {% if solicitud_form.hora_solicitud.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.hora_solicitud.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-floating">
+            <select name="tipo_servicio" class="form-select disable-first-option" id="id_tipo_servicio" required>
+              <option value="" disabled {% if not editing or not solicitud.tipo_servicio %}selected{% endif %}>Selecione Una Opcion</option>
+              <option value="Inspeccion" {% if editing and solicitud.tipo_servicio == 'Inspeccion' %}selected{% endif %}>Inspeccion</option>
+              <option value="Reinspeccion" {% if editing and solicitud.tipo_servicio == 'Reinspeccion' %}selected{% endif %}>Reinspeccion</option>
+            </select>
+            <label for="id_tipo_servicio">Tipo de Servicio</label>
+            {% if solicitud_form.tipo_servicio.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.tipo_servicio.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="text" name="solicitante_nombre_apellido" class="form-control" id="id_solicitante_nombre_apellido" required
+                  value="{% if editing %}{{ solicitud.solicitante_nombre_apellido|default:'' }}{% endif %}">
+            <label for="id_solicitante_nombre_apellido">Nombre y Apellido del Solicitante</label>
+            {% if solicitud_form.solicitante_nombre_apellido.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.solicitante_nombre_apellido.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="text" name="solicitante_cedula" class="form-control" id="id_solicitante_cedula" required
+                  value="{% if editing %}{{ solicitud.solicitante_cedula|default:'' }}{% endif %}">
+            <label for="id_solicitante_cedula">Cédula del Solicitante</label>
+            {% if solicitud_form.solicitante_cedula.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.solicitante_cedula.errors }}</div>
+            {% endif %}
+          </div>
+          <div class="form-text text-danger" id="cedula-mensaje" style="display: none;"></div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-floating">
+            <select name="tipo_representante" class="form-select disable-first-option" id="id_tipo_representante" required>
+              <option value="" disabled {% if not editing or not solicitud.tipo_representante %}selected{% endif %}>Seleccione Una Opción</option>
+              {% for value, label in solicitud_form.fields.tipo_representante.choices %}
                 {% if value %}
-                  <option value="{{ value }}">{{ label }}</option>
+                  <option value="{{ value }}" 
+                          {% if editing and solicitud.tipo_representante|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}
+                  >{{ label }}</option>
                 {% endif %}
               {% endfor %}
             </select>
-          <label for="id_id_solicitud">Comercio</label>
+            <label for="id_tipo_representante">Tipo de Representante</label>
+            {% if solicitud_form.tipo_representante.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.tipo_representante.errors }}</div>
+            {% endif %}
+          </div>
         </div>
-      </div>
 
-      <!-- Fecha y Hora -->
-      <div class="col-md-6">
-        <div class="form-floating">
-          <input type="date" name="fecha_solicitud" class="form-control" id="id_fecha_solicitud" required>
-          <label for="id_fecha_solicitud">Fecha de Solicitud</label>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="text" name="rif_representante_legal" class="form-control" id="id_rif_representante_legal" required
+                  value="{% if editing %}{{ solicitud.rif_representante_legal|default:'' }}{% endif %}">
+            <label for="id_rif_representante_legal">RIF del Representante Legal</label>
+            {% if solicitud_form.rif_representante_legal.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.rif_representante_legal.errors }}</div>
+            {% endif %}
+          </div>
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <div class="form-floating">
-          <input type="time" name="hora_solicitud" class="form-control" id="id_hora_solicitud" required>
-          <label for="id_hora_solicitud">Hora de Solicitud</label>
+        <div class="col-12">
+          <div class="form-floating">
+            <input type="text" name="direccion" class="form-control" id="id_direccion" required
+                  value="{% if editing %}{{ solicitud.direccion|default:'' }}{% endif %}">
+            <label for="id_direccion">Dirección</label>
+            {% if solicitud_form.direccion.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.direccion.errors }}</div>
+            {% endif %}
+          </div>
         </div>
-      </div>
 
-      <!-- Tipo de Servicio -->
-      <div class="col-md-6">
-        <div class="form-floating">
-          <select name="tipo_servicio" class="form-select disable-first-option" id="id_tipo_servicio" required>
-            <option value="" disabled selected>Selecione Una Opcion</option>
-            <option value="Inspeccion">Inspeccion</option>
-            <option value="Reinspeccion">Reinspeccion</option>
-          </select>
-          <label for="id_tipo_servicio">Tipo de Servicio</label>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input type="text" name="estado" class="form-control" id="id_estado" required
+                  value="{% if editing %}{{ solicitud.estado|default:'' }}{% endif %}">
+            <label for="id_estado">Estado</label>
+            {% if solicitud_form.estado.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.estado.errors }}</div>
+            {% endif %}
+          </div>
         </div>
-      </div>
+        
+        <div class="col-md-4">
+            <div class="form-floating">
+                {# Deja que Django Form renderice el campo de municipio completo #}
+                {{ solicitud_form.municipio }}
+                <label for="{{ solicitud_form.municipio.id_for_label }}">Municipio</label>
+                {% if solicitud_form.municipio.errors %}
+                    <div class="alert alert-danger mt-1">{{ solicitud_form.municipio.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
 
-      <!-- Datos del Solicitante -->
-      <div class="col-md-6">
-        <div class="form-floating">
-          <input type="text" name="solicitante_nombre_apellido" class="form-control" id="id_solicitante_nombre_apellido" required>
-          <label for="id_solicitante_nombre_apellido">Nombre y Apellido del Solicitante</label>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <select name="parroquia" class="form-select disable-first-option" id="id_parroquia" required>
+              <option value="" disabled {% if not editing or not solicitud.parroquia %}selected{% endif %}>Seleccione Una Opción</option>
+              {% for value, label in solicitud_form.fields.parroquia.choices %}
+                {% if value %}
+                  <option value="{{ value }}" 
+                          {% if editing and solicitud.parroquia|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}
+                  >{{ label }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <label for="id_parroquia">Parroquia</label>
+            {% if solicitud_form.parroquia.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.parroquia.errors }}</div>
+            {% endif %}
+          </div>
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <div class="form-floating">
-          <input type="text" name="solicitante_cedula" class="form-control" id="id_solicitante_cedula" required>
-          <label for="id_solicitante_cedula">Cédula del Solicitante</label>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="text" name="numero_telefono" class="form-control" id="id_numero_telefono" required
+                  value="{% if editing %}{{ solicitud.numero_telefono|default:'' }}{% endif %}">
+            <label for="id_numero_telefono">Número de Teléfono</label>
+            {% if solicitud_form.numero_telefono.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.numero_telefono.errors }}</div>
+            {% endif %}
+          </div>
         </div>
-        <div class="form-text text-danger" id="cedula-mensaje" style="display: none;"></div>
-      </div>
 
-      <!-- Tipo de Representante -->
-      <div class="col-md-6">
-        <div class="form-floating">
-          <select name="tipo_representante" class="form-select disable-first-option" id="id_tipo_representante" required>
-            <option value="" disabled selected>Seleccione Una Opción</option>
-            {% for value, label in solicitud_form.fields.tipo_representante.choices %}
-              {% if value %}
-                <option value="{{ value }}">{{ label }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-          <label for="id_tipo_representante">Tipo de Representante</label>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="text" name="correo_electronico" class="form-control" id="id_correo_electronico" required
+                  value="{% if editing %}{{ solicitud.correo_electronico|default:'' }}{% endif %}">
+            <label for="id_correo_electronico">Correo Electrónico</label>
+            {% if solicitud_form.correo_electronico.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.correo_electronico.errors }}</div>
+            {% endif %}
+          </div>
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <div class="form-floating">
-          <input type="text" name="rif_representante_legal" class="form-control" id="id_rif_representante_legal" required>
-          <label for="id_rif_representante_legal">RIF del Representante Legal</label>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <input type="text" name="pago_tasa" class="form-control" id="id_pago_tasa" required
+                  value="{% if editing %}{{ solicitud.pago_tasa|default:'' }}{% endif %}">
+            <label for="id_pago_tasa">Pago Tasa</label>
+            {% if solicitud_form.pago_tasa.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.pago_tasa.errors }}</div>
+            {% endif %}
+          </div>
         </div>
-      </div>
 
-      <!-- Dirección -->
-      <div class="col-12">
-        <div class="form-floating">
-          <input type="text" name="direccion" class="form-control" id="id_direccion" required>
-          <label for="id_direccion">Dirección</label>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <select name="metodo_pago" class="form-select disable-first-option" id="id_metodo_pago" required>
+              <option value="" disabled {% if not editing or not solicitud.metodo_pago %}selected{% endif %}>Seleccione Una Opcion</option>
+              {% for value, label in solicitud_form.fields.metodo_pago.choices %}
+                {% if value %}
+                  <option value="{{ value }}" 
+                          {% if editing and solicitud.metodo_pago|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}
+                  >{{ label }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <label for="id_metodo_pago">Método de Pago</label>
+            {% if solicitud_form.metodo_pago.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.metodo_pago.errors }}</div>
+            {% endif %}
+          </div>
         </div>
-      </div>
 
-      <!-- Ubicación -->
-      <div class="col-md-4">
-        <div class="form-floating">
-          <input type="text" name="estado" class="form-control" id="id_estado" required>
-          <label for="id_estado">Estado</label>
+        <div class="col-12">
+          <div class="form-floating">
+            <input type="text" name="referencia" class="form-control" id="id_referencia"
+                  value="{% if editing %}{{ solicitud.referencia|default:'N/A' }}{% endif %}">
+            <label for="id_referencia">Referencia</label>
+            {% if solicitud_form.referencia.errors %}
+              <div class="alert alert-danger mt-1">{{ solicitud_form.referencia.errors }}</div>
+            {% endif %}
+          </div>
         </div>
       </div>
-
-      <div class="col-md-4">
-        <div class="form-floating">
-          <select name="municipio" class="form-select" id="id_municipio" required>
-            <option value="" disabled selected>Seleccione Una Opción</option>
-            {% for value, label in solicitud_form.fields.municipio.choices %}
-              {% if value %}
-                <option value="{{ value }}">{{ label }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-          <label for="id_municipio">Municipio</label>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="form-floating">
-          <select name="parroquia" class="form-select disable-first-option" id="id_parroquia" required>
-            <option value="" disabled selected>Seleccione Una Opción</option>
-            {% for value, label in solicitud_form.fields.parroquia.choices %}
-              {% if value %}
-                <option value="{{ value }}">{{ label }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-          <label for="id_parroquia">Parroquia</label>
-        </div>
-      </div>
-
-      <!-- Contacto -->
-      <div class="col-md-6">
-        <div class="form-floating">
-          <input type="text" name="numero_telefono" class="form-control" id="id_numero_telefono" required>
-          <label for="id_numero_telefono">Número de Teléfono</label>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="form-floating">
-          <input type="text" name="correo_electronico" class="form-control" id="id_correo_electronico" required>
-          <label for="id_correo_electronico">Correo Electrónico</label>
-        </div>
-      </div>
-
-      <!-- Pago -->
-      <div class="col-md-6">
-        <div class="form-floating">
-          <input type="text" name="pago_tasa" class="form-control" id="id_pago_tasa" required>
-          <label for="id_pago_tasa">Pago Tasa</label>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="form-floating">
-          <select name="metodo_pago" class="form-select disable-first-option" id="id_metodo_pago" required>
-            <option value="" disabled selected>Seleccione Una Opcion</option>
-            {% for value, label in solicitud_form.fields.metodo_pago.choices %}
-              {% if value %}
-                <option value="{{ value }}">{{ label }}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-          <label for="id_metodo_pago">Método de Pago</label>
-        </div>
-      </div>
-
-      <div class="col-12">
-        <div class="form-floating">
-          <input type="text" name="referencia" class="form-control" id="id_referencia" value="">
-          <label for="id_referencia">Referencia</label>
-        </div>
-      </div>
-    </div>
-    </section>
+    </section>  
 
     <div class="buttons-solicitud">
-      <button type="submit" class="btn btn-danger">Crear Solicitud</button>
+      <button type="submit" name="submit_solicitud_edit" class="btn btn-danger">{% if editing %} Guardar Cambios {% else %}Crear Solicitud {% endif %}</button>
       <a href="{% url 'certificados_prevencion' %}" class="btn btn-secondary">
       Cancelar
       </a>

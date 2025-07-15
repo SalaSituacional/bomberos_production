@@ -94,23 +94,133 @@ def certificados_prevencion(request):
     })
 
 
+def editar_solicitud(request, id):
+    user = request.session.get('user')
+    print(f"--- DEBUG: Inicio de editar_solicitud para ID: {id} ---")
+    print(f"--- DEBUG: Usuario de sesión: {user} ---")
+
+    if not user:
+        messages.error(request, 'Debes iniciar sesión para acceder a esta página.')
+        print("--- DEBUG: Usuario no autenticado. Redirigiendo a / ---")
+        return redirect('/')
+
+    solicitud = get_object_or_404(Solicitudes, id=id)
+    requisitos = get_object_or_404(Requisitos, id_solicitud=solicitud.id)
+    print(f"--- DEBUG: Solicitud obtenida: {solicitud.id}, Requisitos obtenidos: {requisitos.id} ---")
+
+    # Inicializar formularios para GET request o si POST falla
+    solicitud_form = SolicitudForm(instance=solicitud, user=user, editing=True)
+    requisitos_form = RequisitosForm(instance=requisitos)
+    comercio_form = ComercioForm() # Formulario para agregar un nuevo comercio via modal
+    print("--- DEBUG: Formularios inicializados (GET/fallo POST) ---")
+
+    # Banderas para controlar el comportamiento del modal de añadir comercio
+    open_comercio_modal = False
+
+    if request.method == 'POST':
+        print("\n--- DEBUG: Petición es POST ---")
+        # Debugging: Imprimir el POST completo para ver qué llega
+        print("--- POST Data (Editar Solicitud) ---")
+        print(request.POST)
+        print("-----------------------------------")
+
+        if 'submit_solicitud_edit' in request.POST:
+            print("--- DEBUG: submit_solicitud_edit detectado ---")
+            solicitud_form = SolicitudForm(request.POST, instance=solicitud, user=user, editing=True)
+            requisitos_form = RequisitosForm(request.POST, instance=requisitos)
+            print("--- DEBUG: SolicitudForm y RequisitosForm inicializados con POST data ---")
+
+            if solicitud_form.is_valid() and requisitos_form.is_valid():
+                print("--- DEBUG: Ambos formularios (Solicitud y Requisitos) son VÁLIDOS ---")
+                solicitud_form.save()
+                requisitos_form.save()
+                messages.success(request, 'Solicitud actualizada correctamente.')
+                logger.info(f'Solicitud {solicitud.id} actualizada por usuario {user["user"]}.')
+                print(f"--- DEBUG: Solicitud {solicitud.id} y Requisitos guardados exitosamente. Redirigiendo. ---")
+                return redirect('certificados_prevencion') # Usa el nombre de la URL
+            else:
+                print("--- DEBUG: VALIDACIÓN FALLÓ para Solicitud o Requisitos ---")
+                print("--- DEBUG: Errores de SolicitudForm: ---")
+                print(solicitud_form.errors)
+                print("--- DEBUG: Errores de RequisitosForm: ---")
+                print(requisitos_form.errors)
+
+                # Si los formularios no son válidos, los errores se adjuntan a los formularios
+                # y se renderizarán en la plantilla.
+                for field, errors in solicitud_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"Solicitud - {solicitud_form.fields[field].label}: {error}")
+                        logger.warning(f"Error en Solicitud (Edición) - campo '{field}' ({solicitud_form.fields[field].label}): {error}")
+                for field, errors in requisitos_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"Requisitos - {requisitos_form.fields[field].label}: {error}")
+                        logger.warning(f"Error en Requisitos (Edición) - campo '{field}' ({requisitos_form.fields[field].label}): {error}")
+
+        elif 'submit_add_comercio' in request.POST:
+            print("--- DEBUG: submit_add_comercio detectado (Modal) ---")
+            comercio_form = ComercioForm(request.POST)
+            print("--- DEBUG: ComercioForm inicializado con POST data del modal ---")
+            if comercio_form.is_valid():
+                print("--- DEBUG: ComercioForm (Modal) es VÁLIDO ---")
+                comercio_form.save()
+                messages.success(request, 'Comercio agregado correctamente. Ahora puede seleccionarlo en la lista.')
+                logger.info(f'Nuevo comercio agregado por usuario {user["user"]}.')
+                # Re-inicializar el formulario principal para que incluya el nuevo comercio en sus opciones
+                # Se mantiene la instancia de solicitud para no perder los datos actuales de la edición
+                solicitud_form = SolicitudForm(instance=solicitud, user=user, editing=True)
+                print("--- DEBUG: Comercio guardado exitosamente. SolicitudForm re-inicializado. ---")
+                # No redirigir aquí, queremos que el modal se cierre (via JS) y la página principal se quede.
+            else:
+                print("--- DEBUG: VALIDACIÓN FALLÓ para ComercioForm (Modal) ---")
+                print("--- DEBUG: Errores de ComercioForm: ---")
+                print(comercio_form.errors)
+                # Si el formulario del modal tiene errores, el modal debería reabrirse automáticamente
+                # para mostrar los errores. Pasamos una bandera al contexto para esto.
+                open_comercio_modal = True
+                for field, errors in comercio_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"Comercio (Modal) - {comercio_form.fields[field].label}: {error}")
+                        logger.warning(f"Error al agregar Comercio (Modal) - campo '{field}' ({comercio_form.fields[field].label}): {error}")
+        else:
+            print("--- DEBUG: Ningún botón de submit reconocido en POST ---")
+
+
+    context = {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        'solicitud_form': solicitud_form,
+        'requisitos_form': requisitos_form,
+        'solicitud': solicitud,
+        'comercio_form': comercio_form,
+        'editing': True,
+        'solicitud_id': id,
+        'open_comercio_modal': open_comercio_modal,
+    }
+    print("--- DEBUG: Renderizando formularioSolicitud.html con el contexto ---")
+    print(f"--- DEBUG: Contexto 'open_comercio_modal': {open_comercio_modal} ---")
+    print("--- DEBUG: Fin de la ejecución de la vista. ---")
+    return render(request, 'Seguridad-prevencion/formularioSolicitud.html', context)
+
+
+
 def formulario_certificado_prevencion(request):
     # Verificación de usuario y sesión
     user = request.session.get('user')
     if not user:
         logger.warning('Intento de acceso no autenticado a formulario_certificado_prevencion')
         return redirect('/')
-    
+
     # Obtenemos los comercios (opcional, si los usas en el template)
     try:
-        # Filtramos comercios según el usuario (opcional, el formulario ya lo hace)
         department = None
         user_jerarquia_departments = {
             'ComandanciaJunin': 'Junin',
             'Prevencion05': 'San Cristobal',
         }
         department = user_jerarquia_departments.get(user.get("user"))
-        
+
         if department:
             comercios = Comercio.objects.filter(departamento=department)
             logger.debug(f'Obtenidos {len(comercios)} comercios para el departamento {department}')
@@ -121,92 +231,103 @@ def formulario_certificado_prevencion(request):
         logger.error(f'Error al obtener comercios: {str(e)}')
         comercios = []
         messages.error(request, 'Error al cargar la lista de comercios')
-    
+
     if request.method == 'POST':
         logger.info('Inicio de procesamiento de formulario POST')
-        
+
         # Creamos una copia mutable del POST
         post_data = request.POST.copy()
-        
+
         # Verificamos si el método de pago requiere referencia
         metodo_pago = post_data.get('metodo_pago', '')
         requiere_referencia = metodo_pago in ['Transferencia', 'Deposito']
-        
+
         # Si no requiere referencia, eliminamos el campo del POST para evitar validación
         if not requiere_referencia:
             post_data['referencia'] = 'No Hay Referencia'
-        
+
         # Pasamos el usuario al formulario
         solicitud_form = SolicitudForm(post_data, user=user)
         requisitos_form = RequisitosForm(post_data)
-        
-        if solicitud_form.is_valid() and requisitos_form.is_valid():
-            try:
-                # Guardamos la solicitud PRIMERO
-                solicitud = solicitud_form.save(commit=False)
+        comercio_form = ComercioForm() # Formulario del modal para nuevo comercio
+
+        if 'submit_add_comercio' in request.POST: # Si se envió el formulario del modal
+            comercio_form = ComercioForm(request.POST)
+            if comercio_form.is_valid():
+                comercio_form.save()
+                messages.success(request, 'Comercio agregado correctamente. Ahora puede seleccionarlo.')
+                # Reinicializamos el formulario de solicitud para reflejar el nuevo comercio
+                solicitud_form = SolicitudForm(user=user)
+            else:
+                for field, errors in comercio_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"Comercio - {field}: {error}")
+                # No redirigir para que los errores del modal sean visibles si el modal se reabre
+        else: # Se envió el formulario principal de la solicitud
+            if solicitud_form.is_valid() and requisitos_form.is_valid():
+                try:
+                    # Guardamos la solicitud PRIMERO
+                    solicitud = solicitud_form.save(commit=False)
+
+                    # Validación adicional del comercio
+                    comercio_id = post_data.get('id_solicitud')
+                    if not comercio_id:
+                        raise ValueError("Debe seleccionar un comercio válido")
+
+                    solicitud.id_solicitud_id = comercio_id
+                    solicitud.save()  # Guardamos para obtener el ID
+                    logger.info(f'Solicitud creada con ID: {solicitud.id}')
+
+                    # Ahora guardamos los requisitos ASOCIADOS a la solicitud
+                    requisitos = requisitos_form.save(commit=False)
+                    requisitos.id_solicitud = solicitud  # Asignamos la instancia completa
+                    requisitos.save()
+                    logger.info(f'Requisitos creados con ID: {requisitos.id} para solicitud {solicitud.id}')
+
+                    messages.success(request, 'Solicitud creada exitosamente!')
+                    return redirect('certificados_prevencion')
+
+                except ValueError as ve:
+                    error_msg = f'Error de validación: {str(ve)}'
+                    logger.error(error_msg)
+                    messages.error(request, error_msg)
+                except Exception as e:
+                    error_msg = f'Error al guardar la solicitud: {str(e)}'
+                    logger.error(error_msg, exc_info=True)
+                    messages.error(request, 'Ocurrió un error al procesar tu solicitud')
+
+                # Si hubo un error en la solicitud principal, se mantienen los datos en el form
+                # para que se vuelvan a mostrar en la plantilla
+            else:
+                # Procesar errores de validación del formulario principal
+                for field, errors in solicitud_form.errors.items():
+                    for error in errors:
+                        # Omitimos el error de referencia si no es requerido
+                        if field != 'referencia' or requiere_referencia:
+                            messages.error(request, f"Solicitud - {field}: {error}")
+
+                for field, errors in requisitos_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"Requisitos - {field}: {error}")
                 
-                # Validación adicional del comercio
-                comercio_id = post_data.get('id_solicitud')
-                if not comercio_id:
-                    raise ValueError("Debe seleccionar un comercio válido")
-                
-                solicitud.id_solicitud_id = comercio_id
-                solicitud.save()  # Guardamos para obtener el ID
-                logger.info(f'Solicitud creada con ID: {solicitud.id}')
-                
-                # Ahora guardamos los requisitos ASOCIADOS a la solicitud
-                requisitos = requisitos_form.save(commit=False)
-                requisitos.id_solicitud = solicitud  # Asignamos la instancia completa
-                requisitos.save()
-                logger.info(f'Requisitos creados con ID: {requisitos.id} para solicitud {solicitud.id}')
-                
-                messages.success(request, 'Solicitud creada exitosamente!')
-                return redirect('certificados_prevencion')
-                
-            except ValueError as ve:
-                error_msg = f'Error de validación: {str(ve)}'
-                logger.error(error_msg)
-                messages.error(request, error_msg)
-            except Exception as e:
-                error_msg = f'Error al guardar la solicitud: {str(e)}'
-                logger.error(error_msg, exc_info=True)
-                messages.error(request, 'Ocurrió un error al procesar tu solicitud')
-                
-                # Guardamos los datos del formulario en la sesión para recuperarlos
-                request.session['comercio_form_data'] = {
-                    'solicitud_form_data': request.POST,  # Usamos el POST original aquí
-                    'requisitos_form_data': request.POST
-                }
-                return redirect(request.path)
-        else:
-            # Procesar errores de validación
-            for field, errors in solicitud_form.errors.items():
-                for error in errors:
-                    # Omitimos el error de referencia si no es requerido
-                    if field != 'referencia' or requiere_referencia:
-                        messages.error(request, f"{field}: {error}")
-            
-            for field, errors in requisitos_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
-            
-            request.session['comercio_form_data'] = request.POST  # POST original
-            return redirect(request.path)
-    
-    # Manejo del GET (mostrar formulario)
-    initial_data = request.session.pop('comercio_form_data', None)
-    
+                # Si hubo errores, los formularios (solicitud_form y requisitos_form)
+                # ya contienen los datos enviados y los errores, así que simplemente
+                # se renderiza el template de nuevo. No hay necesidad de redirigir
+                # para mantener los datos de los formularios.
+
+    # Manejo del GET (mostrar formulario) o si POST falló
     context = {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
-        "comercio_form": ComercioForm(),
-        "comercios": comercios,  # Esto es opcional, el formulario ya maneja el filtrado
-        "solicitud_form": SolicitudForm(initial=initial_data, user=user),  # Pasamos el usuario aquí
-        "requisitos_form": RequisitosForm(initial=initial_data),
+        "comercio_form": ComercioForm(), # Siempre vacío para agregar nuevo comercio en el modal
+        "comercios": comercios,
+        "solicitud_form": solicitud_form if 'solicitud_form' in locals() else SolicitudForm(user=user),
+        "requisitos_form": requisitos_form if 'requisitos_form' in locals() else RequisitosForm(),
+        'editing': False # <--- ¡IMPORTANTE! Indica que estamos en modo creación
     }
-    
+
     return render(request, 'Seguridad-prevencion/formularioSolicitud.html', context)
 
 
@@ -868,58 +989,6 @@ def validar_cedula(request):
         "cantidad_comercios": cantidad_comercios,
         "valido": True  # Permitir el registro
     })
-
-
-def editar_solicitud(request, id):
-    user = request.session.get('user')
-    if not user:
-        return redirect('/')
-
-    # Obtener los objetos necesarios
-    solicitud = get_object_or_404(Solicitudes, id=id)
-    datos_solicitud = get_object_or_404(Comercio, id_comercio=solicitud.id_solicitud.id_comercio)
-    requisitos = get_object_or_404(Requisitos, id_solicitud=solicitud.id)
-    
-    if request.method == 'POST':
-        # Procesar el formulario enviado
-        form = SolicitudForm(request.POST or None, instance=solicitud, editing=True, user=user)
-        requisitos_form = RequisitosForm(request.POST or None, instance=requisitos)
-        
-        if form.is_valid() and requisitos_form.is_valid():
-            form.save()
-            requisitos_form.save()
-            messages.success(request, 'Solicitud actualizada correctamente')
-            return redirect('certificados_prevencion')
-        else:
-            # Mostrar errores en el formulario
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
-                    print(f"Error en campo '{field}': {error}")
-            for field, errors in requisitos_form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
-                    print(f"Error en campo '{field}': {error}")
-    else:
-        # Mostrar formulario con datos iniciales
-        form = SolicitudForm(instance=solicitud)
-        requisitos_form = RequisitosForm(instance=requisitos)
-    
-    # Contexto para la plantilla
-    context = {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        'form': form,
-        'requisitos_form': requisitos_form,
-        'comercio': datos_solicitud,
-        'editing': True,
-        'solicitud_id': id
-    }
-    
-    return render(request, 'Seguridad-prevencion/editar_solicitud.html', context)
-
 
 def agregar_comercio(request):
     if request.method == "POST":

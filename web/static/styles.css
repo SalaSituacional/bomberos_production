@@ -3131,6 +3131,273 @@ summary>* {
 
 /* #endregion */
 
+
+/* #region Estilos Formulario */
+  
+/* ====================================================================================================================================================== */
+/* Estilos Formularios planillas de prevencion */
+.content-form {
+  margin-top: 1.5rem;
+  width: 100%;
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+  }
+}
+.agg_comercio {
+  width: 5rem;
+  margin: 0;
+  padding: 0;
+  button {
+    padding: .2rem;
+  }
+}
+.comerce-contain {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  padding: .5rem;
+  label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    margin-right: .5rem;
+  }
+}
+
+
+/* Estilos para el autocompletado */
+.select-autocomplete {
+  position: relative;
+  width: 100%;
+}
+.select-autocomplete input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.select-autocomplete .dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ced4da;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  z-index: 1000;
+  display: none;
+}
+.select-autocomplete .dropdown-item {
+  padding: 8px 15px;
+  cursor: pointer;
+}
+.select-autocomplete .dropdown-item:hover {
+  background-color: #f8f9fa;
+} 
+.select-autocomplete .search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+.hidden-select {
+  display: none;
+}
+
+
+.parte-a h3{
+  margin-top: 1.5rem;
+}
+.parte-a label{
+  color: #b6243a !important;
+}
+.parte-a input:focus{
+  border: 1px solid #b6243a;
+  box-shadow: 0 2px 8px #b6243a;
+}
+.buttons-solicitud {
+  margin: 0 auto;
+  margin-top: 1rem;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+
+  button{
+    width: 100%;
+    margin-bottom: .5rem;
+  }
+  a{
+    width: 100%;
+  }
+}
+
+
+/* Styles for the checkbox itself when checked */
+.form-check-input:checked {
+    background-color: #b6243a;
+    border-color: #b6243a;
+}
+/* Style for the card (.card.h-100) when it contains a checked checkbox */
+.parte-b .card.h-100:has(.form-check-input:checked) {
+    border: 1px solid #b6243a; /* Apply the red border to the card */
+    transition: border-color 0.3s ease-in-out; /* Add a smooth transition for the border */
+}
+/* Style for the input within the card when the card's checkbox is checked */
+.parte-b .card.h-100:has(.form-check-input:checked) input[type="date"] {
+    border-color: #b6243a; /* Change the border color of the input */
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition */
+}
+.parte-b .form-check-input:focus{
+  box-shadow: 0 0 2px 1px #b6243a;
+}
+.parte-b .form-control:focus{
+  border: 1px solid #b6243a;
+  box-shadow: 0 0 5px 1px #b6243a;
+}
+
+
+
+/* Estilos para los mensajes */
+.alert-messages {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+}
+.alert {
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  animation: slideIn 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateX(-20px);
+  position: relative;
+  overflow: hidden;
+}
+.alert:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+}
+.alert-success {
+  background-color: #f0fff4;
+  color: #2f855a;
+  border-left: 5px solid #38a169;
+}
+.alert-warning {
+  background-color: #fffaf0;
+  color: #b7791f;
+  border-left: 5px solid #dd6b20;
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+/* Botón de cerrar */
+.alert .close-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font-size: 1.2em;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.alert .close-btn:hover {
+    opacity: 1;
+}
+
+
+
+
+
+
+/* Modal de Agregar Comercio */
+.add-comerce-content {
+  width: 100%;
+}
+.add-comerce {
+  padding: .5rem;
+  color: #FFF;
+  font-size: 1.2rem;
+}
+.modify-comerce {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.contain-svg-comerce {
+  width: 50%;
+  margin: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.form-add-comerce {
+  margin: .5rem;
+  width: 100%;
+
+  div {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: .5rem;  
+  }
+  input:focus{
+    border: 1px solid #b6243a;
+    box-shadow: 0 2px 8px #b6243a;
+    font-size: 1rem;
+  }
+  label {
+    padding-top: .4rem;
+    color: #b6243a;
+    font-size: .9rem;
+  }
+  .form-floating{
+    margin: 0;
+  }
+}
+
+/* #endregion */
+
 /****************** componentes reutilizables **************/
 
 .highlight {
