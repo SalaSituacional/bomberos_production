@@ -53,12 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return `
       <tr>
-        <td>${index}</td>
-        <td>${tipo}</td>
-        <td>${item.tipo_solicitud}</td>
-        <td>${item.solicitante}</td>
-        <td>${item.fecha}</td>
-        <td class="text-nowrap">
+        <td class="fixed-with-auto">${index}</td>
+        <td class="fixed-with">${tipo}</td>
+        <td class="fixed-with">${item.tipo_solicitud}</td>
+        <td class="fixed-with">${item.solicitante}</td>
+        <td class="fixed-with">${item.fecha}</td>
+        <td class="text-nowrap fixed-with-iconos">
           ${item.tiene_requisitos ? `
             <a href="/seguridad_prevencion/editar_solicitud/${item.id_solicitud}" class="btn btn-sm btn-primary" title="Editar">
               <i class="bi bi-pencil"></i>

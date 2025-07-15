@@ -3641,51 +3641,7 @@ checkbox-styles {
 
 
 /* Estilos para el Autocompletado */
-/* Estilos para el autocompletado */
-  .select-autocomplete {
-    position: relative;
-    width: 100%;
-  }
-  
-  .select-autocomplete input {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  
-  .select-autocomplete .dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    max-height: 200px;
-    overflow-y: auto;
-    background: white;
-    border: 1px solid #ced4da;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-    z-index: 1000;
-    display: none;
-  }
-  
-  .select-autocomplete .dropdown-item {
-    padding: 8px 15px;
-    cursor: pointer;
-  }
-  
-  .select-autocomplete .dropdown-item:hover {
-    background-color: #f8f9fa;
-  }
-  
-  .select-autocomplete .search-icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6c757d;
-  }
+
   
   /* Ocultar el select original pero mantenerlo para el formulario */
   .hidden-select {
