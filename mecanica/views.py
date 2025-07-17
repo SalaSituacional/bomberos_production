@@ -35,36 +35,94 @@ def Dashboard_mecanica(request):
         "apellidos": user["apellidos"],
     })
 
+
 # ======================== Unidades ========================
 def View_Unidades(request):
     user = request.session.get('user')
     if not user:
-            return redirect('/')
-    
+        return redirect('/')
+
+    # 1. Obtener los parámetros de filtro de la URL
+    filter_nombre_unidad = request.GET.get('filterNombreUnidad', '').strip()
+    filter_division_id = request.GET.get('filterDivision', '')
+    filter_estado = request.GET.get('filterEstado', '')
+
+    # 2. Inicializar el queryset base
+    unidades_queryset = Unidades.objects.exclude(id__in=[26, 30, 27]).order_by("id")
+
+    # PREFETCH CORRECTOS SEGÚN _meta.get_fields():
+    unidades_queryset = unidades_queryset.prefetch_related(
+        # Para ManyToManyField 'id_division'
+        Prefetch("id_division", queryset=Divisiones.objects.all(), to_attr="divisiones_prefetch"),
+        # Para ForeignKey inverso 'unidades_detalles_set' (¡Aquí está el cambio!)
+        Prefetch("detalles_de_unidad", queryset=Unidades_Detalles.objects.all(), to_attr="detalles_prefetch")
+    )
+
+    # 3. Aplicar filtros si existen
+    if filter_nombre_unidad:
+        unidades_queryset = unidades_queryset.filter(nombre_unidad__icontains=filter_nombre_unidad)
+
+    if filter_division_id:
+        try:
+            # Filtrar por el ID de la división en ManyToManyField
+            unidades_queryset = unidades_queryset.filter(id_division__id=filter_division_id).distinct()
+        except ValueError:
+            pass
+
+    if filter_estado:
+        # Filtrar por el campo 'estado' en el modelo Unidades_Detalles a través de la relación inversa
+        unidades_queryset = unidades_queryset.filter(detalles_de_unidad__estado=filter_estado).distinct()
+
+
+    # 4. Ejecutar el queryset y obtener el conteo de unidades filtradas
+    data = list(unidades_queryset) # Aquí es donde se evalúa el queryset y fallaría si el prefetch es malo
+    conteo = len(data)
+
+    # 5. Preparar los datos para el template
     datos = []
-
-    data = Unidades.objects.exclude(id__in=[26, 30, 27]).prefetch_related(
-        Prefetch("unidades_detalles_set", to_attr="data_unidad"),
-        Prefetch("id_division", to_attr="divisiones")  # Obtiene las divisiones asociadas
-    ).order_by("id")
-
-    conteo = data.count()
-
     for unidad in data:
+        division_nombres = [div.division for div in unidad.divisiones_prefetch]
+
+        detalles_unidad = []
+        if hasattr(unidad, 'detalles_prefetch'): # Usar el 'to_attr' definido
+            detalles_unidad = [
+                {
+                    "tipo_vehiculo": detalle.tipo_vehiculo,
+                    "serial_carroceria": detalle.serial_carroceria,
+                    "serial_chasis": detalle.serial_chasis,
+                    "marca": detalle.marca,
+                    "año": detalle.año,
+                    "modelo": detalle.modelo,
+                    "placas": detalle.placas,
+                    "tipo_filtro_aceite": detalle.tipo_filtro_aceite,
+                    "tipo_filtro_combustible": detalle.tipo_filtro_combustible,
+                    "bateria": detalle.bateria,
+                    "numero_tag": detalle.numero_tag,
+                    "tipo_bujia": detalle.tipo_bujia,
+                    "uso": detalle.uso,
+                    "capacidad_carga": detalle.capacidad_carga,
+                    "numero_ejes": detalle.numero_ejes,
+                    "numero_puestos": detalle.numero_puestos,
+                    "tipo_combustible": detalle.tipo_combustible,
+                    "tipo_aceite": detalle.tipo_aceite,
+                    "medida_neumaticos": detalle.medida_neumaticos,
+                    "tipo_correa": detalle.tipo_correa,
+                    "estado": detalle.estado,
+                }
+                for detalle in unidad.detalles_prefetch
+            ]
+
         datos.append({
             "nombre_unidad": unidad.nombre_unidad,
             "id_unidad": unidad.id,
-            "divisiones": [div.division for div in unidad.divisiones],  # Lista de nombres de divisiones
-            "detalles": [
-                {
-                    "estado": detalle.estado,  # Reemplaza con los campos reales
-                }
-                for detalle in unidad.data_unidad  # Accede a los detalles prefetchados
-            ]
+            "divisiones": division_nombres,
+            "detalles": detalles_unidad,
         })
 
+    divisiones_para_filtro = Divisiones.objects.all()
 
-    return render(request, "unidades/unidades_inicio.html", {
+    # 6. Preparar el contexto para el template
+    context = {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
@@ -74,7 +132,13 @@ def View_Unidades(request):
         "form_estado": Cambiar_Estado(),
         "form_division": Cambiar_Division(),
         "conteo": conteo,
-    })
+        'divisiones': divisiones_para_filtro,
+        'filtroNombreUnidad': filter_nombre_unidad,
+        'filtroDivision': filter_division_id,
+        'filtroEstado': filter_estado,
+    }
+
+    return render(request, "unidades/unidades_inicio.html", context)
 
 def View_Form_unidades(request):
     user = request.session.get('user')
@@ -160,7 +224,8 @@ def agregar_unidades(request):
 
 def agregar_reportes(request):
     if request.method == "POST":
-        unidad = request.POST.get("id_unidad")
+
+        unidad = request.POST.get("unidad_id")
         servicio = request.POST.get("servicio")
         fecha = request.POST.get("fecha")
         hora = request.POST.get("hora")
@@ -187,7 +252,8 @@ def agregar_reportes(request):
 
 def cambiar_estado(request):
     if request.method == "POST":
-        unidad = request.POST.get("id_unidad-status")
+
+        unidad = request.POST.get("unidad_id_estatus")
     
         unidad_instance = get_object_or_404(Unidades, id=unidad)
         unidad_detalles = get_object_or_404(Unidades_Detalles, id_unidad=unidad_instance.id)
@@ -202,7 +268,7 @@ def cambiar_estado(request):
 
 def reasignar_division(request):
     if request.method == "POST":
-        unidad = request.POST.get("id_unidad-division")
+        unidad = request.POST.get("unidad_id_division")
         # nueva_division = request.POST.get("nuevo")
     
         # Obtener la unidad que queremos actualizar
@@ -282,6 +348,7 @@ def mostrar_informacion(request, id):
 
         if ultimo_reporte:
             reportes_finales.append({
+                "id": ultimo_reporte.id,
                 "servicio": ultimo_reporte.servicio.nombre_servicio,
                 "fecha": ultimo_reporte.fecha.strftime("%Y-%m-%d"),
                 "hora": ultimo_reporte.hora.strftime("%H:%M"),
@@ -319,6 +386,18 @@ def mostrar_informacion(request, id):
     }
 
     return JsonResponse(datos, safe=False)
+
+def eliminar_reporte(request, reporte_id):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+
+    reporte = get_object_or_404(Reportes_Unidades, id=reporte_id)
+    reporte.delete()
+
+    return JsonResponse({
+        "mensaje": "Reporte Eliminado Correctamente..."
+    })
 
 
 

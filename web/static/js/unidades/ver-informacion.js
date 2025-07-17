@@ -22,9 +22,7 @@ botonesVer.forEach((boton) => {
 });
 
 function mostrarInformacion(data) {
-  //   if (contenedor) {
-  //     contenedor.scrollIntoView({ behavior: "smooth" });
-  //   }
+
   contenedor.scrollIntoView({ behavior: "smooth" });
 
   contenedor.innerHTML = "";
@@ -79,23 +77,60 @@ function mostrarInformacion(data) {
     </div>
   `;
 
+  document.getElementById("reporte_unidades").innerHTML = "";
+
+  // Obtener la referencia a la modal y el botón de confirmación
+  const confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal2'));
+  const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+
+  let reporteIdToDelete = null; // Variable para almacenar el ID del reporte a eliminar
+
   data.ultimos_reportes.forEach((reporte) => {
-    // div.classList.add("reporte"); // Clase para estilos CSS
+      document.getElementById("reporte_unidades").innerHTML += `
+      <div class="reporte">
+        <div class="reporte-content">
+          <h2>Reporte</h2>
+          <div>
+            <p><strong>Servicio:</strong> ${reporte.servicio}</p>
+            <p><strong>Fecha:</strong> ${reporte.fecha}</p>
+            <p><strong>Hora:</strong> ${reporte.hora}</p>
+          </div>
+          <div>
+            <p><strong>Descripción:</strong> ${reporte.descripcion}</p>
+            <p><strong>Responsable:</strong> ${reporte.persona_responsable}</p>
+          </div>
+          <button type="button" class="btn btn-danger btn-borrar-reporte" data-reporte-id="${reporte.id}">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
+      `;
+  });
 
-    document.getElementById("reporte_unidades").innerHTML += `
-    <div class="reporte">
-    <h2>Reporte</h2>
-    <div>
-    <p><strong>Servicio:</strong> ${reporte.servicio}</p>
-    <p><strong>Fecha:</strong> ${reporte.fecha}</p>
-    <p><strong>Hora:</strong> ${reporte.hora}</p>
-    </div>
-    <div>
-    <p><strong>Descripción:</strong> ${reporte.descripcion}</p>
-    <p><strong>Responsable:</strong> ${reporte.persona_responsable}</p>
-    </div>
-    </div>
+  // Delegación de eventos: Escuchar clics en los botones de "Eliminar"
+  // Esto es importante porque los botones se añaden dinámicamente
+  document.getElementById("reporte_unidades").addEventListener('click', (event) => {
+      const deleteButton = event.target.closest('.btn-borrar-reporte');
+      if (deleteButton) {
+          reporteIdToDelete = deleteButton.dataset.reporteId; // Obtiene el ID del reporte
+          confirmDeleteModal.show(); // Muestra la modal de confirmación
+      }
+  });
 
-    `;
+  // Cuando el usuario hace clic en el botón "Eliminar" dentro de la modal
+  confirmDeleteButton.addEventListener('click', async () => {
+      if (reporteIdToDelete) {
+        // Construye la URL de eliminación con el ID almacenado
+        const deleteUrl = DELETE_REPORT_BASE_URL.replace('0', reporteIdToDelete);
+
+        const response = fetchWithLoader(deleteUrl);
+        
+        if (response) {
+          location.reload()
+        }
+
+        confirmDeleteModal.hide();
+        reporteIdToDelete = null;
+      }
   });
 }
