@@ -32,76 +32,160 @@
   </div>
 </div>
 
-<div class="tool-personal">
-  <section class="accion-filter">
-    <div class="input-group mb-3">
-      <span class="input-group-text" id="basic-addon1">Nombre: </span>
-      <input type="text" class="form-control" placeholder="Buscar" id="filterid">
+<!-- section filter -->
+<div class="filter-container">
+  <div class="filter-stats">
+    <div class="stat-box">
+      <strong>Conductores Registrados: </strong>
+      <span class="stat-badge">{{ total }}</span>
     </div>
-  </section>
-  <section class="accion-personal">
-    <label class="form-label">
-      Registrar Conductor
-    </label>
-    <button type="button" class="btn">
-      <a href="{% url 'agregar_conductor' %}">
-        <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
-          fill="#000000">
-          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-          <g id="SVGRepo_iconCarrier">
-            <title>plus-circle</title>
-            <desc>Created with Sketch Beta.</desc>
-            <defs> </defs>
-            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-              <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000">
-                <path
-                  d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z"
-                  id="plus-circle" sketch:type="MSShapeGroup"> </path>
-              </g>
-            </g>
-          </g>
-        </svg>
-      </a>
-    </button>
-  </section>
-</div>
-
-<div class="contain-unidades">
-  <!-- tabla -->
-  <div class="table-responsive-sm">
-    <table class="table table-hover tabla-unidades" id="conductoresTable">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Jerarquía</th>
-          <th>Cédula</th>
-          <th>Licencia</th>
-          <th>Certificado Medico</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="conductoresBody">
-        <!-- Los datos se cargarán aquí con JavaScript -->
-      </tbody>
-    </table>
+    <div class="stat-box">
+      <strong>Registrar Conductor: </strong>
+      <span class="stat-badge">
+        <a href="{% url 'agregar_conductor' %}" title="Registrar Conductor">
+          <i class="bi bi-plus-circle"></i>
+        </a>
+      </span>
+    </div>
   </div>
-</div>
+
+  <form method="get" action="" class="filter-form">
+    <!-- Filtro Nombre Conductor -->
+    <div class="filter-group">
+      <div class="floating-input">
+        <input type="text" class="form-control" name="nombreConductor" id="nombreConductor" {% if filterNombreConductor %} value="{{ filterNombreConductor }}" {% endif %}>
+        <label for="nombreConductor">Nombre Conductor</label>
+      </div>
+    </div>
+
+    <!-- Filtro Cedula Conductor -->
+    <div class="filter-group">
+      <div class="floating-input">
+        <input type="text" class="form-control" name="cedulaConductor" id="cedulaConductor" {% if filterCedulaConductor %} value="{{ filterCedulaConductor }}" {% endif %} >
+        <label for="cedulaConductor">Cedula Del Conductor</label>
+      </div>
+    </div>
+
+    <!-- Filtro Licencia Grado -->
+    <div class="filter-group">
+      <div class="floating-select">
+        <select id="quarterInput" name="gradoLicencia">
+          <option value="">Seleccionar...</option>
+          <option value="5" {% if filtro_trimestre == '5' %}selected{% endif %}>5to Grado</option>
+          <option value="4" {% if filtro_trimestre == '4' %}selected{% endif %}>4to Grado</option>
+          <option value="3" {% if filtro_trimestre == '3' %}selected{% endif %}>3er Grado</option>
+          <option value="2" {% if filtro_trimestre == '2' %}selected{% endif %}>2do Grado</option>
+        </select>
+        <label for="quarterInput">Grado De Licencia</label>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="filter-actions">
+      <button type="submit" class="filter-button" title="Filtrar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+        </svg>
+      </button>
+      {% if filterNombreConductor or filterCedulaConductor or filtro_trimestre %}
+        <a href="{% url 'conductores' %}" class="clear-button" title="Limpiar filtros">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+  </form>
 </div>
 
-<!-- Modal para detalles -->
+<div class="table-responsive-sm">
+  <table class="table table-hover" id="conductoresTable">
+    <thead>
+      <tr>
+        <th class="fixed-width">Nombre</th>
+        <th class="fixed-width">Jerarquía</th>
+        <th class="fixed-width">Cédula</th>
+        <th class="fixed-width">Licencia</th>
+        <th class="fixed-width">Certificado Médico</th>
+        <th class="fixed-width">Estado</th>
+        <th class="fixed-width-iconos">Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="conductoresBody">
+      {% if conductores %}
+        {% for conductor in conductores %}
+          <tr data-id="{{ conductor.id }}">
+            <td class="fixed-width">{{ conductor.nombres }} {{ conductor.apellidos }}</td>
+            <td class="fixed-width">{{ conductor.jerarquia }}</td>
+            <td class="fixed-width">{{ conductor.cedula }}</td>
+            <td class="fixed-width">
+              <span class="badge size-font {{ conductor.licencia.badge_class }}">
+                {{ conductor.licencia.text }}
+              </span>
+              {% if conductor.licencia.multiple_licencias %}
+                <span>+{{ conductor.todas_las_licencias|length|add:"-1" }}</span> {# Muestra cuántas licencias adicionales tiene #}
+              {% endif %}
+            </td>
+            <td class="fixed-width">
+              <span class="badge size-font {{ conductor.certificado.badge_class }}">
+                {{ conductor.certificado.text }}
+              </span>
+            </td>
+            <td class="fixed-width">
+              <span class="badge size-font {{ conductor.estado_badge_class }}">
+                {{ conductor.estado_text }}
+              </span>
+            </td>
+            <td class="fixed-width-iconos">
+              <button class="btn btn-details-conductor">
+                <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path d="M892.1 938.7H131.9c-17.8 0-35.1-3.5-51.4-10.4-15.6-6.6-29.7-16.1-41.9-28.2C26.5 888 17 873.9 10.3 858.2 3.5 841.8 0 824.5 0 806.8V217.2c0-17.8 3.5-35 10.4-51.3 6.6-15.7 16.1-29.8 28.2-41.9 12.2-12.2 26.3-21.7 42-28.3 16.2-6.9 33.5-10.4 51.3-10.4h83.4c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7h-83.4c-6.3 0-12.4 1.2-18.1 3.6-5.6 2.4-10.6 5.7-14.9 10-4.3 4.3-7.6 9.2-10 14.8-2.4 5.7-3.6 11.8-3.6 18.1v589.6c0 6.3 1.2 12.4 3.7 18.1 2.3 5.5 5.7 10.5 10 14.8 4.3 4.2 9.2 7.6 14.8 9.9 5.8 2.4 11.9 3.7 18.1 3.7h760.2c6.3 0 12.4-1.2 18.1-3.6 5.6-2.4 10.6-5.7 14.9-10 4.3-4.3 7.6-9.2 10-14.8 2.4-5.7 3.6-11.8 3.6-18.1V217.2c0-6.3-1.2-12.4-3.7-18.1-2.3-5.5-5.7-10.5-10-14.8-4.3-4.2-9.2-7.6-14.8-9.9-5.8-2.4-11.9-3.7-18.1-3.7h-83.4c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h83.4c17.8 0 35.1 3.5 51.4 10.4 15.6 6.6 29.7 16.1 41.9 28.2 12.1 12.1 21.6 26.2 28.3 41.9 6.9 16.3 10.4 33.6 10.4 51.4v589.6c0 17.8-3.5 35-10.4 51.3-6.6 15.7-16.1 29.8-28.2 41.9-12.2 12.2-26.3 21.7-42 28.3-16.3 6.9-33.6 10.4-51.4 10.4z" fill="#b6243a"></path>
+                    <path d="M229.8 714.8c-6.1 0-12.3-1.3-18.1-4.1-21.3-10-30.5-35.5-20.4-56.8L467.5 67.1c10-21.3 35.5-30.5 56.8-20.4 21.3 10 30.5 35.5 20.4 56.8L268.5 690.3c-7.3 15.4-22.7 24.5-38.7 24.5zM810.7 448H640c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h170.7c23.6 0 42.7 19.1 42.7 42.7S834.2 448 810.7 448zM810.7 704h-384c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h384c23.6 0 42.7 19.1 42.7 42.7S834.2 704 810.7 704z" fill="#5F6379"></path>
+                  </g>
+                </svg>
+              </button>
+              <a href="{% url 'editar_conductor' conductor.id %}" class="btn">
+                <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M823.3 938.8H229.4c-71.6 0-129.8-58.2-129.8-129.8V215.1c0-71.6 58.2-129.8 129.8-129.8h297c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7h-297c-24.5 0-44.4 19.9-44.4 44.4V809c0 24.5 19.9 44.4 44.4 44.4h593.9c24.5 0 44.4-19.9 44.4-44.4V512c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v297c0 71.6-58.2 129.8-129.8 129.8z" fill="#b6243a"></path><path d="M483 756.5c-1.8 0-3.5-0.1-5.3-0.3l-134.5-16.8c-19.4-2.4-34.6-17.7-37-37l-16.8-134.5c-1.6-13.1 2.9-26.2 12.2-35.5l374.6-374.6c51.1-51.1 134.2-51.1 185.3 0l26.3 26.3c24.8 24.7 38.4 57.6 38.4 92.7 0 35-13.6 67.9-38.4 92.7L513.2 744c-8.1 8.1-19 12.5-30.2 12.5z m-96.3-97.7l80.8 10.1 359.8-359.8c8.6-8.6 13.4-20.1 13.4-32.3 0-12.2-4.8-23.7-13.4-32.3L801 218.2c-17.9-17.8-46.8-17.8-64.6 0L376.6 578l10.1 80.8z" fill="#5F6379"></path></g></svg>
+              </a>
+              <button class="btn btn-delete-conductor">
+                <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1"
+                      xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z" fill="#b6243a"></path>
+                    <path d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z" fill="#5F6379"></path>
+                  </g>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="7" class="text-center">No se encontraron conductores.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+
 <div class="modal fade" id="detalleModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header modal-header-info">
-        <h5 class="modal-title">Informacion del Conductor</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-conductores-mecanica">
+    <div class="modal-content modal-content-two">
+      <div class="modal-header header-dashboard-two modal-dashboard-conductores">
+        <section class="title-icon">
+          <img src="{% static 'assets/logo bomberos 2.svg' %}" alt="Logo de bomberos" />
+          <h5 class="modal-title" id="detalleModalTitle">Detalles de Conductores</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </section>
       </div>
-      <h5 id="detalleModalTitle"></h5>
-      <div class="modal-body modal-conductores-modify" id="detalleModalBody">
-        <!-- Contenido dinámico -->
+      <div class="modal-body modal-body-two modal-body-three modal-conductores-modify" id="detalleModalBody">
+      
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -110,7 +194,6 @@
   </div>
 </div>
 
-<!-- Modal para eliminación -->
 <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content modal-delete">
@@ -119,6 +202,7 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body body-delete" id="confirmarEliminarBody">
+        {# El contenido se llenará por JS, así que puedes dejarlo vacío o con un mensaje genérico #}
         Eliminar Conductor
       </div>
       <div class="modal-footer">

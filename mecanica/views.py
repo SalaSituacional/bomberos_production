@@ -20,6 +20,7 @@ import pandas as pd
 import json
 from django.db.models import Q, Count, F
 from django.db import transaction
+from datetime import date as localdate
 
 # ========================= Dashboard Mecanica ========================
 def Dashboard_mecanica(request):
@@ -625,57 +626,149 @@ def devolver_herramienta(request, asignacion_id):
     # Redirigir al detalle de la unidad
     return redirect('detalle-asignacion', unidad_id=asignacion.unidad.id)
 
-# 3- Auditoria y Reportes ===================================
-# @login_required
-# def auditoria_inventario(request):
-#     # Últimos inventarios por unidad
-#     ultimos_inventarios = InventarioUnidad.objects.filter(
-#         id__in=InventarioUnidad.objects.values('unidad')
-#         .annotate(max_id=Max('id'))
-#         .values_list('id', flat=True)
-#     ).select_related('unidad')
-    
-#     # Alertas (herramientas no presentes en último inventario)
-#     alertas = DetalleInventario.objects.filter(
-#         inventario_id__in=ultimos_inventarios,
-#         presente=False
-#     ).select_related('herramienta', 'inventario__unidad')
-    
-#     # Estadísticas
-#     stats = {
-#         'total_herramientas': Herramienta.objects.count(),
-#         'asignadas': AsignacionHerramienta.objects.filter(
-#             fecha_devolucion__isnull=True).count(),
-#         'porcentaje_discrepancias': (alertas.count() / Herramienta.objects.count()) * 100 if Herramienta.objects.count() > 0 else 0
-#     }
-    
-#     return render(request, 'inventario/auditoria.html', {
-#         'ultimos_inventarios': ultimos_inventarios,
-#         'alertas': alertas,
-#         'stats': stats
-#     })
 
 
 
 
 # ======================== Conductores ========================
 def conductores(request):
-    user = request.session.get('user')
-    if not user:
-        return redirect('/')
-    
-    hoy = localdate()
-    conductores = Conductor.objects.select_related('personal').prefetch_related(
+    user_data = request.session.get('user')
+    if not user_data:
+        return redirect('/') # Redirigir a login si no hay sesión
+
+    hoy = date.today()
+
+    # Obtener todos los conductores inicialmente
+    # Optimizamos la consulta con select_related y prefetch_related
+    conductores_qs = Conductor.objects.select_related('personal').prefetch_related(
         'licencias', 'certificados_medicos'
-    ).all()
-    
+    ).order_by('personal__nombres', 'personal__apellidos') # Opcional: ordenar para consistencia
+
+    # --- Lógica de Filtrado (la misma que ya tenías) ---
+    filter_nombre_conductor = request.GET.get('nombreConductor', '').strip()
+    filter_cedula_conductor = request.GET.get('cedulaConductor', '').strip()
+    filter_grado_licencia = request.GET.get('gradoLicencia', '').strip() # El valor es '2', '3', '4', '5'
+
+    if filter_nombre_conductor:
+        conductores_qs = conductores_qs.filter(
+            Q(personal__nombres__icontains=filter_nombre_conductor) |
+            Q(personal__apellidos__icontains=filter_nombre_conductor)
+        )
+
+    if filter_cedula_conductor:
+        conductores_qs = conductores_qs.filter(personal__cedula__icontains=filter_cedula_conductor)
+
+    if filter_grado_licencia:
+        # Filtra por el tipo_licencia de las licencias activas y vigentes
+        conductores_qs = conductores_qs.filter(
+            licencias__tipo_licencia=filter_grado_licencia,
+            licencias__activa=True,
+            licencias__fecha_vencimiento__gte=hoy # Considera solo licencias vigentes
+        ).distinct()
+        
+    total_conductores = conductores_qs.count()
+
+    # --- Preparar datos para el template ---
+    # Esto es similar a lo que hacía tu JS, pero ahora lo hacemos en Python
+    conductores_list_for_template = []
+    for conductor in conductores_qs:
+        licencia_info = {
+            'existe': False,
+            'badge_class': 'bg-secondary',
+            'text': 'Sin licencia',
+            'tipo_display': '',
+            'vencida': False,
+            'multiple_licencias': False,
+            'licencia_id': None # Para el modal de detalles
+        }
+        
+        # Encuentra la licencia activa y vigente si existe
+        # Nota: Tus @property en el modelo Conductor son útiles aquí
+        licencia_activa_vigente = conductor.licencia_activa 
+        
+        if licencia_activa_vigente:
+            vencida = licencia_activa_vigente.fecha_vencimiento < hoy
+            licencia_info['existe'] = True
+            licencia_info['vencida'] = vencida
+            licencia_info['tipo_display'] = licencia_activa_vigente.get_tipo_licencia_display()
+            licencia_info['badge_class'] = 'bg-danger' if vencida else 'bg-success'
+            licencia_info['text'] = licencia_info['tipo_display']
+            if vencida:
+                licencia_info['text'] += ' (Vencida)'
+            
+            # Comprobar si hay más de una licencia (activa o inactiva)
+            if conductor.licencias.count() > 1:
+                licencia_info['multiple_licencias'] = True
+            licencia_info['licencia_id'] = licencia_activa_vigente.id # Puedes necesitar esto para detalles
+
+        certificado_info = {
+            'existe': False,
+            'badge_class': 'bg-secondary',
+            'text': 'Sin certificado',
+            'vencido': False,
+            'certificado_id': None # Para el modal de detalles
+        }
+        
+        # Encuentra el certificado activo y vigente si existe
+        certificado_activo_vigente = conductor.certificado_medico_activo
+
+        if certificado_activo_vigente:
+            vencido_cert = certificado_activo_vigente.fecha_vencimiento < hoy
+            certificado_info['existe'] = True
+            certificado_info['vencido'] = vencido_cert
+            certificado_info['badge_class'] = 'bg-danger' if vencido_cert else 'bg-success'
+            certificado_info['text'] = 'Vencido' if vencido_cert else 'Vigente'
+            certificado_info['certificado_id'] = certificado_activo_vigente.id # Puedes necesitar esto para detalles
+
+        conductores_list_for_template.append({
+            'id': conductor.id,
+            'nombres': conductor.personal.nombres,
+            'apellidos': conductor.personal.apellidos,
+            'jerarquia': conductor.personal.jerarquia,
+            'cedula': conductor.personal.cedula,
+            'licencia': licencia_info,
+            'certificado': certificado_info,
+            'activo': conductor.activo,
+            'estado_badge_class': 'bg-success' if conductor.activo else 'bg-danger',
+            'estado_text': 'Activo' if conductor.activo else 'Inactivo',
+            # Puedes añadir más datos del conductor aquí si los necesitas en los detalles
+            'observaciones_generales': conductor.observaciones_generales,
+            'fecha_vencimiento_conductor': conductor.fecha_vencimiento.strftime('%Y-%m-%d') if conductor.fecha_vencimiento else None,
+            'todas_las_licencias': [{
+                'id': lic.id,
+                'tipo_licencia_display': lic.get_tipo_licencia_display(),
+                'numero_licencia': lic.numero_licencia,
+                'fecha_emision': lic.fecha_emision.strftime('%Y-%m-%d'),
+                'fecha_vencimiento': lic.fecha_vencimiento.strftime('%Y-%m-%d'),
+                'organismo_emisor': lic.organismo_emisor,
+                'restricciones': lic.restricciones,
+                'observaciones': lic.observaciones,
+                'activa': lic.activa,
+                'vencida': lic.fecha_vencimiento < hoy
+            } for lic in conductor.licencias.all()],
+            'todos_los_certificados': [{
+                'id': cert.id,
+                'fecha_emision': cert.fecha_emision.strftime('%Y-%m-%d'),
+                'fecha_vencimiento': cert.fecha_vencimiento.strftime('%Y-%m-%d'),
+                'centro_medico': cert.centro_medico,
+                'medico': cert.medico,
+                'observaciones': cert.observaciones,
+                'activo': cert.activo,
+                'vencido': cert.fecha_vencimiento < hoy
+            } for cert in conductor.certificados_medicos.all()],
+        })
+
     return render(request, "mecanica/conductores.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        "conductores": conductores,
-        "hoy": hoy
+        "user": user_data,
+        "jerarquia": user_data["jerarquia"],
+        "nombres": user_data["nombres"],
+        "apellidos": user_data["apellidos"],
+        "conductores": conductores_list_for_template, # Pasamos la lista preparada
+        "total": total_conductores,
+        "hoy": hoy,
+        "filterNombreConductor": filter_nombre_conductor,
+        "filterCedulaConductor": filter_cedula_conductor,
+        "filtro_trimestre": filter_grado_licencia,
     })
 
 def agregar_conductor(request):
@@ -826,23 +919,26 @@ def editar_conductor(request, id):
     }
     return render(request, "mecanica/editar_conductor.html", context)
 
-def api_conductores(request):
-    hoy = date.today().isoformat()
-    conductores = Conductor.objects.select_related('personal').prefetch_related(
-        'licencias', 'certificados_medicos'
-    ).all()
-    
-    data = []
-    for conductor in conductores:
+def api_conductores(request, id):
+    try:
+        # Use .get() to retrieve a single object. This raises DoesNotExist if not found.
+        # Select_related for 'personal' (one-to-one) and prefetch_related for 'licencias'/'certificados_medicos' (one-to-many)
+        conductor = Conductor.objects.select_related('personal').prefetch_related(
+            'licencias', 'certificados_medicos'
+        ).get(id=id)
+
         conductor_dict = {
             'id': conductor.id,
             'activo': conductor.activo,
             'observaciones_generales': conductor.observaciones_generales,
-            'personal': model_to_dict(conductor.personal),
+            'personal': model_to_dict(conductor.personal), # Convert related 'Personal' object to dictionary
             'licencias': [],
             'certificados_medicos': []
         }
-        
+
+        # Manually serialize licenses and medical certificates
+        # This is more efficient than calling model_to_dict on each related object
+        # if you only need specific fields.
         for licencia in conductor.licencias.all():
             conductor_dict['licencias'].append({
                 'id': licencia.id,
@@ -853,7 +949,7 @@ def api_conductores(request):
                 'organismo_emisor': licencia.organismo_emisor,
                 'activa': licencia.activa
             })
-        
+
         for certificado in conductor.certificados_medicos.all():
             conductor_dict['certificados_medicos'].append({
                 'id': certificado.id,
@@ -863,10 +959,16 @@ def api_conductores(request):
                 'medico': certificado.medico,
                 'activo': certificado.activo
             })
-        
-        data.append(conductor_dict)
-    
-    return JsonResponse(data, safe=False)
+            
+        # Return the dictionary directly, as it's for a single conductor
+        return JsonResponse(conductor_dict, safe=False)
+
+    except Conductor.DoesNotExist:
+        # Return a 404 Not Found response if the conductor doesn't exist
+        return JsonResponse({'error': 'Conductor no encontrado'}, status=404)
+    except Exception as e:
+        # Catch any other unexpected errors and return a 500 Internal Server Error
+        return JsonResponse({'error': str(e)}, status=500)
 
 @require_http_methods(["DELETE"])
 def api_eliminar_conductor(request, id):

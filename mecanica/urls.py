@@ -11,9 +11,9 @@ urlpatterns = [
     path('conductores/', conductores, name='conductores'),
     path('agregar_conductores/', agregar_conductor, name='agregar_conductor'),
     path('conductores/<int:id>/editar/', editar_conductor, name='editar_conductor'),
+    path('api/info_conductores/<int:id>/', api_conductores, name='info_conductores'),
 
-    # API Endpoints
-    path('api/conductores/', api_conductores, name='api_conductores'),
+    # API Endpointss
     path('api/conductores/<int:id>/', api_eliminar_conductor, name='api_eliminar_conductor'),
 
     path('formularioUnidades/', View_Form_unidades, name='formulario_unidades'),
