@@ -3553,6 +3553,42 @@ summary>* {
 
 /* #endregion */
 
+
+/* #region Estilos Area Conductores */
+/* Estilos Para la modal de Conductores */
+.modal-dashboard-conductores{
+  width: 100%;
+  padding: 0rem 1rem;
+  .title-icon{
+    width: 100%;
+  }
+}
+.modal-conductores-modify{
+  width: 95%;
+  align-items: flex-start;
+  margin: 1rem auto;
+  .container-fluid{
+    padding: 0;
+  }
+  .container-fluid .row div{
+    padding: 0;
+  }
+  .container-fluid .row div p{
+    max-width: 100%;
+    margin: 0;
+    margin-bottom: 2px;
+    font-size: .9rem;
+  }
+  .container-fluid .row{
+    margin: 0;
+    max-width: 100%;
+  }
+  .container-fluid h5{
+    margin-bottom: 4px;
+  }  
+}
+/* #endregion */
+
 /****************** componentes reutilizables **************/
 
 .highlight {
@@ -4783,60 +4819,6 @@ summary>* {
   font-size: .9rem;
 }
 
-.card-conductores-modify {
-  width: 80% !important;
-}
-
-.card-body-modify {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-content: flex-start;
-  justify-content: flex-start;
-}
-
-.dsp-flex {
-  display: flex;
-}
-
-.expand-card {
-  width: 82%;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.card-header-modify {
-  font-size: 1.5rem;
-}
-
-.form-conductores {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
-  border-radius: 10px;
-  margin: 0 auto;
-  width: 50%;
-  border-radius: 2rem;
-  background-color: #FFF;
-  padding-bottom: 2rem;
-
-  div {
-    display: flex;
-    flex-direction: column;
-    padding: 2rem;
-    width: 90%;
-    height: auto;
-
-    label {
-      margin: .8rem 0;
-    }
-  }
-
-  h3 {
-    text-align: center;
-  }
-}
 
 .nav-inventario {
   margin-top: 2rem;

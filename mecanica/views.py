@@ -631,6 +631,7 @@ def devolver_herramienta(request, asignacion_id):
 
 
 # ======================== Conductores ========================
+
 def conductores(request):
     user_data = request.session.get('user')
     if not user_data:
