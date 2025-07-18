@@ -1374,7 +1374,7 @@ summary>* {
     padding: 0rem;
   }
 
-  .data_form form button {
+  .data_form form button, .data_form form a {
     margin: 1rem;
     background-color: var(--color-button);
     color: #fff;
@@ -1384,7 +1384,7 @@ summary>* {
     width: 8rem;
   }
 
-  .data_form form button:hover {
+  .data_form form button:hover, .data_form form a:hover {
     background-color: #75202d;
     transition: 0.1s all ease-in-out;
   }
@@ -3116,7 +3116,10 @@ summary>* {
   max-height: 80vh !important;
   overflow: auto;
 }
-
+#confirmDeleteModal {
+  position: fixed;
+  top: 250px;
+}
 .filtros-prevencion .buscador-solicitudes{
   align-items: stretch;
 
@@ -4702,11 +4705,6 @@ summary>* {
   margin-bottom: 1rem;
   margin-top: 1rem;
 }
-
-/*
-.form-new-drones {
-  width: ;
-} */
 .buttons-sarp-form {
   width: 100%;
   display: flex;
@@ -4718,7 +4716,6 @@ summary>* {
     width: 45%;
   }
 }
-
 .buttons-inmuebles-form {
   width: 100%;
   margin: 0 auto;
@@ -4732,7 +4729,6 @@ summary>* {
     width: 40%;
   }
 }
-
 .formReasignacion {
   padding: 1rem;
   margin: 1rem 0;
@@ -4783,12 +4779,6 @@ summary>* {
 #cerrar-reporte:hover {
   background: rgba(255, 255, 255, 0.4);
 }
-
-
-/* .is-invalid {
-  border-color: red;
-} */
-
 .cerrar-noti {
   background: transparent;
   border: none;
@@ -4801,8 +4791,6 @@ summary>* {
 .cerrar-noti:hover {
   color: #f00;
 }
-
-
 /* Títulos */
 #ultimo-reporte-card h3 {
   text-align: center;
@@ -4842,139 +4830,13 @@ summary>* {
 }
 
 
-.nav-inventario {
-  margin-top: 2rem;
-  width: 100%;
-  height: auto;
-  display: flex;
-  justify-content: center;
-  z-index: 1;
-}
-
-.border-radius-modify {
-  position: absolute;
-  margin: 0 auto;
-  width: 80%;
-  border-radius: 20px;
-  margin: 0;
-  padding: 0;
-}
-
-.container-filter-inventario {
-  width: 100%;
-  height: auto;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  align-content: center;
-  background-color: #FFF;
-  margin-bottom: 1rem;
-  border-radius: 10px;
-  padding: 1rem !important;
-  flex-wrap: wrap;
-
-  i {
-    margin-left: .5rem;
-    font-size: 2rem;
-  }
-}
-
-.inventario-filter {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  align-content: center;
-  justify-content: center;
-}
-
-.container-modify {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.form-nueva-herramienta {
-  margin: 0 auto;
-  width: 70%;
-  background-color: #FFF;
-  padding: 3rem;
-  border-radius: 20px;
-
-  h2 {
-    margin: 0 auto;
-    width: 100%;
-    text-align: center;
-    padding-bottom: 1rem;
-  }
-
-  div {
-    margin: 0 auto;
-    width: 80%;
-    padding: 1rem;
-  }
-}
-
-.buttons-footer-tools {
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-
-  button {
-    width: 80%;
-    margin-bottom: 1rem;
-  }
-}
-
-.container-info-tool {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
-  justify-content: baseline;
-}
-
-.modal-body-modify {
-  width: 100% !important;
-}
-
-.div-responsive-table {
-  width: 100%;
-  overflow: scroll;
-}
 
 
-#confirmDeleteModal {
-  position: fixed;
-  top: 250px;
-}
 
-.buttons-row {
-  display: flex;
-  gap: .5rem;
-}
 
-.filter-asignacion {
-  display: flex;
-  gap: .5rem;
-}
 
-.highlighted {
-  background-color: #FFF9C4;
-  /* Amarillo claro */
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
 
-.highlight {
-  background-color: #ffeb3b !important;
-  /* Amarillo brillante */
-  transition: background-color 0.3s ease;
-}
+
 
 .contain-ven911-forms {
   width: 100%;
@@ -4983,7 +4845,6 @@ summary>* {
   justify-content: center;
   flex-direction: column;
 }
-
 .form-911 {
   border-radius: 20px;
   background-color: #FFF;

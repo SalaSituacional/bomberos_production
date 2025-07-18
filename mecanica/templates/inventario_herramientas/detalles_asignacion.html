@@ -40,133 +40,130 @@
   </div>
 </div>
 
-<div class="container-fluid">
-    <br>
-    <div class="column">
-        <!-- Asignaciones Actuales -->
-        <div class="w-100">
-            <div class="card shadow mb-4">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-1 mt-1" style="font-size: 1.5rem;">Herramientas Asignadas</h5>
-                </div>
-                <div class="card-body">
-                    {% if asignaciones %}
-                    <div class="table-responsive">
-                        <table class="table table-hover tabla_asignaciones">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Herramienta</th>
-                                    <th>Cantidad</th>
-                                    <th>Código</th>
-                                    <th>Asignada el</th>
-                                    <th>Estado</th>
-                                    <th class="text-end">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for asignacion in asignaciones %}
-                                <tr>
-                                    <td>
-                                        <strong>{{ asignacion.herramienta.nombre }}</strong><br>
-                                        <small class="text-muted">{{ asignacion.herramienta.categoria }}</small>
-                                    </td>
-                                    <td>{{ asignacion.cantidad }}</td>
-                                    <td>{{ asignacion.herramienta.numero_serie|default:"-" }}</td>
-                                    <td>{{ asignacion.fecha_asignacion|date:"d/m/Y" }}</td>
-                                    <td>
-                                        <span class="badge bg-{% if asignacion.herramienta.estado == 'B' %}success{% elif asignacion.herramienta.estado == 'R' %}warning{% else %}danger{% endif %}">
-                                            {{ asignacion.herramienta.get_estado_display }}
-                                        </span>
-                                    </td>
-                                    <td class="text-end">
-                                        {% if not asignacion.fecha_devolucion %}
-                                        <form method="post" action="{% url 'devolver-herramienta' asignacion.id %}" class="d-inline">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                                    title="Devolver herramienta"
-                                                <i class="fas fa-undo-alt"></i> Devolver
-                                            </button>
-                                        </form>
-                                        {% else %}
-                                        <small class="text-muted">
-                                            Devuelta el {{ asignacion.fecha_devolucion|date:"d/m/Y" }}
-                                        </small>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="6" class="text-center py-4">
-                                        <i class="fas fa-tools fa-2x mb-2 text-muted"></i><br>
-                                        No hay herramientas asignadas actualmente
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% else %}
-                    <div class="alert alert-danger">No hay herramientas asignadas</div>
-                    {% endif %}
-                </div>
-            </div>
+<div class="card shadow mb-4 card-detalles-asignaciones">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-1 mt-1" style="font-size: 1.5rem;">Herramientas Asignadas</h5>
+    </div>
+    <div class="card-body">
+        {% if asignaciones %}
+        <div class="table-responsive-sm">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th class="fixed-width">Herramienta</th>
+                        <th class="fixed-width">Cantidad</th>
+                        <th class="fixed-width">Código</th>
+                        <th class="fixed-width">Asignada el</th>
+                        <th class="fixed-width">Estado</th>
+                        <th class="text-end fixed-width">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asignacion in asignaciones %}
+                    <tr>
+                        <td class="fixed-width">
+                            <strong>{{ asignacion.herramienta.nombre }}</strong><br>
+                            <small class="text-muted">{{ asignacion.herramienta.categoria }}</small>
+                        </td>
+                        <td class="fixed-width">{{ asignacion.cantidad }}</td>
+                        <td class="fixed-width">{{ asignacion.herramienta.numero_serie|default:"-" }}</td>
+                        <td class="fixed-width">{{ asignacion.fecha_asignacion|date:"d/m/Y" }}</td>
+                        <td class="fixed-width">
+                            <span class="badge bg-{% if asignacion.herramienta.estado == 'B' %}success{% elif asignacion.herramienta.estado == 'R' %}warning{% else %}danger{% endif %}">
+                                {{ asignacion.herramienta.get_estado_display }}
+                            </span>
+                        </td>
+                        <td class="text-end fixed-width">
+                            {% if not asignacion.fecha_devolucion %}
+                            <form method="post" action="{% url 'devolver-herramienta' asignacion.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                        title="Devolver herramienta"
+                                    <i class="fas fa-undo-alt"></i> Devolver
+                                </button>
+                            </form>
+                            {% else %}
+                            <small class="text-muted">
+                                Devuelta el {{ asignacion.fecha_devolucion|date:"d/m/Y" }}
+                            </small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <i class="fas fa-tools fa-2x mb-2 text-muted"></i><br>
+                            No hay herramientas asignadas actualmente
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+        {% else %}
+        <div class="alert alert-danger">No hay herramientas asignadas</div>
+        {% endif %}
+    </div>
+</div>
 
-        <!-- Formulario de Asignación -->
-        <div class="w-100">
-            <div class="card shadow">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-1 mt-1" style="font-size: 1.5rem;">Asignar Nuevas Herramientas</h5>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
+<div class="card shadow mb-4 card-detalles-asignaciones">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-1 mt-1" style="font-size: 1.5rem;"><i class="bi bi-box-seam me-2"></i> Asignar Nuevas Herramientas</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="herramientas-container">
+                {% for herramienta in form.herramientas_disponibles %}
+                <div class="d-flex align-items-center justify-content-center mb-2 herramienta-line"> 
+                    <div class="form-check form-switch flex-grow-1 d-flex align-items-center me-3"> {# Added d-flex and align-items-center here #}
+                        <input type="checkbox"
+                            name="herramienta_{{ herramienta.id }}_sel" 
+                            id="id_herramienta_{{ herramienta.id }}_sel" 
+                            class="form-check-input herramienta-checkbox" {# Removed flex-grow-1 from here #}
+                            data-herramienta-id="{{ herramienta.id }}" 
+                            {% if herramienta.cantidad_disponible <= 0 %}disabled{% endif %}>
                         
-                        <div class="herramientas-container">
-                            {% for herramienta in form.herramientas_disponibles %}
-                                <div class="herramienta-item d-flex justify-content-start mb-2">
-                                    <div class="form-check form-switch d-flex justify-content-start align-items-start w-100 ms-5">
-                                        <div class="d-flex align-items-center mb-1">
-                                            <input type="checkbox" 
-                                                   name="herramienta_{{ herramienta.id }}_sel" 
-                                                   id="id_herramienta_{{ herramienta.id }}_sel" 
-                                                   class="form-check-input me-2 herramienta-checkbox" 
-                                                   data-herramienta-id="{{ herramienta.id }}" 
-                                                   {% if herramienta.cantidad_disponible <= 0 %}disabled{% endif %}>
-                                            <label class="form-check-label mb-0" for="id_herramienta_{{ herramienta.id }}_sel">
-                                                {{ herramienta.nombre }} (Dispoibles: {{ herramienta.cantidad_disponible }})
-                                            </label>
-                                            <input type="number" 
-                                                   name="herramienta_{{ herramienta.id }}_cant" 
-                                                   id="id_herramienta_{{ herramienta.id }}_cant"
-                                                   class="form-control form-control-sm cantidad-input mt-1 m-2 mb-0 text-center"
-                                                   data-herramienta-id="{{ herramienta.id }}"
-                                                   disabled
-                                                   min="1"
-                                                   max="{{ herramienta.cantidad_disponible }}"
-                                                   value="1"
-                                                   style="width: 100px"
-                                                   {% if herramienta.cantidad_disponible <= 0 %}disabled{% endif %}>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% empty %}
-                                <div class="alert alert-danger">No hay herramientas disponibles para asignar</div>
-                            {% endfor %}
-                        </div>
-                        
-                        <button type="submit" class="btn btn-danger mt-3">Asignar Selección</button>
-                    </form>         
+                        <span class="d-flex flex-column align-items-start align-items-md-start ms-3 label-content">
+                            <strong>{{ herramienta.nombre }}</strong> 
+                            {% if herramienta.cantidad_disponible <= 0 %}
+                                <span class="badge bg-secondary mt-1">Agotada</span>
+                            {% else %}
+                                <span class="badge bg-danger text-white mt-1">Disponibles: {{ herramienta.cantidad_disponible }}</span>
+                            {% endif %}
+                        </span>
+                        <label class="visually-hidden" for="id_herramienta_{{ herramienta.id }}_sel">
+                            {{ herramienta.nombre }} (Cantidad)
+                        </label>
+                    </div>
+                    
+                    <div class="flex-shrink-0">
+                        <input type="number" 
+                            name="herramienta_{{ herramienta.id }}_cant" 
+                            id="id_herramienta_{{ herramienta.id }}_cant"
+                            class="form-control form-control-sm cantidad-input text-center" 
+                            data-herramienta-id="{{ herramienta.id }}"
+                            disabled 
+                            min="1"
+                            max="{{ herramienta.cantidad_disponible }}"
+                            value="1"
+                            style="width: 75px;">
+                    </div>
                 </div>
+                {% empty %}
+                    <div class="alert alert-info text-center mb-0">No hay herramientas disponibles para asignar en este momento.</div>
+                {% endfor %}
             </div>
-        </div>
+            <button type="submit" class="btn btn-danger mt-3"><i class="bi bi-box-arrow-in-up me-2"></i> Asignar Selección</button>
+        </form>        
     </div>
-    <br>
-    <div class="d-flex justify-content-center align-items-center mb-4">
-        <a href="{% url 'asignacion-unidades' %}" class="btn btn-outline-danger" style="width: 80%;">
-            <i class="bi bi-arrow-left"></i> Volver
-        </a>
-    </div>
+</div>
+
+<div class="d-flex justify-content-center align-items-center mb-4">
+    <a href="{% url 'asignacion-unidades' %}" class="btn btn-outline-danger">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
 </div>
 
 
@@ -177,28 +174,6 @@
   </section>
 </footer>
 
-<script>
-    // En tu archivo JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    const checkboxes = document.querySelectorAll('.herramienta-checkbox:not(:disabled)');
-    
-    checkboxes.forEach(checkbox => {
-        const toolId = checkbox.dataset.herramientaId;
-        const cantidadInput = document.querySelector(`.cantidad-input[data-herramienta-id="${toolId}"]`);
-        
-        checkbox.addEventListener('change', function() {
-            cantidadInput.disabled = !this.checked;
-            if (!this.checked) {
-                cantidadInput.value = 1;
-            }
-        });
-        
-        // Habilitar inicialmente si está marcado (en caso de error de validación)
-        if (checkbox.checked) {
-            cantidadInput.disabled = false;
-        }
-    });
-});
-</script>
+<script src="{% static 'js/mecanica/asignacionesJs.js' %}"></script>
 {% endblock %}
 

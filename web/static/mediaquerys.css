@@ -1,3 +1,10 @@
+.herramienta-checkbox {
+    width: 1.25rem;  /* Adjust as needed, e.g., 1.5rem for slightly larger */
+    height: 1.25rem; /* Should match width for a square checkbox */
+    /* Optional: adjust margin if needed after resizing */
+    margin-top: 0; /* Ensures vertical alignment, good default for form-check-input */
+    flex-shrink: 0; /* Prevents the checkbox from shrinking on smaller screens */
+}
 
 
 
@@ -930,6 +937,16 @@
     }
 
   /* #endregion */
+
+  /* #region Inventario Unidades */
+    .card-detalles-asignaciones{
+      width: 80%;
+      margin: 0 auto;
+    }
+    .herramienta-line{
+      padding: 5px 2.5rem;
+    }
+  /* #endregion */
 }
 
 /* ==================== */
@@ -1086,6 +1103,7 @@
     max-width: 90%;
   }
   /* #endregion */
+
 }
 
 /* ==================== */
@@ -1274,6 +1292,7 @@
     max-width: 65%;
   }
   /* #endregion */
+
 }
 
 

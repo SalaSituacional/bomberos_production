@@ -409,38 +409,56 @@ def listar_herramientas(request):
     user = request.session.get('user')
     if not user:
         return redirect('/')
-    
-    # Búsqueda y filtrado
-    query = request.GET.get('q', '')
-    categoria = request.GET.get('categoria', '')
 
+    # --- Capture parameters from the form ---
+    nombre_herramienta_query = request.GET.get('nombreHerramienta', '').strip() # Use .strip() to remove leading/trailing whitespace
+    serial_herramienta_query = request.GET.get('serialHerramienta', '').strip()
+    categoria_seleccionada_id = request.GET.get('categoria', '').strip() # This name matches the form, but let's be explicit
+
+    # Get all categories for the dropdown filter
     categorias = CategoriaHerramienta.objects.all().order_by('nombre')
-    
+
+    # Start with all tools, annotated for available count
     herramientas = Herramienta.objects.annotate(
         asignadas=Count('asignaciones', filter=Q(asignaciones__fecha_devolucion__isnull=True))
     ).order_by('nombre')
-    
-    if query:
-        herramientas = herramientas.filter(
-            Q(nombre__icontains=query) | 
-            Q(numero_serie__icontains=query) |
-            Q(modelo__icontains=query)
-        )
-    
-    if categoria:
-        herramientas = herramientas.filter(categoria=categoria)
 
+    # --- Apply filters based on captured parameters ---
+
+    # Filter by nombreHerramienta (tool name)
+    if nombre_herramienta_query:
+        herramientas = herramientas.filter(nombre__icontains=nombre_herramienta_query)
+
+    # Filter by serialHerramienta (tool serial number)
+    if serial_herramienta_query:
+        herramientas = herramientas.filter(numero_serie__icontains=serial_herramienta_query)
+        # You might also want to search other fields if 'serialHerramienta' could apply to them,
+        # but based on the name, numero_serie seems most appropriate.
+
+    # Filter by categoria (category)
+    if categoria_seleccionada_id:
+        try:
+            # Ensure the category ID is an integer
+            categoria_seleccionada_id = int(categoria_seleccionada_id)
+            herramientas = herramientas.filter(categoria__id=categoria_seleccionada_id)
+        except ValueError:
+            # Handle cases where 'categoria' is not a valid integer (e.g., malformed URL)
+            pass # Or log an error, ignore the filter, etc.
+
+    # --- Prepare context for the template ---
     return render(request, 'inventario_herramientas/listar_herramientas.html', {
         'herramientas': herramientas,
         'user': user,
-        'jerarquia': user['jerarquia'],
-        'nombres': user['nombres'],
-        'apellidos': user['apellidos'],
-        'query': query,
+        'jerarquia': user.get('jerarquia'), # Use .get() for safer dictionary access
+        'nombres': user.get('nombres'),
+        'apellidos': user.get('apellidos'),
+        
+        # Pass back the specific query parameters for form persistence
+        'nombreHerramienta': nombre_herramienta_query,
+        'serialHerramienta': serial_herramienta_query,
         'categorias': categorias,
-        'categoria_seleccionada': int(categoria) if categoria else None
+        'categoria_seleccionada': categoria_seleccionada_id # Pass the ID back for 'selected' option
     })
-
 
 def crear_herramienta(request):
     user = request.session.get('user')
@@ -515,25 +533,62 @@ def eliminar_herramienta(request, pk):
 
 
 
-# 2- Asignacion Herramientas ===============================
 def asignacion_unidades(request):
     user = request.session.get('user')
     if not user:
         return redirect('/')
 
-    unidades = Unidades.objects.exclude(id__in=[26, 30, 27]).annotate(
-        num_herramientas=Count(
-            'asignaciones_herramientas',
-            filter=Q(asignaciones_herramientas__fecha_devolucion__isnull=True)
-        )
-    ).order_by('nombre_unidad')
-    
+    # Fetch all categories to dynamically create table headers in the template
+    categorias = CategoriaHerramienta.objects.all().order_by('nombre')
+
+    # Start with all relevant units, excluding the specified IDs
+    unidades_queryset = Unidades.objects.exclude(id__in=[26, 30, 27]).order_by('nombre_unidad')
+
+    unidades_con_detalle = []
+
+    for unidad in unidades_queryset:
+        # 1. Calculate the total number of *assigned quantities* for the current unit
+        #    We need to SUM the 'cantidad' from AsignacionHerramienta records
+        total_asignadas = AsignacionHerramienta.objects.filter(
+            unidad=unidad,
+            fecha_devolucion__isnull=True
+        ).aggregate(
+            total_cantidad=Coalesce(Sum('cantidad'), 0) # Sum 'cantidad' field, default to 0 if no assignments
+        )['total_cantidad']
+
+        # 2. Get category-wise counts (sum of quantities) for currently assigned tools for THIS unit
+        #    This will give us rows like: {'categoria_id': 1, 'categoria_nombre': 'Martillos', 'cantidad_asignada': 5}
+        categoria_asignaciones_list = AsignacionHerramienta.objects.filter(
+            unidad=unidad,
+            fecha_devolucion__isnull=True
+        ).values(
+            categoria_id=F('herramienta__categoria__id'),
+            categoria_nombre=F('herramienta__categoria__nombre')
+        ).annotate(
+            cantidad_asignada=Coalesce(Sum('cantidad'), 0)
+        ).order_by('categoria_nombre')
+
+        # Convert the list of category assignments into a dictionary for easy lookup by category ID
+        # e.g., {categoria_id: cantidad_asignada, ...}
+        categorias_counts_dict = {
+            item['categoria_id']: item['cantidad_asignada']
+            for item in categoria_asignaciones_list
+        }
+
+        unidades_con_detalle.append({
+            'id': unidad.id,
+            'nombre_unidad': unidad.nombre_unidad,
+            'num_herramientas_total_asignadas': total_asignadas, # Renamed for clarity
+            'categorias_counts': categorias_counts_dict,
+        })
+
     return render(request, 'inventario_herramientas/asignar_herramientas.html', {
         "user": user,
-        'jerarquia': user['jerarquia'],
-        'nombres': user['nombres'],
-        'apellidos': user['apellidos'],
-        'unidades': unidades,
+        'jerarquia': user.get('jerarquia'), # Use .get() for safer dictionary access
+        'nombres': user.get('nombres'),
+        'apellidos': user.get('apellidos'),
+        'unidades': unidades_con_detalle, # Pass the enriched list
+        'categorias': categorias, # Pass all categories for dynamic header
         'seccion_activa': 'asignaciones'
     })
 

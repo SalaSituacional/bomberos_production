@@ -27,3 +27,13 @@ def sum_attr(listado, attr_path):
 def sub(value, arg):
     """Resta el arg del value"""
     return value - arg
+
+@register.filter
+def get_item(dictionary, key):
+    """
+    Allows dictionary lookup with a variable key in Django templates.
+    Usage: {{ my_dict|get_item:my_key }}
+    """
+    if isinstance(dictionary, dict):
+        return dictionary.get(key)
+    return None # Return None if not a dictionary or key not found
