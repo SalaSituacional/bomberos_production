@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, get_object_or_404  
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.utils.timezone import now
 import json
 import io
@@ -10,6 +10,7 @@ import fitz  # PyMuPDF
 from .forms import *
 from .models import *
 from .urls import *
+
 # =============================================================================== APIS PARA LA SECCION DE DRONES ====================================================================
 @login_required
 def Dashboard_sarp(request):
@@ -33,15 +34,62 @@ def Registros_sarp(request):
 
     if not user:
         return redirect('/')
-    # Renderizar la página con los datos
+
+    # --- Captura de parámetros de filtro ---
+    filter_registro = request.GET.get('filterRegistro')
+    filter_fecha_registro = request.GET.get('filterFechaRegistro')
+    filter_operador_id = request.GET.get('filterOperador')
+
+    # --- Construcción del queryset base ---
+    registros_vuelos_list = Registro_Vuelos.objects.all().order_by('-fecha', '-hora_despegue') # Good practice to order your results
+
+    # --- Aplicación de filtros condicionales ---
+    if filter_registro:
+        registros_vuelos_list = registros_vuelos_list.filter(
+            Q(id_vuelo__icontains=filter_registro) | 
+            Q(observaciones_vuelo__icontains=filter_registro) # Added back observations filter for completeness
+        )
+
+    if filter_fecha_registro:
+        registros_vuelos_list = registros_vuelos_list.filter(fecha=filter_fecha_registro)
+
+    if filter_operador_id:
+        try:
+            filter_operador_id = int(filter_operador_id)
+            registros_vuelos_list = registros_vuelos_list.filter(id_operador__id=filter_operador_id)
+        except (ValueError, TypeError):
+            pass
+
+    # --- Pagination Logic ---
+    paginator = Paginator(registros_vuelos_list, 10)  # Show 10 records per page, adjust as needed
+    page = request.GET.get('page') # Get the current page number from the URL
+
+    try:
+        registros_vuelos_paginated = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        registros_vuelos_paginated = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        registros_vuelos_paginated = paginator.page(paginator.num_pages)
+
+    operadores_disponibles = Personal.objects.filter(
+        id__in=[44,5,53,73]
+    ).exclude(id=4)
+
+    # Renderizar la página con los datos paginados y los valores de filtro
     return render(request, "registros_sarp.html", {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
         "apellidos": user["apellidos"],
         "formularioDrones": DronesForm,
+        "registros_vuelos": registros_vuelos_paginated, # *** THIS IS THE KEY CHANGE ***
+        "filterRegistro": filter_registro,
+        "filterFechaRegistro": filter_fecha_registro,
+        "filterOperador": filter_operador_id, 
+        "operadores_disponibles": operadores_disponibles,
     })
-
 
 def registrar_drones(request):
     if request.method == "POST":
@@ -62,38 +110,157 @@ def registrar_drones(request):
 
     return HttpResponse("Método no permitido", status=405)
 
-def api_vuelos(request):
-    # Obtener parámetros de paginación de la URL (?page=1&limit=5)
-    page = int(request.GET.get('page', 1))
-    limit = int(request.GET.get('limit', 15))  # Cambiar de 20 a 5
+def crear_o_editar_reporte(request, id_vuelo=None): # id_vuelo is optional for creation
+    user = request.session.get('user')
 
-    # Obtener todos los registros
-    vuelos = Registro_Vuelos.objects.all().order_by('id_vuelo').values(
-        "id", 'id_vuelo', "sitio", 'fecha', 'id_dron__nombre_dron', 
-        'id_operador__jerarquia', "id_operador__nombres",
-        "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
-        "id_observador__apellidos", "observador_externo"
-    )
+    if not user:
+        return redirect('/')
 
-    # Aplicar paginación
-    paginator = Paginator(vuelos, limit)  # Cambia el valor de limit a 5
-    vuelos_paginados = paginator.get_page(page)  # Obtener la página actual
+    editing = False
+    vuelo = None
+    estado_dron_instance = None
+    estado_baterias_instance = None
+    estado_control_instance = None
+    detalles_vuelo_instance = None
 
-    # Procesar detalles de vuelo
-    vuelos_con_detalles = []
-    for vuelo in vuelos_paginados:
-        detalles = DetallesVuelo.objects.filter(id_vuelo=vuelo['id']).values('duracion_vuelo').first()
-        vuelo['detalles'] = detalles if detalles else {}  
-        vuelos_con_detalles.append(vuelo)
+    if id_vuelo: # If an id_vuelo is provided, we are in edit mode
+        editing = True
+        vuelo = get_object_or_404(Registro_Vuelos, id_vuelo=id_vuelo)
+        
+        # Get related instances, or None if they don't exist
+        estado_dron_instance = EstadoDron.objects.filter(id_vuelo=vuelo).first()
+        estado_baterias_instance = EstadoBaterias.objects.filter(id_vuelo=vuelo).first()
+        estado_control_instance = EstadoControl.objects.filter(id_vuelo=vuelo).first()
+        detalles_vuelo_instance = DetallesVuelo.objects.filter(id_vuelo=vuelo).first()
 
-    # Retornar datos con metadatos de paginación
+    if request.method == 'POST':
+        # If editing, pass the instance to the form to pre-populate and update
+        form_vuelos = RegistroVuelosForm(request.POST, instance=vuelo)
+        form_estado_dron = EstadoDronForm(request.POST, instance=estado_dron_instance)
+        form_estado_baterias = EstadoBateriasForm(request.POST, instance=estado_baterias_instance)
+        form_estado_control = EstadoControlForm(request.POST, instance=estado_control_instance)
+        form_detalles_vuelo = DetallesVueloForm(request.POST, instance=detalles_vuelo_instance)
+
+        # Validate all forms
+        if (form_vuelos.is_valid() and 
+            form_estado_dron.is_valid() and 
+            form_estado_baterias.is_valid() and 
+            form_estado_control.is_valid() and 
+            form_detalles_vuelo.is_valid()):
+            
+            # Save the main flight record
+            vuelo_obj = form_vuelos.save(commit=False)
+            if not editing: # Only generate id_vuelo for new records
+                # The save method of Registro_Vuelos model handles id_vuelo generation
+                pass 
+            vuelo_obj.save() # Save Registro_Vuelos instance first
+
+            # Save related forms, linking them to the main flight record
+            # For related objects, use get_or_create or filter().first() based on your logic
+            # Here, we create/update based on whether an instance already existed
+            
+            print(vuelo_obj)
+
+            estado_dron_obj = form_estado_dron.save(commit=False)
+            estado_dron_obj.id_vuelo = vuelo_obj
+            estado_dron_obj.id_dron = vuelo_obj.id_dron
+            estado_dron_obj.save()
+
+            estado_baterias_obj = form_estado_baterias.save(commit=False)
+            estado_baterias_obj.id_vuelo = vuelo_obj
+            estado_baterias_obj.id_dron = vuelo_obj.id_dron
+            estado_baterias_obj.save()
+
+            estado_control_obj = form_estado_control.save(commit=False)
+            estado_control_obj.id_vuelo = vuelo_obj
+            estado_control_obj.id_dron = vuelo_obj.id_dron
+            estado_control_obj.save()
+
+            detalles_vuelo_obj = form_detalles_vuelo.save(commit=False)
+            detalles_vuelo_obj.id_vuelo = vuelo_obj
+            detalles_vuelo_obj.save()
+
+            # Optional: Add a success message
+            if editing:
+                # messages.success(request, 'Reporte de vuelo actualizado exitosamente!')
+                return redirect('registros_sarp') # Redirect to the list view after update
+            else:
+                # messages.success(request, 'Reporte de vuelo creado exitosamente!')
+                return redirect('registros_sarp') # Redirect to the list view after creation
+
+    else: # GET request: instantiate forms with existing data for editing or blank for creation
+        form_vuelos = RegistroVuelosForm(instance=vuelo)
+        form_estado_dron = EstadoDronForm(instance=estado_dron_instance)
+        form_estado_baterias = EstadoBateriasForm(instance=estado_baterias_instance)
+        form_estado_control = EstadoControlForm(instance=estado_control_instance)
+        form_detalles_vuelo = DetallesVueloForm(instance=detalles_vuelo_instance)
+
+    # Pass all forms to the template
+    return render(request, "formulario_sarp.html", { # Assuming 'formularios_sarp.html' is your form template
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "formularioDrones": DronesForm, # For the 'Agregar Dron' modal
+        "formularioVuelos": form_vuelos,
+        "formularioEstadoDron": form_estado_dron,
+        "formularioEstadoBaterias": form_estado_baterias,
+        "formularioEstadoControl": form_estado_control,
+        "formularioDetallesVuelo": form_detalles_vuelo,
+        "editing": editing, # Pass this flag to the template for conditional display
+        # You might also want to pass the original vuelo object if needed for context
+        "vuelo_original": vuelo
+    })
+
+# =================================== APIs ================================================
+def api_eliminar_vuelo(request, id_vuelo):
+    if request.method == "DELETE":
+        vuelo = Registro_Vuelos.objects.filter(id_vuelo=id_vuelo).first()
+        if vuelo:
+            vuelo.delete()
+            return JsonResponse({"message": "Vuelo eliminado correctamente"}, status=200)
+        else:
+            return JsonResponse({"error": "Vuelo no encontrado"}, status=404)
+    return JsonResponse({"error": "Método no permitido"},status=405)
+
+def obtener_estadisticas_misiones(request):
+    """
+    API que devuelve la cantidad de misiones diarias, semanales y mensuales.
+    """
+    hoy = now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de la semana actual
+    inicio_mes = hoy.replace(day=1)  # Primer día del mes actual
+
+    misiones_diarias = Registro_Vuelos.objects.filter(fecha=hoy).count()
+    misiones_semanales = Registro_Vuelos.objects.filter(fecha__gte=inicio_semana).count()
+    misiones_mensuales = Registro_Vuelos.objects.filter(fecha__gte=inicio_mes).count()
+
     return JsonResponse({
-        "total_paginas": paginator.num_pages,
-        "pagina_actual": page,
-        "tiene_anterior": vuelos_paginados.has_previous(),
-        "tiene_siguiente": vuelos_paginados.has_next(),
-        "vuelos": vuelos_con_detalles
-    }, safe=False)
+        "mision_diario": misiones_diarias,
+        "mision_semanal": misiones_semanales,
+        "mision_mensual": misiones_mensuales
+    })
+
+def obtener_ultimo_reporte(request):
+    """
+    API que devuelve la información del último vuelo registrado.
+    """
+    ultimo_vuelo = Registro_Vuelos.objects.order_by('-fecha', '-id').first()
+
+    if not ultimo_vuelo:
+        return JsonResponse({
+            "error": "No hay reportes disponibles",
+            "status": "empty"
+        }, status=200)  # Cambiado a 200 para manejar más fácil en el frontend
+
+    return JsonResponse({
+        "id_vuelo": ultimo_vuelo.id_vuelo,
+        "fecha": str(ultimo_vuelo.fecha),
+        "sitio": ultimo_vuelo.sitio,
+        "dron": ultimo_vuelo.id_dron.nombre_dron,
+        "tipo_mision": ultimo_vuelo.tipo_mision,
+        "status": "success"
+    })
 
 def obtener_reporte(request, id_vuelo):
     try:
@@ -201,145 +368,7 @@ def obtener_reporte(request, id_vuelo):
     except Exception as e:
         print(f"Error al generar el reporte: {e}")
         return HttpResponse(f"Hubo un error al generar el reporte: {str(e)}", status=500)
-
-def editar_reporte(request, id_vuelo):
-    vuelo = get_object_or_404(Registro_Vuelos, id_vuelo=id_vuelo)
-    
-    estado_dron = EstadoDron.objects.filter(id_vuelo=vuelo).first()
-    estado_baterias = EstadoBaterias.objects.filter(id_vuelo=vuelo).first()
-    estado_control = EstadoControl.objects.filter(id_vuelo=vuelo).first()
-    detalles_vuelo = DetallesVuelo.objects.filter(id_vuelo=vuelo).first()
-
-    data = {
-        "vuelo": {
-            "id_vuelo": vuelo.id_vuelo,
-            "id_operador": vuelo.id_operador.id if vuelo.id_operador else None,
-            "operador": f'{vuelo.id_operador.jerarquia} {vuelo.id_operador.nombres} {vuelo.id_operador.apellidos}' if vuelo.id_observador else None,
-            "id_observador": vuelo.id_observador.id if vuelo.id_observador else None,
-            "observador": f'{vuelo.id_observador.jerarquia} {vuelo.id_observador.nombres} {vuelo.id_observador.apellidos}' if vuelo.id_observador else None,
-            "observador_externo": vuelo.observador_externo,
-            "fecha": str(vuelo.fecha),
-            "sitio": vuelo.sitio,
-            "hora_despegue": str(vuelo.hora_despegue),
-            "hora_aterrizaje": str(vuelo.hora_aterrizaje),
-            "id_dron": vuelo.id_dron.id_dron,
-            "dron": vuelo.id_dron.nombre_dron,
-            "tipo_mision": vuelo.tipo_mision,
-            "observaciones_vuelo": vuelo.observaciones_vuelo,
-            "apoyo_realizado_a": vuelo.apoyo_realizado_a,
-        },
-        "estado_dron": {
-            "cuerpo": estado_dron.cuerpo,
-            "observacion_cuerpo": estado_dron.observacion_cuerpo,
-            "camara": estado_dron.camara,
-            "observacion_camara": estado_dron.observacion_camara,
-            "helices": estado_dron.helices,
-            "observacion_helices": estado_dron.observacion_helices,
-            "sensores": estado_dron.sensores,
-            "observacion_sensores": estado_dron.observacion_sensores,
-            "motores": estado_dron.motores,
-            "observacion_motores": estado_dron.observacion_motores,
-        } if estado_dron else None,
-        "estado_baterias": {
-            "bateria1": estado_baterias.bateria1,
-            "bateria2": estado_baterias.bateria2,
-            "bateria3": estado_baterias.bateria3,
-            "bateria4": estado_baterias.bateria4,
-        } if estado_baterias else None,
-        "estado_control": {
-            "cuerpo": estado_control.cuerpo,
-            "joysticks": estado_control.joysticks,
-            "pantalla": estado_control.pantalla,
-            "antenas": estado_control.antenas,
-            "bateria": estado_control.bateria,
-        } if estado_control else None,
-        "detalles_vuelo": {
-            "viento": detalles_vuelo.viento,
-            "nubosidad": detalles_vuelo.nubosidad,
-            "riesgo_vuelo": detalles_vuelo.riesgo_vuelo,
-            "zona_vuelo": detalles_vuelo.zona_vuelo,
-            "numero_satelites": detalles_vuelo.numero_satelites,
-            "distancia_recorrida": detalles_vuelo.distancia_recorrida,
-            "altitud": detalles_vuelo.altitud,
-            "duracion_vuelo": detalles_vuelo.duracion_vuelo,
-            "observaciones": detalles_vuelo.observaciones,
-        } if detalles_vuelo else None,
-    }
-
-    return JsonResponse(data, safe=False)
-
-def api_eliminar_vuelo(request, id_vuelo):
-    if request.method == "DELETE":
-        vuelo = Registro_Vuelos.objects.filter(id_vuelo=id_vuelo).first()
-        if vuelo:
-            vuelo.delete()
-            return JsonResponse({"message": "Vuelo eliminado correctamente"}, status=200)
-        else:
-            return JsonResponse({"error": "Vuelo no encontrado"}, status=404)
-    return JsonResponse({"error": "Método no permitido"},status=405)
-
-def obtener_estadisticas_misiones(request):
-    """
-    API que devuelve la cantidad de misiones diarias, semanales y mensuales.
-    """
-    hoy = now().date()
-    inicio_semana = hoy - timedelta(days=hoy.weekday())  # Lunes de la semana actual
-    inicio_mes = hoy.replace(day=1)  # Primer día del mes actual
-
-    misiones_diarias = Registro_Vuelos.objects.filter(fecha=hoy).count()
-    misiones_semanales = Registro_Vuelos.objects.filter(fecha__gte=inicio_semana).count()
-    misiones_mensuales = Registro_Vuelos.objects.filter(fecha__gte=inicio_mes).count()
-
-    return JsonResponse({
-        "mision_diario": misiones_diarias,
-        "mision_semanal": misiones_semanales,
-        "mision_mensual": misiones_mensuales
-    })
-
-def obtener_ultimo_reporte(request):
-    """
-    API que devuelve la información del último vuelo registrado.
-    """
-    ultimo_vuelo = Registro_Vuelos.objects.order_by('-fecha', '-id').first()
-
-    if not ultimo_vuelo:
-        return JsonResponse({
-            "error": "No hay reportes disponibles",
-            "status": "empty"
-        }, status=200)  # Cambiado a 200 para manejar más fácil en el frontend
-
-    return JsonResponse({
-        "id_vuelo": ultimo_vuelo.id_vuelo,
-        "fecha": str(ultimo_vuelo.fecha),
-        "sitio": ultimo_vuelo.sitio,
-        "dron": ultimo_vuelo.id_dron.nombre_dron,
-        "tipo_mision": ultimo_vuelo.tipo_mision,
-        "status": "success"
-    })
-
-def buscar_vuelo_por_id(request, vuelo_id):
-    # Verifica si existe el vuelo
-    if not Registro_Vuelos.objects.filter(id_vuelo=vuelo_id).exists():
-        return JsonResponse({'error': 'No existe ningún vuelo con ese ID'}, status=200)
-
-    vuelo_buscador = Registro_Vuelos.objects.filter(id_vuelo=vuelo_id).values(
-        "id", 'id_vuelo', "sitio", 'fecha', 'id_dron__nombre_dron', 
-        'id_operador__jerarquia', "id_operador__nombres",
-        "id_operador__apellidos", "id_observador__jerarquia", "id_observador__nombres",
-        "id_observador__apellidos", "observador_externo"
-    )
-
-    # Procesar detalles de vuelo
-    vuelos_con_detalles = []
-    for vuelo in vuelo_buscador:
-        detalles = DetallesVuelo.objects.filter(id_vuelo=vuelo['id']).values('duracion_vuelo').first()
-        vuelo['detalles'] = detalles if detalles else {}  
-        vuelos_con_detalles.append(vuelo)
-
-    return JsonResponse(vuelos_con_detalles, safe=False)
-
-
-# Exporar reportes en excel
+# ================================== Exporar reportes en excel =============================
 def generar_excel_reportes_sarp(request):
     mes_str = request.GET.get('mes', None)
     
@@ -377,141 +406,3 @@ def generar_excel_reportes_sarp(request):
 
     return JsonResponse(data, safe=False)
 
-def Formularios_sarp(request):
-    user = request.session.get('user')
-
-    if not user:
-        return redirect('/')
-
-    vuelo_instance = None
-
-    if request.method == "POST":
-        vuelo_id = request.POST.get("id_vuelo")  # Verifica si hay un vuelo existente
-
-        # Cargar datos del formulario
-        vuelo_form = RegistroVuelosForm(request.POST)
-        dron_form = EstadoDronForm(request.POST)
-        baterias_form = EstadoBateriasForm(request.POST)
-        control_form = EstadoControlForm(request.POST)
-        detalles_form = DetallesVueloForm(request.POST)
-
-        if (vuelo_form.is_valid() and dron_form.is_valid() and
-            baterias_form.is_valid() and control_form.is_valid() and detalles_form.is_valid()):
-
-            dron = vuelo_form.cleaned_data["id_dron"]
-            operador = vuelo_form.cleaned_data["id_operador"]
-            observador = vuelo_form.cleaned_data["id_observador"]
-
-            dron_instance = Drones.objects.get(id_dron=dron)
-            operador_instance = Personal.objects.get(id=operador)
-            observador_instance = Personal.objects.get(id=observador)
-
-            if vuelo_id:  # Si hay un ID de vuelo, actualizarlo
-                vuelo_instance = Registro_Vuelos.objects.get(id_vuelo=vuelo_id)
-                vuelo_instance.id_operador = operador_instance
-                vuelo_instance.id_observador = observador_instance
-                vuelo_instance.observador_externo = vuelo_form.cleaned_data["observador_externo"]
-                vuelo_instance.fecha = vuelo_form.cleaned_data["fecha"]
-                vuelo_instance.sitio = vuelo_form.cleaned_data["sitio"]
-                vuelo_instance.hora_despegue = vuelo_form.cleaned_data["hora_despegue"]
-                vuelo_instance.hora_aterrizaje = vuelo_form.cleaned_data["hora_aterrizaje"]
-                vuelo_instance.id_dron = dron_instance
-                vuelo_instance.tipo_mision = vuelo_form.cleaned_data["tipo_mision"]
-                vuelo_instance.observaciones_vuelo = vuelo_form.cleaned_data["observaciones_vuelo"]
-                vuelo_instance.apoyo_realizado_a = vuelo_form.cleaned_data["apoyo_realizado_a"]
-                vuelo_instance.save()  # Guardar los cambios
-
-            else:  # Si no hay ID, crear un nuevo vuelo
-                vuelo_instance = Registro_Vuelos.objects.create(
-                    id_operador=operador_instance,
-                    id_observador=observador_instance,
-                    observador_externo=vuelo_form.cleaned_data["observador_externo"],
-                    fecha=vuelo_form.cleaned_data["fecha"],
-                    sitio=vuelo_form.cleaned_data["sitio"],
-                    hora_despegue=vuelo_form.cleaned_data["hora_despegue"],
-                    hora_aterrizaje=vuelo_form.cleaned_data["hora_aterrizaje"],
-                    id_dron=dron_instance,
-                    tipo_mision=vuelo_form.cleaned_data["tipo_mision"],
-                    observaciones_vuelo=vuelo_form.cleaned_data["observaciones_vuelo"],
-                    apoyo_realizado_a=vuelo_form.cleaned_data["apoyo_realizado_a"]
-                )
-
-            # Actualizar o crear Estado del Dron
-            EstadoDron.objects.update_or_create(
-                id_vuelo=vuelo_instance,
-                id_dron=vuelo_instance.id_dron,
-                defaults={
-                    "cuerpo": dron_form.cleaned_data["cuerpo"],
-                    "observacion_cuerpo": dron_form.cleaned_data["observacion_cuerpo"],
-                    "camara": dron_form.cleaned_data["camara"],
-                    "observacion_camara": dron_form.cleaned_data["observacion_camara"],
-                    "helices": dron_form.cleaned_data["helices"],
-                    "observacion_helices": dron_form.cleaned_data["observacion_helices"],
-                    "sensores": dron_form.cleaned_data["sensores"],
-                    "observacion_sensores": dron_form.cleaned_data["observacion_sensores"],
-                    "motores": dron_form.cleaned_data["motores"],
-                    "observacion_motores": dron_form.cleaned_data["observacion_motores"],
-                }
-            )
-
-            # Actualizar o crear Estado de las Baterías
-            EstadoBaterias.objects.update_or_create(
-                id_vuelo=vuelo_instance,
-                id_dron=vuelo_instance.id_dron,
-                defaults={
-                    "bateria1": baterias_form.cleaned_data["bateria1"],
-                    "bateria2": baterias_form.cleaned_data["bateria2"],
-                    "bateria3": baterias_form.cleaned_data["bateria3"],
-                    "bateria4": baterias_form.cleaned_data["bateria4"],
-                }
-            )
-
-            # Actualizar o crear Estado del Control
-            EstadoControl.objects.update_or_create(
-                id_vuelo=vuelo_instance,
-                id_dron=vuelo_instance.id_dron,
-                defaults={
-                    "cuerpo": control_form.cleaned_data["cuerpo_control"],
-                    "joysticks": control_form.cleaned_data["joysticks"],
-                    "pantalla": control_form.cleaned_data["pantalla"],
-                    "antenas": control_form.cleaned_data["antenas"],
-                    "bateria": control_form.cleaned_data["bateria"],
-                }
-            )
-
-            # Actualizar o crear Detalles del Vuelo
-            DetallesVuelo.objects.update_or_create(
-                id_vuelo=vuelo_instance,
-                defaults={
-                    "viento": detalles_form.cleaned_data["viento"],
-                    "nubosidad": detalles_form.cleaned_data["nubosidad"],
-                    "riesgo_vuelo": detalles_form.cleaned_data["riesgo_vuelo"],
-                    "zona_vuelo": detalles_form.cleaned_data["zona_vuelo"],
-                    "numero_satelites": detalles_form.cleaned_data["numero_satelites"],
-                    "distancia_recorrida": f"{detalles_form.cleaned_data['distancia_recorrida']} {detalles_form.cleaned_data['magnitud_distancia']}",
-                    "altitud": detalles_form.cleaned_data["altitud"],
-                    "duracion_vuelo": detalles_form.cleaned_data["duracion_vuelo"],
-                    "observaciones": detalles_form.cleaned_data["observaciones"],
-                }
-            )
-
-            return redirect("registros_sarp")
-
-    else:
-        vuelo_form = RegistroVuelosForm()
-        dron_form = EstadoDronForm()
-        baterias_form = EstadoBateriasForm()
-        control_form = EstadoControlForm()
-        detalles_form = DetallesVueloForm()
-
-    return render(request, "formulario_sarp.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        "formularioVuelos": vuelo_form,
-        "formularioEstadoDron": dron_form,
-        "formularioEstadoBaterias": baterias_form,
-        "formularioEstadoControl": control_form,
-        "formularioDetallesVuelo": detalles_form,
-    })

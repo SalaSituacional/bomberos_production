@@ -14,6 +14,7 @@
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
+        <h3 class="division-title">Dashboard</h3>
         <section class="user-name">
             <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
             <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,10 +30,8 @@
                 </g>
             </svg>
         </section>
-
     </div>
 
-    <!-- card-new -->
     <div class="card-new">
         <div class="procediments-contain">
             <h4 class="title-procediments">Drones - SARP</h4>
@@ -59,16 +58,13 @@
         <div class="procediments-contain">
             <!-- Suministro de Combustible -->
             <h4 class="title-procediments">Misiones</h4>
-            <br>
             <section class="items-cards">
                 <article class="card-mecanic color-blue">
                     <span>Mensual: </span>
                     <span id="mision-mensual">
                         <b>
-
                             0
                         </b>
-
                     </span>
                 </article>
 
@@ -76,20 +72,16 @@
                     <span>Semanal: </span>
                     <span id="mision-semanal">
                         <b>
-
                             0
                         </b>
-
                     </span>
                 </article>
                 <article class="card-mecanic color-blue">
                     <span>Diario: </span>
                     <span id="mision-diario">
                         <b>
-
                             0
                         </b>
-
                     </span>
                 </article>
             </section>
@@ -97,16 +89,14 @@
     </div>
 
     <!-- Tarjeta de Notificación de Reporte -->
-    <section id="ultimo-reporte-card" class="oculto" style="z-index: 2;">
-        <div id="card-content">
-            <button id="cerrar-reporte">&times;</button>
-            <h3>📋 Último Reporte</h3>
-            <p>🔖 <strong>ID:</strong> <span id="reporte-id">-</span></p>
-            <p>📅 <strong>Fecha:</strong> <span id="reporte-fecha">-</span></p>
-            <p>📍 <strong>Sitio:</strong> <span id="reporte-sitio">-</span></p>
-            <p>🚁 <strong>Dron:</strong> <span id="reporte-dron">-</span></p>
-            <p>🎯 <strong>Misión:</strong> <span id="reporte-mision">-</span></p>
-        </div>
+    <section id="ultimo-procedimiento-card" class="oculto" style="z-index: 2;">
+        <button id="cerrar-procedimiento">&times;</button>
+        <h3>📋 Último Reporte</h3>
+        <p>🔖 <strong>ID:</strong> <span id="reporte-id">-</span></p>
+        <p>📅 <strong>Fecha:</strong> <span id="reporte-fecha">-</span></p>
+        <p>📍 <strong>Sitio:</strong> <span id="reporte-sitio">-</span></p>
+        <p>🚁 <strong>Dron:</strong> <span id="reporte-dron">-</span></p>
+        <p>🎯 <strong>Misión:</strong> <span id="reporte-mision">-</span></p>
     </section>
 
     

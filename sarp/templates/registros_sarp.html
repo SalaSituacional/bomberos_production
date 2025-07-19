@@ -7,8 +7,10 @@
 {% elif user.user == "Sarp_01"%}
 {% include "layouts/panel_sarp.html" %}
 {% endif %}
+
 {% load static %}
-{% load crispy_forms_tags %} {# Carga las etiquetas de Crispy Forms #}
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="general-dashboard">
@@ -31,106 +33,174 @@
     </section>
   </div>
 </div>
-<!-- contenido-->
 
-<div class="tool-personal">
-  <section class="accion-filter">
-    <div class="input-group mb-3">
-      <span class="input-group-text" id="basic-addon1">Registro: </span>
-      <input type="text" class="form-control" placeholder="Buscar " id="filterJerarquia">
+<div class="filter-container">
+  <div class="filter-stats">
+    <div class="stat-box">
+      <strong>Agregar Dron</strong>
+      <button type="button" class="btn btn-danger stat-badge" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        <i class="bi bi-plus-circle"></i>
+      </button>
     </div>
-  </section>
-  <section class="accion-personal">
-    <svg width="50px" height="50px" fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin-right: 1rem;"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M20,7H18V5h2a1,1,0,0,0,0-2H14a1,1,0,0,0,0,2h2V7H8V5h2a1,1,0,0,0,0-2H4A1,1,0,0,0,4,5H6V7H4a3,3,0,0,0,0,6H6.1a4.955,4.955,0,0,0,.99,2.092A5,5,0,0,0,3,20a1,1,0,0,0,2,0,3,3,0,0,1,3-3h3v2a1,1,0,0,0,2,0V17h3a3,3,0,0,1,3,3,1,1,0,0,0,2,0,5,5,0,0,0-4.091-4.908A4.955,4.955,0,0,0,17.9,13H20a3,3,0,0,0,0-6Zm0,4H17a1,1,0,0,0-1,1,3,3,0,0,1-3,3H11a3,3,0,0,1-3-3,1,1,0,0,0-1-1H4A1,1,0,0,1,4,9H20a1,1,0,0,1,0,2Zm-6,1a2,2,0,0,1-4,0,1.929,1.929,0,0,1,.1-.581A1,1,0,1,0,11.417,10.1,1.978,1.978,0,0,1,12,10,2,2,0,0,1,14,12Z"></path></g></svg>
-    <label class="form-label">
-      Agregar Nuevo Dron:
-    </label>
-    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-      <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
-        fill="#000000">
-        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-        <g id="SVGRepo_iconCarrier">
-          <title>plus-circle</title>
-          <desc>Created with Sketch Beta.</desc>
-          <defs> </defs>
-          <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-            <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000">
-              <path
-                d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z"
-                id="plus-circle" sketch:type="MSShapeGroup"> </path>
-            </g>
-          </g>
-        </g>
-      </svg>
-    </button>
-    <label class="form-label">
-      Agregar Reporte de Vuelo:
-    </label>
-    <button type="button" class="btn">
-      <a href="{% url 'formularios_sarp' %}">
-        <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
-          fill="#000000">
-          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-          <g id="SVGRepo_iconCarrier">
-            <title>plus-circle</title>
-            <desc>Created with Sketch Beta.</desc>
-            <defs> </defs>
-            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-              <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000">
-                <path
-                  d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z"
-                  id="plus-circle" sketch:type="MSShapeGroup"> </path>
-              </g>
-            </g>
-          </g>
-        </svg>
-      </a>
-    </button>
-  </section>
-</div>
-
-<div class="contain-unidades">
-  <!-- tabla -->
-  <div class="table-responsive-sm">
-    <table class="table table-hover tabla-unidades">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Fecha</th>
-          <th scope="col">Lugar</th>
-          <th scope="col">Dron</th>
-          <th scope="col">Operador</th>
-          <th scope="col">Observador</th>
-          <th scope="col">Horas de Vuelo</th>
-          <th scope="col">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="table-group-divider" id="tabla-vuelos">
-      </tbody>
-    </table>
+    <div class="stat-box">
+      <strong>Agregar Reporte de Vuelo</strong>
+      <span class="stat-badge">
+        <a href="{% url 'crear_reporte_sarp' %}">
+          <i class="bi bi-plus-circle"></i>
+        </a>
+      </span>
+    </div>
   </div>
 
-  <div id="paginacion" style="display: flex; justify-content: center; margin-top: 10px;">
-    <button class="btn btn-danger" id="anterior" disabled>Anterior</button>
-    <span style="margin: 0 10px;">Página <span id="pagina-actual">1</span></span>
-    <button class="btn btn-danger" id="siguiente">Siguiente</button>
+  <form method="get" class="filter-form">
+
+    <div class="filter-group">
+      <div class="floating-input">
+        <input type="text" class="form-control" name="filterRegistro" id="filterRegistro"  {% if filterRegistro %} value="{{ filterRegistro }}" {% endif %}>
+        <label for="filterRegistro">Registro: </label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="floating-input">
+        <input type="date" class="form-control" name="filterFechaRegistro" id="filterFechaRegistro"  {% if filterFechaRegistro %} value="{{ filterFechaRegistro }}" {% endif %}>
+        <label for="filterFechaRegistro">Fecha de Registro: </label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="floating-select">
+        <select type="date" class="form-select" name="filterOperador" id="filterOperador">
+          <option value="" selected="" {% if not filterOperador %}selected{% endif %}>Seleccione Una Opción</option>
+          {% for operador in operadores_disponibles %}
+            <option value="{{ operador.id }}" {% if filterOperador and filterOperador == operador.id %}selected{% endif %}>
+              {{ operador.jerarquia.abreviatura }} {{ operador.nombres }} {{ operador.apellidos }} 
+            </option>
+          {% endfor %}
+        </select>
+        <label for="filterOperador">Operadores: </label>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="filter-actions">
+      <button type="submit" class="filter-button" title="Filtrar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
+        </svg>
+      </button>
+      {% if filterRegistro or filterFechaRegistro or filterOperador %}
+        <a href="{% url 'registros_sarp' %}" class="clear-button" title="Limpiar filtros">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+
+  </form>
 </div>
 
+<div class="table-responsive-sm">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th class="fixed-width">ID Vuelo</th>
+        <th class="fixed-width">Operador</th>
+        <th class="fixed-width">Fecha</th>
+        <th class="fixed-width">Dron</th>
+        <th class="fixed-width">Sitio</th>
+        <th class="fixed-width">Tipo Misión</th>
+        <th class="fixed-width">Observaciones</th>
+        <th class="fixed-width-iconos">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for registro in registros_vuelos %}
+      <tr>
+        <td class="fixed-width">{{ registro.id_vuelo }}</td>
+        <td class="fixed-width">{{ registro.id_operador.jerarquia.abreviatura }} {{ registro.id_operador.nombres }} {{ registro.id_operador.apellidos }}</td>
+        <td class="fixed-width">{{ registro.fecha|date:"d/m/Y" }}</td>
+        <td class="fixed-width">{{ registro.id_dron.nombre_dron }}</td>
+        <td class="fixed-width">{{ registro.sitio }}</td>
+        <td class="fixed-width">{{ registro.tipo_mision }}</td>
+        <td class="fixed-width">{{ registro.observaciones_vuelo }}</td>
+        <td class="icons-accion fixed-width-iconos">
+          <a href="{% url 'editar_reporte_sarp' registro.id_vuelo %}" class="btn editar_unidad" data-unidad="{{ registro.id_vuelo }}">
+            <svg fill="#b6243a" height="35px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 217.855 217.855" xml:space="preserve" style="pointer-events: none;">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path
+                  d="M215.658,53.55L164.305,2.196C162.899,0.79,160.991,0,159.002,0c-1.989,0-3.897,0.79-5.303,2.196L3.809,152.086 c-1.35,1.352-2.135,3.166-2.193,5.075l-1.611,52.966c-0.063,2.067,0.731,4.069,2.193,5.532c1.409,1.408,3.317,2.196,5.303,2.196 c0.076,0,0.152-0.001,0.229-0.004l52.964-1.613c1.909-0.058,3.724-0.842,5.075-2.192l149.89-149.889 C218.587,61.228,218.587,56.479,215.658,53.55z M57.264,201.336l-42.024,1.28l1.279-42.026l91.124-91.125l40.75,40.743 L57.264,201.336z M159,99.602l-40.751-40.742l40.752-40.753l40.746,40.747L159,99.602z">
+                </path>
+              </g>
+            </svg>
+          </a>
+
+          <button class="btn generar-excel" data-unidad="{{ registro.id_vuelo }}">
+            <svg width="35px" height="40px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M809.3 1024H214.7c-71.3 0-129.4-58-129.4-129.4V129.4C85.3 58 143.4 0 214.7 0h594.6c71.3 0 129.4 58 129.4 129.4v765.3c0 71.3-58.1 129.3-129.4 129.3zM214.7 85.3c-24.3 0-44 19.8-44 44v765.3c0 24.3 19.8 44 44 44h594.6c24.3 0 44-19.8 44-44V129.4c0-24.3-19.8-44-44-44H214.7z" fill="#b6243a"></path><path d="M426.7 1024H213.3c-70.6 0-128-57.4-128-128V682.7h213.4c70.6 0 128 57.4 128 128V1024z m-256-256v128c0 23.5 19.1 42.6 42.6 42.6h128v-128c0-23.5-19.1-42.6-42.6-42.6h-128zM810.7 1024H597.3V810.6c0-70.6 57.4-128 128-128h213.4V896c0 70.6-57.4 128-128 128z m-128-85.3h128c23.5 0 42.6-19.1 42.6-42.6V768h-128c-23.5 0-42.6 19.1-42.6 42.6v128.1zM448 355.6H277.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7H448c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7zM661.3 533.3h-384c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h384c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7z" fill="#5F6379"></path></g></svg>
+          </button>
+
+          <button type="button" class="btn btn-link delete-vuelo-btn" data-id-vuelo="{{ registro.id_vuelo }}" title="Eliminar Reporte de Vuelo">
+            <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                <g id="SVGRepo_iconCarrier">
+                    <path d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z" fill="#b6243a"></path>
+                    <path d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z" fill="#5F6379"></path>
+                </g>
+            </svg>
+          </button>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="8" class="text-center">No se encontraron registros de vuelos con los filtros aplicados.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Después de tu tabla existente -->
+<div class="pagination">
+  <span class="step-links">
+       {% if registros_vuelos.has_previous %}
+            <a href="?page=1{% if filterRegistro %}&filterRegistro={{ filterRegistro }}{% endif %}{% if filterFechaRegistro %}&filterFechaRegistro={{ filterFechaRegistro }}{% endif %}{% if filterOperador %}&filterOperador={{ filterOperador }}{% endif %}" 
+               class="btn btn-secondary me-1" title="Primera página">&laquo;</a>
+            <a href="?page={{ registros_vuelos.previous_page_number }}{% if filterRegistro %}&filterRegistro={{ filterRegistro }}{% endif %}{% if filterFechaRegistro %}&filterFechaRegistro={{ filterFechaRegistro }}{% endif %}{% if filterOperador %}&filterOperador={{ filterOperador }}{% endif %}" 
+               class="btn btn-danger me-2" title="Página anterior">&lsaquo;</a>
+        {% else %}
+            <a href="#" class="btn btn-secondary me-1 disabled" tabindex="-1" aria-disabled="true" title="Primera página">&laquo;</a>
+            <a href="#" class="btn btn-danger me-2 disabled" tabindex="-1" aria-disabled="true" title="Página anterior">&lsaquo;</a> 
+        {% endif %}
+
+        {% if registros_vuelos.has_next %} {# Changed 'datos' to 'registros_vuelos' #}
+            <a href="?page={{ registros_vuelos.next_page_number }}{% if filterRegistro %}&filterRegistro={{ filterRegistro }}{% endif %}{% if filterFechaRegistro %}&filterFechaRegistro={{ filterFechaRegistro }}{% endif %}{% if filterOperador %}&filterOperador={{ filterOperador }}{% endif %}" 
+               class="btn btn-danger ms-2" title="Página siguiente">&rsaquo;</a>
+            <a href="?page={{ registros_vuelos.paginator.num_pages }}{% if filterRegistro %}&filterRegistro={{ filterRegistro }}{% endif %}{% if filterFechaRegistro %}&filterFechaRegistro={{ filterFechaRegistro }}{% endif %}{% if filterOperador %}&filterOperador={{ filterOperador }}{% endif %}" 
+               class="btn btn-secondary ms-1" title="Última página">&raquo;</a>
+        {% else %}
+            <a href="#" class="btn btn-danger ms-2 disabled" tabindex="-1" aria-disabled="true" title="Página siguiente">&rsaquo;</a>
+            <a href="#" class="btn btn-secondary ms-1 disabled" tabindex="-1" aria-disabled="true" title="Última página">&raquo;</a> 
+        {% endif %}
+  </span>
+  <span class="current">
+      Página {{ registros_vuelos.number }} de {{ registros_vuelos.paginator.num_pages }}.
+  </span>
+</div>
+
+{% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' or user.user == 'Comandancia' or user.user == '2dacomandancia' %}
 <div class="contain-dates">
-  <h4 class="title-procediments">Exportar Reportes</h4>
+  <h4 class="title-procediments titulo-exportaciones-excel">Exportaciones</h4>
   <br>
   <section class="buttons-items input-group mb-3 filter-search">
     <span class="input-group-text"><b> Seleccionar Mes:</b></span>
     <input type="month" class="form-control fecha_manual" name="" id="mes_excel">
     <button id="exportarExcel" class="btn btn-danger download-link" disabled>Exportar .xls</button>
-  </section>
+</section>
 </div>
-
-</div>
+{% endif %}
 
 
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -147,7 +217,23 @@
         <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
           <form action="{% url 'registrar_dron' %}" method="POST" id="form-new-drones">
             {% csrf_token %}
-            {{ formularioDrones |crispy }}
+            {% for field in formularioDrones %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-group">
+                  <div class="floating-input mb-3">           
+                    {% render_field field class="form-control" %}
+                    {{ field.label_tag }}
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
             <div class="buttons-reportes">
               <button type="submit" class="btn btn-danger" id="confirmarEliminar">
                 Agregar
@@ -169,23 +255,16 @@
     <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
   </section>
 </footer>
+
 <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 <script>
-  const ApiVuelos = "{% url 'api_vuelos' %}";
   const REPORTE_BASE_URL_PLACEHOLDER = "{% url 'reporte' '0000' %}";
-  const BUSCAR_VUELO_BASE_URL_PLACEHOLDER = "{% url 'buscar_vuelo_por_id' '0000' %}";
-  const EDITAR_REPORTE_BASE_URL_PLACEHOLDER = "{% url 'editar_reporte' '0000' %}";
   const EliminarVueloBaseUrlPlaceholder = "{% url 'api_eliminar_vuelo' '0000' %}";
-  const FormularioSarp = "{% url 'formularios_sarp' %}";
+  const FormularioSarp = "{% url 'crear_reporte_sarp' %}";
   const GenerarExcelReportesSarpUrl = "{% url 'generar_excel_sarp' %}";
-
 </script>
-
-<script src="{% static 'js/sarp/data_tables.js' %}"></script>
 <script src="{% static 'js/sarp/obtener_info_table.js' %}"></script>
-<script src="{% static 'js/sarp/editar_reporte.js' %}"></script>
 <script src="{% static 'js/sarp/eliminar_reporte.js' %}"></script>
 <script src="{% static 'js/sarp/generar_excel_sarp.js' %}"></script>
-<script src="{% static 'js/sarp/buscador_reportes.js' %}"></script>
 
 {% endblock %}

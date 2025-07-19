@@ -3614,6 +3614,17 @@ summary>* {
   }
 /* #endregion */
 
+
+/* #region Estilos Seccion Inventario */
+  .herramienta-checkbox {
+    width: 1.25rem;  /* Adjust as needed, e.g., 1.5rem for slightly larger */
+    height: 1.25rem; /* Should match width for a square checkbox */
+    /* Optional: adjust margin if needed after resizing */
+    margin-top: 0; /* Ensures vertical alignment, good default for form-check-input */
+    flex-shrink: 0; /* Prevents the checkbox from shrinking on smaller screens */
+}
+/* #endregion */
+
 /****************** componentes reutilizables **************/
 
 .highlight {
@@ -4631,24 +4642,7 @@ summary>* {
 
 
 
-.formulario-sarp {
-  width: 50%;
-  display: flex;
-  margin: 0 auto;
-  form {
-    margin: 0 auto;
-    width: 100%;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 20px;
-    h2 {
-      text-align: center;
-    }
-    div {
-      padding: 1.5rem;
-    }
-  }
-}
+
 .formulario-bienes {
   width: 50%;
   display: flex;
@@ -4705,17 +4699,7 @@ summary>* {
   margin-bottom: 1rem;
   margin-top: 1rem;
 }
-.buttons-sarp-form {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
 
-  button {
-    width: 45%;
-  }
-}
 .buttons-inmuebles-form {
   width: 100%;
   margin: 0 auto;
@@ -4734,100 +4718,7 @@ summary>* {
   margin: 1rem 0;
 }
 
-/* Estilos de la tarjeta */
-#ultimo-reporte-card {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 320px;
-  background: linear-gradient(135deg, #b6243a, #d66e7e);
-  /* Degradado azul */
-  color: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
-  font-size: 14px;
-  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-  transform: translateY(50px);
-  opacity: 0;
-  z-index: 1000;
-  overflow: hidden;
-  font-family: "Arial", sans-serif;
-}
 
-/* Mostrar la tarjeta con animación */
-#ultimo-reporte-card.mostrar {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* Botón de cerrar */
-#cerrar-reporte {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 5px 8px;
-  transition: background 0.3s ease;
-}
-
-#cerrar-reporte:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-.cerrar-noti {
-  background: transparent;
-  border: none;
-  color: #888;
-  font-size: 16px;
-  cursor: pointer;
-  margin-left: auto;
-}
-
-.cerrar-noti:hover {
-  color: #f00;
-}
-/* Títulos */
-#ultimo-reporte-card h3 {
-  text-align: center;
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-/* Animación de entrada */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Aplicar la animación */
-#ultimo-reporte-card.mostrar {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-/* Control de texto largo */
-#ultimo-reporte-card p span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  max-width: 100%;
-}
-
-.size-font {
-  font-size: .9rem;
-}
 
 
 

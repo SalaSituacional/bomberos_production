@@ -119,7 +119,7 @@
             <td class="fixed-width">{{ conductor.jerarquia }}</td>
             <td class="fixed-width">{{ conductor.cedula }}</td>
             <td class="fixed-width">
-              <span class="badge size-font {{ conductor.licencia.badge_class }}">
+              <span class="badge {{ conductor.licencia.badge_class }}">
                 {{ conductor.licencia.text }}
               </span>
               {% if conductor.licencia.multiple_licencias %}
@@ -127,12 +127,12 @@
               {% endif %}
             </td>
             <td class="fixed-width">
-              <span class="badge size-font {{ conductor.certificado.badge_class }}">
+              <span class="badge {{ conductor.certificado.badge_class }}">
                 {{ conductor.certificado.text }}
               </span>
             </td>
             <td class="fixed-width">
-              <span class="badge size-font {{ conductor.estado_badge_class }}">
+              <span class="badge {{ conductor.estado_badge_class }}">
                 {{ conductor.estado_text }}
               </span>
             </td>
