@@ -1,33 +1,3 @@
-.formulario-sarp {
-  width: 50%;
-  display: flex;
-  margin: 0 auto;
-  form {
-    margin: 0 auto;
-    width: 100%;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 20px;
-    h2 {
-      text-align: center;
-    }
-    div {
-      padding: 1.5rem;
-    }
-  }
-}.buttons-sarp-form {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-
-  button {
-    width: 45%;
-  }
-}
-
-
 
 
 
