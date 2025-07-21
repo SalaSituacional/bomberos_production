@@ -106,7 +106,7 @@
       </svg>
       <a href="{% url 'formulario_certificado_prevencion' %}" class="btn btn-danger">Solicitar</a>
     </div>
-    <!-- <div class="request-prevencion-card">
+    <div class="request-prevencion-card">
       <h4 class="request-prevencion-title">Renovacion</h4>
       <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
         viewBox="0 0 512 512" xml:space="preserve" fill="#000000">
@@ -149,7 +149,7 @@
           <rect x="143.982" y="268.052" width="15.999" height="15.904"></rect>
         </g>
       </svg>
-      <a href="" class="btn btn-danger">Solicitar</a>
+      <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">Solicitar</a>
     </div>
     <div class="request-prevencion-card">
       <h4 class="request-prevencion-title">Reinspeccion de Seguridad</h4>
@@ -192,109 +192,93 @@
           <rect x="255.996" y="299.784" width="16.205" height="15.9"></rect>
         </g>
       </svg>
-      <a href="" class="btn btn-danger">
-        Solicitar
-      </a>
-    </div> -->
+      <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">Solicitar</a>
+    </div>
   </div>
 </div>
 
 <!----------------------------- -registros ------------------------------------------------>
-<div class="contain-request">
-  <h4 class="title-procediments">Guia De Registros</h4>
-</div>
 
-<div class="section-filter mb-4">
-  <form method="get" class="bg-light p-3 rounded shadow-sm">
-    <div class="row g-2 align-items-center">
-      <!-- Registros Totales -->
-      <div class="col-md-auto col-12">
-        <div class="d-flex align-items-center bg-white p-2 rounded border">
-          <span class="fw-bold me-2 text-nowrap">Registros:</span>
-          <span class="badge bg-danger rounded-pill">{{ conteo }}</span>
-        </div>
+<div class="filter-container filtros-prevencion">
+  <div class="contain-request">
+    <h4 class="title-procediments">Guia De Registros</h4>
+  </div>
+  <!-- Registros Totales -->
+  <div class="filter-stats">
+    <div class="stat-box">
+      <span>Registros:</span>
+      <span class="stat-badge">{{ conteo }}</span>
+    </div>
+  </div>
+
+  <form method="get" class="filter-form buscador-solicitudes">
+    <!-- Número de Expediente -->
+    <div class="filter-group">
+      <div class="form-floating">
+        <label class="form-label" for="numero_expediente">Expediente</label>
+        <input class="form-control" type="search" id="numero_expediente" name="numero_expediente" value="{{ numero_expediente }}">
       </div>
-      
-      <!-- Número de Expediente -->
-      <div class="col-md col-sm-6 col-12">
-        <div class="input-group">
-          <span class="input-group-text bg-white fw-bold text-nowrap">Expediente</span>
-          <input class="form-control" 
-                 type="search" 
-                 name="numero_expediente" 
-                 placeholder="Buscar..."
-                 value="{{ numero_expediente }}"
-                 aria-label="Número de expediente">
-        </div>
+    </div>
+    
+    <!-- RIF del Comercio -->
+    <div class="filter-group">
+      <div class="form-floating">
+        <label class="form-label" for="rif_empresarial">RIF</label>
+        <input class="form-control" type="search" id="rif_empresarial" name="rif_empresarial" value="{{ rif_empresarial }}">
       </div>
-      
-      <!-- RIF del Comercio -->
-      <div class="col-md col-sm-6 col-12">
-        <div class="input-group">
-          <span class="input-group-text bg-white fw-bold text-nowrap">RIF</span>
-          <input class="form-control" 
-                 type="search" 
-                 name="rif_empresarial" 
-                 placeholder="Buscar..."
-                 value="{{ rif_empresarial }}"
-                 aria-label="RIF del comercio">
-        </div>
+    </div>
+    
+    <!-- Filtro de Dependencia (solo para administrador) -->
+    {% if user.user == 'SeRvEr' or user.user == "Sala_Situacional" %}
+    <div class="filter-group">
+      <div class="form-floating">
+        <label class="form-label">Dependencia</label>
+        <select class="form-select" name="dependencia">
+          <option value="">Todas</option>
+          <option value="San Cristobal">San Cristobal</option>
+          <option value="Junin">Junin</option>
+        </select>
       </div>
-      
-      <!-- Filtro de Dependencia (solo para administrador) -->
-      {% if user.user == 'SeRvEr' or user.user == "Sala_Situacional" %}
-      <div class="col-md col-sm-6 col-12">
-        <div class="input-group">
-          <span class="input-group-text bg-white fw-bold text-nowrap">Dependencia</span>
-          <select class="form-select" name="dependencia">
-            <option value="">Todas</option>
-            <option value="San Cristobal">San Cristobal</option>
-            <option value="Junin">Junin</option>
-          </select>
-        </div>
-      </div>
-      {% endif %}
-      
-      <!-- Botones -->
-      <div class="col-md-auto col-6">
-        <button type="submit" class="btn btn-danger w-100">
-          <i class="fas fa-search me-1"></i> Buscar
-        </button>
-      </div>
-      
-      <div class="col-md-auto col-6">
-        <a href="?" class="btn btn-outline-secondary w-100">
-          <i class="fas fa-undo me-1"></i> Limpiar
-        </a>
-      </div>
+    </div>
+    {% endif %}
+    
+    <!-- Botones -->
+    <div class="filter-actions">
+      <button type="submit" class="filter-button">
+        <i class="fas fa-search me-1"></i> Buscar
+      </button>
+    
+      <a href="?" class="clear-button">
+        <i class="fas fa-undo me-1"></i> Limpiar
+      </a>
     </div>
   </form>
 </div>
 
-<div class="table-responsive-sm">
-  <table class="table table-hover table-modify" id="data-table">
+<div class="table-responsive-sm tabla-seguridad-prevencion">
+  <table class="table table-hover" id="data-table">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Número Expediente</th>
-        <th scope="col">Nombre Del Comercio</th>
-        <th scope="col">RIF Del Comercio</th>
-        <th scope="col">Departamento</th>
-        <th scope="col">Acciones</th>
+        <th scope="col" class="fixed-width-auto">#</th>
+        <th scope="col" class="fixed-width">Número Expediente</th>
+        <th scope="col" class="fixed-width">Nombre Del Comercio</th>
+        <th scope="col" class="fixed-width">RIF Del Comercio</th>
+        <th scope="col" class="fixed-width">Departamento</th>
+        <th scope="col" class="fixed-width-iconos">Acciones</th>
       </tr>
     </thead>
     <tbody class="table-group-divider">
       {% if comercios %}
       {% for row in comercios %}
       <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ row.id_comercio }}</td>
-        <td>{{ row.nombre_comercio }}</td>
-        <td>{{ row.rif_empresarial }}</td>
-        <td>{{ row.departamento }}</td>
-        <td class="icons-accion-two">
+        <td class="fixed-width-auto">{{ forloop.counter }}</td>
+        <td class="fixed-width">{{ row.id_comercio }}</td>
+        <td class="fixed-width">{{ row.nombre_comercio }}</td>
+        <td class="fixed-width">{{ row.rif_empresarial }}</td>
+        <td class="fixed-width">{{ row.departamento }}</td>
+        <td class="icons-accion-two fixed-width-iconos">
           <!-- NO TOCAR Boton informacion-->
-          <button type="button" class="button-info view-solicitudes" data-id="{{ row.id_comercio }}" data-bs-toggle="modal" data-bs-target="#modal-info">
+          <a class="button-info view-solicitudes" data-id="{{ row.id_comercio }}" data-bs-toggle="modal" data-bs-target="#modal-info">
             <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" version="1.1"
               xmlns="http://www.w3.org/2000/svg" fill="#000000" style="pointer-events: none;">
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -308,63 +292,49 @@
                   fill="#5F6379"></path>
               </g>
             </svg>
-          </button>
+          </a>
         </td>
       </tr>
       {% endfor %}
       {% else %}
-      {% if request.GET.numero_expediente %}
-      <tr>
-        <td colspan="6" class="text-center text-warning">No se encontraron resultados.</td>
-      </tr>
-      {% endif %}
+        {% if request.GET.numero_expediente %}
+        <tr>
+          <td colspan="6" class="fixed-width text-center text-warning">No se encontraron resultados.</td>
+        </tr>
+        {% endif %}
       {% endif %}
     </tbody>
   </table>
 </div>
 
 <!-- Paginación -->
-<div class="pagination-container">
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            {% if comercios.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}" aria-label="First">
-                        <span aria-hidden="true">&laquo;&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ comercios.previous_page_number }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-            {% endif %}
-            
-            {% for num in comercios.paginator.page_range %}
-                {% if comercios.number == num %}
-                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
-                {% elif num > comercios.number|add:'-3' and num < comercios.number|add:'3' %}
-                    <li class="page-item"><a class="page-link" href="?page={{ num }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}">{{ num }}</a></li>
-                {% endif %}
-            {% endfor %}
-            
-            {% if comercios.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ comercios.next_page_number }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ comercios.paginator.num_pages }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}" aria-label="Last">
-                        <span aria-hidden="true">&raquo;&raquo;</span>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
-    <div class="text-center">
-        <p>Mostrando {{ comercios.start_index }} - {{ comercios.end_index }} de {{ comercios.paginator.count }} registros</p>
-    </div>
+<div class="pagination">
+  <span class="step-links">
+    {% if datos.has_previous %}
+      <a class="btn btn-secondary" href="?page=1&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}">&laquo;&laquo;</a>
+      <a class="btn btn-danger" href="?page={{ comercios.previous_page_number }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}">&laquo;</a>
+    {% else %}
+      <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">&laquo;</a>
+      <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">&lsaquo;</a>  
+    {% endif %}
+
+
+    {% if datos.has_next %}
+      <a class="btn btn-danger" href="?page={{ comercios.next_page_number }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}">&raquo;</a>
+
+      <a class="btn btn-secondary" href="?page={{ comercios.paginator.num_pages }}&numero_expediente={{ numero_expediente }}&rif_empresarial={{ rif_empresarial }}">&raquo;&raquo;</a>
+    {% else %}
+        <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+          &rsaquo;
+        </a>
+        <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+          &raquo;
+        </a>  
+    {% endif %}
+  </span>
+  <span class="current">
+    Página {{ comercios.number }} de {{ comercios.paginator.num_pages }}
+  </span>
 </div>
 
 <div class="contain-dates contain-dates-seguridad-prevencion">
@@ -373,10 +343,6 @@
   <div class="export-controls card shadow-sm mb-4">
     <div class="card-body">
       <div class="row g-3 align-items-center justify-content-center">
-        <div class="progress mt-3 d-none" id="exportProgress">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                role="progressbar" style="width: 0%"></div>
-        </div>
 
         {% if user.user == 'SeRvEr' or user.user == 'Sala_Situacional' %}
           <div class="col-md-4">
@@ -423,7 +389,7 @@
 
 <!------------------------------ modal de informacion ------------------------------>
 <div class="modal fade" tabindex="-1" id="modal-info">
-  <div class="modal-dialog modal-xl">
+  <div class="modal-dialog modal-xl modal-size-prevencion">
     <div class="modal-content modal-content-two">
       <div class="modal-header header-dashboard-two">
         <section class="title-icon">
@@ -431,17 +397,17 @@
           <h2>Cuerpo de Bomberos</h2>
         </section>
       </div>
-      <div class="modal-body modal-body-two modal-body-three">
-        <section class="info-modify info-modal table-responsive-sm" id="info_modal">
-          <table class="table table-hover table-modify">
+      <div class="modal-body modal-body-two">
+        <section class="info-modal table-responsive-sm informacion-modal-prevencion" id="info_modal">
+          <table class="table table-hover">
             <thead>
               <tr>
-                <th scope="col">#</th>
-                <th scope="col">Tipo De Documento</th>
-                <th scope="col">Solicitud</th>
-                <th scope="col">Solicitante</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Acciones</th>
+                <th scope="col" class="fixed-width-auto">#</th>
+                <th scope="col" class="fixed-width">Tipo De Documento</th>
+                <th scope="col" class="fixed-width">Solicitud</th>
+                <th scope="col" class="fixed-width">Solicitante</th>
+                <th scope="col" class="fixed-width">Fecha</th>
+                <th scope="col" class="fixed-width-iconos">Acciones</th>
               </tr>
             </thead>
             <tbody class="table-group-divider" id="tabla-contenido-prevencion">

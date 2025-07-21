@@ -1,0 +1,410 @@
+{% if user.user == "SeRvEr" %}
+{% include "layouts/panel_admin.html" %}
+{% elif user.user == "Sala_Situacional" %}
+{% include "layouts/panel_sala_situacional.html" %}
+{% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
+{% include "layouts/panel_comandancia.html" %}
+{% elif user.user == "Bienes_00"%}
+{% include "layouts/panel_bienes.html" %}
+{% endif %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="general-dashboard">
+  <div class="div-user-name username-space">
+    <h3 class="division-title">Bienes Municipales</h3>
+    <section class="user-name">
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
+      <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
+            fill="#000000"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
+            fill="#000000"></path>
+        </g>
+      </svg>
+    </section>
+  </div>
+</div>
+
+<div class="filter-container">
+  <div class="filter-stats">
+    <div class="stat-box">
+      <strong>Bienes Totales</strong>
+      <span class="stat-badge">{{ total_bienes }}</span>
+    </div>
+    <div class="stat-box">
+      <strong>Registrar Bienes:</strong>
+      <a href="{% url 'registroInventario' %}" class="stat-badge" title="Registrar Inventario">
+        <i class="bi bi-plus-circle"></i>
+      </a>
+    </div>
+  </div>
+
+  <form class="filter-form" action="" method="GET">
+    <div class="filter-group">
+      <div class="floating-input">
+        <input type="text" class="form-control" id="filterid" name="filterID" value="{{ filterID_value|default_if_none:'' }}">
+        <label for="filterID">ID: </label>
+      </div>
+    </div>
+    
+    <div class="filter-group">
+      <div class="floating-select">
+        <select name="filterDependencia" id="filterDependencia">
+          <option value="">Seleccionar...</option>
+          {% for dependencia_obj in dependencias %}
+            <option value="{{ dependencia_obj.id }}" {% if dependencia_obj.id|stringformat:"s" == filterDependencia_value %}selected{% endif %}>
+              {{ dependencia_obj.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+        <label for="filterDependencia">Dependencia</label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="floating-select">
+        <select name="filterEstado" id="filterEstado">
+          <option value="">Seleccionar...</option>
+          {% for estado_option in estado_choices %}
+              <option value="{{ estado_option }}" {% if estado_option == filterEstado_value %}selected{% endif %}>
+                  {{ estado_option }}
+              </option>
+          {% endfor %}
+        </select>
+        <label for="filterEstado">Estado</label>
+      </div>
+    </div>
+  </section>
+  <section class="accion-personal">
+    <label class="form-label">
+      Registrar Bienes:
+    </label>
+    <button type="button" class="btn">
+      <a href="{% url 'registroInventario' %}">
+        <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+          fill="#000000">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+          <g id="SVGRepo_iconCarrier">
+            <title>plus-circle</title>
+            <desc>Created with Sketch Beta.</desc>
+            <defs> </defs>
+            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+              <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000">
+                <path
+                  d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z"
+                  id="plus-circle" sketch:type="MSShapeGroup"> </path>
+              </g>
+            </g>
+          </g>
+        </svg>
+      </a>
+    </button>
+  </section>
+</div>
+
+<div class="table-responsive-sm">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th class="fixed-width-auto">Número</th>
+        <th class="fixed-width">Identificador</th>
+        <th class="fixed-width">Descripción</th>
+        <th class="fixed-width">Cantidad</th>
+        <th class="fixed-width">Dependencia</th>
+        <th class="fixed-width">Departamento</th>
+        <th class="fixed-width">Responsable</th>
+        <th class="fixed-width">Fecha de Registro</th>
+        <th class="fixed-width">Estado Actual</th>
+        <th class="fixed-width-iconos">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for bien in bienes_municipales %}
+      <tr data-identificador="{{ bien.identificador }}" data-departamento="{{ bien.departamento}}">
+        <td class="fixed-width-auto">{{ forloop.counter }}</td>-
+        <td class="fixed-width">{{ bien.identificador }}</td>
+        <td class="fixed-width">{{ bien.descripcion }}</td>
+        <td class="fixed-width">{{ bien.cantidad }}</td>
+        <td class="fixed-width">{{ bien.dependencia.nombre }}</td>
+        <td class="fixed-width">{{ bien.departamento }}</td>
+        <td class="fixed-width">{{ bien.responsable.jerarquia }} {{ bien.responsable.nombres.split|first }} {{ bien.responsable.apellidos.split|first }}</td>
+        <td class="fixed-width">{{ bien.fecha_registro|date:"Y-m-d" }}</td>
+        <td class="fixed-width">{{ bien.estado_actual }}</td>
+        <td class="icons-accion fixed-width-iconos">
+          <button class="btn" data-bien-id="{{ bien.identificador }}" data-bs-toggle="modal" data-bs-target="#modalReasignarBien">
+            <svg width="35px" height="40px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M810.7 938.7H213.3c-17.3 0-34-3.4-49.9-10.1-15.2-6.4-29-15.7-40.7-27.5-11.7-11.7-21-25.4-27.4-40.7-6.7-15.8-10.1-32.6-10.1-49.8V213.3c0-17.2 3.4-34 10.1-49.8 6.4-15.2 15.7-29 27.5-40.7 11.7-11.7 25.4-20.9 40.7-27.4 15.8-6.7 32.5-10.1 49.8-10.1h597.3c17.3 0 34 3.4 49.9 10.1 15.2 6.4 29 15.7 40.7 27.5 11.7 11.7 21 25.4 27.4 40.7 6.7-15.8 10.1-32.6 10.1-49.8V320c0 23.6-19.1 42.7-42.7 42.7s-42.7-19.1-42.7-42.7V213.3c0-5.8-1.1-11.4-3.4-16.6-2.1-5.1-5.2-9.6-9.1-13.5-4-4-8.5-7-13.6-9.2-5.2-2.2-10.8-3.3-16.6-3.3H213.3c-5.8 0-11.4 1.1-16.6 3.3-5.1 2.2-9.7 5.2-13.6 9.1-4 4-7.1 8.5-9.2 13.6-2.2 5.3-3.4 10.9-3.4 16.6v597.3c0 5.8 1.1 11.4 3.4 16.6 2.1 5.1 5.2 9.6 9.1 13.5 4 4 8.5 7 13.6 9.2 5.2 2.2 10.8 3.3 16.6 3.3h597.3c5.8 0 11.4-1.1 16.6-3.3 5.1-2.2 9.7-5.2 13.6-9.1 4-4 7.1-8.5 9.2-13.6 2.2-5.3 3.4-10.9 3.4-16.6V704c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v106.7c0 17.2-3.4 34-10.1 49.8-6.4 15.2-15.7 29-27.5 40.7-11.7 11.7-25.4 20.9-40.7 27.4-15.7 6.7-32.5 10.1-49.7 10.1z" fill="#b6243a"></path><path d="M768 682.7c-10.9 0-21.8-4.2-30.2-12.5-16.7-16.7-16.7-43.7 0-60.3l97.8-97.8-97.8-97.8c-16.7-16.7-16.7-43.7 0-60.3 16.7-16.7 43.7-16.7 60.3 0l128 128c16.7 16.7 16.7 43.7 0 60.3l-128 128c-8.3 8.2-19.2 12.4-30.1 12.4z" fill="#5F6379"></path><path d="M896 554.7H512c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h384c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.7 42.7z" fill="#5F6379"></path></g></svg>
+          </button>
+
+          <button class="btn" data-bien-id="{{ bien.identificador }}" data-estado-actual="{{ bien.estado_actual }}" data-bs-toggle="modal" data-bs-target="#modalCambiarEstado">
+            <svg width="35px" height="40px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M533 1024l-147.7-84.8-136.4 78.3h-11.3c-17.3 0-34.2-3.4-50.1-10.1-15.3-6.5-29.1-15.7-40.8-27.6-11.7-11.7-21-25.5-27.5-40.8-6.7-15.9-10.1-32.7-10.1-50.1V128.5c0-17.4 3.4-34.2 10.1-50.1 6.5-15.3 15.8-29.1 27.6-40.8 11.7-11.8 25.5-21 40.8-27.5C203.3 3.4 220.2 0 237.5 0h590.9c17.3 0 34.2 3.4 50.1 10.1 15.3 6.5 29.1 15.7 40.8 27.6 11.7-11.7 21-25.5 27.5-40.8 6.7-15.9 10.1-32.7 10.1-50.1V889c0 17.4-3.4 34.2-10.1 50.1-6.5 15.3-15.8 29.1-27.6 40.8-11.7 11.8-25.5 21-40.8 27.5-15.8 6.7-32.7 10.1-50 10.1h-11.3l-136.4-78.3L533 1024z m147.7-182.6l157.2 90.3c2.5-0.6 5-1.4 7.5-2.4 5.2-2.2 9.9-5.4 13.9-9.4 4.1-4.1 7.2-8.7 9.4-14 2.3-5.3 3.4-11.1 3.4-17V128.5c0-5.9-1.1-11.7-3.4-17-2.2-5.2-5.4-9.9-9.4-13.9-4.1-4.1-8.7-7.2-13.9-9.4-5.4-2.3-11.1-3.4-17-3.4H237.5c-5.9 0-11.6 1.1-17 3.4-5.2 2.2-9.9 5.4-13.9 9.4-4.1 4.1-7.2 8.7-13.9 9.4-2.4 1-4.9 1.8-7.5 2.4l157.2-90.3L533 926.2l147.7-84.8z" fill="#b6243a"></path><path d="M490.6 310.9H321c-23.4 0-42.4-19-42.4-42.4s19-42.4 42.4-42.4h169.6c23.4 0 42.4 19 42.4 42.4s-19 42.4-42.4 42.4zM702.5 487.6H321c-23.4 0-42.4-19-42.4-42.4s19-42.4 42.4-42.4h381.6c23.4 0 42.4 19 42.4 42.4-0.1 23.4-19 42.4-42.5 42.4z" fill="#5F6379"></path></g></svg>
+          </button>
+            
+          <button class="btn" data-bs-toggle="modal" data-bs-target="#modalHistorialBien" data-bien-id="{{ bien.identificador }}"> 
+            <svg width="35px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="pointer-events: none;">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M9 6C9 4.34315 7.65685 3 6 3H4C2.34315 3 1 4.34315 1 6V8C1 9.65685 2.34315 11 4 11H6C7.65685 11 9 9.65685 9 8V6ZM7 6C7 5.44772 6.55228 5 6 5H4C3.44772 5 3 5.44772 3 6V8C3 8.55228 3.44772 9 4 9H6C6.55228 9 7 8.55228 7 8V6Z"
+                        fill="#b6243a">
+                    </path>
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M9 16C9 14.3431 7.65685 13 6 13H4C2.34315 13 1 14.3431 1 16V18C1 19.6569 2.34315 21 4 21H6C7.65685 21 9 19.6569 9 18V16ZM7 16C7 15.4477 6.55228 15 6 15H4C3.44772 15 3 15.4477 3 16V18C3 18.5523 3.44772 19 4 19H6C6.55228 19 7 18.5523 7 18V16Z"
+                        fill="#b6243a">
+                    </path>
+                    <path
+                        d="M11 7C11 6.44772 11.4477 6 12 6H22C22.5523 6 23 6.44772 23 7C23 7.55228 22.5523 8 22 8H12C11.4477 8 11 7.55228 11 7Z"
+                        fill="#5F6379">
+                    </path>
+                    <path
+                        d="M11 17C11 16.4477 11.4477 16 12 16H22C22.5523 16 23 16.4477 23 17C23 17.5523 22.5523 18 22 18H12C11.4477 18 11 17.5523 11 17Z"
+                        fill="#5F6379">
+                    </path>
+                </g>
+            </svg>
+          </button>
+
+          <button class="btn" data-bs-toggle="modal" data-bs-target="#modalEliminarBien" data-id-bien="{{ bien.identificador }}">
+              <svg width="35px" height="35px" viewBox="0 0 1024 1024" class="icon" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                  <g id="SVGRepo_iconCarrier">
+                      <path d="M779.5 1002.7h-535c-64.3 0-116.5-52.3-116.5-116.5V170.7h768v715.5c0 64.2-52.3 116.5-116.5 116.5zM213.3 256v630.1c0 17.2 14 31.2 31.2 31.2h534.9c17.2 0 31.2-14 31.2-31.2V256H213.3z" fill="#b6243a"></path>
+                      <path d="M917.3 256H106.7C83.1 256 64 236.9 64 213.3s19.1-42.7 42.7-42.7h810.7c23.6 0 42.7 19.1 42.7 42.7S940.9 256 917.3 256zM618.7 128H405.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h213.3c23.6 0 42.7 19.1 42.7 42.7S642.2 128 618.7 128zM405.3 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7S448 403 448 426.6v256c0 23.6-19.1 42.7-42.7 42.7zM618.7 725.3c-23.6 0-42.7-19.1-42.7-42.7v-256c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v256c-0.1 23.6-19.2 42.7-42.7 42.7z" fill="#5F6379"></path>
+                  </g>
+              </svg>
+          </button>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="10" class="text-center">No se encontraron bienes con los filtros aplicados.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Después de tu tabla existente -->
+<div class="pagination">
+    <span class="step-links">
+        {% if bienes_municipales.has_previous %}
+            <a href="?page=1{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+              class="btn btn-secondary">&laquo;</a>
+            <a href="?page={{ bienes_municipales.previous_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+              class="btn btn-danger">&lsaquo;</a>
+        {% else %}
+            <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+              &laquo;
+            </a>
+            <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+              &lsaquo;
+            </a>  
+        {% endif %}
+
+
+        {% if bienes_municipales.has_next %}
+            <a href="?page={{ bienes_municipales.next_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+              class="btn btn-danger">&rsaquo;</a>
+            <a href="?page={{ bienes_municipales.paginator.num_pages }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
+              class="btn btn-secondary">&raquo;</a>
+        {% else %}
+            <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+              &rsaquo;
+            </a>
+            <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+              &rsaquo;
+            </a>  
+        {% endif %}
+    </span>
+    <span class="current">
+        Página {{ bienes_municipales.number }} de {{ bienes_municipales.paginator.num_pages }}.
+    </span>
+</div>
+
+  <div class="contain-dates">
+    <h4 class="title-procediments">Exportar Reportes</h4>
+    <br>
+    <section class="buttons-items input-group mb-3 filter-search">
+      <!-- <span class="input-group-text"><b> Seleccionar Mes:</b></span>
+      <input type="month" class="form-control fecha_manual" name="" id="mes_excel"> -->
+      <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
+    </section>
+  </div>
+
+
+
+<!-- Modal para Reasignación del item-->
+<div class="modal fade" id="modalReasignarBien" tabindex="-1" aria-labelledby="modalReasignarBienLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header config-modal-delete">
+        <h2 class="modal-title fs-5" id="staticBackdropLabel">
+          Transferir Inmueble
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" class="formReasignacion" id="formReasignacion" action="{% url 'reasignarBien' %}">
+        {% csrf_token %}
+        <input type="hidden" name="bien" id="inputBienId">
+        {{ form_movimientos }}
+          <div class="buttons-inmuebles-form">
+            <button type="submit" class="btn btn-danger">Aceptar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Reasignación -->
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalReasignarBienLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header config-modal-delete">
+        <h2 class="modal-title fs-5" id="staticBackdropLabel">
+          Cambiar Estado
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" class="formReasignacion" id="formReasignacionEstado" action="{% url 'cambiarEstadoBien' %}">
+        {% csrf_token %}
+        <input type="hidden" name="bien" id="inputBienId">
+        {{ form_estado }}
+        
+          <div class="buttons-inmuebles-form">
+            <button type="submit" class="btn btn-danger">Aceptar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirmar Eliminación del item -->
+<div class="modal fade" id="modalEliminarBien" tabindex="-1" aria-labelledby="modalEliminarBienLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header config-modal-delete">
+        <h2 class="modal-title fs-5" id="staticBackdropLabel">
+          Eliminar Item
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <form method="POST" action="{% url 'eliminarBien' %}" class="formularioeliminarinmueble">
+        {% csrf_token %}
+        <input type="hidden" name="bien_id" id="inputEliminarBienId">
+        <div class="modal-body">
+          <h4>¿Seguro que quieres eliminar el item?</h4>
+        </div>
+        <div class="buttons-inmuebles-form">
+          <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Mostrar Información Relacionada con el item -->
+<div class="modal fade" id="modalHistorialBien" tabindex="-1" aria-labelledby="modalHistorialBienLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content modal-content-information-bienes">
+      <div class="modal-header config-modal-delete">
+        <h2 class="modal-title fs-5" id="staticBackdropLabel">
+          Historial del Item
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body contain-inputs-data w-100">
+        <div id="bien-info">
+          <h3>Información</h3>
+          <div id="bienDetalle" class="contain-detalle-bienes">Cargando...</div>
+        </div>
+        <hr>
+        <div id="movimientos-info" class="contain-info-movimientos">
+          <h3>Últimos Movimientos</h3>
+          <ul id="listaMovimientos" class="list-group"></ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger w-100" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- fin contenido -->
+<footer class="footer">
+  <section class="text-reserved">
+    <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
+  </section>
+</footer>
+
+<!-- <script>
+  // Obtener los formularios por sus IDs
+  const formReasignacion = document.getElementById("formReasignacion");
+  const formReasignacionEstado = document.getElementById("formReasignacionEstado");
+
+  // Función para aplicar clases a los elementos dentro de un formulario
+  function applyClassesToFormElements(form) {
+    if (form) {
+      // Seleccionar todas las divs dentro del formulario
+      const innerDivs = form.querySelectorAll("div");
+
+      // Iterar sobre cada div y aplicar las clases a sus inputs, labels, selects y textareas
+      innerDivs.forEach(div => {
+        const label = div.querySelector("label");
+        const input = div.querySelector("input");
+        const select = div.querySelector("select");
+        const textarea = div.querySelector("textarea");
+
+        if (label) {
+          label.classList.add("form-label");
+        }
+
+        if (input) {
+          input.classList.add("form-control");
+        }
+
+        if (select) {
+          select.classList.add("form-select");
+        }
+
+        if (textarea) {
+          textarea.classList.add("form-control");
+        }
+      });
+    }
+  }
+
+  // Aplicar las clases a los formularios si existen
+  applyClassesToFormElements(formReasignacion);
+  applyClassesToFormElements(formReasignacionEstado);
+</script> -->
+<script src="{% static 'js/bienes_inmuebles/tabla_bienes.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/reasignar_bien.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/cambiar_estado.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/informacionBien.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/eliminar_bienes.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/generar_excel_bienes.js' %}"></script>
+
+
+
+{% endblock %}

@@ -30,8 +30,6 @@
 <div class="general-dashboard">
   <div class="div-user-name  username-space">
     <h3 class="division-title">Tabla de Personal</h3>
-    
-
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
       <svg
@@ -64,69 +62,118 @@
       </svg>
     </section>
   </div>
-  <div class="tool-personal">
-    <form class="accion-filter">
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Jerarquia:</span>
-        <input type="text" class="form-control" placeholder="Buscar Jerarquia" id="filterJerarquia" name="filterJerarquia" value="{{ filterJerarquia|default:'' }}">
-      </div>
-      <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Status</span>
-        <select class="form-select form-select-sm" aria-label="Small select example" id="filterStatus" name="filterStatus">
-          <option selected disabled>Estado</option>
-          <option value="Activo" {% if filterStatus == "Activo" %} selected {% endif %}>Activo</option>
-          <option value="Jubilado" {% if filterStatus == "Jubilado" %} selected {% endif %}>Jubilado</option>
-          <option value="Incapacitado" {% if filterStatus == "Incapacitado" %} selected {% endif %}>Incapacitado</option>
-          <option value="Fallecido" {% if filterStatus == "Fallecido" %} selected {% endif %}>Fallecido</option>
-          <option value="Cese" {% if filterStatus == "Cese" %} selected {% endif %}>Cese</option>
-          <option value="Comision de Servicios" {% if filterStatus == "Comision de Servicios" %} selected {% endif %}>Comision de Servicios</option>
-        </select>
+
+  <!-- section filter -->
+  <div class="filter-container">
+
+    <div class="filter-stats">
+      <div class="stat-box">
+        <strong>Personal Total: </strong>
+        <span class="stat-badge">{{ conteo }}</span>
       </div>
 
-      <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-danger d-flex"> 
-          <i class="bi bi-search me-2"></i> Buscar
+      <div class="stat-box">
+        <strong>Agregar Personal: </strong>
+        <a href="{% url 'registrar_personal' %}" class="stat-badge" title="Agregar Personal">
+          <i class="bi bi-plus-circle"></i>
+        </a>
+      </div>
+    </div>
+
+    <form method="get" action="" class="filter-form">
+      <!-- Filtro Jerarquia -->
+      <div class="filter-group">
+        <div class="floating-select">
+          <select name="filterJerarquia" class="form-select form-select-sm" id="filterJerarquia">
+            <option value="" selected="">Jerarquía</option>
+            <option value="General" {% if filterJerarquia == "General" %} selected {% endif %}>General</option>
+            <option value="Coronel" {% if filterJerarquia == "Coronel" %} selected {% endif %}>Coronel</option>
+            <option value="Teniente Coronel" {% if filterJerarquia == "Teniente Coronel" %} selected {% endif %}>Teniente Coronel</option>
+            <option value="Mayor" {% if filterJerarquia == "Mayor" %} selected {% endif %}>Mayor</option>
+            <option value="Capitán" {% if filterJerarquia == "Capitán" %} selected {% endif %}>Capitán</option>
+            <option value="Primer Teniente" {% if filterJerarquia == "Primer Teniente" %} selected {% endif %}>Primer Teniente</option>
+            <option value="Teniente" {% if filterJerarquia == "Teniente" %} selected {% endif %}>Teniente</option>
+            <option value="Sargento Mayor" {% if filterJerarquia == "Sargento Mayor" %} selected {% endif %}>Sargento Mayor</option>
+            <option value="Sargento Primero" {% if filterJerarquia == "Sargento Primero" %} selected {% endif %}>Sargento Primero</option>
+            <option value="Sargento segundo" {% if filterJerarquia == "Sargento segundo" %} selected {% endif %}>Sargento segundo</option>
+            <option value="Cabo Primero" {% if filterJerarquia == "Cabo Primero" %} selected {% endif %}>Cabo Primero</option>
+            <option value="Cabo Segundo" {% if filterJerarquia == "Cabo Segundo" %} selected {% endif %}>Cabo Segundo</option>
+            <option value="Distinguido" {% if filterJerarquia == "Distinguido" %} selected {% endif %}>Distinguido</option>
+            <option value="Bombero" {% if filterJerarquia == "Bombero" %} selected {% endif %}>Bombero</option>
+          </select>
+          <label for="filterJerarquia">Jerarquia</label>
+        </div>
+      </div>
+
+      <!-- Filtro Status -->
+      <div class="filter-group">
+        <div class="floating-select">
+          <select class="form-select form-select-sm" aria-label="Small select example" id="filterStatus" name="filterStatus">
+            <option selected disabled>Estado</option>
+            <option value="Activo" {% if filterStatus == "Activo" %} selected {% endif %}>Activo</option>
+            <option value="Jubilado" {% if filterStatus == "Jubilado" %} selected {% endif %}>Jubilado</option>
+            <option value="Incapacitado" {% if filterStatus == "Incapacitado" %} selected {% endif %}>Incapacitado</option>
+            <option value="Fallecido" {% if filterStatus == "Fallecido" %} selected {% endif %}>Fallecido</option>
+            <option value="Cese" {% if filterStatus == "Cese" %} selected {% endif %}>Cese</option>
+            <option value="Comision de servicios" {% if filterStatus == "Comision de servicios" %} selected {% endif %}>Comision de servicios</option>
+          </select>
+          <label for="filterStatus">Status</label>
+        </div>
+      </div>
+      
+      <!-- Filtro Rol -->
+      <div class="filter-group">
+        <div class="floating-select">
+          <select class="form-select form-select-sm" aria-label="Small select example" id="filterRol" name="filterRol">
+            <option value="" selected="">Contrato</option>
+            <option value="Bombero" {% if filterRol == "Bombero" %} selected {% endif %}>Bombero</option>
+            <option value="Administrativo" {% if filterRol == "Administrativo" %} selected {% endif %}>Administrativo</option>
+            <option value="Civil" {% if filterRol == "Civil" %} selected {% endif %}>Civil</option>
+          </select>
+          <label for="filterRol">Contrato</label>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="filter-actions">
+        <button type="submit" class="filter-button" title="Filtrar"> 
+          <i class="bi bi-search me-2"></i>
         </button>
-        <a href="{% url 'personal' %}" class="btn btn-secondary d-flex align-items-center">
-          <i class="bi bi-arrow-clockwise me-2"></i> Reiniciar
+        <a href="{% url 'personal' %}" class="clear-button" title="Reiniciar">
+          <i class="bi bi-arrow-clockwise me-2"></i>
         </a>
       </div>
     </form>
-    <section class="accion-personal">
-        Personal Total: {{ conteo }}
-        <a href="{% url 'registrar_personal' %}" class="btn">
-          <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>plus-circle</title> <desc>Created with Sketch Beta.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage"> <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000"> <path d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z" id="plus-circle" sketch:type="MSShapeGroup"> </path> </g> </g> </g></svg>
-        </a>
-    </section>
   </div>
+
  <!-- tabla -->
   <div class="table-responsive-sm">
-    <table class="table table-hover table-personal" id="data-table">
+    <table class="table table-hover" id="data-table">
       <thead>
         <tr>
-            <th>#</th>
-            <th>Nombres</th>
-            <th>Apellidos</th>
-            <th>Jerarquía</th>
-            <th>Cargo</th>
-            <th>Cédula</th>
-            <th>Rol</th>
-            <th>Status</th>
-            <th>Acciones</th>
+            <th class="fixed-width-auto">#</th>
+            <th class="fixed-width">Nombres</th>
+            <th class="fixed-width">Apellidos</th>
+            <th class="fixed-width">Jerarquía</th>
+            <th class="fixed-width">Cargo</th>
+            <th class="fixed-width">Cédula</th>
+            <th class="fixed-width">Rol</th>
+            <th class="fixed-width">Status</th>
+            <th class="fixed-width-iconos">Acciones</th>
         </tr>
     </thead>
     <tbody>
         {% for personal in personal %}
              <tr>
-                <th scope="row" class="">{{ forloop.counter }}</th>
-                <td class="">{{ personal.nombres }}</td>
-                <td class="">{{ personal.apellidos }}</td>
-                <td class="">{{ personal.jerarquia }}</td>
-                <td class="">{{ personal.cargo }}</td>
-                <td class="">{{ personal.cedula }}</td>
-                <td class="">{{ personal.rol }}</td>
-                <td class="">{{ personal.status }}</td>
-                <td >
+                <th scope="row" class="fixed-width-auto">{{ forloop.counter }}</th>
+                <td class="fixed-width">{{ personal.nombres }}</td>
+                <td class="fixed-width">{{ personal.apellidos }}</td>
+                <td class="fixed-width">{{ personal.jerarquia }}</td>
+                <td class="fixed-width">{{ personal.cargo }}</td>
+                <td class="fixed-width">{{ personal.cedula }}</td>
+                <td class="fixed-width">{{ personal.rol }}</td>
+                <td class="fixed-width">{{ personal.status }}</td>
+                <td class="fixed-width-iconos">
                   <a class="btn btn-danger edit-button" href="{% url 'editar_personal' personal.id %}">
                     Editar
                   </a>
@@ -140,12 +187,16 @@
 
     </table>
   </div>     
+
+  {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' or user.user == 'Comandancia' or user.user == '2dacomandancia' %}
   <div class="contain-dates">
-    <section class="buttons-items">
-      <button id="exportarExcel" class="btn btn-danger">Exportar .xls</button>
+    <h4 class="title-procediments titulo-exportaciones-excel">Exportaciones</h4>
+    <br>
+    <section class="buttons-items input-group mb-3 filter-search">
+      <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
     </section>
-  
   </div>
+  {% endif %}
 </div>  
 
 <!-- Notificación Personal -->

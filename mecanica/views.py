@@ -20,6 +20,7 @@ import pandas as pd
 import json
 from django.db.models import Q, Count, F
 from django.db import transaction
+from datetime import date as localdate
 
 # ========================= Dashboard Mecanica ========================
 def Dashboard_mecanica(request):
@@ -35,36 +36,94 @@ def Dashboard_mecanica(request):
         "apellidos": user["apellidos"],
     })
 
+
 # ======================== Unidades ========================
 def View_Unidades(request):
     user = request.session.get('user')
     if not user:
-            return redirect('/')
-    
+        return redirect('/')
+
+    # 1. Obtener los parámetros de filtro de la URL
+    filter_nombre_unidad = request.GET.get('filterNombreUnidad', '').strip()
+    filter_division_id = request.GET.get('filterDivision', '')
+    filter_estado = request.GET.get('filterEstado', '')
+
+    # 2. Inicializar el queryset base
+    unidades_queryset = Unidades.objects.exclude(id__in=[26, 30, 27]).order_by("id")
+
+    # PREFETCH CORRECTOS SEGÚN _meta.get_fields():
+    unidades_queryset = unidades_queryset.prefetch_related(
+        # Para ManyToManyField 'id_division'
+        Prefetch("id_division", queryset=Divisiones.objects.all(), to_attr="divisiones_prefetch"),
+        # Para ForeignKey inverso 'unidades_detalles_set' (¡Aquí está el cambio!)
+        Prefetch("detalles_de_unidad", queryset=Unidades_Detalles.objects.all(), to_attr="detalles_prefetch")
+    )
+
+    # 3. Aplicar filtros si existen
+    if filter_nombre_unidad:
+        unidades_queryset = unidades_queryset.filter(nombre_unidad__icontains=filter_nombre_unidad)
+
+    if filter_division_id:
+        try:
+            # Filtrar por el ID de la división en ManyToManyField
+            unidades_queryset = unidades_queryset.filter(id_division__id=filter_division_id).distinct()
+        except ValueError:
+            pass
+
+    if filter_estado:
+        # Filtrar por el campo 'estado' en el modelo Unidades_Detalles a través de la relación inversa
+        unidades_queryset = unidades_queryset.filter(detalles_de_unidad__estado=filter_estado).distinct()
+
+
+    # 4. Ejecutar el queryset y obtener el conteo de unidades filtradas
+    data = list(unidades_queryset) # Aquí es donde se evalúa el queryset y fallaría si el prefetch es malo
+    conteo = len(data)
+
+    # 5. Preparar los datos para el template
     datos = []
-
-    data = Unidades.objects.exclude(id__in=[26, 30, 27]).prefetch_related(
-        Prefetch("unidades_detalles_set", to_attr="data_unidad"),
-        Prefetch("id_division", to_attr="divisiones")  # Obtiene las divisiones asociadas
-    ).order_by("id")
-
-    conteo = data.count()
-
     for unidad in data:
+        division_nombres = [div.division for div in unidad.divisiones_prefetch]
+
+        detalles_unidad = []
+        if hasattr(unidad, 'detalles_prefetch'): # Usar el 'to_attr' definido
+            detalles_unidad = [
+                {
+                    "tipo_vehiculo": detalle.tipo_vehiculo,
+                    "serial_carroceria": detalle.serial_carroceria,
+                    "serial_chasis": detalle.serial_chasis,
+                    "marca": detalle.marca,
+                    "año": detalle.año,
+                    "modelo": detalle.modelo,
+                    "placas": detalle.placas,
+                    "tipo_filtro_aceite": detalle.tipo_filtro_aceite,
+                    "tipo_filtro_combustible": detalle.tipo_filtro_combustible,
+                    "bateria": detalle.bateria,
+                    "numero_tag": detalle.numero_tag,
+                    "tipo_bujia": detalle.tipo_bujia,
+                    "uso": detalle.uso,
+                    "capacidad_carga": detalle.capacidad_carga,
+                    "numero_ejes": detalle.numero_ejes,
+                    "numero_puestos": detalle.numero_puestos,
+                    "tipo_combustible": detalle.tipo_combustible,
+                    "tipo_aceite": detalle.tipo_aceite,
+                    "medida_neumaticos": detalle.medida_neumaticos,
+                    "tipo_correa": detalle.tipo_correa,
+                    "estado": detalle.estado,
+                }
+                for detalle in unidad.detalles_prefetch
+            ]
+
         datos.append({
             "nombre_unidad": unidad.nombre_unidad,
             "id_unidad": unidad.id,
-            "divisiones": [div.division for div in unidad.divisiones],  # Lista de nombres de divisiones
-            "detalles": [
-                {
-                    "estado": detalle.estado,  # Reemplaza con los campos reales
-                }
-                for detalle in unidad.data_unidad  # Accede a los detalles prefetchados
-            ]
+            "divisiones": division_nombres,
+            "detalles": detalles_unidad,
         })
 
+    divisiones_para_filtro = Divisiones.objects.all()
 
-    return render(request, "unidades/unidades_inicio.html", {
+    # 6. Preparar el contexto para el template
+    context = {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
@@ -74,7 +133,13 @@ def View_Unidades(request):
         "form_estado": Cambiar_Estado(),
         "form_division": Cambiar_Division(),
         "conteo": conteo,
-    })
+        'divisiones': divisiones_para_filtro,
+        'filtroNombreUnidad': filter_nombre_unidad,
+        'filtroDivision': filter_division_id,
+        'filtroEstado': filter_estado,
+    }
+
+    return render(request, "unidades/unidades_inicio.html", context)
 
 def View_Form_unidades(request):
     user = request.session.get('user')
@@ -160,7 +225,8 @@ def agregar_unidades(request):
 
 def agregar_reportes(request):
     if request.method == "POST":
-        unidad = request.POST.get("id_unidad")
+
+        unidad = request.POST.get("unidad_id")
         servicio = request.POST.get("servicio")
         fecha = request.POST.get("fecha")
         hora = request.POST.get("hora")
@@ -187,7 +253,8 @@ def agregar_reportes(request):
 
 def cambiar_estado(request):
     if request.method == "POST":
-        unidad = request.POST.get("id_unidad-status")
+
+        unidad = request.POST.get("unidad_id_estatus")
     
         unidad_instance = get_object_or_404(Unidades, id=unidad)
         unidad_detalles = get_object_or_404(Unidades_Detalles, id_unidad=unidad_instance.id)
@@ -202,7 +269,7 @@ def cambiar_estado(request):
 
 def reasignar_division(request):
     if request.method == "POST":
-        unidad = request.POST.get("id_unidad-division")
+        unidad = request.POST.get("unidad_id_division")
         # nueva_division = request.POST.get("nuevo")
     
         # Obtener la unidad que queremos actualizar
@@ -282,6 +349,7 @@ def mostrar_informacion(request, id):
 
         if ultimo_reporte:
             reportes_finales.append({
+                "id": ultimo_reporte.id,
                 "servicio": ultimo_reporte.servicio.nombre_servicio,
                 "fecha": ultimo_reporte.fecha.strftime("%Y-%m-%d"),
                 "hora": ultimo_reporte.hora.strftime("%H:%M"),
@@ -320,6 +388,18 @@ def mostrar_informacion(request, id):
 
     return JsonResponse(datos, safe=False)
 
+def eliminar_reporte(request, reporte_id):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+
+    reporte = get_object_or_404(Reportes_Unidades, id=reporte_id)
+    reporte.delete()
+
+    return JsonResponse({
+        "mensaje": "Reporte Eliminado Correctamente..."
+    })
+
 
 
 # ========================== Herramientas e Inventario =========================
@@ -329,38 +409,56 @@ def listar_herramientas(request):
     user = request.session.get('user')
     if not user:
         return redirect('/')
-    
-    # Búsqueda y filtrado
-    query = request.GET.get('q', '')
-    categoria = request.GET.get('categoria', '')
 
+    # --- Capture parameters from the form ---
+    nombre_herramienta_query = request.GET.get('nombreHerramienta', '').strip() # Use .strip() to remove leading/trailing whitespace
+    serial_herramienta_query = request.GET.get('serialHerramienta', '').strip()
+    categoria_seleccionada_id = request.GET.get('categoria', '').strip() # This name matches the form, but let's be explicit
+
+    # Get all categories for the dropdown filter
     categorias = CategoriaHerramienta.objects.all().order_by('nombre')
-    
+
+    # Start with all tools, annotated for available count
     herramientas = Herramienta.objects.annotate(
         asignadas=Count('asignaciones', filter=Q(asignaciones__fecha_devolucion__isnull=True))
     ).order_by('nombre')
-    
-    if query:
-        herramientas = herramientas.filter(
-            Q(nombre__icontains=query) | 
-            Q(numero_serie__icontains=query) |
-            Q(modelo__icontains=query)
-        )
-    
-    if categoria:
-        herramientas = herramientas.filter(categoria=categoria)
 
+    # --- Apply filters based on captured parameters ---
+
+    # Filter by nombreHerramienta (tool name)
+    if nombre_herramienta_query:
+        herramientas = herramientas.filter(nombre__icontains=nombre_herramienta_query)
+
+    # Filter by serialHerramienta (tool serial number)
+    if serial_herramienta_query:
+        herramientas = herramientas.filter(numero_serie__icontains=serial_herramienta_query)
+        # You might also want to search other fields if 'serialHerramienta' could apply to them,
+        # but based on the name, numero_serie seems most appropriate.
+
+    # Filter by categoria (category)
+    if categoria_seleccionada_id:
+        try:
+            # Ensure the category ID is an integer
+            categoria_seleccionada_id = int(categoria_seleccionada_id)
+            herramientas = herramientas.filter(categoria__id=categoria_seleccionada_id)
+        except ValueError:
+            # Handle cases where 'categoria' is not a valid integer (e.g., malformed URL)
+            pass # Or log an error, ignore the filter, etc.
+
+    # --- Prepare context for the template ---
     return render(request, 'inventario_herramientas/listar_herramientas.html', {
         'herramientas': herramientas,
         'user': user,
-        'jerarquia': user['jerarquia'],
-        'nombres': user['nombres'],
-        'apellidos': user['apellidos'],
-        'query': query,
+        'jerarquia': user.get('jerarquia'), # Use .get() for safer dictionary access
+        'nombres': user.get('nombres'),
+        'apellidos': user.get('apellidos'),
+        
+        # Pass back the specific query parameters for form persistence
+        'nombreHerramienta': nombre_herramienta_query,
+        'serialHerramienta': serial_herramienta_query,
         'categorias': categorias,
-        'categoria_seleccionada': int(categoria) if categoria else None
+        'categoria_seleccionada': categoria_seleccionada_id # Pass the ID back for 'selected' option
     })
-
 
 def crear_herramienta(request):
     user = request.session.get('user')
@@ -435,25 +533,62 @@ def eliminar_herramienta(request, pk):
 
 
 
-# 2- Asignacion Herramientas ===============================
 def asignacion_unidades(request):
     user = request.session.get('user')
     if not user:
         return redirect('/')
 
-    unidades = Unidades.objects.exclude(id__in=[26, 30, 27]).annotate(
-        num_herramientas=Count(
-            'asignaciones_herramientas',
-            filter=Q(asignaciones_herramientas__fecha_devolucion__isnull=True)
-        )
-    ).order_by('nombre_unidad')
-    
+    # Fetch all categories to dynamically create table headers in the template
+    categorias = CategoriaHerramienta.objects.all().order_by('nombre')
+
+    # Start with all relevant units, excluding the specified IDs
+    unidades_queryset = Unidades.objects.exclude(id__in=[26, 30, 27]).order_by('nombre_unidad')
+
+    unidades_con_detalle = []
+
+    for unidad in unidades_queryset:
+        # 1. Calculate the total number of *assigned quantities* for the current unit
+        #    We need to SUM the 'cantidad' from AsignacionHerramienta records
+        total_asignadas = AsignacionHerramienta.objects.filter(
+            unidad=unidad,
+            fecha_devolucion__isnull=True
+        ).aggregate(
+            total_cantidad=Coalesce(Sum('cantidad'), 0) # Sum 'cantidad' field, default to 0 if no assignments
+        )['total_cantidad']
+
+        # 2. Get category-wise counts (sum of quantities) for currently assigned tools for THIS unit
+        #    This will give us rows like: {'categoria_id': 1, 'categoria_nombre': 'Martillos', 'cantidad_asignada': 5}
+        categoria_asignaciones_list = AsignacionHerramienta.objects.filter(
+            unidad=unidad,
+            fecha_devolucion__isnull=True
+        ).values(
+            categoria_id=F('herramienta__categoria__id'),
+            categoria_nombre=F('herramienta__categoria__nombre')
+        ).annotate(
+            cantidad_asignada=Coalesce(Sum('cantidad'), 0)
+        ).order_by('categoria_nombre')
+
+        # Convert the list of category assignments into a dictionary for easy lookup by category ID
+        # e.g., {categoria_id: cantidad_asignada, ...}
+        categorias_counts_dict = {
+            item['categoria_id']: item['cantidad_asignada']
+            for item in categoria_asignaciones_list
+        }
+
+        unidades_con_detalle.append({
+            'id': unidad.id,
+            'nombre_unidad': unidad.nombre_unidad,
+            'num_herramientas_total_asignadas': total_asignadas, # Renamed for clarity
+            'categorias_counts': categorias_counts_dict,
+        })
+
     return render(request, 'inventario_herramientas/asignar_herramientas.html', {
         "user": user,
-        'jerarquia': user['jerarquia'],
-        'nombres': user['nombres'],
-        'apellidos': user['apellidos'],
-        'unidades': unidades,
+        'jerarquia': user.get('jerarquia'), # Use .get() for safer dictionary access
+        'nombres': user.get('nombres'),
+        'apellidos': user.get('apellidos'),
+        'unidades': unidades_con_detalle, # Pass the enriched list
+        'categorias': categorias, # Pass all categories for dynamic header
         'seccion_activa': 'asignaciones'
     })
 
@@ -546,57 +681,150 @@ def devolver_herramienta(request, asignacion_id):
     # Redirigir al detalle de la unidad
     return redirect('detalle-asignacion', unidad_id=asignacion.unidad.id)
 
-# 3- Auditoria y Reportes ===================================
-# @login_required
-# def auditoria_inventario(request):
-#     # Últimos inventarios por unidad
-#     ultimos_inventarios = InventarioUnidad.objects.filter(
-#         id__in=InventarioUnidad.objects.values('unidad')
-#         .annotate(max_id=Max('id'))
-#         .values_list('id', flat=True)
-#     ).select_related('unidad')
-    
-#     # Alertas (herramientas no presentes en último inventario)
-#     alertas = DetalleInventario.objects.filter(
-#         inventario_id__in=ultimos_inventarios,
-#         presente=False
-#     ).select_related('herramienta', 'inventario__unidad')
-    
-#     # Estadísticas
-#     stats = {
-#         'total_herramientas': Herramienta.objects.count(),
-#         'asignadas': AsignacionHerramienta.objects.filter(
-#             fecha_devolucion__isnull=True).count(),
-#         'porcentaje_discrepancias': (alertas.count() / Herramienta.objects.count()) * 100 if Herramienta.objects.count() > 0 else 0
-#     }
-    
-#     return render(request, 'inventario/auditoria.html', {
-#         'ultimos_inventarios': ultimos_inventarios,
-#         'alertas': alertas,
-#         'stats': stats
-#     })
 
 
 
 
 # ======================== Conductores ========================
+
 def conductores(request):
-    user = request.session.get('user')
-    if not user:
-        return redirect('/')
-    
-    hoy = localdate()
-    conductores = Conductor.objects.select_related('personal').prefetch_related(
+    user_data = request.session.get('user')
+    if not user_data:
+        return redirect('/') # Redirigir a login si no hay sesión
+
+    hoy = date.today()
+
+    # Obtener todos los conductores inicialmente
+    # Optimizamos la consulta con select_related y prefetch_related
+    conductores_qs = Conductor.objects.select_related('personal').prefetch_related(
         'licencias', 'certificados_medicos'
-    ).all()
-    
+    ).order_by('personal__nombres', 'personal__apellidos') # Opcional: ordenar para consistencia
+
+    # --- Lógica de Filtrado (la misma que ya tenías) ---
+    filter_nombre_conductor = request.GET.get('nombreConductor', '').strip()
+    filter_cedula_conductor = request.GET.get('cedulaConductor', '').strip()
+    filter_grado_licencia = request.GET.get('gradoLicencia', '').strip() # El valor es '2', '3', '4', '5'
+
+    if filter_nombre_conductor:
+        conductores_qs = conductores_qs.filter(
+            Q(personal__nombres__icontains=filter_nombre_conductor) |
+            Q(personal__apellidos__icontains=filter_nombre_conductor)
+        )
+
+    if filter_cedula_conductor:
+        conductores_qs = conductores_qs.filter(personal__cedula__icontains=filter_cedula_conductor)
+
+    if filter_grado_licencia:
+        # Filtra por el tipo_licencia de las licencias activas y vigentes
+        conductores_qs = conductores_qs.filter(
+            licencias__tipo_licencia=filter_grado_licencia,
+            licencias__activa=True,
+            licencias__fecha_vencimiento__gte=hoy # Considera solo licencias vigentes
+        ).distinct()
+        
+    total_conductores = conductores_qs.count()
+
+    # --- Preparar datos para el template ---
+    # Esto es similar a lo que hacía tu JS, pero ahora lo hacemos en Python
+    conductores_list_for_template = []
+    for conductor in conductores_qs:
+        licencia_info = {
+            'existe': False,
+            'badge_class': 'bg-secondary',
+            'text': 'Sin licencia',
+            'tipo_display': '',
+            'vencida': False,
+            'multiple_licencias': False,
+            'licencia_id': None # Para el modal de detalles
+        }
+        
+        # Encuentra la licencia activa y vigente si existe
+        # Nota: Tus @property en el modelo Conductor son útiles aquí
+        licencia_activa_vigente = conductor.licencia_activa 
+        
+        if licencia_activa_vigente:
+            vencida = licencia_activa_vigente.fecha_vencimiento < hoy
+            licencia_info['existe'] = True
+            licencia_info['vencida'] = vencida
+            licencia_info['tipo_display'] = licencia_activa_vigente.get_tipo_licencia_display()
+            licencia_info['badge_class'] = 'bg-danger' if vencida else 'bg-success'
+            licencia_info['text'] = licencia_info['tipo_display']
+            if vencida:
+                licencia_info['text'] += ' (Vencida)'
+            
+            # Comprobar si hay más de una licencia (activa o inactiva)
+            if conductor.licencias.count() > 1:
+                licencia_info['multiple_licencias'] = True
+            licencia_info['licencia_id'] = licencia_activa_vigente.id # Puedes necesitar esto para detalles
+
+        certificado_info = {
+            'existe': False,
+            'badge_class': 'bg-secondary',
+            'text': 'Sin certificado',
+            'vencido': False,
+            'certificado_id': None # Para el modal de detalles
+        }
+        
+        # Encuentra el certificado activo y vigente si existe
+        certificado_activo_vigente = conductor.certificado_medico_activo
+
+        if certificado_activo_vigente:
+            vencido_cert = certificado_activo_vigente.fecha_vencimiento < hoy
+            certificado_info['existe'] = True
+            certificado_info['vencido'] = vencido_cert
+            certificado_info['badge_class'] = 'bg-danger' if vencido_cert else 'bg-success'
+            certificado_info['text'] = 'Vencido' if vencido_cert else 'Vigente'
+            certificado_info['certificado_id'] = certificado_activo_vigente.id # Puedes necesitar esto para detalles
+
+        conductores_list_for_template.append({
+            'id': conductor.id,
+            'nombres': conductor.personal.nombres,
+            'apellidos': conductor.personal.apellidos,
+            'jerarquia': conductor.personal.jerarquia,
+            'cedula': conductor.personal.cedula,
+            'licencia': licencia_info,
+            'certificado': certificado_info,
+            'activo': conductor.activo,
+            'estado_badge_class': 'bg-success' if conductor.activo else 'bg-danger',
+            'estado_text': 'Activo' if conductor.activo else 'Inactivo',
+            # Puedes añadir más datos del conductor aquí si los necesitas en los detalles
+            'observaciones_generales': conductor.observaciones_generales,
+            'fecha_vencimiento_conductor': conductor.fecha_vencimiento.strftime('%Y-%m-%d') if conductor.fecha_vencimiento else None,
+            'todas_las_licencias': [{
+                'id': lic.id,
+                'tipo_licencia_display': lic.get_tipo_licencia_display(),
+                'numero_licencia': lic.numero_licencia,
+                'fecha_emision': lic.fecha_emision.strftime('%Y-%m-%d'),
+                'fecha_vencimiento': lic.fecha_vencimiento.strftime('%Y-%m-%d'),
+                'organismo_emisor': lic.organismo_emisor,
+                'restricciones': lic.restricciones,
+                'observaciones': lic.observaciones,
+                'activa': lic.activa,
+                'vencida': lic.fecha_vencimiento < hoy
+            } for lic in conductor.licencias.all()],
+            'todos_los_certificados': [{
+                'id': cert.id,
+                'fecha_emision': cert.fecha_emision.strftime('%Y-%m-%d'),
+                'fecha_vencimiento': cert.fecha_vencimiento.strftime('%Y-%m-%d'),
+                'centro_medico': cert.centro_medico,
+                'medico': cert.medico,
+                'observaciones': cert.observaciones,
+                'activo': cert.activo,
+                'vencido': cert.fecha_vencimiento < hoy
+            } for cert in conductor.certificados_medicos.all()],
+        })
+
     return render(request, "mecanica/conductores.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        "conductores": conductores,
-        "hoy": hoy
+        "user": user_data,
+        "jerarquia": user_data["jerarquia"],
+        "nombres": user_data["nombres"],
+        "apellidos": user_data["apellidos"],
+        "conductores": conductores_list_for_template, # Pasamos la lista preparada
+        "total": total_conductores,
+        "hoy": hoy,
+        "filterNombreConductor": filter_nombre_conductor,
+        "filterCedulaConductor": filter_cedula_conductor,
+        "filtro_trimestre": filter_grado_licencia,
     })
 
 def agregar_conductor(request):
@@ -747,23 +975,26 @@ def editar_conductor(request, id):
     }
     return render(request, "mecanica/editar_conductor.html", context)
 
-def api_conductores(request):
-    hoy = date.today().isoformat()
-    conductores = Conductor.objects.select_related('personal').prefetch_related(
-        'licencias', 'certificados_medicos'
-    ).all()
-    
-    data = []
-    for conductor in conductores:
+def api_conductores(request, id):
+    try:
+        # Use .get() to retrieve a single object. This raises DoesNotExist if not found.
+        # Select_related for 'personal' (one-to-one) and prefetch_related for 'licencias'/'certificados_medicos' (one-to-many)
+        conductor = Conductor.objects.select_related('personal').prefetch_related(
+            'licencias', 'certificados_medicos'
+        ).get(id=id)
+
         conductor_dict = {
             'id': conductor.id,
             'activo': conductor.activo,
             'observaciones_generales': conductor.observaciones_generales,
-            'personal': model_to_dict(conductor.personal),
+            'personal': model_to_dict(conductor.personal), # Convert related 'Personal' object to dictionary
             'licencias': [],
             'certificados_medicos': []
         }
-        
+
+        # Manually serialize licenses and medical certificates
+        # This is more efficient than calling model_to_dict on each related object
+        # if you only need specific fields.
         for licencia in conductor.licencias.all():
             conductor_dict['licencias'].append({
                 'id': licencia.id,
@@ -774,7 +1005,7 @@ def api_conductores(request):
                 'organismo_emisor': licencia.organismo_emisor,
                 'activa': licencia.activa
             })
-        
+
         for certificado in conductor.certificados_medicos.all():
             conductor_dict['certificados_medicos'].append({
                 'id': certificado.id,
@@ -784,10 +1015,16 @@ def api_conductores(request):
                 'medico': certificado.medico,
                 'activo': certificado.activo
             })
-        
-        data.append(conductor_dict)
-    
-    return JsonResponse(data, safe=False)
+            
+        # Return the dictionary directly, as it's for a single conductor
+        return JsonResponse(conductor_dict, safe=False)
+
+    except Conductor.DoesNotExist:
+        # Return a 404 Not Found response if the conductor doesn't exist
+        return JsonResponse({'error': 'Conductor no encontrado'}, status=404)
+    except Exception as e:
+        # Catch any other unexpected errors and return a 500 Internal Server Error
+        return JsonResponse({'error': str(e)}, status=500)
 
 @require_http_methods(["DELETE"])
 def api_eliminar_conductor(request, id):

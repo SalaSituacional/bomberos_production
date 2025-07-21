@@ -19,49 +19,61 @@
 
 {% block content %}
 <div class="general-dashboard">
-  <div class="div-user-name username-space">
-    <h3 class="division-title">Gestion Inventario</h3>
-    <section class="user-name">
-      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
-      <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-        <g id="SVGRepo_iconCarrier">
-          <path fill-rule="evenodd" clip-rule="evenodd"
-            d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
-            fill="#000000"></path>
-          <path fill-rule="evenodd" clip-rule="evenodd"
-            d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
-            fill="#000000"></path>
-        </g>
-      </svg>
-    </section>
-  </div>
-</div>
-
-
-<div class="container-flui">
-    <div class="row mb-4 text-end">
-        <div class="col d-flex justify-content-end">
-            <a href="{% url 'asignacion-unidades' %}" class="btn btn-danger me-2">Asignaciones</a>
-            <a href="{% url 'crear-herramienta' %}" class="btn btn-danger">
-                <i class="bi bi-plus-circle me-2"></i> Nueva Herramienta
-            </a>
-        </div>
+    <div class="div-user-name username-space">
+        <h3 class="division-title">Gestion Inventario</h3>
+        <section class="user-name">
+        <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
+        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
+                fill="#000000"></path>
+            <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
+                fill="#000000"></path>
+            </g>
+        </svg>
+        </section>
     </div>
 
-    <!-- filtros  -->
-    <div class="card mb-4">
-    <div class="card-body">
-        <form method="get">
-            <div class="row g-2 align-items-end">
-                <div class="col-md-5">
-                    <label class="form-label mb-1">Buscar por Nombre/Serial:</label>
-                    <input type="text" name="q" class="form-control" placeholder="Buscar..." value="{{ query }}">
+    <div class="filter-container">
+        <div class="filter-stats">
+            <div class="stat-box">
+                <strong>Asignacines</strong>
+                <span class="stat-badge">
+                    <a href="{% url 'asignacion-unidades' %}" title="Asignar">
+                        <i class="bi bi-tools"></i>
+                    </a>
+                </span>
+            </div>
+            <div class="stat-box">
+                <strong>Agregar Herramienta</strong>
+                <span class="stat-badge">
+                    <a href="{% url 'crear-herramienta' %}" title="Nueva Herramienta">
+                        <i class="bi bi-plus-circle"></i>
+                    </a>
+                </span>
+            </div>
+        </div>
+
+        <form method="get" class="filter-form">
+            <div class="filter-group">
+                <div class="floating-input">
+                    <input type="text" name="nombreHerramienta" class="form-control" id="nombreHerramienta" value="{{ nombreHerramienta }}">
+                    <label for="nombreHerramienta">Nombre Herramienta:</label>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label mb-1">Buscar Categoría:</label>
-                    <select name="categoria" class="form-select">
+            </div>
+            <div class="filter-group">
+                <div class="floating-input">
+                    <input type="text" name="serialHerramienta" class="form-control" id="serialHerramienta" value="{{ serialHerramienta }}">
+                    <label for="serialHerramienta">Serial Herramienta:</label>
+                </div>
+            </div>
+            <div class="filter-group">
+                <div class="floating-select">
+                    <select name="categoria" id="categoriaHerramienta">
                         <option value="">Todas las categorías</option>
                         {% for cat in categorias %}
                         <option value="{{ cat.id }}" {% if cat.id == categoria_seleccionada %}selected{% endif %}>
@@ -69,103 +81,99 @@
                         </option>
                         {% endfor %}
                     </select>
+                    <label for="categoriaHerramienta">Buscar Categoría:</label>
                 </div>
-                <div class="col-md-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-danger w-100">
-                        <i class="bi bi-funnel-fill"></i> Filtrar
-                    </button>
-                    <a href="{% url 'listar-herramientas' %}" class="btn btn-outline-danger w-100">
-                        Limpiar
-                    </a>
-                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-funnel-fill"></i> Filtrar
+                </button>
+                <a href="{% url 'listar-herramientas' %}" class="btn btn-outline-danger">
+                    Limpiar
+                </a>
             </div>
         </form>
     </div>
-</div>
 
     <!-- Tabla de herramientas -->
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover tabla_herramientas">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Serial</th>
-                            <th>Categoría</th>
-                            <th>Cantidad</th>
-                            <th>Estado</th>
-                            <th>Asignaciones</th>
-                            <th>Disponibles</th>
-                    
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for herramienta in herramientas %}
-                        <tr>
-                            <td>{{ herramienta.nombre }}</td>
-                            <td>{{ herramienta.numero_serie|default:"-" }}</td>
-                            <td>{{ herramienta.categoria.nombre }}</td>
-                            <td>{{ herramienta.cantidad_total }}</td>
-                            <td>
-                                {% if herramienta.get_estado_display == "Bueno" %}
-                                    <span class="badge bg-success text-light" style="font-size: 0.85rem;">
-                                        {{ herramienta.get_estado_display }}
-                                    </span>
-                                {% elif herramienta.get_estado_display == "Regular" %}
-                                    <span class="badge bg-warning text-dark" style="font-size: 0.85rem;">
-                                        {{ herramienta.get_estado_display }}
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-danger text-light" style="font-size: 0.85rem;">
-                                        {{ herramienta.get_estado_display }}
-                                    </span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if herramienta.asignadas > 0 %}
-                                    <span class="badge bg-secondary text-light" style="font-size: 0.85rem;">
-                                        {{ herramienta.asignadas }} asignadas(s)
-                                    </span>
-                                {% else %}
-                                <span class="badge bg-success text-light" style="font-size: 0.85rem;">Disponible</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if herramienta.asignadas > 0 %}
-                                    <span class="badge bg-primary text-light" style="font-size: 0.85rem;">
-                                        {{ herramienta.cantidad_total|sub:herramienta.asignadas }} disponible(s)
-                                    </span>
-                                {% else %}
-                                <span class="badge bg-success text-light" style="font-size: 0.85rem;">Disponible</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{% url 'editar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Editar">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <a href="{% url 'eliminar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center">No se encontraron herramientas</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="table-responsive-sm">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="fixed-width">Nombre</th>
+                    <th class="fixed-width">Serial</th>
+                    <th class="fixed-width">Categoría</th>
+                    <th class="fixed-width">Cantidad</th>
+                    <th class="fixed-width">Estado</th>
+                    <th class="fixed-width">Asignaciones</th>
+                    <th class="fixed-width">Disponibles</th>
+                    <th class="fixed-width-iconos">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for herramienta in herramientas %}
+                <tr>
+                    <td class="fixed-width">{{ herramienta.nombre }}</td>
+                    <td class="fixed-width">{{ herramienta.numero_serie|default:"-" }}</td>
+                    <td class="fixed-width">{{ herramienta.categoria.nombre }}</td>
+                    <td class="fixed-width">{{ herramienta.cantidad_total }}</td>
+                    <td class="fixed-width">
+                        {% if herramienta.get_estado_display == "Bueno" %}
+                            <span class="badge bg-success text-light" style="font-size: 0.85rem;">
+                                {{ herramienta.get_estado_display }}
+                            </span>
+                        {% elif herramienta.get_estado_display == "Regular" %}
+                            <span class="badge bg-warning text-dark" style="font-size: 0.85rem;">
+                                {{ herramienta.get_estado_display }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger text-light" style="font-size: 0.85rem;">
+                                {{ herramienta.get_estado_display }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="fixed-width">
+                        {% if herramienta.asignadas > 0 %}
+                            <span class="badge bg-secondary text-light" style="font-size: 0.85rem;">
+                                {{ herramienta.asignadas }} asignadas(s)
+                            </span>
+                        {% else %}
+                        <span class="badge bg-success text-light" style="font-size: 0.85rem;">Disponible</span>
+                        {% endif %}
+                    </td>
+                    <td class="fixed-width">
+                        {% if herramienta.asignadas > 0 %}
+                            <span class="badge bg-primary text-light" style="font-size: 0.85rem;">
+                                {{ herramienta.cantidad_total|sub:herramienta.asignadas }} disponible(s)
+                            </span>
+                        {% else %}
+                        <span class="badge bg-success text-light" style="font-size: 0.85rem;">Disponible</span>
+                        {% endif %}
+                    </td>
+                    <td class="fixed-width-iconos">
+                        <a href="{% url 'editar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <a href="{% url 'eliminar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No se encontraron herramientas</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
+    <footer class="footer">
+        <section class="text-reserved">
+            <h5>2025 © Cuerpo de bomberos - San Cristobal</h5>
+        </section>
+    </footer>
+</div>
 
-
-<footer class="footer">
-  <section class="text-reserved">
-    <h5>2025 © Cuerpo de bomberos - San Cristobal</h5>
-  </section>
-</footer>
 {% endblock %}

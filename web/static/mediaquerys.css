@@ -1,0 +1,1762 @@
+
+
+
+
+
+
+/* Anchuras */
+/* ==================== */
+/* Telefonos Super Pequenos (375px - 450px) */
+/* ==================== */
+@media (min-width: 375px) {
+  /* #region Dashboard */
+  .body{
+    padding: 0 !important;
+  }
+
+  .header-dashboard{
+    justify-content: space-between;
+  }
+
+  .title-icon h1{
+    font-size: 1.2rem;
+  }
+
+  .tools-exit-help{
+    margin-left: .3rem;
+    justify-content: flex-end;
+    
+    img{
+      margin: 0;
+    }
+  }
+  
+  .progress-bar {
+  width: 70%;
+  
+  p {
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+  }
+}
+  
+
+  /* #endregion */
+
+  /* #region Formulario Procedimientos */
+    .form-container{
+      padding: 1rem .5rem;
+    }
+  /* #endregion */
+
+  /* #region Notificaicones Area Personal */
+    .noti-container {
+      left: calc(100% / 2 - 170px);
+      width: 340px;
+    }
+    .noti-container-comandante {
+      left: calc(100% / 2 - 170px);
+      width: 340px;
+    }
+  /* #endregion */
+}
+
+/* ==================== */
+/* Telefonos Pequenos (450px - 650px) */
+/* ==================== */
+@media (min-width: 450px) {
+  /* #region Dashboard */
+
+  .title-icon h1{
+    font-size: 1.5rem;
+  }
+  .title-icon img{
+    width: 2.4rem;
+  }
+  .tools-exit-help img {
+    width: 2.2rem;
+  }
+
+  .user-name{
+    width: auto;
+    margin-right: 1rem;
+
+    p{
+      font-size: 1rem;
+    }
+  } 
+
+  .items-list {
+    width: 60%;
+  }
+  .div-analytics{
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: .5rem;
+    justify-content: space-evenly;
+  }
+  .items-cards{
+    justify-content: space-evenly;
+  }
+  .card-parroquies{
+    width: 45%;
+
+    span{
+      width: 100%;
+    }
+    p{
+      font-size: 1.2rem;
+    }
+  }
+  #ultimo-procedimiento-card {
+    width: 90%;
+    left: calc(100%/2 - 45%);
+    font-size: 1.1rem;
+    line-height: 1.3;
+
+    p{
+      margin-bottom: .8rem;
+    }
+  }
+  /* #endregion */
+
+  /* #region Notificaicones Area Personal */
+    .noti-container {
+      left: calc(100% / 2 - 210px);
+      width: 420px;
+    }
+    .noti-container-comandante {
+      left: calc(100% / 2 - 210px);
+      width: 420px;
+    }
+  /* #endregion */
+}
+
+/* ==================== */
+/* TABLETS PEQUEÑAS (650px - 768px) */
+/* ==================== */
+@media (min-width: 650px) {
+  
+  /* #region Login */
+  .form-items{
+    width: 70%;
+  }
+  .title-login{
+    font-size: 3.4rem;
+  }
+  /* #endregion */
+
+  /* #region Dashboard */
+
+  .title-icon h1{
+    font-size: 2rem;
+  }
+  .title-icon img{
+    width: 2.8rem;
+  }
+  .tools-exit-help img {
+    width: 2.4rem;
+  }
+  .tools-exit-help {
+    margin-right: .5rem;
+  }
+
+  .procediments-contain{
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .card-parroquies{
+    width: 40%;
+
+    span{
+      width: 60%;
+    }
+  }
+  .items-row{
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    height: 70rem;
+    
+  }
+  .items-list {
+    width: 50%;
+    margin: 0;
+  }
+
+  .progress-bar {
+  width: 48%;
+  
+  p {
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+  }
+}
+  
+
+  /* #endregion */
+
+  /* #region Formulario Procedimientos */
+
+  .form-container2 h4{
+    width: 100%;
+    text-align: center;
+  }
+
+  .form-container, .form-container2{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    gap: 1rem;
+
+    padding: 1rem;
+  }
+
+  .form-container .form-floating, .form-container .form-floating{
+    flex-basis: 48%; /* Aproximadamente el 50%, dejando espacio para el margin */
+    max-width: 100%; 
+    margin: 0 !important;
+  }
+
+  /* 3. Estilos para el caso de UN SOLO ELEMENTO (.form-floating:only-child) */
+  .form-container .form-floating:only-child, .form-container .form-floating:only-child {
+    /* Cuando es el único hijo, ocupa el 70% del contenedor */
+    flex-basis: 100%; 
+    max-width: 100%;
+    justify-self: center;
+    
+    /* Para centrar un elemento con flexbox, ajustamos los márgenes automáticos */
+    /* Usamos auto para los márgenes laterales */
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .form-check-procedimientos-container{
+    width: 100%;
+  }
+
+  /* #endregion */
+
+  /* #region Tablas Procedimientos */
+
+  .div-user-name{
+    flex-direction: row;
+    align-items: center;
+    margin-top: .7rem;
+    margin-bottom: .7rem;
+    justify-content: space-between;
+  }
+
+  .division-title{
+    width: auto;
+    margin: 0;
+    margin-left: 5px;
+  }
+  .user-name{
+    margin: 0;
+    margin-right: 5px;
+  }
+
+  .filter-container{
+    padding: .5rem;
+  }
+
+  .filter-group{
+    width: calc(100% / 3 - .5rem);
+  }
+
+  .filter-button, .clear-button{
+    width: 25%;
+  }
+
+  /* #endregion */
+
+  /* #region Estadisticas */
+  .bar-graphic-horizontal{
+    padding: .1rem;
+    padding-right: .5rem;
+    width: 580px !important;
+    margin: 0 auto;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+  }
+  .bartwo{
+    width: 578px;
+  }
+
+  .barts-horizontal{
+    min-width: 600px !important;
+  }
+  .cards-stadist-rows{
+    height: 110vh !important;
+  }
+  .cards-stadists{
+    width: 90%;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+  }
+  /* #endregion */
+
+  /* #region Notificaicones Area Personal */
+    .noti-container {
+      left: 20px;
+    }
+    .noti-container-comandante {
+      left: 20px;
+    }
+  /* #endregion */
+
+  /* #region Instagram */
+    .form-instagram{
+      width: 100%;
+      height: auto;
+    }
+    .form-feed-instagram{
+      flex-wrap: nowrap;
+      width: 80%;
+
+      button{
+        padding: .7rem;
+        margin: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+      
+      input{
+        padding: .7rem;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+
+    .modal-content-instagram{
+      width: 60%;
+    }
+    .instagram-embed{
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding: 0;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      justify-content: space-evenly;
+
+      .instagram-media{
+        min-width: 40% !important;
+      }
+    }
+  /* #endregion */
+
+  /* #region Formulario Personal  */
+  .container-personal-form{
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  .fecha-cese-input{
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  .fecha-cese-input>div{
+    flex-direction: row;
+    align-items: stretch !important;
+
+    div{
+      width: 100% !important;
+      padding: 0 !important;
+    }
+    input{
+      border-radius: 0 !important;
+      border-top-right-radius: 10px !important;
+      border-bottom-right-radius: 10px !important;
+    }
+    span{
+      flex-direction: row;
+      border-radius: 0 !important;
+      border-top-left-radius: 10px !important;
+      border-bottom-left-radius: 10px !important;
+      font-size: .7rem;
+      height: 100%;
+    }
+    small{
+      font-size:.7rem;
+    }
+    p{
+      padding-top: 0rem;
+    }
+  }
+  .form-section{
+    border-radius: 10px;
+  }
+  /* #endregion */
+
+  /* #region Detalles Personal */
+    .perfil-empleado {
+      width: 90% !important;
+      margin: 0 auto;
+      border-radius: 10px;
+    }
+    .perfil-header{
+      padding-top: 1rem;
+      flex-direction: row;
+      align-items: flex-start;
+      padding-bottom: 1.4rem;
+    }
+    .foto-perfil {
+      width: 120px;
+      height: 120px;
+      margin-right: 1rem;
+      align-self: center;
+    }
+    .info-basica{
+      align-items: flex-start;
+      order: 0;
+      margin: 0;
+      margin-left: 10px;
+    }
+    .grupo-sanguineo{
+      align-self: flex-start;
+      font-size: 1.1rem;
+      margin-right: 1rem;
+    }
+
+    .perfil-detalles{
+      flex-direction: column;
+      width: 85%;
+      align-items: center;
+    }
+    .detalle-seccion{
+      margin: 0;
+      margin-bottom: 2rem;
+      border-radius: 10px;
+    }
+    .mensaje-ayuda{
+      display: none;
+    }
+    .familiares-detalles{
+      width: 85%;
+      margin: 0 auto;
+    }
+    .family-cards-container{
+      flex-direction: column;
+      margin: 0;
+      margin-bottom: 2rem;
+    }
+    .family-card{
+      border-radius: 10px;
+
+      h4{
+        font-size: 1.2rem;
+      }
+      .family-info-item{
+        font-size: 1.1rem;
+      }
+      .family-info-label{
+        font-size: 1.1rem;
+      }
+    }
+    .boton-volver-personal{
+      margin: 0 auto;
+      justify-content: flex-start;
+      width: 85%;
+      padding-bottom: 1rem;
+    }
+  /* #endregion */
+
+  /* #region Formulario Solicitudes */
+
+    .parte-b .row{
+      justify-content: space-evenly;
+    }
+
+    .parte-b .row div{
+      width: calc(100% / 2 - 1rem);
+
+      div{
+        width: 100%;
+      }
+    }
+
+    .parte-a {
+      width: 95%;
+      margin: 0 auto;
+    }
+
+  /* #endregion */
+
+  /* #region Unidades Tabla */
+
+    .form-reportes, .form-estado, .form-division{
+      .filter-group{
+        width: 100% !important;
+      }
+    }
+    .reporte-content{
+      width: 70%;
+      border-radius: 10px;
+    }
+
+  /* #endregion */
+
+  /* #region Conductores de Mecanica */
+  .modal-conductores-mecanica{
+    width: 95%;
+    max-width: 95%;
+  }
+  .modal-conductores-modify{
+    .container-fluid .row div p{
+      font-size: 1rem;
+    }
+  }
+
+  /* #endregion */
+}
+
+/* ==================== */
+/* TABLETS STANDARD (768px - 992px) */
+/* ==================== */
+@media (min-width: 768px) {
+  /* Ajustes para tablets más grandes */
+
+  /* #region Dashboard */
+  #ultimo-procedimiento-card {
+    width: 50%;
+    bottom: 10px;
+    left: 10px;
+  }
+  .title-stadist-parroquies{
+    width: 90%;
+  }
+  .analitics-filters{
+    width: 90%;
+  }
+  .graphic-statistics{
+    width: 90%;
+    margin: 0 auto;
+  }
+  .procediments-contain .position-end{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10px;
+  }
+  .analitics-filters .position-end{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10px;
+  }
+  .graphic-statistics{
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+  .progress-bar{
+    width: calc(100% / 3 - 2rem);
+  }
+  /* #endregion */
+
+  /* #region Formulario Procedimientos */
+
+  /* 3. Estilos para el caso de UN SOLO ELEMENTO (.form-floating:only-child) */
+  .form-container .form-floating:only-child, .form-container .form-floating:only-child {
+    /* Cuando es el único hijo, ocupa el 70% del contenedor */
+    flex-basis: 90%; 
+    max-width: 90%;
+    
+    /* Para centrar un elemento con flexbox, ajustamos los márgenes automáticos */
+    /* Usamos auto para los márgenes laterales */
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* #endregion */
+
+  /* #region Tablas Procedimientos */
+
+  .info-modal{
+    padding: 1rem;
+  }
+
+  .filter-search{
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+
+    input[type="month"]{
+      width: calc(100% / 2 - 1rem) !important;
+      margin: 0;
+      border-bottom-left-radius: 0 !important;
+      border-top-right-radius: 10px !important;
+      border: thin solid #b6bbba;
+      border-left: none;
+    }
+
+    button{
+      margin-top: 1rem;
+    }
+  }
+  .input-group-text{
+    width: calc(100% / 2 - 1rem);
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 10px !important;
+    border: thin solid #b6bbba;
+    border-right: thin solid #d3dad8;
+    justify-content: center;
+  }
+
+  .info-modal{
+    font-size: 1.1rem;
+  }
+
+  /* #endregion */
+
+ /* #region Estadisticas */
+  .bar-graphic-horizontal{
+    padding: 0rem; 
+    padding-right: .5rem;
+    width: 95% !important;
+    margin: 0 auto;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+  }
+  .bartwo{
+    width: 95%;
+  }
+
+  .barts-horizontal{
+    min-width: 100% !important;
+  }
+  .barts{
+    min-width: 95%;
+  }
+
+  .cards-stadist-rows{
+    height: 100vh !important;
+  }
+  .cards-stadists{
+    width: 90%;
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+
+    select{
+      width: 80%;
+    }
+    .card-month{
+      width: 80%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    input{
+      width: 100%;
+      margin: 0 auto;
+    }
+    .btn-graphic {
+      width: 80%;
+      margin: .1rem;
+    }
+  }
+  /* #endregion */
+
+  /* #region Detalles Personal */
+    .perfil-header{
+      padding: 1rem;
+    }
+  /* #endregion */
+
+  /* #region Solicitudes */
+    .request-prevencion-container{
+      width: 75%;
+    }
+    .request-prevencion-card{
+      border-radius: 10px;
+      border-bottom: 3px solid #b6243a;
+    }
+  /* #endregion */
+
+  /* #region Formulario Solicitudes */
+    .buttons-solicitud{
+      flex-direction: row;
+      flex-wrap: nowrap;
+
+      button{
+        width: 45%;
+        margin: 0;
+      }
+      a{
+        width: 45%;
+        margin: 0;
+      }
+    }
+  /* #endregion */
+
+  /* #region Unidades Tabla */
+    .Info-Unidades{
+      width: 85%;
+      border-radius: 15px;
+    }
+    .reporte-content{
+      width: 60%;
+      border-radius: 10px;
+    }
+
+  /* #endregion */
+}
+
+/* ==================== */
+/* LAPTOPS PEQUEÑAS (992px - 1200px) */
+/* ==================== */
+@media (min-width: 992px) {
+  /* #region Login */
+  .form-items{
+    width: 50%;
+  }
+  /* #endregion */
+
+  /* #region Dashboard */
+  .items-list{
+    width: 25%;
+  }
+  .items-row{
+    flex-direction: row;
+    height: 25rem;
+    justify-content: space-evenly;
+  }
+
+  .card-parroquies{
+    width: 30%;
+    margin: 0.5rem;
+  }
+  .title-procediments{
+    margin-bottom: 0;
+  }
+
+  #ultimo-procedimiento-card {
+    width: 40%;
+  }
+  /* #endregion */
+
+  /* #region formulario Procedimientos */
+    .data_form{
+      width: 85%;
+      margin: 0 auto;
+    }
+
+    .form-container{
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    .form-check-procedimientos-container{
+      justify-content: flex-end;
+      flex-direction: row-reverse !important;
+      width: 96%;
+      padding-left: 0;
+
+
+      label{
+        font-size: 1.1rem;
+        color: #454545;
+        margin: 0;
+        margin-right: 1rem;
+        text-decoration: dashed;
+      }
+    }
+
+    .data_form .form-container .form-floating label{
+      padding-top: .7rem;
+    }
+
+    .data_form .form-container .form-floating input, .data_form .form-container .form-floating select {
+      min-height: 1.1rem;
+    }
+  /* #endregion */
+
+  /* #region Tablas Procedimientos */
+
+    .filter-container{
+      width: 95%;
+      margin: 0 auto 30px;
+      border-radius: 15px;
+    }
+
+    .filter-button, .clear-button{
+      width: 15%;
+    }
+
+    .contain-dates {
+      width: 80%;
+      border-radius: 15px;
+    }
+
+    .table-responsive-sm{
+      width: 97%;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 10px;
+    }
+
+  /* #endregion */
+
+  /* #region Estadisticas */
+    .content-stadist{
+      flex-direction: row;
+      align-items: flex-start;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .stadist-column{
+      margin: 0;
+      margin-left: 1rem;
+    }
+
+    .cards-stadist-column{
+      width: 100%;
+      
+      border-radius: 0;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+    .cards-stadists{
+      border-radius: 0;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    .stadist-rows{
+      padding: 0;
+    }
+    
+    .cards-stadists{
+      width: 100%;
+    }
+  
+    /* #endregion */
+
+  /* #region Instagram */
+    .form-feed-instagram{
+      width: 60%;
+    }
+
+    .instagram-embed{
+      .instagram-media{
+        min-width: 31% !important;
+      }
+    }
+  /* #endregion */
+
+  /* #region Formulario Personal */
+    .fecha-cese-input>div{
+      width: 70% !important;
+      margin: 0 auto;
+    }
+  /* #endregion */
+
+  /* #region Detalles Personal */
+    .perfil-detalles{
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      align-items: stretch;
+      width: 95%;
+    }
+    .detalle-seccion{
+      min-width: 47%;
+      flex-basis: 0;
+    }
+
+    .familiares-detalles{
+      width: 95%;
+    }
+    .family-cards-container{
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      width: 100%;
+    }
+    .family-card{
+      min-width: 48%;
+      max-width: 48%;
+      margin-right: 0 !important;
+    }
+  /* #endregion */
+
+  /* #region Solicitudes */
+    .request-prevencion-container{
+      width: 60%;
+    }
+    .tabla-seguridad-prevencion{
+      width: 95%;
+    }
+    .contain-dates-seguridad-prevencion{
+      width: 95%;
+    }
+  /* #endregion */
+
+  /* #region Formulario Solicitudes */
+    .modify-comerce{
+      flex-direction: row;
+    }
+    .contain-svg-comerce{
+        align-self: flex-start;
+        margin-top: 3.3rem;
+    }
+    .form-add-comerce div{
+      justify-content: center;
+      align-items: center;
+    }
+    .parte-b .row div{
+      width: calc(100% / 3);
+    }
+    .parte-b .row{
+      margin: 0 auto;
+      align-items: center;
+      justify-content: flex-start;
+    }
+  /* #endregion */
+
+  /* #region Unidades Tabla */
+    .Info-Unidades{
+      width: 80%;
+    }
+    .reporte-content{
+      width: 45%;
+    }
+
+  /* #endregion */
+
+  /* #region Inventario Unidades */
+    .card-detalles-asignaciones{
+      width: 80%;
+      margin: 0 auto;
+    }
+    .herramienta-line{
+      padding: 5px 2.5rem;
+    }
+  /* #endregion */
+}
+
+/* ==================== */
+/* DESKTOP (1200px +) */
+/* ==================== */
+@media (min-width: 1200px) {
+  /* #region Login */
+
+  .img-background{
+    background-position: center -12px;
+  }
+  .form-items{
+    width: 20%;
+  }
+  .form-content{
+    height: 45vh;
+    padding: 1rem;
+    img{
+      width: 6rem;
+    }
+
+    transition: box-shadow 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+    &:focus-within {
+      box-shadow: 0 0 20px 2px #6c738580;
+      background-color: #ffffff70;
+      transform: scale(1.02);
+    }
+  }
+  .title-login{
+    font-size: 5rem;
+  }
+  .icons img{
+    width: 4rem;
+  }
+
+  /* #endregion */
+
+  /* #region Dashboard */
+
+  .header-dashboard{
+    height: 6vh;
+  }
+  .general-dashboard{
+    margin-top: calc(6vh - 16px);
+  }
+  .card-parroquies span{
+    width: 45%;
+  }
+
+  #ultimo-procedimiento-card {
+    width: 30%;
+  }
+  /* #endregion */
+
+  /* #region formulario Procedimientos */
+    .data_form{
+      width: 85%;
+      margin: 0 auto;
+    }
+
+    .form-container{
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    .form-check-procedimientos-container{
+      justify-content: flex-end;
+      flex-direction: row-reverse !important;
+      width: 96%;
+    }
+  /* #endregion */
+
+  /* #region Tablas Procedimientos */
+    .modal-content-two{
+      width: 90%;
+      margin: 0 auto;
+    }
+    .info-modal{
+      width: 90%;
+
+      p{
+        font-size: 1.1rem;
+      }
+      h4{
+        font-size: 1.4rem;
+      }
+    }
+  /* #endregion */
+
+  /* #region Estadisticas */
+
+  /* #endregion */
+
+  /* #region Instagram */
+
+    .modal-content-instagram{
+      width: 40%;
+    }
+
+    .instagram-embed{
+      .instagram-media{
+        min-width: 31% !important;
+      }
+    }
+  /* #endregion */
+
+  /* #region Formulario Personal */
+    .container-personal-form{
+      width: 80%;
+    }
+    .fecha-cese-input>div{
+      width: 55% !important;
+    }
+  /* #endregion */
+
+  /* #region Detalles Personal */
+    .perfil-header{
+    padding-left: 5rem;
+    padding-right: 5rem;
+    }
+    .perfil-empleado{
+      width: 80% !important;
+    }
+
+  /* #endregion */
+
+  /* #region Solicitudes */
+    .request-prevencion-container{
+      width: 45%;
+    }
+  /* #endregion */
+
+  /* #region Formulario Solicitudes */
+    .buttons-solicitud{
+      width: 55%;
+    }
+    .content-form{
+      width: 85%;
+      margin: 0 auto;
+    }
+  /* #endregion */
+
+  /* #region Unidades Tabla */
+  .Info-Unidades {
+    & div{
+      flex-direction: row;
+    }
+    div p{
+      width: calc(100% / 2 - 1rem);
+    }
+  }
+  /* #endregion */
+
+  /* #region Conductores de Mecanica */
+  .modal-conductores-mecanica{
+    width: 90%;
+    max-width: 90%;
+  }
+  /* #endregion */
+
+}
+
+/* ==================== */
+/* DESKTOP (1400px +) */
+/* ==================== */
+@media (min-width: 1410px) {
+  /* #region Login */
+  .form-items{
+    width: 16%;
+  }
+  /* #endregion */
+
+  /* #region Dashboard */
+
+  .header-dashboard{
+    height: 6vh;
+  }
+
+  .card-parroquies{
+    width: calc(100% / 6 - 1rem);
+  }
+  #ultimo-procedimiento-card {
+    width: 30%;
+    height: 45vh;
+  }
+
+  .progress-bar{
+    width: calc(100% / 3 - 5rem);
+  }
+  .items-list {
+    width: 18%;
+  }
+
+  /* #endregion */
+
+  /* #region Formulario Procedimientos */
+  .data_form{
+    width: 70%;
+    margin: 0 auto;
+  }
+
+  .form-container, .form-container2{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    gap: 1rem;
+
+    padding: 1rem;
+  }
+
+  .form-container .form-floating, .form-container .form-floating{
+    flex-basis: 48%; /* Aproximadamente el 50%, dejando espacio para el margin */
+    max-width: 100%; 
+    margin: 0 !important;
+    height: 3.7rem;
+  }
+
+  /* 3. Estilos para el caso de UN SOLO ELEMENTO (.form-floating:only-child) */
+  .form-container .form-floating:only-child, .form-container .form-floating:only-child {
+    /* Cuando es el único hijo, ocupa el 70% del contenedor */
+    flex-basis: 70%; 
+    max-width: 70%;
+    justify-self: center;
+    
+    /* Para centrar un elemento con flexbox, ajustamos los márgenes automáticos */
+    /* Usamos auto para los márgenes laterales */
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+
+  .data_form .form-container .form-floating select, .data_form .form-container .form-floating input {
+    padding-top: 1.8rem;
+    padding-bottom: .4rem;
+    height: 100%;
+  }
+
+  /* #endregion */
+
+  /* #region Tablas Procedimientos */
+    .filter-container{
+      width: 90%;
+    }
+
+    .filter-form{
+      justify-content: center;
+      gap: .5rem;
+    }
+
+    .filter-form>div{
+      width: calc(100% / 4 - 1rem);
+    }
+
+    .filter-group{
+      margin: 0;
+    }
+    .filter-actions{
+      width: 15% !important;
+      justify-content: flex-start;
+    }
+    .filter-button, .clear-button{
+      width: calc(100% / 2 - 1rem);
+    }
+    /* .table-responsive-sm{
+      width: 85%;
+    } */
+  /* #endregion */
+
+  /* #region Instagram */
+  .form-feed-instagram{
+    width: 50%;
+  }
+
+  .modal-content-instagram{
+    width: 40%;
+  }
+
+  .instagram-embed{
+    .instagram-media{
+      min-width: 30% !important;
+    }
+  }
+  /* #endregion */
+
+  /* #region Formulario Personal */
+    .container-personal-form{
+      width: 65%;
+    }
+    .fecha-cese-input>div{
+      width: 45% !important;
+    }
+  /* #endregion */
+
+  /* #region Detalles Personal */
+    .family-card-header{
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  /* #endregion */
+
+  /* #region Solicitudes */
+    .request-prevencion-container{
+      width: 35%;
+    }
+    .tabla-seguridad-prevencion{
+      width: 90%;
+    }
+    .contain-dates-seguridad-prevencion{
+      width: 90%;
+    }
+    .filtros-prevencion .filter-stats{
+      width: 90%;
+      margin: 0 auto;
+    }
+  /* #endregion */
+
+  /* #region Formulario Solicitudes */
+    .content-form{
+      width: 75%;
+      margin: 0 auto;
+      padding: 2.5rem;
+    }
+  /* #endregion */
+
+  /* #region Unidades Tabla */
+    .Info-Unidades{
+      width: 80%;
+    }
+    .reporte-content{
+      width: 30%;
+    }
+    .form-reportes, .form-estado, .form-division {
+      .filter-group{
+        margin: .5rem;
+      }
+    }
+
+  /* #endregion */
+
+  /* #region Conductores de Mecanica */
+  .modal-conductores-mecanica{
+    width: 65%;
+    max-width: 65%;
+  }
+  /* #endregion */
+
+  /* #region Bienes Municipales */
+    .form-container .form-floating-inmuebles:first-child{
+      margin-bottom: 10px !important;
+    }
+  /* #endregion */
+}
+
+
+
+
+
+/* Alturas */
+@media (max-height: 500px) {
+  /* #region Login */
+  .form-content img{
+    width: 40vh;
+    position: absolute;
+    top: calc(100vh / 2 - 20vh);
+    z-index: 0;
+    opacity: .5;
+  }
+  .title-login{
+    font-size: 1.3rem;
+  }
+  .inputs-forms{
+    margin: 0;
+    margin-bottom: 5px;
+    z-index: 1;
+
+    input{
+      margin: 0;
+    }
+  }
+  .btn-inputs-forms{
+    z-index: 1;
+  }
+  /* #endregion */
+
+  /* #region Dashboard */
+
+  .header-dashboard{
+    height: 10vh;
+  }
+  .title-icon h1{
+    font-size: 1.3rem;
+  }
+
+  /* #endregion */
+}
+
+@media (min-height: 501px) and (max-height: 600px){
+  /* #region Login */
+  .form-content img{
+    width: 12rem;
+    position: absolute;
+    top: calc(100vh / 2 - 6rem);
+    z-index: 0;
+    opacity: .5;
+  }
+  .title-login{
+    font-size: 1.3rem;
+  }
+  .inputs-forms{
+    margin: 0;
+    margin-bottom: 5px;
+    z-index: 1;
+
+    input{
+      margin: 0;
+    }
+  }
+  .btn-inputs-forms{
+    z-index: 1;
+  }
+  /* #endregion */
+
+  /* #region Dashboard */
+  .header-dashboard{
+    height: 10vh;
+  }
+  .title-icon h1{
+    font-size: 1.3rem;
+  }
+  /* #endregion */
+}
+
+@media (min-height: 601px) and (max-height: 800px) {
+  
+  /* #region Login */
+  .form-content img {
+    width: 5rem;
+  }  
+  .inputs-forms{
+    margin: 0 0 5px 0;
+    
+    input {
+      margin: 0;
+    }
+  }
+  .title-login{
+    font-size: 1.92rem;
+    line-height: 1.1;
+    margin-top: 0;
+  }
+  /* #endregion */
+
+  /* #region Dashboard */
+  .header-dashboard{
+    height: 8vh;
+  }
+  .title-icon h1{
+    font-size: 1.5rem;
+  }
+  /* #endregion*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Estilos QUE NO SE PARA QUE SIRVEN */
+/* .checkbox-styles {
+  width: 2rem !important;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkbox-styles input[type="checkbox"] {
+  margin-left: 1rem;
+  width: 1rem;
+  height: 1.5rem;
+  border: 2px solid #6c7385;
+  background-color: #fff;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.checkbox-styles input[type="checkbox"]:checked::before {
+  z-index: 9;
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 7px;
+  width: 10px;
+  height: 18px;
+  border: solid white;
+  border-width: 0 4px 4px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-styles input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -3px;
+  width: 40px;
+  height: 40px;
+  background-color: #08c;
+}
+
+.checkbox-styles label {
+  margin-left: 8px;
+  cursor: pointer;
+}
+ */
+
+/* .stadist-parroquies {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 50%;
+  height: auto;
+  background-color: #f0f0f06a;
+  border: thin solid #969696db;
+  border-radius: 50px;
+  padding: 1rem;
+} */
+/* .column-one {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+} */
+
+
+
+
+/* .detalles_lesionados {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start !important;
+  margin: 0.5rem;
+  width: auto !important;
+
+  div {
+    width: 19.4rem;
+    margin: 0.5rem;
+  }
+} */
+
+/* .buttons-items {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 0 auto;
+  width: 100%;
+
+  button {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    border: none;
+    padding: 0.5rem;
+    margin: 1rem;
+    border-radius: 5px;
+    width: 12rem;
+    height: auto;
+    font-size: 1rem;
+    background-color: var(--color-button);
+    color: #fff;
+    font-family: var(--kanit-regular);
+  }
+
+  button:hover {
+    background-color: rgb(151, 0, 0);
+  }
+
+  input {
+    margin: .5rem;
+    width: 60% !important;
+  }
+} */
+
+
+
+/* .icons-accion-two {
+  width: 10rem;
+  padding: 0;
+
+  button {
+    margin: 1rem;
+    width: 50px;
+    height: 60px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: .5rem;
+  }
+} */
+
+/* .section-filter {
+  width: 95%;
+  height: auto;
+  padding: 0.4rem;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: #ffffff;
+  border: thin solid #ffffff;
+  margin: 0 auto;
+  border-radius: 10px;
+  flex-wrap: wrap;
+  font-size: 1.2rem;
+} */
+
+/* .filter-search-prevention {
+  display: flex;
+  width: auto;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  input {
+    border-radius: 5px;
+    outline: none;
+    border: thin solid #b7b7b7;
+    width: 18rem;
+    height: 2.5rem;
+    margin: 0.5rem;
+  }
+
+  select {
+    border-radius: 5px;
+    outline: none;
+    border: thin solid #b7b7b7;
+    width: 18rem;
+    height: 2.5rem;
+    margin: 0.5rem;
+  }
+
+  svg {
+    width: 25px;
+    height: 25px;
+  }
+} */
+/* .general-dashboard ul {
+  visibility: visible;
+  display: none;
+} */
+
+/* .modal-header {
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: space-around;
+  background-color: var(--color-header-dashboard);
+  width: 100%;
+  color: #FFF;
+  padding: 1.2rem;
+} */
+
+/* .modal-header-info {
+  justify-content: center;
+  background-color: var(--color-header-dashboard);
+  width: 100%;
+  color: #FFF;
+  padding: 1.2rem;
+} */
+
+
+
+/* .modal-content-two {
+  width: auto;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+} */
+
+/* .margin-span {
+    margin: 0 .4rem;
+} */
+
+
+/* Herramientas de personal (tool-personal) */
+/* .tool-personal {
+    width: 100%; 
+    height: auto;
+    padding: 0.8rem;
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    background-color: #ffffff;
+    border: thin solid #ffffff;
+    margin: 0 auto;
+    border-radius: 10px;
+    flex-wrap: wrap;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+} */
+
+
+/* Filtros y acciones */
+/* .accion-filter {
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0.5rem; 
+    div {
+        margin: 0.5rem; 
+    }
+}
+
+.accion-personal {
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center; 
+    text-align: center;
+    padding: 0.5rem; 
+
+    p {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    a,
+    button {
+        margin: 0.5rem; 
+        transform: scale(1); 
+        font-size: 1rem;
+    }
+
+    a,
+    button:hover {
+        transform: scale(1.1);
+        transition: 0.1s ease-in-out all;
+    }
+
+    a {
+        font-size: 1.2rem;
+    }
+} */

@@ -307,10 +307,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nroCuentaInput) nroCuentaInput.addEventListener('blur', validarNroCuenta);
     if (nroRifInput) nroRifInput.addEventListener('blur', validarRif);
     if (fechaNacimientoInput) fechaNacimientoInput.addEventListener('change', validarFechaNacimiento);
-    if (statusSelect) {
-        statusSelect.addEventListener('change', actualizarFechaCese);
-        actualizarFechaCese(); // Validar estado inicial
-    }
     if (form) form.addEventListener('submit', validarFormulario);
 
     // Validación en tiempo real para algunos campos

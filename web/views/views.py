@@ -7,13 +7,16 @@ from django.contrib import messages
 from ..forms import *
 from ..models import *
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.db.models import Case, When
-from datetime import timezone as dt_timezone
+from datetime import timezone as dt_timezone  # Importar el timezone de datetime
+from django.utils import timezone
 from django.http import JsonResponse
-from datetime import datetime
-from datetime import timedelta
+import instaloader
+import time
+from datetime import timezone as dt_timezone
+from django.utils import timezone
+from django.shortcuts import render, redirect
 from django.utils.timezone import make_aware
 from django.db.models import Prefetch
 from datetime import date
@@ -25,6 +28,7 @@ from django.utils.timezone import localdate
 from django.forms.models import model_to_dict
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Vista Personalizada para el error 404
@@ -45,21 +49,44 @@ def logout(request):
     request.session.flush()  # Eliminar todos los datos de la sesión
     return redirect('/login/')
 
+
+
 def get_instagram_post_date(url):
     L = instaloader.Instaloader()
-
-    # Extraer el shortcode de la URL
-    shortcode = url.split("/p/")[-1].split("/")[0]
-
+    
+    # Configuración para evitar bloqueos
+    L.request_timeout = 120
+    L.sleep = True
+    L.delay_requests = True
+    L.max_connection_attempts = 3
+    
     try:
-        # Obtener la publicación usando el shortcode
-        post = instaloader.Post.from_shortcode(L.context, shortcode)
-        naive_datetime = post.date_utc  # Asumiendo que `post.date_utc` es el valor sin zona horaria
-        # Convertir la fecha sin zona horaria a UTC
-        fecha_publicacion = timezone.make_aware(naive_datetime, dt_timezone.utc)
-        return fecha_publicacion
+        # Extracción del shortcode
+        if 'instagram.com/p/' in url:
+            shortcode = url.split('instagram.com/p/')[1].split('/')[0]
+        elif 'instagram.com/reel/' in url:
+            shortcode = url.split('instagram.com/reel/')[1].split('/')[0]
+        else:
+            return None
+
+        # Intento con reintentos
+        for attempt in range(3):
+            try:
+                post = instaloader.Post.from_shortcode(L.context, shortcode)
+                post_date = post.date
+                
+                # Convertir a datetime con timezone si es necesario
+                if post_date.tzinfo is None:
+                    post_date = timezone.make_aware(post_date, dt_timezone.utc)
+                    
+                return post_date
+            except Exception as e:
+                print(f"Intento {attempt + 1} fallido: {str(e)}")
+                time.sleep(5)
+                
+        return None
     except Exception as e:
-        print(f"Error al obtener la publicación: {e}")
+        print(f"Error final: {str(e)}")
         return None
 
 def instagram_feed(request):
@@ -67,26 +94,49 @@ def instagram_feed(request):
     if not user:
         return redirect('/')
 
-    success = False  # Variable para indicar si se ha agregado correctamente
+    # Obtener todos los posts ordenados por fecha
+    posts_list = InstagramPost.objects.all().order_by('-fecha')
+    
+    # Configurar paginación (15 items por página)
+    paginator = Paginator(posts_list, 12)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
 
     if request.method == 'POST':
-        url = request.POST.get('url')
+        url = request.POST.get('url', '').strip()
         if url:
+            if not any(x in url for x in ['instagram.com/p/', 'instagram.com/reel/']):
+                return render(request, 'instagram_feed.html', {
+                    **base_context(user),
+                    'posts': posts  # Usamos el objeto paginado
+                })
+            
             fecha_publicacion = get_instagram_post_date(url)
             if fecha_publicacion:
                 InstagramPost.objects.create(url=url, fecha=fecha_publicacion)
-                success = True  # Ahora success indica éxito sin redireccionar
-
-    posts = InstagramPost.objects.all().order_by('-fecha')
+                # Redirigir para evitar reenvío del formulario
+                return redirect('/instagram/?success=True')
+            else:
+                return render(request, 'instagram_feed.html', {
+                    **base_context(user),
+                    'error_message': "No se pudo obtener la fecha. ¿El post es público?",
+                    'posts': posts  # Usamos el objeto paginado
+                })
 
     return render(request, 'instagram_feed.html', {
+        **base_context(user),
+        'posts': posts  # Objeto paginado
+    })
+
+def base_context(user):
+    return {
         "user": user,
         "jerarquia": user["jerarquia"],
         "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        'posts': posts,
-        'success': success,  # Asegurarse de que success esté en el contexto
-    })
+        "apellidos": user["apellidos"]
+    }
+
+
 
 # Vista de la Ventana Inicial (Login)
 @never_cache
@@ -108,13 +158,13 @@ def Home(request):
             }
             if user.user == "Mecanica_01":
                 return redirect("/mecanica/dashboard_mecanica/")
-            if user.user == "Sarp_01":
-                return redirect("/dashboard_sarp/")
-            if user.user == "Bienes_00":
-                return redirect("/dashboard_bienes/")
-            if user.user == "Ven_911":
+            elif user.user == "Sarp_01":
+                return redirect("/sarp/dashboard_sarp/")
+            elif user.user == "Bienes_00":
+                return redirect("/bienes_municipales/dashboard_bienes/")
+            elif user.user == "Ven_911":
                 return redirect("/ven911/home/")
-            if user.user == "ComandanciaJunin":
+            elif user.user == "ComandanciaJunin":
                 return redirect("/junin/DashboardJunin/")
             else:
                 return redirect("/dashboard/")
@@ -129,6 +179,7 @@ def View_personal(request):
 
     buscar_jerarquia = request.GET.get('filterJerarquia', '')
     buscar_status = request.GET.get('filterStatus', '')
+    buscar_rol = request.GET.get('filterRol', '')
 
     # Verificar si el usuario está en la sesión
     if not user:
@@ -142,6 +193,8 @@ def View_personal(request):
         personal_queryset = personal_queryset.filter(jerarquia__icontains=buscar_jerarquia)
     if buscar_status:
         personal_queryset = personal_queryset.filter(status=buscar_status)
+    if buscar_rol:
+        personal_queryset = personal_queryset.filter(rol=buscar_rol)
 
     conteo = personal_queryset.count()
 
@@ -187,7 +240,8 @@ def View_personal(request):
         "personal": personal_ordenado,
         "conteo": conteo,
         "filterJerarquia": buscar_jerarquia,  # Para mantener el filtro en el template
-        "filterStatus": buscar_status        # Para mantener el filtro en el template
+        "filterStatus": buscar_status,        # Para mantener el filtro en el template
+        "filterRol": buscar_rol                # Para mantener el filtro en el template
     })
 
 
@@ -410,42 +464,6 @@ def editar_personal(request, personal_id):
     }
     return render(request, 'personal/personal_form.html', context)
 
-@login_required
-# Vista para el Dashboard
-def Dashboard_bienes(request):
-    # Filtrar bienes por estado y contar el total de cada uno
-    bienes_buenos = BienMunicipal.objects.filter(estado_actual="Bueno").count()
-    bienes_regulares = BienMunicipal.objects.filter(estado_actual="Regular").count()
-    bienes_defectuosos = BienMunicipal.objects.filter(estado_actual="Defectuoso").count()
-    bienes_dañados = BienMunicipal.objects.filter(estado_actual="Dañado").count()  # Corregido para contar correctamente
-
-     # Contar bienes por dependencia
-    cuartelcentral = BienMunicipal.objects.filter(dependencia__nombre="Cuartel Central").count()
-    estacion01 = BienMunicipal.objects.filter(dependencia__nombre="Estacion 01").count()
-    estacion02 = BienMunicipal.objects.filter(dependencia__nombre="Estacion 02").count()
-    estacion03 = BienMunicipal.objects.filter(dependencia__nombre="Estacion 03").count()
-
-
-    # Verificar si hay un usuario autenticado en la sesión
-    user = request.session.get('user')
-    if not user:
-        return redirect('/')
-
-    # Renderizar la página con los datos
-    return render(request, "bienes_municipales/dashboard_bienes.html", {
-        "user": user,
-        "jerarquia": user.get("jerarquia", ""),  # Agregado un valor predeterminado
-        "nombres": user.get("nombres", ""),
-        "apellidos": user.get("apellidos", ""),
-        "bienes_buenos": bienes_buenos,
-        "bienes_regulares": bienes_regulares,
-        "bienes_defectuosos": bienes_defectuosos,
-        "bienes_dañados": bienes_dañados,
-        "count_cuartelcentral": cuartelcentral,
-        "count_estacion01": estacion01,
-        "count_estacion02": estacion02,
-        "count_estacion03": estacion03,
-    })
 
 @login_required
 def Dashboard(request):
@@ -462,233 +480,6 @@ def Dashboard(request):
         "apellidos": user["apellidos"],
     })
 
-@login_required
-def Dashboard_sarp(request):
-    user = request.session.get('user')
-    drones_disponibles = Drones.objects.all().count()
-    operadores_totales = Personal.objects.filter(id__in=[44, 5,53,73]).exclude(id=4).count()
-    if not user:
-        return redirect('/')
-    # Renderizar la página con los datos
-    return render(request, "sarp/dashboard_sarp.html", {
-        "drones_disponibles" : drones_disponibles,
-        "operadores_totales" : operadores_totales,
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-    })
-
-def Registros_sarp(request):
-    user = request.session.get('user')
-
-    if not user:
-        return redirect('/')
-    # Renderizar la página con los datos
-    return render(request, "sarp/registros_sarp.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        "formularioDrones": DronesForm,
-    })
-
-# ==========================
-
-@login_required
-def Registros_bienes(request):
-    user = request.session.get('user')
-
-    if not user:
-        return redirect('/')
-    # Renderizar la página con los datos
-
-    if request.method == "POST":
-        form = BienMunicipalForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            responsable_id = data['responsable']
-            responsable_obj = Personal.objects.get(id=responsable_id)
-
-            bien = BienMunicipal.objects.create(
-                identificador=data['identificador'],
-                descripcion=data['descripcion'],
-                cantidad=data['cantidad'],
-                dependencia=data['dependencia'],
-                departamento=data['departamento'],
-                responsable=responsable_obj,
-                fecha_registro=data['fecha_registro'],
-                estado_actual=data['estado_actual']
-            )
-            return redirect("/inventario_bienes/")
-        else:
-            return JsonResponse({"errores": form.errors}, status=400)
-    
-    else:
-        form = BienMunicipalForm()
-        return render(request, "bienes_municipales/registro_inventario.html", {
-            "user": user,
-            "jerarquia": user["jerarquia"],
-            "nombres": user["nombres"],
-            "apellidos": user["apellidos"],
-            "form_bienes": BienMunicipalForm()
-            })
-
-def Inventario_bienes(request):
-    user = request.session.get('user')
-    total_bienes = BienMunicipal.objects.all().count()
-
-    if not user:
-        return redirect('/')
-    # Renderizar la página con los datos
-    return render(request, "bienes_municipales/inventario_bienes.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        "form_movimientos": MovimientoBienForm(),
-        "form_estado": CambiarEstadoBienForm(),
-        "total_bienes": total_bienes,
-    })
-
-def Formularios_sarp(request):
-    user = request.session.get('user')
-
-    if not user:
-        return redirect('/')
-
-    vuelo_instance = None
-
-    if request.method == "POST":
-        vuelo_id = request.POST.get("id_vuelo")  # Verifica si hay un vuelo existente
-
-        # Cargar datos del formulario
-        vuelo_form = RegistroVuelosForm(request.POST)
-        dron_form = EstadoDronForm(request.POST)
-        baterias_form = EstadoBateriasForm(request.POST)
-        control_form = EstadoControlForm(request.POST)
-        detalles_form = DetallesVueloForm(request.POST)
-
-        if (vuelo_form.is_valid() and dron_form.is_valid() and
-            baterias_form.is_valid() and control_form.is_valid() and detalles_form.is_valid()):
-
-            dron = vuelo_form.cleaned_data["id_dron"]
-            operador = vuelo_form.cleaned_data["id_operador"]
-            observador = vuelo_form.cleaned_data["id_observador"]
-
-            dron_instance = Drones.objects.get(id_dron=dron)
-            operador_instance = Personal.objects.get(id=operador)
-            observador_instance = Personal.objects.get(id=observador)
-
-            if vuelo_id:  # Si hay un ID de vuelo, actualizarlo
-                vuelo_instance = Registro_Vuelos.objects.get(id_vuelo=vuelo_id)
-                vuelo_instance.id_operador = operador_instance
-                vuelo_instance.id_observador = observador_instance
-                vuelo_instance.observador_externo = vuelo_form.cleaned_data["observador_externo"]
-                vuelo_instance.fecha = vuelo_form.cleaned_data["fecha"]
-                vuelo_instance.sitio = vuelo_form.cleaned_data["sitio"]
-                vuelo_instance.hora_despegue = vuelo_form.cleaned_data["hora_despegue"]
-                vuelo_instance.hora_aterrizaje = vuelo_form.cleaned_data["hora_aterrizaje"]
-                vuelo_instance.id_dron = dron_instance
-                vuelo_instance.tipo_mision = vuelo_form.cleaned_data["tipo_mision"]
-                vuelo_instance.observaciones_vuelo = vuelo_form.cleaned_data["observaciones_vuelo"]
-                vuelo_instance.apoyo_realizado_a = vuelo_form.cleaned_data["apoyo_realizado_a"]
-                vuelo_instance.save()  # Guardar los cambios
-
-            else:  # Si no hay ID, crear un nuevo vuelo
-                vuelo_instance = Registro_Vuelos.objects.create(
-                    id_operador=operador_instance,
-                    id_observador=observador_instance,
-                    observador_externo=vuelo_form.cleaned_data["observador_externo"],
-                    fecha=vuelo_form.cleaned_data["fecha"],
-                    sitio=vuelo_form.cleaned_data["sitio"],
-                    hora_despegue=vuelo_form.cleaned_data["hora_despegue"],
-                    hora_aterrizaje=vuelo_form.cleaned_data["hora_aterrizaje"],
-                    id_dron=dron_instance,
-                    tipo_mision=vuelo_form.cleaned_data["tipo_mision"],
-                    observaciones_vuelo=vuelo_form.cleaned_data["observaciones_vuelo"],
-                    apoyo_realizado_a=vuelo_form.cleaned_data["apoyo_realizado_a"]
-                )
-
-            # Actualizar o crear Estado del Dron
-            EstadoDron.objects.update_or_create(
-                id_vuelo=vuelo_instance,
-                id_dron=vuelo_instance.id_dron,
-                defaults={
-                    "cuerpo": dron_form.cleaned_data["cuerpo"],
-                    "observacion_cuerpo": dron_form.cleaned_data["observacion_cuerpo"],
-                    "camara": dron_form.cleaned_data["camara"],
-                    "observacion_camara": dron_form.cleaned_data["observacion_camara"],
-                    "helices": dron_form.cleaned_data["helices"],
-                    "observacion_helices": dron_form.cleaned_data["observacion_helices"],
-                    "sensores": dron_form.cleaned_data["sensores"],
-                    "observacion_sensores": dron_form.cleaned_data["observacion_sensores"],
-                    "motores": dron_form.cleaned_data["motores"],
-                    "observacion_motores": dron_form.cleaned_data["observacion_motores"],
-                }
-            )
-
-            # Actualizar o crear Estado de las Baterías
-            EstadoBaterias.objects.update_or_create(
-                id_vuelo=vuelo_instance,
-                id_dron=vuelo_instance.id_dron,
-                defaults={
-                    "bateria1": baterias_form.cleaned_data["bateria1"],
-                    "bateria2": baterias_form.cleaned_data["bateria2"],
-                    "bateria3": baterias_form.cleaned_data["bateria3"],
-                    "bateria4": baterias_form.cleaned_data["bateria4"],
-                }
-            )
-
-            # Actualizar o crear Estado del Control
-            EstadoControl.objects.update_or_create(
-                id_vuelo=vuelo_instance,
-                id_dron=vuelo_instance.id_dron,
-                defaults={
-                    "cuerpo": control_form.cleaned_data["cuerpo_control"],
-                    "joysticks": control_form.cleaned_data["joysticks"],
-                    "pantalla": control_form.cleaned_data["pantalla"],
-                    "antenas": control_form.cleaned_data["antenas"],
-                    "bateria": control_form.cleaned_data["bateria"],
-                }
-            )
-
-            # Actualizar o crear Detalles del Vuelo
-            DetallesVuelo.objects.update_or_create(
-                id_vuelo=vuelo_instance,
-                defaults={
-                    "viento": detalles_form.cleaned_data["viento"],
-                    "nubosidad": detalles_form.cleaned_data["nubosidad"],
-                    "riesgo_vuelo": detalles_form.cleaned_data["riesgo_vuelo"],
-                    "zona_vuelo": detalles_form.cleaned_data["zona_vuelo"],
-                    "numero_satelites": detalles_form.cleaned_data["numero_satelites"],
-                    "distancia_recorrida": f"{detalles_form.cleaned_data['distancia_recorrida']} {detalles_form.cleaned_data['magnitud_distancia']}",
-                    "altitud": detalles_form.cleaned_data["altitud"],
-                    "duracion_vuelo": detalles_form.cleaned_data["duracion_vuelo"],
-                    "observaciones": detalles_form.cleaned_data["observaciones"],
-                }
-            )
-
-            return redirect("/registros_sarp/")
-
-    else:
-        vuelo_form = RegistroVuelosForm()
-        dron_form = EstadoDronForm()
-        baterias_form = EstadoBateriasForm()
-        control_form = EstadoControlForm()
-        detalles_form = DetallesVueloForm()
-
-    return render(request, "sarp/formulario_sarp.html", {
-        "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
-        "formularioVuelos": vuelo_form,
-        "formularioEstadoDron": dron_form,
-        "formularioEstadoBaterias": baterias_form,
-        "formularioEstadoControl": control_form,
-        "formularioDetallesVuelo": detalles_form,
-    })
 
 @login_required
 # Vista de archivo para hacer pruebas de backend
@@ -2579,55 +2370,61 @@ def ver_registros(request):
     if not user:
         return redirect('/')
 
-        # Obtener la fecha enviada desde el frontend
-    fecha_carga = request.GET.get('fecha', None)
-        # Convierte la fecha cargada a un objeto datetime "aware"
-    if fecha_carga:
-        fecha_inicio = make_aware(datetime.strptime(fecha_carga, "%Y-%m-%d"))
-        fecha_fin = fecha_inicio + timedelta(days=1)
-    else:
-        # Si no se pasa la fecha, por defecto cargar los procedimientos del día actual
-        fecha_inicio = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        fecha_fin = fecha_inicio + timedelta(days=1)
-
-
     # Filtrar procedimientos según la fecha
-    registros = RegistroPeticiones.objects.filter(
-        fecha_hora__gte=fecha_inicio,
-        fecha_hora__lt=fecha_fin
-    ).order_by('-fecha_hora')
+    registros = RegistroPeticiones.objects.all().order_by('-fecha_hora')
 
-    # Convertir el QuerySet en una lista de diccionarios
-    procedimientos = list(
-        registros.values(
-            "usuario__user",  # Nombre del usuario relacionado
-            "url",
-            "fecha_hora"
-        )
-    )
+    # Configuración de paginación
+    page = request.GET.get('page', 1) # Obtener el número de página de la URL, por defecto 1
+    paginator = Paginator(registros, 15) # Mostrar 10 registros por página
 
-    # Formatear las fechas en el backend
-    for procedimiento in procedimientos:
-        procedimiento['fecha_hora'] = procedimiento['fecha_hora'].strftime("%d/%m/%Y, %H:%M")
+    try:
+        registros_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        # Si el parámetro de página no es un entero, entregar la primera página.
+        registros_paginados = paginator.page(1)
+    except EmptyPage:
+        # Si la página está fuera de rango (ej. 9999), entregar la última página de resultados.
+        registros_paginados = paginator.page(paginator.num_pages)
 
+    # Convertir el QuerySet paginado en una lista de diccionarios
+    # Solo procesamos los objetos de la página actual
+    procedimientos_para_template = []
+    for registro in registros_paginados:
+        procedimientos_para_template.append({
+            "usuario__user": registro.usuario.user,
+            "url": registro.url,
+            "fecha_hora": registro.fecha_hora.strftime("%d/%m/%Y, %H:%M")
+        })
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':  # Verificar si es una solicitud AJAX
-        # Serializa los datos en un formato compatible con JSON
-        procedimientos = list(registros.values(
-            "usuario__user",
-            "url",
-            "fecha_hora",
-        ))
+    if request.method == 'POST':  # Verificar si es una solicitud AJAX
+        # Para solicitudes AJAX, serializamos solo los datos de la página actual
+        procedimientos_ajax = []
+        for registro in registros_paginados:
+            procedimientos_ajax.append({
+                "usuario__user": registro.usuario.user,
+                "url": registro.url,
+                "fecha_hora": registro.fecha_hora.strftime("%d/%m/%Y, %H:%M") # Formatear para JSON
+            })
+        
+        # Devolver los datos paginados y la información de paginación
+        return JsonResponse({
+            'procedimientos': procedimientos_ajax,
+            'num_pages': paginator.num_pages, # Total de páginas
+            'current_page': registros_paginados.number, # Página actual
+            'has_next': registros_paginados.has_next(),
+            'has_previous': registros_paginados.has_previous(),
+            'next_page_number': registros_paginados.next_page_number() if registros_paginados.has_next() else None,
+            'previous_page_number': registros_paginados.previous_page_number() if registros_paginados.has_previous() else None,
+        })
 
-        # Responder con los datos en formato JSON y la fecha para la siguiente carga
-        return JsonResponse({'procedimientos': procedimientos, 'fecha': fecha_inicio.strftime("%Y-%m-%d")})
-
-    return render(request, 'ver_registros.html', {'registros': procedimientos,
-                                                  "user": user,
-                                                  "jerarquia": user["jerarquia"],
-                                                  "nombres": user["nombres"],
-                                                  "apellidos": user["apellidos"],
-                                                  })
+    return render(request, 'ver_registros.html', {
+        'registros': procedimientos_para_template, # Pasamos la lista formateada para la primera carga
+        'datos': registros_paginados, # Pasamos el objeto paginador para la navegación
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+    })
 
 def Antecedentes(request):
     datos_combinados = []
@@ -4935,5 +4732,3 @@ def View_Procedimiento_Editar(request):
         "comision_tres": datos_comision_tres,
         "form_brigada": form_brigada,
         })
-
-# ========================================================================================= Vistas Para el Area de Inventario de Unidades =====================================================

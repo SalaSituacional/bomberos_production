@@ -1,3 +1,5 @@
+{% load widget_tweaks %}
+
 {% if user.user == "SeRvEr" %}
 {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
@@ -31,178 +33,216 @@
     </section>
   </div>
 </div>
-<div class="tool-personal">
-  <section class="accion-filter">
-    <div class="input-group mb-3">
-      <span class="input-group-text" id="basic-addon1">Nombre Unidad:</span>
-      <input type="text" class="form-control" placeholder="Buscar unidad" id="filterJerarquia">
-    </div>
-  </section>
-  <section class="accion-personal">
-    <p class="me-5">
 
-      Total Unidades: {{ conteo }}     
-    </p>
-    <p>
-      Agregar Unidad:
-    </p>
-    <a href="{% url 'formulario_unidades' %}">
-      <button type="button" class="btn">
-        <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
-          fill="#000000">
-          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-          <g id="SVGRepo_iconCarrier">
-            <title>plus-circle</title>
-            <desc>Created with Sketch Beta.</desc>
-            <defs> </defs>
-            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-              <g id="Icon-Set" sketch:type="MSLayerGroup" transform="translate(-464.000000, -1087.000000)" fill="#000">
-                <path
-                  d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z"
-                  id="plus-circle" sketch:type="MSShapeGroup"> </path>
-              </g>
-            </g>
-          </g>
+<!-- section filter -->
+<div class="filter-container">
+  <div class="filter-stats">
+    <div class="stat-box">
+      <strong>Total Unidades:</strong>
+      <span class="stat-badge">{{ conteo }}</span>
+    </div>
+    <div class="stat-box">
+      <strong>Agregar Unidad: </strong>
+
+      <span class="stat-badge">
+        <a href="{% url 'formulario_unidades' %}">
+          <i class="bi bi-plus-circle"></i>
+        </a>
+      </span>
+
+    </div>
+  </div>
+
+  <form method="get" action="" class="filter-form">
+    <!-- Filtro Nombre Unidad -->
+    <div class="filter-group">
+      <div class="floating-input">
+        <input type="text" class="form-control" name="filterNombreUnidad" id="filterNombreUnidad" {% if filtroNombreUnidad %} value="{{ filtroNombreUnidad }}" {% endif %}>
+        <label for="search-input-two">Nombre de Unidad</label>
+      </div>
+    </div>
+
+    <!-- Filtro Division -->
+    <div class="filter-group">
+      <div class="floating-select">
+        <select name="filterDivision" id="search-input-three">
+          <option value="">Seleccionar...</option>
+          {% for division in divisiones %}
+            <option value="{{ division.id }}" 
+                    {% if filtroDivision == division.id|stringformat:"s" %}selected{% endif %}>
+              {{ division.division }}
+            </option>
+          {% endfor %}
+        </select>
+        <label for="search-input-three">Division</label>
+      </div>
+    </div>
+
+    <!-- Filtro Estado -->
+    <div class="filter-group">
+      <div class="floating-select">
+        <select id="quarterInput" name="filterEstado">
+          <option value="">Seleccionar...</option>
+          <option value="🟢 Activo" {% if filtroEstado == '🟢 Activo' %}selected{% endif %}>🟢 Activo</option>
+          <option value="🟡 Mantenimiento" {% if filtroEstado == '🟡 Mantenimiento' %}selected{% endif %}>🟡 Mantenimiento</option>
+          <option value="🔴 Fuera de Servicio" {% if filtroEstado == '🔴 Fuera de Servicio' %}selected{% endif %}>🔴 Fuera de Servicio</option>
+        </select>
+        <label for="quarterInput">Estado</label>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="filter-actions">
+      <button type="submit" class="filter-button" title="Filtrar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2z"/>
         </svg>
       </button>
-    </a>
-  </section>
+      {% if filtroNombreUnidad or filtroDivision or filtroEstado %}
+        <a href="{% url 'unidades' %}" class="clear-button" title="Limpiar filtros">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+  </form>
 </div>
+
+
+
 <div class="contain-unidades">
   <!-- tabla -->
   <div class="table-responsive-sm">
-    <table class="table table-hover tabla-unidades">
+    <table class="table table-hover ">
       <thead>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Unidad</th>
-          <th scope="col">Division</th>
-          <th scope="col">Agregar Reporte</th>
-          <th scope="col">Cambiar Estado</th>
-          <th scope="col">Reasignar Division</th>
-          <th scope="col">Modificar</th>
-          <th scope="col">Ver Informacion</th>
+          <th scope="col" class="fixed-width-auto">#</th>
+          <th scope="col" class="fixed-width">Unidad</th>
+          <th scope="col" class="fixed-width">Division</th>
+          <th scope="col" class="fixed-width-iconos">Agregar Reporte</th>
+          <th scope="col" class="fixed-width-iconos">Cambiar Estado</th>
+          <th scope="col" class="fixed-width-iconos">Reasignar Division</th>
+          <th scope="col" class="fixed-width-iconos">Modificar</th>
+          <th scope="col" class="fixed-width-iconos">Ver Informacion</th>
         </tr>
       </thead>
       <tbody class="table-group-divider">
-        <div id="procedimientos-container">
           <!-- prettier-ignore -->
           {% for row in datos %}
-          <tr>
-            <th>{{ forloop.counter }}</th>
-            <td>{{ row.nombre_unidad }}</td>
-            <td>{{ row.divisiones|join:", "}}</td>
-            <td>
-              <button class="btn agg-reportes" data-unidad="{{ row.id_unidad }}"
-                data-unidad-nombre="{{ row.nombre_unidad }}" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                <svg fill="red" width="35px" height="40px" viewBox="0 0 32 32" id="icon"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                  <g id="SVGRepo_iconCarrier">
-                    <defs>
-                      <style>
-                        .cls-1 {
-                          fill: none;
-                        }
-                      </style>
-                    </defs>
-                    <path
-                      d="M26,30H6a2.0023,2.0023,0,0,1-2-2V4A2.0023,2.0023,0,0,1,6,2H26a2.0023,2.0023,0,0,1,2,2V28A2.0023,2.0023,0,0,1,26,30ZM6,4V28H26V4Z">
-                    </path>
-                    <rect x="10" y="13" width="12" height="2" transform="translate(32 28) rotate(-180)"></rect>
-                    <rect x="12" y="18" width="8" height="2" transform="translate(32 38) rotate(-180)"></rect>
-                    <rect id="_Transparent_Rectangle_" data-name="<Transparent Rectangle>" class="cls-1" width="32"
-                      height="32"></rect>
-                  </g>
-                </svg>
-              </button>
-            </td>
-            <td>{{ row.detalles.0.estado }}
-              <button class="btn cambiar-estado" data-unidad="{{ row.id_unidad }}"
-                data-unidad-nombre="{{ row.nombre_unidad }}" data-estado-actual="{{ row.detalles.0.estado }}"
-                data-bs-toggle="modal" data-bs-target="#modal-estado">
-                <svg width="35px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                  <g id="SVGRepo_iconCarrier">
-                    <path
-                      d="M3.35288 8.95043C4.00437 6.17301 6.17301 4.00437 8.95043 3.35288C10.9563 2.88237 13.0437 2.88237 15.0496 3.35288C17.827 4.00437 19.9956 6.17301 20.6471 8.95044C21.1176 10.9563 21.1176 13.0437 20.6471 15.0496C19.9956 17.827 17.827 19.9956 15.0496 20.6471C13.0437 21.1176 10.9563 21.1176 8.95044 20.6471C6.17301 19.9956 4.00437 17.827 3.35288 15.0496C2.88237 13.0437 2.88237 10.9563 3.35288 8.95043Z"
-                      fill="red" fill-opacity="0.15"></path>
-                    <path
-                      d="M3.35288 15.0496L2.6227 15.2209L3.35288 15.0496ZM3.35288 8.95043L2.6227 8.77915L3.35288 8.95043ZM20.6471 8.95044L19.9169 9.12171L20.6471 8.95044ZM20.6471 15.0496L19.9169 14.8783L20.6471 15.0496ZM15.0496 20.6471L14.8783 19.9169L15.0496 20.6471ZM8.95044 20.6471L9.12171 19.9169L8.95044 20.6471ZM8.95043 3.35288L9.12171 4.08306L8.95043 3.35288ZM15.0496 3.35288L14.8783 4.08306L15.0496 3.35288ZM7.85732 12.2227C7.54944 12.4998 7.52448 12.974 7.80157 13.2819C8.07867 13.5898 8.55289 13.6148 8.86077 13.3377L7.85732 12.2227ZM10.0656 11.2443L10.5673 11.8018L10.0656 11.2443ZM11.627 11.4405L12.2511 11.0245L11.627 11.4405ZM12.373 12.5595L11.7489 12.9755H11.7489L12.373 12.5595ZM13.9344 12.7557L13.4327 12.1982L13.9344 12.7557ZM16.1427 11.7773C16.4506 11.5002 16.4755 11.026 16.1984 10.7181C15.9213 10.4102 15.4471 10.3852 15.1392 10.6623L16.1427 11.7773ZM13.0746 13.2875L12.9811 14.0316L13.0746 13.2875ZM10.9254 10.7125L10.8319 11.4567H10.8319L10.9254 10.7125ZM4.08306 14.8783C3.63898 12.9851 3.63898 11.0149 4.08306 9.12171L2.6227 8.77915C2.12577 10.8976 2.12577 13.1024 2.6227 15.2209L4.08306 14.8783ZM19.9169 9.12171C20.361 11.0149 20.361 12.9851 19.9169 14.8783L21.3773 15.2208C21.8742 13.1024 21.8742 10.8976 21.3773 8.77916L19.9169 9.12171ZM14.8783 19.9169C12.9851 20.361 11.0149 20.361 9.12171 19.9169L8.77916 21.3773C10.8976 21.8742 13.1024 21.8742 15.2208 21.3773L14.8783 19.9169ZM9.12171 4.08306C11.0149 3.63898 12.9851 3.63898 14.8783 4.08306L15.2208 2.6227C13.1024 2.12577 10.8976 2.12577 8.77916 2.6227L9.12171 4.08306ZM9.12171 19.9169C6.62161 19.3305 4.6695 17.3784 4.08306 14.8783L2.6227 15.2209C3.33924 18.2756 5.72441 20.6608 8.77916 21.3773L9.12171 19.9169ZM15.2208 21.3773C18.2756 20.6608 20.6608 18.2756 21.3773 15.2208L19.9169 14.8783C19.3305 17.3784 17.3784 19.3305 14.8783 19.9169L15.2208 21.3773ZM14.8783 4.08306C17.3784 4.6695 19.3305 6.62161 19.9169 9.12171L21.3773 8.77916C20.6608 5.72441 18.2756 3.33924 15.2208 2.6227L14.8783 4.08306ZM8.77916 2.6227C5.72441 3.33924 3.33924 5.72441 2.6227 8.77915L4.08306 9.12171C4.6695 6.6216 6.62161 4.6695 9.12171 4.08306L8.77916 2.6227ZM8.86077 13.3377L10.5673 11.8018L9.56383 10.6869L7.85732 12.2227L8.86077 13.3377ZM11.003 11.8566L11.7489 12.9755L12.997 12.1434L12.2511 11.0245L11.003 11.8566ZM14.4362 13.3131L16.1427 11.7773L15.1392 10.6623L13.4327 12.1982L14.4362 13.3131ZM11.7489 12.9755C11.8915 13.1894 12.0413 13.4173 12.1919 13.5861C12.3566 13.7708 12.6072 13.9847 12.9811 14.0316L13.1681 12.5433C13.227 12.5508 13.277 12.572 13.31 12.5929C13.336 12.6094 13.3372 12.6167 13.3114 12.5878C13.2857 12.5589 13.2487 12.5118 13.1933 12.4333C13.1382 12.3552 13.0762 12.2623 12.997 12.1434L11.7489 12.9755ZM13.4327 12.1982C13.3266 12.2937 13.2435 12.3684 13.1708 12.4304C13.0977 12.4929 13.0503 12.5293 13.0181 12.551C12.9861 12.5725 12.989 12.5658 13.0183 12.5562C13.0554 12.5442 13.1091 12.5359 13.1681 12.5433L12.9811 14.0316C13.3549 14.0786 13.6507 13.9334 13.8559 13.7952C14.0436 13.6688 14.2451 13.4851 14.4362 13.3131L13.4327 12.1982ZM10.5673 11.8018C10.6734 11.7063 10.7565 11.6316 10.8291 11.5696C10.9023 11.5071 10.9497 11.4707 10.9819 11.449C11.0139 11.4275 11.011 11.4342 10.9817 11.4438C10.9446 11.4558 10.8909 11.4641 10.8319 11.4567L11.0189 9.96835C10.6451 9.92139 10.3493 10.0666 10.1441 10.2048C9.95642 10.3312 9.7549 10.5149 9.56383 10.6869L10.5673 11.8018ZM12.2511 11.0245C12.1085 10.8106 11.9587 10.5827 11.8081 10.4139C11.6434 10.2292 11.3928 10.0153 11.0189 9.96835L10.8319 11.4567C10.773 11.4492 10.723 11.428 10.69 11.4071C10.664 11.3906 10.6628 11.3833 10.6886 11.4122C10.7143 11.4411 10.7513 11.4882 10.8067 11.5668C10.8618 11.6448 10.9238 11.7377 11.003 11.8566L12.2511 11.0245Z"
-                      fill="red"></path>
-                  </g>
-                </svg>
-              </button>
-            </td>
-            <td>
-              <button class="btn reasignar-unidad" data-unidad="{{ row.id_unidad }}"
-                data-unidad-nombre="{{ row.nombre_unidad }}" data-division-actual="{{ row.divisiones|join:', ' }}"
-                data-bs-toggle="modal" data-bs-target="#modal-division">
-                <svg fill="red" xmlns="http://www.w3.org/2000/svg" width="35px" height="40px" viewBox="0 0 52 52"
-                  enable-background="new 0 0 52 52" xml:space="preserve">
-                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                  <g id="SVGRepo_iconCarrier">
-                    <path
-                      d="M23.2,10.2C18.1,5.1,10,3.5,2.9,5.7C2.6,5.7,2.2,6.2,2.2,7s0,3,0,3.9c0,0.8,0.7,1,1.1,0.9 c5.4-2.2,12-1.2,16.3,3.3l1.1,1.1c0.6,0.6,0.1,1.7-0.7,1.7h-7.8c-0.8,0-1.5,0.6-1.5,1.5v3c0,0.8,0.6,1.5,1.5,1.5l19.2,0.2 c0.8,0,1.5-0.6,1.5-1.5L33,3.5C33,2.7,32.4,2,31.5,2h-3c-0.8,0-1.6,0.6-1.6,1.4l-0.1,7.9c0,0.8-1.1,1.3-1.7,0.7 C25.2,12.1,23.2,10.2,23.2,10.2z">
-                    </path>
-                    <path
-                      d="M3.5,27.8h3c0.8,0,1.5,0.7,1.5,1.5v13.2C8,43.3,8.7,44,9.5,44h33c0.8,0,1.5-0.7,1.5-1.5V16.9 c0-0.8-0.7-1.5-1.5-1.5h-4c-0.8,0-1.5-0.7-1.5-1.5v-3c0-0.8,0.7-1.5,1.5-1.5H46c2.2,0,4,1.8,4,4V46c0,2.2-1.8,4-4,4H6 c-2.2,0-4-1.8-4-4V29.3C2,28.5,2.7,27.8,3.5,27.8z">
-                    </path>
-                  </g>
-                </svg>
-              </button>
-            </td>
-            <td>
-              <button class="btn editar_unidad" data-unidad="{{ row.id_unidad }}">
-                <svg fill="red" height="35px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 217.855 217.855" xml:space="preserve">
-                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                  <g id="SVGRepo_iconCarrier">
-                    <path
-                      d="M215.658,53.55L164.305,2.196C162.899,0.79,160.991,0,159.002,0c-1.989,0-3.897,0.79-5.303,2.196L3.809,152.086 c-1.35,1.352-2.135,3.166-2.193,5.075l-1.611,52.966c-0.063,2.067,0.731,4.069,2.193,5.532c1.409,1.408,3.317,2.196,5.303,2.196 c0.076,0,0.152-0.001,0.229-0.004l52.964-1.613c1.909-0.058,3.724-0.842,5.075-2.192l149.89-149.889 C218.587,61.228,218.587,56.479,215.658,53.55z M57.264,201.336l-42.024,1.28l1.279-42.026l91.124-91.125l40.75,40.743 L57.264,201.336z M159,99.602l-40.751-40.742l40.752-40.753l40.746,40.747L159,99.602z">
-                    </path>
-                  </g>
-                </svg>
-              </button>
-            </td>
-            <td>
-              <button class="btn ver-informacion" data-unidad="{{ row.id_unidad }}">
-                <svg width="35px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                  <g id="SVGRepo_iconCarrier">
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M9 6C9 4.34315 7.65685 3 6 3H4C2.34315 3 1 4.34315 1 6V8C1 9.65685 2.34315 11 4 11H6C7.65685 11 9 9.65685 9 8V6ZM7 6C7 5.44772 6.55228 5 6 5H4C3.44772 5 3 5.44772 3 6V8C3 8.55228 3.44772 9 4 9H6C6.55228 9 7 8.55228 7 8V6Z"
-                      fill="red"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M9 16C9 14.3431 7.65685 13 6 13H4C2.34315 13 1 14.3431 1 16V18C1 19.6569 2.34315 21 4 21H6C7.65685 21 9 19.6569 9 18V16ZM7 16C7 15.4477 6.55228 15 6 15H4C3.44772 15 3 15.4477 3 16V18C3 18.5523 3.44772 19 4 19H6C6.55228 19 7 18.5523 7 18V16Z"
-                      fill="red"></path>
-                    <path
-                      d="M11 7C11 6.44772 11.4477 6 12 6H22C22.5523 6 23 6.44772 23 7C23 7.55228 22.5523 8 22 8H12C11.4477 8 11 7.55228 11 7Z"
-                      fill="#0F0F0F"></path>
-                    <path
-                      d="M11 17C11 16.4477 11.4477 16 12 16H22C22.5523 16 23 16.4477 23 17C23 17.5523 22.5523 18 22 18H12C11.4477 18 11 17.5523 11 17Z"
-                      fill="#0F0F0F"></path>
-                  </g>
-                </svg>
-              </button>
-            </td>
+            <tr>
+              <th class="fixed-width-auto">{{ forloop.counter }}</th>
+              <td class="fixed-width">{{ row.nombre_unidad }}</td>
+              <td class="fixed-width">{{ row.divisiones|join:", "}}</td>
+              <td class="fixed-width-iconos">
+                <button class="btn agg-reportes" data-unidad="{{ row.id_unidad }}"
+                  data-unidad-nombre="{{ row.nombre_unidad }}" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="35px" height="40px" viewBox="8.848199844360352 6.437900066375732 30.30360221862793 35.12409973144531" enable-background="new 0 0 48 48">
+                    <g>
+                        <path fill="#FFFFFF" stroke="#B6243AFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="   M28.5257,41.062H14.6869c-2.9485,0-5.3387-2.3902-5.3387-5.3387V12.2766c0-2.9485,2.3902-5.3387,5.3387-5.3387h13.8388   c2.9485,0,5.3387,2.3902,5.3387,5.3387v23.4468C33.8644,38.6718,31.4742,41.062,28.5257,41.062z"/>
+                        <line fill="none" stroke="#B6243AFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="15.8367" y1="35.9957" x2="19.2086" y2="35.9957"/>
+                        <line fill="none" stroke="#B6243AFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="15.8367" y1="30.6099" x2="21.6458" y2="30.6099"/>
+                    </g>
+                    <g>
+                      <g>
+                        <path fill="none" stroke="#292626FF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="    M27.2195,23.5219L27.2195,23.5219c0,0.9401-0.8407,1.7021-1.8777,1.7021h-7.471c-1.037,0-1.8777-0.7621-1.8777-1.7021v0    c0-2.2717,2.0315-4.1132,4.5374-4.1132h2.1516C25.188,19.4087,27.2195,21.2503,27.2195,23.5219z"/>
+                        <circle fill="none" stroke="#292626FF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" cx="21.6063" cy="14.6175" r="2.8651"/>
+                      </g>
+                    </g>
+                    <g>
+                      <g>
+                      </g>
+                      <g>
+                        <circle fill="#FFFFFF" stroke="#292626FF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" cx="32.1063" cy="34.4939" r="6.5455"/>
+                        <polyline fill="none" stroke="#292626FF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="    29.5734,34.5242 31.2418,36.1926 34.6392,32.7951   "/>
+                      </g>
+                    </g>
+                  </svg>
+                </button>
 
-          </tr>
+              </td>
+              <td class="fixed-width-iconos">{{ row.detalles.0.estado }}
+                <button class="btn cambiar-estado" data-unidad="{{ row.id_unidad }}"
+                  data-unidad-nombre="{{ row.nombre_unidad }}" data-estado-actual="{{ row.detalles.0.estado }}"
+                  data-bs-toggle="modal" data-bs-target="#modal-estado">
+                  <svg fill="#B6243AFF" width="35px" height="40px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        d="M3.35288 8.95043C4.00437 6.17301 6.17301 4.00437 8.95043 3.35288C10.9563 2.88237 13.0437 2.88237 15.0496 3.35288C17.827 4.00437 19.9956 6.17301 20.6471 8.95044C21.1176 10.9563 21.1176 13.0437 20.6471 15.0496C19.9956 17.827 17.827 19.9956 15.0496 20.6471C13.0437 21.1176 10.9563 21.1176 8.95044 20.6471C6.17301 19.9956 4.00437 17.827 3.35288 15.0496C2.88237 13.0437 2.88237 10.9563 3.35288 8.95043Z"
+                        fill="#000" fill-opacity="0"></path>
+                      <path
+                        d="M3.35288 15.0496L2.6227 15.2209L3.35288 15.0496ZM3.35288 8.95043L2.6227 8.77915L3.35288 8.95043ZM20.6471 8.95044L19.9169 9.12171L20.6471 8.95044ZM20.6471 15.0496L19.9169 14.8783L20.6471 15.0496ZM15.0496 20.6471L14.8783 19.9169L15.0496 20.6471ZM8.95044 20.6471L9.12171 19.9169L8.95044 20.6471ZM8.95043 3.35288L9.12171 4.08306L8.95043 3.35288ZM15.0496 3.35288L14.8783 4.08306L15.0496 3.35288ZM7.85732 12.2227C7.54944 12.4998 7.52448 12.974 7.80157 13.2819C8.07867 13.5898 8.55289 13.6148 8.86077 13.3377L7.85732 12.2227ZM10.0656 11.2443L10.5673 11.8018L10.0656 11.2443ZM11.627 11.4405L12.2511 11.0245L11.627 11.4405ZM12.373 12.5595L11.7489 12.9755H11.7489L12.373 12.5595ZM13.9344 12.7557L13.4327 12.1982L13.9344 12.7557ZM16.1427 11.7773C16.4506 11.5002 16.4755 11.026 16.1984 10.7181C15.9213 10.4102 15.4471 10.3852 15.1392 10.6623L16.1427 11.7773ZM13.0746 13.2875L12.9811 14.0316L13.0746 13.2875ZM10.9254 10.7125L10.8319 11.4567H10.8319L10.9254 10.7125ZM4.08306 14.8783C3.63898 12.9851 3.63898 11.0149 4.08306 9.12171L2.6227 8.77915C2.12577 10.8976 2.12577 13.1024 2.6227 15.2209L4.08306 14.8783ZM19.9169 9.12171C20.361 11.0149 20.361 12.9851 19.9169 14.8783L21.3773 15.2208C21.8742 13.1024 21.8742 10.8976 21.3773 8.77916L19.9169 9.12171ZM14.8783 19.9169C12.9851 20.361 11.0149 20.361 9.12171 19.9169L8.77916 21.3773C10.8976 21.8742 13.1024 21.8742 15.2208 21.3773L14.8783 19.9169ZM9.12171 4.08306C11.0149 3.63898 12.9851 3.63898 14.8783 4.08306L15.2208 2.6227C13.1024 2.12577 10.8976 2.12577 8.77916 2.6227L9.12171 4.08306ZM9.12171 19.9169C6.62161 19.3305 4.6695 17.3784 4.08306 14.8783L2.6227 15.2209C3.33924 18.2756 5.72441 20.6608 8.77916 21.3773L9.12171 19.9169ZM15.2208 21.3773C18.2756 20.6608 20.6608 18.2756 21.3773 15.2208L19.9169 14.8783C19.3305 17.3784 17.3784 19.3305 14.8783 19.9169L15.2208 21.3773ZM14.8783 4.08306C17.3784 4.6695 19.3305 6.62161 19.9169 9.12171L21.3773 8.77916C20.6608 5.72441 18.2756 3.33924 15.2208 2.6227L14.8783 4.08306ZM8.77916 2.6227C5.72441 3.33924 3.33924 5.72441 2.6227 8.77915L4.08306 9.12171C4.6695 6.6216 6.62161 4.6695 9.12171 4.08306L8.77916 2.6227ZM8.86077 13.3377L10.5673 11.8018L9.56383 10.6869L7.85732 12.2227L8.86077 13.3377ZM11.003 11.8566L11.7489 12.9755L12.997 12.1434L12.2511 11.0245L11.003 11.8566ZM14.4362 13.3131L16.1427 11.7773L15.1392 10.6623L13.4327 12.1982L14.4362 13.3131ZM11.7489 12.9755C11.8915 13.1894 12.0413 13.4173 12.1919 13.5861C12.3566 13.7708 12.6072 13.9847 12.9811 14.0316L13.1681 12.5433C13.227 12.5508 13.277 12.572 13.31 12.5929C13.336 12.6094 13.3372 12.6167 13.3114 12.5878C13.2857 12.5589 13.2487 12.5118 13.1933 12.4333C13.1382 12.3552 13.0762 12.2623 12.997 12.1434L11.7489 12.9755ZM13.4327 12.1982C13.3266 12.2937 13.2435 12.3684 13.1708 12.4304C13.0977 12.4929 13.0503 12.5293 13.0181 12.551C12.9861 12.5725 12.989 12.5658 13.0183 12.5562C13.0554 12.5442 13.1091 12.5359 13.1681 12.5433L12.9811 14.0316C13.3549 14.0786 13.6507 13.9334 13.8559 13.7952C14.0436 13.6688 14.2451 13.4851 14.4362 13.3131L13.4327 12.1982ZM10.5673 11.8018C10.6734 11.7063 10.7565 11.6316 10.8291 11.5696C10.9023 11.5071 10.9497 11.4707 10.9819 11.449C11.0139 11.4275 11.011 11.4342 10.9817 11.4438C10.9446 11.4558 10.8909 11.4641 10.8319 11.4567L11.0189 9.96835C10.6451 9.92139 10.3493 10.0666 10.1441 10.2048C9.95642 10.3312 9.7549 10.5149 9.56383 10.6869L10.5673 11.8018ZM12.2511 11.0245C12.1085 10.8106 11.9587 10.5827 11.8081 10.4139C11.6434 10.2292 11.3928 10.0153 11.0189 9.96835L10.8319 11.4567C10.773 11.4492 10.723 11.428 10.69 11.4071C10.664 11.3906 10.6628 11.3833 10.6886 11.4122C10.7143 11.4411 10.7513 11.4882 10.8067 11.5668C10.8618 11.6448 10.9238 11.7377 11.003 11.8566L12.2511 11.0245Z"
+                        fill="#B6243AFF"></path>
+                    </g>
+                  </svg>
+                </button>
+              </td>
+              <td class="fixed-width-iconos">
+                <button class="btn reasignar-unidad" data-unidad="{{ row.id_unidad }}"
+                  data-unidad-nombre="{{ row.nombre_unidad }}" data-division-actual="{{ row.divisiones|join:', ' }}"
+                  data-bs-toggle="modal" data-bs-target="#modal-division">
+                  <svg fill="#B6243AFF" xmlns="http://www.w3.org/2000/svg" width="35px" height="40px" viewBox="0 0 52 52"
+                    enable-background="new 0 0 52 52" xml:space="preserve">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        d="M23.2,10.2C18.1,5.1,10,3.5,2.9,5.7C2.6,5.7,2.2,6.2,2.2,7s0,3,0,3.9c0,0.8,0.7,1,1.1,0.9 c5.4-2.2,12-1.2,16.3,3.3l1.1,1.1c0.6,0.6,0.1,1.7-0.7,1.7h-7.8c-0.8,0-1.5,0.6-1.5,1.5v3c0,0.8,0.6,1.5,1.5,1.5l19.2,0.2 c0.8,0,1.5-0.6,1.5-1.5L33,3.5C33,2.7,32.4,2,31.5,2h-3c-0.8,0-1.6,0.6-1.6,1.4l-0.1,7.9c0,0.8-1.1,1.3-1.7,0.7 C25.2,12.1,23.2,10.2,23.2,10.2z">
+                      </path>
+                      <path
+                        d="M3.5,27.8h3c0.8,0,1.5,0.7,1.5,1.5v13.2C8,43.3,8.7,44,9.5,44h33c0.8,0,1.5-0.7,1.5-1.5V16.9 c0-0.8-0.7-1.5-1.5-1.5h-4c-0.8,0-1.5-0.7-1.5-1.5v-3c0-0.8,0.7-1.5,1.5-1.5H46c2.2,0,4,1.8,4,4V46c0,2.2-1.8,4-4,4H6 c-2.2,0-4-1.8-4-4V29.3C2,28.5,2.7,27.8,3.5,27.8z">
+                      </path>
+                    </g>
+                  </svg>
+                </button>
+              </td>
+              <td class="fixed-width-iconos">
+                <button class="btn editar_unidad" data-unidad="{{ row.id_unidad }}">
+                  <svg fill="#B6243AFF" height="35px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 217.855 217.855" xml:space="preserve">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        d="M215.658,53.55L164.305,2.196C162.899,0.79,160.991,0,159.002,0c-1.989,0-3.897,0.79-5.303,2.196L3.809,152.086 c-1.35,1.352-2.135,3.166-2.193,5.075l-1.611,52.966c-0.063,2.067,0.731,4.069,2.193,5.532c1.409,1.408,3.317,2.196,5.303,2.196 c0.076,0,0.152-0.001,0.229-0.004l52.964-1.613c1.909-0.058,3.724-0.842,5.075-2.192l149.89-149.889 C218.587,61.228,218.587,56.479,215.658,53.55z M57.264,201.336l-42.024,1.28l1.279-42.026l91.124-91.125l40.75,40.743 L57.264,201.336z M159,99.602l-40.751-40.742l40.752-40.753l40.746,40.747L159,99.602z">
+                      </path>
+                    </g>
+                  </svg>
+                </button>
+              </td>
+              <td class="fixed-width-iconos">
+                <button class="btn ver-informacion" data-unidad="{{ row.id_unidad }}">
+                  <svg width="35px" height="40px" viewBox="0 0 24 24" fill="#B6243AFF" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M9 6C9 4.34315 7.65685 3 6 3H4C2.34315 3 1 4.34315 1 6V8C1 9.65685 2.34315 11 4 11H6C7.65685 11 9 9.65685 9 8V6ZM7 6C7 5.44772 6.55228 5 6 5H4C3.44772 5 3 5.44772 3 6V8C3 8.55228 3.44772 9 4 9H6C6.55228 9 7 8.55228 7 8V6Z"
+                        fill="#B6243AFF"></path>
+                      <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M9 16C9 14.3431 7.65685 13 6 13H4C2.34315 13 1 14.3431 1 16V18C1 19.6569 2.34315 21 4 21H6C7.65685 21 9 19.6569 9 18V16ZM7 16C7 15.4477 6.55228 15 6 15H4C3.44772 15 3 15.4477 3 16V18C3 18.5523 3.44772 19 4 19H6C6.55228 19 7 18.5523 7 18V16Z"
+                        fill="#B6243AFF"></path>
+                      <path
+                        d="M11 7C11 6.44772 11.4477 6 12 6H22C22.5523 6 23 6.44772 23 7C23 7.55228 22.5523 8 22 8H12C11.4477 8 11 7.55228 11 7Z"
+                        fill="#0F0F0F"></path>
+                      <path
+                        d="M11 17C11 16.4477 11.4477 16 12 16H22C22.5523 16 23 16.4477 23 17C23 17.5523 22.5523 18 22 18H12C11.4477 18 11 17.5523 11 17Z"
+                        fill="#0F0F0F"></path>
+                    </g>
+                  </svg>
+                </button>
+              </td>
+
+            </tr>
           {% endfor %}
-        </div>
       </tbody>
     </table>
   </div>
 
   <div class="contain-dates">
-    <h4 class="title-procediments">Exportar Reportes</h4>
+    <h4 class="title-procediments titulo-exportaciones-excel">Exportar Reportes</h4>
     <br>
     <section class="buttons-items input-group mb-3 filter-search">
       <span class="input-group-text"><b> Seleccionar Mes:</b></span>
@@ -216,7 +256,7 @@
 
 <!----------------------- Modal Reportes ---------------------------------->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  aria-labelledby="staticBackdropLabel" aria-hidden="">
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header config-modal-delete">
@@ -229,7 +269,25 @@
         <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
           <form action="{% url 'agregar_reportes' %}" method="POST" class="form-reportes">
             {% csrf_token %}
-            {{ form_reportes }}
+
+            {% for field in form_reportes %}
+              {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'date' or field.field.widget.input_type == 'time' %}
+                <div class="filter-group">
+                  <div class="floating-input">
+                    {% render_field field class="form-control" %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% else %}
+                <div class="filter-group">
+                  <div class="floating-select">
+                    {% render_field field %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+
             <div class="buttons-reportes">
               <button type="submit" class="btn btn-danger" id="confirmarEliminar">
                 Agregar
@@ -260,8 +318,25 @@
         <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
           <form action="{% url 'cambiar_estado' %}" method="POST" class="form-estado">
             {% csrf_token %}
-            {{ form_estado }}
-            <br>
+
+            {% for field in form_estado %}
+              {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'date' or field.field.widget.input_type == 'time' %}
+                <div class="filter-group">
+                  <div class="floating-input">
+                    {% render_field field class="form-control" %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% else %}
+                <div class="filter-group">
+                  <div class="floating-select">
+                    {% render_field field placeholder=field.label %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+
             <div class="buttons-estados">
               <button type="submit" class="btn btn-danger" id="">
                 Cambiar
@@ -293,7 +368,41 @@
         <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
           <form action="{% url 'reasignar_division' %}" method="POST" class="form-division">
             {% csrf_token %}
-            {{ form_division }}
+
+            {% for field in form_division %}
+              {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'date' or field.field.widget.input_type == 'time' %}
+                <div class="filter-group">
+                  <div class="floating-input">
+                    {% render_field field class="form-control" %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% elif field.field.widget.input_type == 'select' %}
+                <div class="filter-group">
+                  <div class="floating-select">
+                    {% render_field field placeholder=field.label %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% elif field.field.widget.input_type == 'checkbox' %}
+                <div class="form-checkbox-dvisiones mb-3">
+                  <label class="form-label">{{ field.label }}</label>
+                  <div class="form-check-group-column">
+                    {% for choice in field %}
+                      <div class="form-check">
+                        {{ choice.tag }}
+                        {# {{ choice.tag }} #} 
+                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                            {{ choice.choice_label }}
+                        </label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+
+            {% endfor %}
+
             <div class="buttons-division">
               <button type="submit" class="btn btn-danger" id="">
                 Asignar
@@ -304,6 +413,25 @@
             </div>
           </form>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- --------------------- Modal de Confirmar Eliminar Reporte -------------------->
+<div class="modal fade" id="confirmDeleteModal2" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que quieres eliminar este reporte? Esta acción no se puede deshacer.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteButton">Eliminar</button>
       </div>
     </div>
   </div>
@@ -320,11 +448,16 @@
   </section>
 </footer>
 
+<script>
+    const CSRF_TOKEN = "{{ csrf_token }}"; // Obtiene el token CSRF de Django
+    // Genera una URL base para eliminar reportes. El '0' es un marcador de posición para el ID.
+    const DELETE_REPORT_BASE_URL = "{% url 'eliminar_reporte' 0 %}";
+</script>
+
 <script src="{% static 'js/unidades/agregar_reporte.js' %}"></script>
 <script src="{% static 'js/unidades/cambiar_estado.js' %}"></script>
 <script src="{% static 'js/unidades/reasignar_unidad.js' %}"></script>
 <script src="{% static 'js/unidades/editar_unidades.js' %}"></script>
 <script src="{% static 'js/unidades/ver-informacion.js' %}"></script>
-<script src="{% static 'js/unidades/filter_table_unidades.js' %}"></script>
 <script src="{% static 'js/unidades/reportes_excel.js' %}"></script>
 {% endblock %}

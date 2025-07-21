@@ -8,31 +8,21 @@ botonesStatus.forEach((boton) => {
 
   
       // Obtener el elemento input original
-      let input = document.getElementById("id_id_unidad_status");
-  
-      // Crear un nuevo elemento <select>
-      let select = document.createElement("select");
-      select.setAttribute("name", "id_unidad-status");
-      select.id = input.id; // Mantener el mismo ID del input (opcional)
-      select.disabled = true; // Deshabilitar para que no se pueda cambiar
-  
-      // Crear la opción dentro del select
-      select.innerHTML = `<option value="${id_unidad}" selected>${unidad}</option>`;
-  
-      // Crear un input oculto para enviar el valor del select
-      let hiddenInput = document.createElement("input");
-      hiddenInput.type = "hidden";
-      hiddenInput.name = "id_unidad-status"; // Mismo nombre para que el valor se envíe
-      hiddenInput.value = id_unidad;
-  
-      // Reemplazar el input original con el select
-      input.parentNode.replaceChild(select, input);
-  
-      // Agregar el input oculto después del select para que se envíe el valor
-      select.parentNode.appendChild(hiddenInput);
+      document.getElementById("id_id_unidad_status").value = unidad;
+      document.getElementById("id_id_unidad_status").setAttribute("readonly", true);
 
       document.getElementById("id_actual").value = estadoActual;
-      document.getElementById("id_actual").setAttribute("readonly", true); ;
+      document.getElementById("id_actual").setAttribute("readonly", true);
 
+      // Crear o actualizar el input hidden para el id de la unidad
+      let hiddenInput = document.getElementById("unidad_id_hidden");
+      if (!hiddenInput) {
+        hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.id = "unidad_id_estatus_hidden";
+        hiddenInput.name = "unidad_id_estatus";
+        document.getElementById("id_id_unidad_status").parentNode.appendChild(hiddenInput);
+      }
+      hiddenInput.value = id_unidad;
     });
   });

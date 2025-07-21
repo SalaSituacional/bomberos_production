@@ -29,6 +29,7 @@
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name">
+    <h3 class="division-title">Estadisticas</h3>
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b>{{ user.user }}</b></p>
       <svg
@@ -63,13 +64,11 @@
   </div>
   <div class="content-stadist">
     <div class="stadist-rows">
+
       <!-- Pie 1 -->
       <section class="cards-stadist-rows">
-        <div class="cards-stadists">
-          <div id="graphic-one" class="cards-stadists">
-            <p>Procedimientos <br> (Divisiones - Tipos de Procedimientos)</p>
-            <canvas id="pie"></canvas>
-          </div>
+        <div class="cards-stadists"> <!-- Este es el contenedor principal de la tarjeta -->
+          <p>Procedimientos <br> (Divisiones - Tipos de Procedimientos)</p>
           <select class="form-select-sm" aria-label="Default select example">
             <option selected disabled class="form-select">Seleccionar Division</option>
             <option value="4">Grumae</option>
@@ -85,16 +84,20 @@
           <div class="card-month">
             <input type="month" id="month-picker2" class="form-select">
           </div>
-          <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPoint()">Exportar</button>
+          <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPoint()">Exportar</button>
+
+          <div id="graphic-one" class="chart-canvas-wrapper"> <!-- Nueva clase para el contenedor de la gráfica -->
+            <canvas id="pie"></canvas>
+          </div>
+          
         </div>
       </section>
+
       <!-- Donut 1 -->
       <section class="cards-stadist-rows">
         <section class="cards-stadists">
-        <div class="cards-stadists" id="graphic-two">
           <p>Procedimientos <br> (Divisiones - Parroquias)</p>
-          <canvas id="donuts"></canvas>
-        </div>
+
           <select class="form-select-sm3" aria-label="Default select example">
             <option selected disabled class="form-select">Seleccionar Division</option>
             <option value="4">Grumae</option>
@@ -110,16 +113,21 @@
           <div class="card-month">
             <input type="month" id="month-picker4" class="form-select">
           </div>
-          <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPointTwo()">Exportar</button>
+          <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPointTwo()">Exportar</button>
+
+        <div class="chart-canvas-wrapper" id="graphic-two">
+          <canvas id="donuts"></canvas>
+        </div>
+        
         </section>
       </section>
+
+
       <!-- Pie 2 -->
       <section class="cards-stadist-rows">
         <div class="cards-stadists">
-          <div id="graphic-three" class="cards-stadists">
-            <p>Procedimientos <br> (Divisiones - Tipos de Procedimientos)</p>
-            <canvas id="pie_two"></canvas>
-          </div>
+          <p>Procedimientos <br> (Divisiones - Tipos de Procedimientos)</p>
+
           <select class="form-select-sm2" aria-label="Default select example">
             <option selected disabled class="form-select">Seleccionar Division</option>
             <option value="4">Grumae</option>
@@ -135,16 +143,19 @@
           <div class="card-month">
             <input type="month" id="month-picker3" class="form-select">
           </div>
-          <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPointThree()">Exportar</button>
+          <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPointThree()">Exportar</button>
+
+          <div id="graphic-three" class="chart-canvas-wrapper">
+            <canvas id="pie_two"></canvas>
+          </div>
+          
         </div>
       </section>
+
       <!-- Donut 2 -->
       <section class="cards-stadist-rows">
         <section class="cards-stadists">
-        <div class="cards-stadists" id="graphic-four">
           <p>Procedimientos <br> (Divisiones - Parroquias)</p>
-          <canvas id="donuts_two"></canvas>
-        </div>
           <select class="form-select-sm4" aria-label="Default select example">
             <option selected disabled class="form-select">Seleccionar Division</option>
             <option value="4">Grumae</option>
@@ -160,73 +171,89 @@
           <div class="card-month">
             <input type="month" id="month-picker5" class="form-select">
           </div>
-          <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPointFour()">Exportar</button>
+          <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPointFour()">Exportar</button>
+        <div class="chart-canvas-wrapper" id="graphic-four">
+          <canvas id="donuts_two"></canvas>
+        </div>
         </section>
       </section>
+
       <!-- Polar 1 -->
       <section class="cards-stadist-rows">
         <section class="cards-stadists">
-        <div class="cards-stadists" id="graphic-five">
           <p>Procedimientos <br> (Tipos de Procedimientos - Divisiones)</p>
+          <select class="form-select-sm5" aria-label="Default select example">
+            <option selected="" disabled="" class="form-select">Seleccionar Division</option>
+          <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="4">Atendido No Efectuado</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="17">Asesoramiento</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="20">Reinspeccion de Prevención</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="23">Inspeccion Establecimiento por Artificios Pirotecnicos</option><option value="24">Valoración Medica</option><option value="25">Jornada Medica</option><option value="26">Administración de Medicamentos</option><option value="27">Administración de Tratamiento</option><option value="28">Aerosolterapia</option><option value="29">Atención Local</option><option value="30">Atención Prehospitalaria</option><option value="31">Cuantificación de Presión Arterial</option><option value="32">Cuantificación de Signos Vitales</option><option value="33">Cura</option><option value="34">Otro</option><option value="35">Certificado de Salud Mental</option><option value="36">Consulta Bombero Activo</option><option value="37">Consulta Integrante Brigada Juvenil</option><option value="38">Consulta Paciente Externo</option><option value="39">Evaluación Psicológica Postvacacional</option><option value="40">Evaluación Psicológica Prevacacional</option><option value="41">Evaluación Personal Nuevo Ingreso</option><option value="45">Capacitación</option></select>
+            <div class="card-month">
+              <input type="month" id="month-picker6" class="form-select">
+            </div>
+            <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPointFive()">Exportar</button>
+        <div class="chart-canvas-wrapper" id="graphic-five">
           <canvas id="polar"></canvas>
         </div>
-        <select class="form-select-sm5" aria-label="Default select example">
-          <option selected="" disabled="" class="form-select">Seleccionar Division</option>
-        <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="4">Atendido No Efectuado</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="17">Asesoramiento</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="20">Reinspeccion de Prevención</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="23">Inspeccion Establecimiento por Artificios Pirotecnicos</option><option value="24">Valoración Medica</option><option value="25">Jornada Medica</option><option value="26">Administración de Medicamentos</option><option value="27">Administración de Tratamiento</option><option value="28">Aerosolterapia</option><option value="29">Atención Local</option><option value="30">Atención Prehospitalaria</option><option value="31">Cuantificación de Presión Arterial</option><option value="32">Cuantificación de Signos Vitales</option><option value="33">Cura</option><option value="34">Otro</option><option value="35">Certificado de Salud Mental</option><option value="36">Consulta Bombero Activo</option><option value="37">Consulta Integrante Brigada Juvenil</option><option value="38">Consulta Paciente Externo</option><option value="39">Evaluación Psicológica Postvacacional</option><option value="40">Evaluación Psicológica Prevacacional</option><option value="41">Evaluación Personal Nuevo Ingreso</option><option value="45">Capacitación</option></select>
-          <div class="card-month">
-            <input type="month" id="month-picker6" class="form-select">
-          </div>
-          <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPointFive()">Exportar</button>
         </section>
       </section>
+
       <!-- Polar 2 -->
       <section class="cards-stadist-rows">
         <section class="cards-stadists">
-        <div class="cards-stadists" id="graphic-six">
           <p>Procedimientos <br> (Tipos de Procedimientos - Parroquias)</p>
-          <canvas id="polar2"></canvas>
-        </div>
-        <select class="form-select-sm6" aria-label="Default select example">
-          <option selected="" disabled="" class="form-select">Seleccionar Division</option>
-          <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="4">Atendido No Efectuado</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="17">Asesoramiento</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="20">Reinspeccion de Prevención</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="23">Inspeccion Establecimiento por Artificios Pirotecnicos</option><option value="24">Valoración Medica</option><option value="25">Jornada Medica</option><option value="26">Administración de Medicamentos</option><option value="27">Administración de Tratamiento</option><option value="28">Aerosolterapia</option><option value="29">Atención Local</option><option value="30">Atención Prehospitalaria</option><option value="31">Cuantificación de Presión Arterial</option><option value="32">Cuantificación de Signos Vitales</option><option value="33">Cura</option><option value="34">Otro</option><option value="35">Certificado de Salud Mental</option><option value="36">Consulta Bombero Activo</option><option value="37">Consulta Integrante Brigada Juvenil</option><option value="38">Consulta Paciente Externo</option><option value="39">Evaluación Psicológica Postvacacional</option><option value="40">Evaluación Psicológica Prevacacional</option><option value="41">Evaluación Personal Nuevo Ingreso</option><option value="45">Capacitación</option></select>
-          <div class="card-month">
-            <input type="month" id="month-picker7" class="form-select">
+          
+          <select class="form-select-sm6" aria-label="Default select example">
+            <option selected="" disabled="" class="form-select">Seleccionar Division</option>
+            <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="4">Atendido No Efectuado</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="17">Asesoramiento</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="20">Reinspeccion de Prevención</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="23">Inspeccion Establecimiento por Artificios Pirotecnicos</option><option value="24">Valoración Medica</option><option value="25">Jornada Medica</option><option value="26">Administración de Medicamentos</option><option value="27">Administración de Tratamiento</option><option value="28">Aerosolterapia</option><option value="29">Atención Local</option><option value="30">Atención Prehospitalaria</option><option value="31">Cuantificación de Presión Arterial</option><option value="32">Cuantificación de Signos Vitales</option><option value="33">Cura</option><option value="34">Otro</option><option value="35">Certificado de Salud Mental</option><option value="36">Consulta Bombero Activo</option><option value="37">Consulta Integrante Brigada Juvenil</option><option value="38">Consulta Paciente Externo</option><option value="39">Evaluación Psicológica Postvacacional</option><option value="40">Evaluación Psicológica Prevacacional</option><option value="41">Evaluación Personal Nuevo Ingreso</option><option value="45">Capacitación</option></select>
+            <div class="card-month">
+              <input type="month" id="month-picker7" class="form-select">
+            </div>
+            <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPointSix()">Exportar</button>
+
+            <div class="chart-canvas-wrapper" id="graphic-six">
+            <canvas id="polar2"></canvas>
           </div>
-          <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPointSix()">Exportar</button>
         </section>
       </section>
+
       <!-- Pie 3 -->
       <section class="cards-stadist-rows">
         <div class="cards-stadists">
-          <div id="graphic-seven" class="cards-stadists">
-            <p>Procedimientos <br> (Tipos de Procedimientos - Detalles)</p>
-            <canvas id="pie3"></canvas>
-          </div>
+          <p>Procedimientos <br> (Tipos de Procedimientos - Detalles)</p>
+
           <select class="form-select-sm7" aria-label="Default select example">
             <option selected="" disabled="" class="form-select">Seleccionar Division</option>
             <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="45">Capacitación</option><option value="100">Accidentes de Transito</option></select>
           <div class="card-month">
             <input type="month" id="month-picker8" class="form-select">
           </div>
-          <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPointSeven()">Exportar</button>
+          <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPointSeven()">Exportar</button>
+          
+          <div id="graphic-seven" class="chart-canvas-wrapper">
+            <canvas id="pie3"></canvas>
+          </div>
+          
         </div>
       </section>
+
       <!-- Pie 4 -->
       <section class="cards-stadist-rows">
         <div class="cards-stadists">
-          <div id="graphic-eigth" class="cards-stadists">
-            <p>Procedimientos <br> (Tipos de Procedimientos - Detalles)</p>
-            <canvas id="pie4"></canvas>
-          </div>
+          <p>Procedimientos <br> (Tipos de Procedimientos - Detalles)</p>
+
           <select class="form-select-sm8" aria-label="Default select example">
             <option selected="" disabled="" class="form-select">Seleccionar Division</option>
             <option value="1">Abastecimiento de agua</option><option value="2">Apoyo a Otras Unidades</option><option value="3">Guardia de Prevencion</option><option value="5">Despliegue de Seguridad</option><option value="6">Falsa Alarma</option><option value="7">Atenciones Paramedicas</option><option value="9">Servicios Especiales</option><option value="10">Rescate</option><option value="11">Incendios</option><option value="12">Fallecidos</option><option value="13">Mitigación de Riesgos</option><option value="14">Evaluación de Riesgos</option><option value="15">Puesto de Avanzada</option><option value="16">Traslados</option><option value="18">Inspeccion</option><option value="19">Investigacion</option><option value="21">Retención Preventiva</option><option value="22">Artificios Pirotécnicos</option><option value="45">Capacitación</option><option value="100">Accidentes de Transito</option></select>
           <div class="card-month">
             <input type="month" id="month-picker9" class="form-select">
           </div>
-          <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPointEight()">Exportar</button>
+          <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPointEight()">Exportar</button>
+
+          <div id="graphic-eigth" class="chart-canvas-wrapper">
+            <canvas id="pie4"></canvas>
+          </div>
+          
         </div>
       </section>
+
     </div>
     <!-- ------------------------------------------------------------------------------------------------------ -->
     <div class="stadist-column">
@@ -463,7 +490,7 @@
           </div>
         </div>
         <div class="bartwo">
-          <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAWord()">Exportar</button>
+          <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAWord()">Exportar</button>
         </div>
       </section>
     </div>
@@ -481,7 +508,7 @@
       <input type="month" id="month-picker" class="form-select ">
     </div>
     <div class="btn-bar">
-      <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPointNueve()">Exportar</button>
+      <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPointNueve()">Exportar</button>
     </div>
   </div>
 <br>
@@ -493,10 +520,10 @@
   </div>
   <div class="bartwo">
     <div class="select-bar">
-      <input type="month" id="month-picker-9" class="form-select-sm9">
+      <input type="month" id="month-picker-9" class="form-select">
     </div>
     <div class="btn-bar">
-      <button type="button" class="btn btn-primary btn-graphic download-link" onclick="exportarAPowerPointDiez()">Exportar</button>
+      <button type="button" class="btn btn-danger btn-graphic download-link" onclick="exportarAPowerPointDiez()">Exportar</button>
     </div>
   </div>
 
@@ -509,7 +536,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <script src="{% static 'js/estadisticas.js' %}"></script>
   <script src="{% static 'js/export.js' %}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
   {% endblock %}
 </div>

@@ -9,7 +9,7 @@ from django.db.models.functions import Coalesce
 # ========================================= MODELOS PARA EL AREA DE CONTROL DE UNIDADES =============================================================================================
 
 class Unidades_Detalles(models.Model):
-  id_unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE)
+  id_unidad = models.ForeignKey(Unidades, on_delete=models.CASCADE, related_name='detalles_de_unidad')
   tipo_vehiculo = models.CharField()
   serial_carroceria = models.CharField()
   serial_chasis = models.CharField()

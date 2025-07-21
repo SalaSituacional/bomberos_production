@@ -40,13 +40,6 @@ admin.site.register(RegistroPeticiones)
 # admin.site.register(Reportes_Unidades)
 # admin.site.register(Servicios)
 
-# admin.site.register(Drones)
-# admin.site.register(Registro_Vuelos)
-# admin.site.register(EstadoDron)
-# admin.site.register(EstadoBaterias)
-# admin.site.register(EstadoControl)
-# admin.site.register(DetallesVuelo)
-
 # admin.site.register(Dependencia)
 # admin.site.register(BienMunicipal)
 # admin.site.register(MovimientoBien)

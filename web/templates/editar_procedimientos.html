@@ -25,10 +25,12 @@
 {% endif %}
 
 {% load static %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name">
+    <h4 class="division-title">Editar Procedimientos</h4>
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="user-login">{{ user.user }}</b></p>
       <svg
@@ -66,430 +68,1341 @@
   </section>
   <section class="data_form">
     <form action="" method="post">
-        <input type="hidden" id="id_procedimiento_editar" name="id_editar" value="">
+      <input type="hidden" id="id_procedimiento_editar" name="id_editar" value="">
       {% csrf_token %}
-      <div class="form-style">{{ form.as_div }}</div>
+      <div class="form-container">
+        {% for field in form %}
+          <div class="form-floating mb-3">           
+            {% render_field field class="form-control" %}
+            {{ field.label_tag }}
+          </div>
+        {% endfor %}
+      </div>
+
       <h4>Datos de la Operacion</h4>
-      <div class="form-style" id="form_general">{{ form2.as_div }}</div>
-      <div class="form-style" id="form_enfermeria" style="display: none">
-        {{ form_enfermeria.as_div }}
+      
+      <div class="form-container" id="form_general">
+        {% for field in form2 %}
+          <div class="form-floating mb-3">           
+            {% render_field field class="form-control" %}
+            {{ field.label_tag }}
+          </div>
+        {% endfor %}
       </div>
-      <div class="form-style" id="servicios_medicos" style="display: none">
-        {{ servicios_medicos.as_div }}
+
+
+      <div class="form-container" id="form_enfermeria" style="display: none">
+        {% for field in form_enfermeria %}
+          <div class="form-floating mb-3">           
+            {% render_field field class="form-control" %}
+            {{ field.label_tag }}
+          </div>
+        {% endfor %}
       </div>
-      <div class="form-style" id="psicologia" style="display: none">
-        {{ psicologia.as_div }}
+
+      <div class="form-container" id="servicios_medicos" style="display: none">
+        {% for field in servicios_medicos %}
+          <div class="form-floating mb-3">           
+            {% render_field field class="form-control" %}
+            {{ field.label_tag }}
+          </div>
+        {% endfor %}
       </div>
-      <div class="form-style" id="capacitacion" style="display: none">
-        {{ capacitacion.as_div }}
+
+      <div class="form-container" id="psicologia" style="display: none">
+        {% for field in psicologia %}
+          <div class="form-floating mb-3">           
+            {% render_field field class="form-control" %}
+            {{ field.label_tag }}
+          </div>
+        {% endfor %}
       </div>
+
+      <div class="form-container" id="capacitacion" style="display: none">
+        {% for field in capacitacion %}
+          <div class="form-floating mb-3">           
+            {% render_field field class="form-control" %}
+            {{ field.label_tag }}
+          </div>
+        {% endfor %}
+      </div>
+
       <h4>Datos de la Ubicacion</h4>
-      <div class="form-style">{{ form3.as_div }}</div>
+      <div class="form-container">
+        {% for field in form3 %}
+          <div class="form-floating mb-3">           
+            {% render_field field class="form-control" %}
+            {{ field.label_tag }}
+          </div>
+        {% endfor %}
+      </div>
 
       <h4 id="tipos_procedimientos_title">Tipo de Procedimientos</h4>
-      <div class="form-style" id="tipos_procedimientos">{{ form4.as_div }}</div>
+      <div class="form-container" id="tipos_procedimientos">
+        {% for field in form4 %}
+          <div class="form-floating mb-3">           
+            {% render_field field class="form-control" %}
+            {{ field.label_tag }}
+          </div>
+        {% endfor %}
+      </div>
 
       <article id="detalles-form">
         <!-- Detalles de Procedimiento (Abastecimiento de Agua) -->
         <div class="disp-none" id="abast_agua">
           <h4>Abastecimiento de Agua</h4>
-          <div class="form-style">{{ form_abastecimiento_agua.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_abastecimiento_agua %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Apoyo a Otras Unidades) -->
-        <div class="data_form disp-none" id="apoyo_unid">
+        <div class="disp-none" id="apoyo_unid">
           <h4>Apoyo a Otras Unidades</h4>
-          <div class="form-style">{{ form_apoyo_unidades.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_apoyo_unidades %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Guardia de Prevencion) -->
-        <div class="data_form disp-none" id="guard_prev">
+        <div class="disp-none" id="guard_prev">
           <h4>Guardia de Prevencion</h4>
-          <div class="form-style">{{ form_guardia_prevencion.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_guardia_prevencion %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Atendido No Efectuado) -->
-        <div class="data_form disp-none" id="atend_no_efect">
+        <div class="disp-none" id="atend_no_efect">
           <h4>Atendido No Efectuado</h4>
-          <div class="form-style">{{ form_atendido_no_efectuado.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_atendido_no_efectuado %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Despliegue de seguridad) -->
-        <div class="data_form disp-none" id="desp_seguridad">
+        <div class="disp-none" id="desp_seguridad">
           <h4>Despliegue de Seguridad</h4>
-          <div class="form-style">{{ form_despliegue_seguridad.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_despliegue_seguridad %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Falsa Alarma) -->
-        <div class="data_form disp-none" id="falsa_alarm">
+        <div class="disp-none" id="falsa_alarm">
           <h4>Falsa Alarma</h4>
-          <div class="form-style">{{ form_falsa_alarma.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_falsa_alarma %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Servicios_especiales) -->
-        <div class="data_form disp-none" id="serv_especiales">
+        <div class="disp-none" id="serv_especiales">
           <h4>Servicios Especiales</h4>
-          <div class="form-style">{{ form_servicios_especiales.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_servicios_especiales %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Fallecidos) -->
-        <div class="data_form disp-none" id="fallecidos">
+        <div class="disp-none" id="fallecidos">
           <h4>Fallecidos</h4>
-          <div class="form-style">{{ form_fallecido.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_fallecido %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Rescate) -->
-        <div class="data_form disp-none" id="rescate">
+        <div class="disp-none" id="rescate">
           <h4>Rescate</h4>
-          <div class="form-style">{{ rescate_form.as_div }}</div>
+          <div class="form-container">
+            {% for field in rescate_form %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Rescate Animal) -->
-        <div class="data_form disp-none" id="rescate_animal">
+        <div class="disp-none" id="rescate_animal">
           <h4>Rescate Animal</h4>
-          <div class="form-style">{{ rescate_form_animal.as_div }}</div>
+          <div class="form-container">
+            {% for field in rescate_form_animal %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Rescate Persona) -->
-        <div class="data_form disp-none" id="rescate_persona">
+        <div class="disp-none" id="rescate_persona">
           <h4>Rescate Persona</h4>
-          <div class="form-style">{{ rescate_form_persona.as_div }}</div>
+          <div class="form-container">
+            {% for field in rescate_form_persona %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Incendio) -->
-        <div class="data_form disp-none" id="incendio_form">
+        <div class="disp-none" id="incendio_form">
           <h4>Incendio</h4>
-          <div class="form-style">
-            {{ incendio_form.as_div }}
+          <div class="form-container">
+            {% for field in incendio_form %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+
             <!-- Detalles de Procedimiento (persona Presente) -->
-            <div id="persona_presente" class="display-row">
+            <div id="persona_presente" class="form-container2">
               <h4>Datos Persona Presente</h4>
-              {{ persona_presente_form.as_div }}
+              {% for field in persona_presente_form %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                    {% render_field field class="form-control" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
 
             <!-- Detalles de Procedimiento (Retencion Preventiva) -->
-            <div class="display-row" id="retencion_preventiva_incendio">
+            <div class="form-container2" id="retencion_preventiva_incendio">
               <h4>Retencion Preventiva</h4>
-              {{ retencion_preventiva_incendio.as_div }}
+                {% for field in retencion_preventiva_incendio %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+              {% endfor %}
             </div>
 
             <!-- Detalles de Procedimiento (Detalles Vehiculos) -->
-            <div id="detalles_vehiculo" class="display-row">
+            <div id="detalles_vehiculo" class="form-container2">
               <h4>Datos de Vehiculo</h4>
+              {% for field in detalles_vehiculo_form %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endfor %}
+
               {{ detalles_vehiculo_form.as_div }}
             </div>
+
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Atenciones Paramedicas) -->
-        <div class="data_form disp-none" id="atenciones_paramedicas">
-          <h4 class="mod-title-width">Atenciones Paramedicas</h4>
-          <div class="form-style">{{ atenciones_paramedicas.as_div }}</div>
+        <div class="disp-none" id="atenciones_paramedicas">
+          <h4 class="">Atenciones Paramedicas</h4>
+          <div class="form-container">
+            {% for field in atenciones_paramedicas %}
+              {% if field.field.widget.input_type != "checkbox" %}
+              <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+              </div>
+              {% endif %}
+              
+              {% if field.field.widget.input_type == "checkbox" %}
+              <div class="form-check form-check-procedimientos-container">
+                {% render_field field class="form-check-input form-check-procedimientos" %}
+                {{ field.label_tag }}
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Emergencias Medicas) -->
-        <div class="data_form disp-none" id="emergencias_medicas">
+        <div class="disp-none" id="emergencias_medicas">
           <h4>Emergencias Medicas</h4>
-          <div class="form-style">
-            {{ emergencias_medicas.as_div }}
+          <div class="form-container">
+          {% for field in emergencias_medicas %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
             <!-- Detalles de Procedimiento (Detalles Traslado) -->
-            <div id="traslados_emergencias" class="display-row">
+            <div id="traslados_emergencias">
               <h4>Datos del Traslado</h4>
-              {{ traslados_emergencias.as_div }}
+              <div class="form-container2">
+
+                {% for field in traslados_emergencias %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+                {% endfor %}
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Accidentes de Transito) -->
-        <div class="data_form disp-none" id="accidentes_transito">
+        <div class="disp-none" id="accidentes_transito">
           <h4>Accidentes de Transito</h4>
-          <div class="form-style">
-            {{ formulario_accidentes_transito.as_div }}
+          <div class="form-container">
+            {% for field in formulario_accidentes_transito %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+
             <!-- Detalles de Procedimiento (Detalles Vehiculo) -->
-            <div id="vehiculo_accidente" class="display-row">
+            <div id="vehiculo_accidente" class="form-container2">
               <h4>Datos del Vehiculo</h4>
-              {{ detalles_vehiculo_accidentes.as_div }}
+              {% for field in detalles_vehiculo_accidentes %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
             <!-- Detalles de Procedimiento (Detalles Vehiculo) -->
-            <div id="otro_vehiculo_accidente" class="display-row">
+            <div id="otro_vehiculo_accidente" class="form-container2">
               <h4>Otro Vehiculo</h4>
-              {{ detalles_vehiculo_accidentes2.as_div }}
+              {% for field in detalles_vehiculo_accidentes2 %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
             <!-- Detalles de Procedimiento (Detalles Vehiculo) -->
-            <div id="otro_vehiculo_accidente2" class="display-row">
+            <div id="otro_vehiculo_accidente2" class="form-container2">
               <h4>Ultimo Vehiculo</h4>
-              {{ detalles_vehiculo_accidentes3.as_div }}
+              {% for field in detalles_vehiculo_accidentes3 %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
+
             <!-- Detalles de Procedimiento (Detalles Lesionado) -->
-            <div id="lesionado_accidente" class="display-row">
+            <div id="lesionado_accidente" class="form-container2">
               <h4>Datos del Lesionado</h4>
-              {{ detalles_lesionados_accidentes.as_div }}
+              {% for field in detalles_lesionados_accidentes %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
             <!-- Detalles de Procedimiento (Detalles Traslado) -->
-            <div id="traslado_accidente" class="display-row">
+            <div id="traslado_accidente" class="form-container2">
               <h4>Datos del Traslado</h4>
-              {{ traslados_accidentes.as_div }}
+              {% for field in traslados_accidentes %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endfor %}
             </div>
 
             <!-- Detalles de Procedimiento (Detalles Lesionado) -->
-            <div id="lesionado_accidente2" class="display-row">
+            <div id="lesionado_accidente2" class="form-container2">
               <h4>Datos Segundo Lesionado</h4>
-              {{ detalles_lesionados_accidentes2.as_div }}
+              {% for field in detalles_lesionados_accidentes2 %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
             <!-- Detalles de Procedimiento (Detalles Traslado) -->
-            <div id="traslado_accidente2" class="display-row">
+            <div id="traslado_accidente2" class="form-container2">
               <h4>Datos del Traslado</h4>
-              {{ traslados_accidentes2.as_div }}
+              {% for field in traslados_accidentes2 %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endfor %}
             </div>
 
             <!-- Detalles de Procedimiento (Detalles Lesionado) -->
-            <div id="lesionado_accidente3" class="display-row">
+            <div id="lesionado_accidente3" class="form-container2">
               <h4>Datos Tercer Lesionado</h4>
-              {{ detalles_lesionados_accidentes3.as_div }}
+              {% for field in detalles_lesionados_accidentes3 %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
             <!-- Detalles de Procedimiento (Detalles Traslado) -->
-            <div id="traslado_accidente3" class="display-row">
+            <div id="traslado_accidente3" class="form-container2">
               <h4>Datos del Traslado</h4>
-              {{ traslados_accidentes3.as_div }}
+              {% for field in traslados_accidentes3 %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endfor %}
             </div>
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Evaluacion de Riesgo) -->
-        <div class="data_form disp-none" id="evaluacion_riesgo">
+        <div class="disp-none" id="evaluacion_riesgo">
           <h4>Evaluacion de Riesgo</h4>
-          <div class="form-style">
-            {{ evaluacion_riesgo_form.as_div }}
-            <div id="form_persona_presente" class="disp-none display-row">
+          <div class="form-container">
+            {% for field in evaluacion_riesgo_form %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+            <div id="form_persona_presente" class="disp-none form-container2">
               <h4>Persona Presente</h4>
-              {{ persona_presente_eval_form.as_div }}
+              {% for field in persona_presente_eval_form %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Mitigacion de Riesgo) -->
-        <div class="data_form disp-none" id="mitigacion_riesgo">
+        <div class="disp-none" id="mitigacion_riesgo">
           <h4>Mitigacion de Riesgo</h4>
-          <div class="form-style">{{ mitigacion_riesgo_form.as_div }}</div>
+          <div class="form-container">
+            {% for field in mitigacion_riesgo_form %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
+          </div>
         </div>
 
-         <!-- Detalles de Procedimiento (Detalles De Vehiculo Derrame) -->
-         <div class="data_form disp-none" id="vehiculo_derrame_form">
+        <!-- Detalles de Procedimiento (Detalles De Vehiculo Derrame) -->
+        <div class="disp-none" id="vehiculo_derrame_form">
           <h4>Detalles Vehiculo</h4>
-          <div class="form-style">{{ vehiculo_derrame_form.as_div }}</div>
+          <div class="form-container">
+            {% for field in vehiculo_derrame_form %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
         <!-- Detalles de Procedimiento (Detalles De Vehiculo Derrame) -->
-        <div class="data_form disp-none" id="vehiculo_derrame_form2">
+        <div class="disp-none" id="vehiculo_derrame_form2">
           <h4>Detalles Segundo Vehiculo</h4>
-          <div class="form-style">{{ vehiculo_derrame_form2.as_div }}</div>
+          <div class="form-container">
+            {% for field in vehiculo_derrame_form2 %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
+
         <!-- Detalles de Procedimiento (Detalles De Vehiculo Derrame) -->
-        <div class="data_form disp-none" id="vehiculo_derrame_form3">
+        <div class="disp-none" id="vehiculo_derrame_form3">
           <h4>Detalles Tercer Vehiculo</h4>
-          <div class="form-style">{{ vehiculo_derrame_form3.as_div }}</div>
+          <div class="form-container">
+            {% for field in vehiculo_derrame_form3 %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
-        <!-- Detalles de Procedimiento (Mitigacion de Riesgo) -->
-        <div class="data_form disp-none" id="puesto_avanzada">
+
+        <!-- Detalles de Procedimiento (Puesto de Avanzada) -->
+        <div class="disp-none" id="puesto_avanzada">
           <h4>Puesto de Avanzada</h4>
-          <div class="form-style">{{ puesto_avanzada_form.as_div }}</div>
+          <div class="form-container">
+            {% for field in puesto_avanzada_form %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
-        <!-- Detalles de Procedimiento (Mitigacion de Riesgo) -->
-        <div class="data_form disp-none" id="traslados_prehospitalaria">
+        <!-- Detalles de Procedimiento (Traslados Prehospitalaria) -->
+        <div class="disp-none" id="traslados_prehospitalaria">
           <h4>Traslados</h4>
-          <div class="form-style">
-            {{ traslados_prehospitalaria_form.as_div }}
+          <div class="form-container">
+            {% for field in traslados_prehospitalaria_form %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Asesoramiento) -->
-        <div class="data_form disp-none" id="asesoramiento_form">
+        <div class="disp-none" id="asesoramiento_form">
           <h4>Asesoramiento</h4>
-          <div class="form-style">{{ asesoramiento_form.as_div }}</div>
+          <div class="form-container">
+            {% for field in asesoramiento_form %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Reinspeccion de Prevencion) -->
-        <div class="data_form disp-none" id="reinspeccion_prevencion">
+        <div class="disp-none" id="reinspeccion_prevencion">
           <h4>Reinspeccion de Prevencion</h4>
-          <div class="form-style">{{ reinspeccion_prevencion.as_div }}</div>
+          <div class="form-container">
+            {% for field in reinspeccion_prevencion %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Retencion Preventiva) -->
-        <div class="data_form disp-none" id="retencion_preventiva">
+        <div class="disp-none" id="retencion_preventiva">
           <h4>Retencion Preventiva</h4>
-          <div class="form-style">{{ retencion_preventiva.as_div }}</div>
+          <div class="form-container">
+            {% for field in retencion_preventiva %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Arificios Pirotecnicos) -->
-        <div class="data_form disp-none" id="artificios_pirotecnico">
+        <div class="disp-none" id="artificios_pirotecnico">
           <h4>Artificios Pirotecnicos</h4>
-          <div class="form-style">{{ artificios_pirotecnico.as_div }}</div>
+          <div class="form-container">
+            {% for field in artificios_pirotecnico %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Lesionados) -->
-        <div class="data_form disp-none" id="lesionados">
+        <div class="disp-none" id="lesionados">
           <h4>Lesionado por Artificio Pirotecnico</h4>
-          <div class="form-style">{{ lesionados.as_div }}</div>
+          <div class="form-container">
+            {% for field in lesionados %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Incendio) -->
-        <div class="data_form disp-none" id="incendio_art">
+        <div class="disp-none" id="incendio_art">
           <h4>Incendio Por Artificios Pirotecnicos</h4>
-          <div class="form-style">
-            {{ incendio_art.as_div }}
+          <div class="form-container">
+            {% for field in incendio_art %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
             <!-- Detalles de Procedimiento (persona Presente) -->
-            <div id="persona_presente_art" class="display-row">
+            <div id="persona_presente_art" class="form-container2">
               <h4>Datos Persona Presente</h4>
-              {{ persona_presente_art.as_div }}
+              {% for field in persona_presente_art %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
 
             <!-- Detalles de Procedimiento (Detalles Vehiculos) -->
-            <div id="detalles_vehiculo_art" class="display-row">
+            <div id="detalles_vehiculo_art" class="form-container2">
               <h4>Datos de Vehiculo</h4>
-              {{ detalles_vehiculo_art.as_div }}
+              {% for field in detalles_vehiculo_art %}
+                {% if field.field.widget.input_type != "checkbox" %}
+                  <div class="form-floating mb-3">           
+                  {% render_field field class="form-control" %}
+                  {{ field.label_tag }}
+                  </div>
+                {% endif %}
+
+                {% if field.field.widget.input_type == "checkbox" %}
+                  <div class="form-check form-check-procedimientos-container">
+                    {% render_field field class="form-check-input form-check-procedimientos" %}
+                    {{ field.label_tag }}
+                  </div>
+                {% endif %}
+              {% endfor %}
             </div>
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Fallecidos) -->
-        <div class="data_form disp-none" id="fallecidos_art">
+        <div class="disp-none" id="fallecidos_art">
           <h4>Fallecido por Artificio Pirotecnico</h4>
-          <div class="form-style">{{ fallecidos_art.as_div }}</div>
+          <div class="form-container">
+            {% for field in fallecidos_art %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Inspeccion Artificios Pirotecnicos) -->
-        <div class="data_form disp-none" id="inspeccion_art_pir">
+        <div class="disp-none" id="inspeccion_art_pir">
           <h4>Inspeccion Establecimiento Por Artificios Pirotecnicos</h4>
-          <div class="form-style">{{ inspeccion_artificios_pir.as_div }}</div>
+          <div class="form-container">
+            {% for field in inspeccion_artificios_pir %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
-        <!-- Detalles de Procedimiento (Inspeccion Artificios Pirotecnicos) -->
-        <div class="data_form disp-none" id="valoracion_medica">
+        <!-- Detalles de Procedimiento (Valoracion Medica) -->
+        <div class="disp-none" id="valoracion_medica">
           <h4>Valoracion Medica</h4>
-          <div class="form-style">{{ valoracion_medica.as_div }}</div>
+          <div class="form-container">
+            {% for field in valoracion_medica %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
         <!-- Detalles de Procedimiento (Jornada Medica) -->
-        <div class="data_form disp-none" id="jornada_medica">
+        <div class="disp-none" id="jornada_medica">
           <h4>Jornada Medica</h4>
-          <div class="form-style">{{ jornada_medica.as_div }}</div>
+          <div class="form-container">
+            {% for field in jornada_medica %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
-        <!-- Detalles de Procedimiento (Inspeccion Artificios Pirotecnicos) -->
-        <div class="data_form disp-none" id="detalles_enfermeria">
+        <!-- Detalles de Procedimiento (Detalles Enfermeria) -->
+        <div class="disp-none" id="detalles_enfermeria">
           <h4>Detalles Atencion</h4>
-          <div class="form-style">{{ form_detalles_enfermeria.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_detalles_enfermeria %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
-        <!-- Detalles de Procedimiento (Inspeccion Artificios Pirotecnicos) -->
-        <div class="data_form disp-none" id="detalles_psicologia">
+        <!-- Detalles de Procedimiento (Detalles Psicologia) -->
+        <div class="disp-none" id="detalles_psicologia">
           <h4>Detalles Psicologia</h4>
-          <div class="form-style">{{ form_detalles_psicologia.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_detalles_psicologia %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
         
-        <!-- Detalles de Procedimiento (Inspeccion Artificios Pirotecnicos) -->
-        <div class="data_form disp-none" id="detalles_capacitacion">
+        <!-- Detalles de Procedimiento (Detalles Capacitacion) -->
+        <div class="disp-none" id="detalles_capacitacion">
           <h4>Detalles Capacitacion</h4>
-          <div class="form-style">{{ form_capacitacion.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_capacitacion %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
         
-        <!-- Detalles de Procedimiento (Inspeccion Artificios Pirotecnicos) -->
-        <div class="data_form disp-none" id="detalles_brigada">
+        <!-- Detalles de Procedimiento (Detalles Brigada) -->
+        <div class="disp-none" id="detalles_brigada">
           <h4>Detalles Brigada</h4>
-          <div class="form-style">{{ form_brigada.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_brigada %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
         
-        <!-- Detalles de Procedimiento (Inspeccion Artificios Pirotecnicos) -->
-        <div class="data_form disp-none" id="detalles_frente_preventivo">
+        <!-- Detalles de Procedimiento (Detalles Frente Preventivo) -->
+        <div class="disp-none" id="detalles_frente_preventivo">
           <h4>Detalles Frente Preventivo</h4>
-          <div class="form-style">{{ form_frente_preventivo.as_div }}</div>
+          <div class="form-container">
+            {% for field in form_frente_preventivo %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
 
         <!-- ===================================================================================== -->
 
         <!-- Detalles de Procedimiento (Inspecciones) -->
-        <div class="data_form disp-none" id="form_inpecciones">
-          <h4 class="mod-title-width">Detalles Inspeccion</h4>
-          <div class="form-style">
-            {{ form_inspecciones.as_div }}
+        <div class="disp-none" id="form_inpecciones">
+          <h4 class="">Detalles Inspeccion</h4>
+          <div class="form-container">
+            {% for field in form_inspecciones %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Inspecciones - Prevencion y Asesorias) -->
-        <div class="data_form disp-none" id="form_inspecciones_prevencion">
+        <div class="disp-none" id="form_inspecciones_prevencion">
           <h4>Detalles Inspeccion de Prevencion</h4>
-          <div class="form-style">
-            {{ form_inspecciones_prevencion.as_div }}
+          <div class="form-container">
+            {% for field in form_inspecciones_prevencion %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Inspecciones - Habitabilidad) -->
-        <div class="data_form disp-none" id="form_inspecciones_habitabilidad">
+        <div class="disp-none" id="form_inspecciones_habitabilidad">
           <h4>Detalles Inspeccion de Habitabilidad</h4>
-          <div class="form-style">
-            {{ form_inspecciones_habitabilidad.as_div }}
+          <div class="form-container">
+            {% for field in form_inspecciones_habitabilidad %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Inspecciones - Arbol) -->
-        <div class="data_form disp-none" id="form_inspecciones_arbol">
+        <div class="disp-none" id="form_inspecciones_arbol">
           <h4>Detalles Inspeccion de Árbol</h4>
-          <div class="form-style">
-            {{ form_inspecciones_arbol.as_div }}
+          <div class="form-container">
+            {% for field in form_inspecciones_arbol %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Inspecciones - Otros) -->
-        <div class="data_form disp-none" id="form_inspecciones_otros">
+        <div class="disp-none" id="form_inspecciones_otros">
           <h4>Detalles Inspeccion (Otros)</h4>
-          <div class="form-style">
-            {{ form_inspecciones_otros.as_div }}
+          <div class="form-container">
+            {% for field in form_inspecciones_otros %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
 
 <!-- ========================================================================================================== -->
 
         <!-- Detalles de Procedimiento (Investigacion) -->
-        <div class="data_form disp-none" id="form_investigacion">
-          <h4 class="mod-title-width">Detalles Investigacion</h4>
-          <div class="form-style">
-            {{ form_investigacion.as_div }}
+        <div class="disp-none" id="form_investigacion">
+          <h4>Detalles Investigacion</h4>
+          <div class="form-container">
+            {% for field in form_investigacion %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Investigacion Vehiculo) -->
-        <div class="data_form disp-none" id="form_inv_vehiculo">
+        <div class="disp-none" id="form_inv_vehiculo">
           <h4>Investigacion (Vehiculos)</h4>
-          <div class="form-style">
-            {{ form_inv_vehiculo.as_div }}
+          <div class="form-container">
+            {% for field in form_inv_vehiculo %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Investigacion Comercio) -->
-        <div class="data_form disp-none" id="form_inv_comercio">
+        <div class="disp-none" id="form_inv_comercio">
           <h4>Investigacion (Comercio)</h4>
-          <div class="form-style">
-            {{ form_inv_comercio.as_div }}
+          <div class="form-container">
+            {% for field in form_inv_comercio %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
 
         <!-- Detalles de Procedimiento (Investigacion Estructura) -->
-        <div class="data_form disp-none" id="form_inv_estructura">
+        <div class="disp-none" id="form_inv_estructura">
           <h4></h4>
-          <div class="form-style">
-            {{ form_inv_estructura.as_div }}
+          <div class="form-container">
+            {% for field in form_inv_estructura %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
           </div>
         </div>
-
       </article>
 
       <section id="form_comisionoes" style="display: none;">
         <h4>Datos Comisiones Presentes</h4>
-        <div class="form-style data_form margin-bottom" id="checkbox_agg">{{ form_comision.as_div }}
-          <article class="margin-bottom" id="comision_uno" style="display: none;">{{ comision_uno.as_div }}</article>
-          <article class="margin-bottom" id="comision_dos" style="display: none;">{{ comision_dos.as_div }}</article>
-          <article class="margin-bottom" id="comision_tres" style="display: none;">{{ comision_tres.as_div }}</article>
+        <div class="form-container form-container3" id="checkbox_agg">
+          {% for field in form_comision %}
+            {% if field.field.widget.input_type != "checkbox" %}
+              <div class="form-floating mb-3">           
+              {% render_field field class="form-control" %}
+              {{ field.label_tag }}
+              </div>
+            {% endif %}
+
+            {% if field.field.widget.input_type == "checkbox" %}
+              <div class="form-check form-check-procedimientos-container">
+                {% render_field field class="form-check-input form-check-procedimientos" %}
+                {{ field.label_tag }}
+              </div>
+            {% endif %}
+          {% endfor %}
+          <article class="form-container2 form-container-margin" id="comision_uno" style="display: none;">
+            <h4>Comision 1</h4>
+            {% for field in comision_uno %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </article>
+          <article class="form-container2" id="comision_dos" style="display: none;">
+            <h4>Comision 2</h4>
+            {% for field in comision_dos %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </article>
+          <article class="form-container2" id="comision_tres" style="display: none;">
+            <h4>Comision 3</h4>
+            {% for field in comision_tres %}
+              {% if field.field.widget.input_type != "checkbox" %}
+                <div class="form-floating mb-3">           
+                {% render_field field class="form-control" %}
+                {{ field.label_tag }}
+                </div>
+              {% endif %}
+
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check form-check-procedimientos-container">
+                  {% render_field field class="form-check-input form-check-procedimientos" %}
+                  {{ field.label_tag }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </article>
         </div>
       </section>
       
@@ -498,7 +1411,7 @@
         Aceptar
       </button>
       <button type="button" class="">
-        <a href="{% url 'dashboard' %}">Cancelar</a>
+        <a href="javascript:history.back()">Cancelar</a>
       </button>
     </form>
   </section>
@@ -585,7 +1498,7 @@
 <script src="{% static 'js/procedimientos/division.js' %}"></script>
 <script src="{% static 'js/procedimientos/formularios_procedimientos.js' %}"></script>
 <script src="{% static 'js/procedimientos/tipos_procedimientos.js' %}"></script>
-<script src="{% static 'js/procedimientos/unidades.js' %}"></script>
+<!-- <script src="{% static 'js/procedimientos/unidades.js' %}"></script> -->
 <script src="{% static 'js/procedimientos/solicitante.js' %}"></script>
 <script src="{% static 'js/datos_local_storage.js' %}"></script>
 <script src="{% static 'js/procedimientos/otras_validaciones.js' %}"></script>

@@ -50,6 +50,7 @@
   
   <!-- section filter -->
   <div class="filter-container">
+    
     <div class="filter-stats">
       <div class="stat-box">
         <strong>Procedimientos Totales: </strong>
@@ -116,7 +117,7 @@
           </svg>
         </button>
         {% if filtro_parroquia or filtro_procedimiento or filtro_trimestre %}
-          <a href="" class="clear-button" title="Limpiar filtros">
+          <a href="{% url 'tabla_general' %}" class="clear-button" title="Limpiar filtros">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
               <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
             </svg>
@@ -128,53 +129,54 @@
 
   <!-- tabla -->
   <div class="table-responsive-sm">
-    <table class="table table-hover tabla-general-procedimientos" id="data-table">
+    <table class="table table-hover" id="data-table">
       <thead>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Division</th>
-          <th scope="col">Solicitante</th>
-          <th scope="col">Jefe de C.</th>
-          <th scope="col">Parroquia</th>
-          <th scope="col">Municipio</th>
-          <th scope="col">Direccion</th>
-          <th scope="col">Fecha</th>
-          <th scope="col">Hora</th>
-          <th scope="col">Tipo P.</th>
-          <th scope="col">Acciones</th>
+          <th scope="col" class="fixed-width-auto">#</th>
+          <th scope="col" class="fixed-width">Division</th>
+          <th scope="col" class="fixed-width">Solicitante</th>
+          <th scope="col" class="fixed-width">Jefe de C.</th>
+          <th scope="col" class="fixed-width">Unidad</th>
+          <th scope="col" class="fixed-width">Parroquia</th>
+          <th scope="col" class="fixed-width">Municipio</th>
+          <th scope="col" class="fixed-width">Direccion</th>
+          <th scope="col" class="fixed-width-auto">Fecha</th>
+          <th scope="col" class="fixed-width-auto">Hora</th>
+          <th scope="col" class="fixed-width">Tipo de Proc.</th>
+          <th scope="col" class="fixed-width-iconos">Acciones</th>
         </tr>
       </thead>
       <tbody class="table-group-divider">
-        <div id="procedimientos-container">
+        <div class="procedimientos-container">
+        <!-- prettier-ignore -->
+        {% for row in datos %}
+        <tr>
           <!-- prettier-ignore -->
-          {% for row in datos %}
-          <tr>
-            <!-- prettier-ignore -->
-            <th scope="row">{{ forloop.counter }}</th>
-            <!-- prettier-ignore -->
-            <td class="fixed-width">{{ row.id_division.division }}</td>
-            {% if row.solicitante_externo == "" %}
-            <!-- prettier-ignore -->
-            <td class="fixed-width">{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{ row.id_solicitante.apellidos.split|first }}</td>
-            {% else %}
-            <!-- prettier-ignore -->
-            <td class="fixed-width">{{ row.solicitante_externo }}</td>
-            {% endif %}
-            <!-- prettier-ignore -->
-            <td class="fixed-width">{{ row.id_jefe_comision.jerarquia }} {{ row.id_jefe_comision.nombres.split|first }} {{ row.id_jefe_comision.apellidos.split|first }}</td>
-            <!-- prettier-ignore -->
-            {% if row.id_parroquia.parroquia != "Sin Registro" %}
-            <td class="fixed-width">{{ row.id_parroquia.parroquia }}</td>
-            {% else %}
-            <td class="fixed-width">Otros Municipios</td>
-            {% endif %}
-            <!-- prettier-ignore -->
-            <td class="fixed-width">{{ row.id_municipio.municipio }}</td>
-            <td class="fixed-width">{{ row.direccion }}</td>
-            <td class="fixed-width">{{ row.fecha|date:"d-m-Y" }}</td>
-            <td class="fixed-width">{{ row.hora }}</td>
-            <td class="fixed-width">{{ row.id_tipo_procedimiento.tipo_procedimiento }}</td>
-            <td class="icons-accion">
+          <th scope="row" class="fixed-width-auto">{{ forloop.counter }}</th>
+          <td class="fixed-width">{{ row.id_division.division }}</td>
+          {% if row.solicitante_externo == "" %}
+          <!-- prettier-ignore -->
+          <td class="fixed-width">{{ row.id_solicitante.jerarquia }} {{ row.id_solicitante.nombres.split|first }} {{ row.id_solicitante.apellidos.split|first }}</td>
+          {% else %}
+          <!-- prettier-ignore -->
+          <td class="fixed-width">{{ row.solicitante_externo }}</td>
+          {% endif %}
+          <!-- prettier-ignore -->
+          <td class="fixed-width">{{ row.id_jefe_comision.jerarquia }} {{ row.id_jefe_comision.nombres.split|first }} {{ row.id_jefe_comision.apellidos.split|first }}</td>
+          <!-- prettier-ignore -->
+          <td class="fixed-width">{{ row.unidad }}</td>
+          {% if row.id_parroquia.parroquia != "Sin Registro" %}
+          <td class="fixed-width">{{ row.id_parroquia.parroquia }}</td>
+          {% else %}
+          <td class="fixed-width">Otros Municipios</td>
+          {% endif %}
+          <!-- prettier-ignore -->
+          <td class="fixed-width">{{ row.id_municipio.municipio }}</td>
+          <td class="fixed-width">{{ row.direccion }}</td>
+          <td class="fixed-width-auto">{{ row.fecha|date:"d-m-Y" }}</td>
+          <td class="fixed-width-auto">{{ row.hora }}</td>
+          <td class="fixed-width">{{ row.id_tipo_procedimiento.tipo_procedimiento }}</td>
+          <td class="icons-accion fixed-width-iconos">
 
               {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
                 <!-- NO TOCAR BOTON ELIMINAR-->
@@ -252,27 +254,41 @@
       <span class="step-links">
           {% if datos.has_previous %}
               <a href="?page=1{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
-                class="btn btn-danger">&laquo; Primera</a>
+                class="btn btn-secondary">&laquo;</a>
               <a href="?page={{ datos.previous_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
-                class="btn btn-danger">Anterior</a>
+                class="btn btn-danger">&lsaquo;</a>
+          {% else %}
+              <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+                &laquo;
+              </a>
+              <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+                &lsaquo;
+              </a>  
           {% endif %}
 
-          <span class="current">
-              Página {{ datos.number }} de {{ datos.paginator.num_pages }}.
-          </span>
 
           {% if datos.has_next %}
               <a href="?page={{ datos.next_page_number }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
-                class="btn btn-danger">Siguiente</a>
+                class="btn btn-danger">&rsaquo;</a>
               <a href="?page={{ datos.paginator.num_pages }}{% if filtro_parroquia %}&parroquia={{ filtro_parroquia }}{% endif %}{% if filtro_procedimiento %}&procedimiento={{ filtro_procedimiento }}{% endif %}{% if filtro_trimestre %}&trimestre={{ filtro_trimestre }}{% endif %}" 
-                class="btn btn-danger">Última &raquo;</a>
+                class="btn btn-secondary">&raquo;</a>
+          {% else %}
+              <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
+                &rsaquo;
+              </a>
+              <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
+                &rsaquo;
+              </a>  
           {% endif %}
+      </span>
+      <span class="current">
+          Página {{ datos.number }} de {{ datos.paginator.num_pages }}.
       </span>
   </div>
 
   {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' or user.user == 'Comandancia' or user.user == '2dacomandancia' %}
   <div class="contain-dates">
-    <h4 class="title-procediments">Exportaciones</h4>
+    <h4 class="title-procediments titulo-exportaciones-excel">Exportaciones</h4>
     <br>
     <section class="buttons-items input-group mb-3 filter-search">
       <span class="input-group-text"><b> Seleccionar Mes:</b></span>
@@ -297,7 +313,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body modal-body-two">
-        <div id="infoProcedimiento" class="infoProcedimientos style-delete"></div>
+        <div id="infoProcedimiento" class="infoProcedimientos"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
