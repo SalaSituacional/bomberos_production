@@ -122,6 +122,7 @@ CertificadoMedicoFormSet = inlineformset_factory(
 
 # ======================================= UNIDADES ================================================
 
+
 class Unidades_Informacion(forms.Form):
     op = [
         ("", "Seleccione una Opción"),
@@ -225,7 +226,7 @@ class Cambiar_Division(forms.Form):
     )
     nuevo = forms.ModelMultipleChoiceField(
         queryset=Divisiones.objects.all(), 
-        widget=forms.CheckboxSelectMultiple  # O SelectMultiple para un dropdown
+        widget=forms.CheckboxSelectMultiple, # Esto es crucial para generar checkboxes
     )
 
 # =============================================================================== Formularios Para el Area de Inventarios Unidades ===============================================

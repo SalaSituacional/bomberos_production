@@ -23,16 +23,15 @@ urlpatterns = [
     # SARP
     path('dashboard_sarp/', Dashboard_sarp,name='dashboard_sarp'),
     path('registros_sarp/', Registros_sarp, name='registros_sarp'),
-    path('formularios_sarp/', Formularios_sarp, name='formularios_sarp'),
+    # URL para crear un nuevo reporte
+    path('formularios_sarp/', crear_o_editar_reporte, name='crear_reporte_sarp'),
+    path('reportes/editar/<str:id_vuelo>/', crear_o_editar_reporte, name='editar_reporte_sarp'),
     
     path('registrar_dron/', registrar_drones, name="registrar_dron"),
-    path('api/vuelos/', api_vuelos, name="api_vuelos"), 
     path('reporte/<str:id_vuelo>/', obtener_reporte, name='reporte'),
-    path('editar_reporte/<str:id_vuelo>/', editar_reporte, name='editar_reporte'),
     path("api/eliminar_vuelo/<str:id_vuelo>/", api_eliminar_vuelo, name="api_eliminar_vuelo"),
     path('api/estadisticas-misiones/', obtener_estadisticas_misiones, name="estadisticas-misiones"),
     path('api/ultimo_reporte/', obtener_ultimo_reporte, name="ultimo_reporte_sarp"),
-    path('api/buscar_vuelo/<str:vuelo_id>/', buscar_vuelo_por_id, name='buscar_vuelo_por_id'),
     
     # Funcion de generar excel
     path('generar-excel-reportes-sarp/', generar_excel_reportes_sarp, name='generar_excel_sarp'),

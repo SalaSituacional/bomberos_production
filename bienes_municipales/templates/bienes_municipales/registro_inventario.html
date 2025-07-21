@@ -9,6 +9,7 @@
 {% endif %}
 
 {% load static %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="general-dashboard">
@@ -32,15 +33,32 @@
   </div>
 </div>
 
-<div class="formulario-bienes">
+<section class="procedures_record">
+  <h2 class="title_procedures_record">Registrar Bienes Municipales</h2>
+</section>
+
+<div class="data_form">
   <form method="POST" id="formulario_bienes">
-    <h2>Registrar Inmueble</h2>
     {% csrf_token %}
-    {{ form_bienes }}
-    <div class="buttons-sarp-form">
-      <button type="submit" class="btn btn-danger">Registrar</button>
-      <button type="reset" class="btn btn-danger"><a href="{% url 'inventarioBienes' %}">Cancelar</a></button>
+
+    <div class="form-container">
+      {% for field in form_bienes %}
+        {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'date' or field.field.widget.input_type == 'time' %}
+            <div class="form-floating mb-3 form-floating-inmuebles">
+              {% render_field field class="form-control" %}
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            </div>
+        {% else %}
+            <div class="form-floating mb-3 form-floating-inmuebles">
+              {% render_field field class="form-select" %}
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            </div>
+        {% endif %}
+      {% endfor %}
     </div>
+
+    <button type="submit" class="btn btn-danger">Registrar</button>
+    <a href="{% url 'inventario_bienes' %}" class="btn btn-secondary">Cancelar</a>
   </form>
 </div>
 
@@ -51,39 +69,5 @@
   </section>
 </footer>
 
-<script>
-  // Obtener el formulario por su ID
-  const form = document.getElementById("formulario_bienes");
-
-  if (form) {
-    // Seleccionar todas las divs dentro del formulario
-    const innerDivs = form.querySelectorAll("div");
-
-    // Iterar sobre cada div y aplicar las clases a sus inputs y labels
-    innerDivs.forEach(div => {
-      const label = div.querySelector("label");
-      const input = div.querySelector("input");
-      const select = div.querySelector("select");
-      const textarea = div.querySelector("textarea");
-
-      if (label) {
-        label.classList.add("form-label");
-      }
-
-      if (input) {
-        input.classList.add("form-control");
-      }
-
-      if (select) {
-        select.classList.add("form-select");
-      }
-      if (textarea) {
-        textarea.classList.add("form-control");
-      }
-    });
-  }
-
-</script>
-<script src="{% static 'js/loader-function.js' %}"></script>
 <script src="{% static 'js/bienes_inmuebles/verificar_identificador.js' %}"></script>
 {% endblock %}

@@ -17,65 +17,62 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid px-4 dashboard-container">
-  <!-- Header Section -->
-  <div class="row align-items-center dashboard-header mb-4">
-    <div class="col-md-6">
-      <h1 class="dashboard-title">
-        <span class="me-2"><i class="fas fa-tools"></i></span>
-        <span class="fw-bold">Confirmar Eliminación de Herramienta</span>
-      </h1>
-    </div>
-    <div class="col-md-6 text-end user-info">
-      <div class="d-inline-flex align-items-center">
-        <span class="user-badge">
-          {{ jerarquia }} {{ nombres }} {{ apellidos }} | 
-          <strong id="usuario">{{ user.user }}</strong>
-        </span>
-        <svg class="ms-2 user-icon" width="24px" height="24px" viewBox="0 0 24 24" fill="currentColor">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"></path>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"></path>
-        </svg>
-      </div>
-    </div>
+
+<div class="general-dashboard">
+  <div class="div-user-name username-space">
+      <h3 class="division-title">Eliminar Herramienta</h3>
+      <section class="user-name">
+      <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
+      <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+          <g id="SVGRepo_iconCarrier">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M12.0001 1.25C9.37678 1.25 7.25013 3.37665 7.25013 6C7.25013 8.62335 9.37678 10.75 12.0001 10.75C14.6235 10.75 16.7501 8.62335 16.7501 6C16.7501 3.37665 14.6235 1.25 12.0001 1.25ZM8.75013 6C8.75013 4.20507 10.2052 2.75 12.0001 2.75C13.7951 2.75 15.2501 4.20507 15.2501 6C15.2501 7.79493 13.7951 9.25 12.0001 9.25C10.2052 9.25 8.75013 7.79493 8.75013 6Z"
+              fill="#000000"></path>
+          <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M12.0001 12.25C9.68658 12.25 7.55506 12.7759 5.97558 13.6643C4.41962 14.5396 3.25013 15.8661 3.25013 17.5L3.25007 17.602C3.24894 18.7638 3.24752 20.222 4.52655 21.2635C5.15602 21.7761 6.03661 22.1406 7.22634 22.3815C8.4194 22.6229 9.97436 22.75 12.0001 22.75C14.0259 22.75 15.5809 22.6229 16.7739 22.3815C17.9637 22.1406 18.8443 21.7761 19.4737 21.2635C20.7527 20.222 20.7513 18.7638 20.7502 17.602L20.7501 17.5C20.7501 15.8661 19.5807 14.5396 18.0247 13.6643C16.4452 12.7759 14.3137 12.25 12.0001 12.25ZM4.75013 17.5C4.75013 16.6487 5.37151 15.7251 6.71098 14.9717C8.02693 14.2315 9.89541 13.75 12.0001 13.75C14.1049 13.75 15.9733 14.2315 17.2893 14.9717C18.6288 15.7251 19.2501 16.6487 19.2501 17.5C19.2501 18.8078 19.2098 19.544 18.5265 20.1004C18.156 20.4022 17.5366 20.6967 16.4763 20.9113C15.4194 21.1252 13.9744 21.25 12.0001 21.25C10.0259 21.25 8.58087 21.1252 7.52393 20.9113C6.46366 20.6967 5.84425 20.4022 5.47372 20.1004C4.79045 19.544 4.75013 18.8078 4.75013 17.5Z"
+              fill="#000000"></path>
+          </g>
+      </svg>
+      </section>
   </div>
 
+
   <!-- Main Content -->
-  <div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-      <form method="post">
-        {% csrf_token %}
-        
-        <div class="alert alert-danger border-left-4 border-danger">
-          <div class="d-flex align-items-center">
-            <i class="fas fa-exclamation-circle fs-3 me-3"></i>
-            <div>
-              <h4 class="alert-heading mb-2">¿Está seguro que desea eliminar esta herramienta?</h4>
-              <div class="tool-details">
-                <p class="mb-1"><strong>Nombre:</strong> <span class="text-dark">{{ herramienta.nombre }}</span></p>
-                <p class="mb-0"><strong>Serial:</strong> <span class="text-dark">{{ herramienta.numero_serie|default:"-" }}</span></p>
-              </div>
+  <div class="d-flex justify-content-center">
+    <form method="post">
+      {% csrf_token %}
+      
+      <div class="alert alert-danger border-left-4 border-danger">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-exclamation-circle fs-3 me-3"></i>
+          <div>
+            <h4 class="alert-heading mb-2">¿Está seguro que desea eliminar esta herramienta?</h4>
+            <div class="tool-details">
+              <p class="mb-1"><strong>Nombre:</strong> <span class="text-dark">{{ herramienta.nombre }}</span></p>
+              <p class="mb-0"><strong>Serial:</strong> <span class="text-dark">{{ herramienta.numero_serie|default:"-" }}</span></p>
             </div>
           </div>
-          
-          {% if herramienta.asignaciones_activas > 0 %}
-          <div class="alert alert-warning mt-3 d-flex align-items-center">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <span>Esta herramienta tiene <strong>{{ herramienta.asignaciones_activas }}</strong> asignación(es) activa(s)</span>
-          </div>
-          {% endif %}
         </div>
         
-        <div class="d-flex justify-content-end gap-3 mt-4">
-          <a href="{% url 'listar-herramientas' %}" class="btn btn-secondary">
-            <i class="bi bi-x-lg me-2"></i> Cancelar
-          </a>
-          <button type="submit" class="btn btn-danger">
-            <i class="bi bi-check-lg me-2"></i> Confirmar Eliminación
-          </button>
+        {% if herramienta.asignaciones_activas > 0 %}
+        <div class="alert alert-warning mt-3 d-flex align-items-center">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <span>Esta herramienta tiene <strong>{{ herramienta.asignaciones_activas }}</strong> asignación(es) activa(s)</span>
         </div>
-      </form>
-    </div>
+        {% endif %}
+      </div>
+      
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <a href="{% url 'listar-herramientas' %}" class="btn btn-secondary">
+          <i class="bi bi-x-lg me-2"></i> Cancelar
+        </a>
+        <button type="submit" class="btn btn-danger">
+          <i class="bi bi-check-lg me-2"></i> Eliminar
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 

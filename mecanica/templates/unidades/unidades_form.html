@@ -9,11 +9,12 @@
 {% endif %}
 
 {% load static %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="general-dashboard">
   <div class="div-user-name username-space">
-    <h3 class="division-title">Nueva Unidad</h3>
+    <h3 class="division-title">{% if editing %}Editra Unidad{% else %}Agregar Unidad{% endif %}</h3>
     <section class="user-name">
       <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
       <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,17 +34,142 @@
 </div>
 
 <div class="contain-unidades">
-  <form action="{% url 'agregar_unidades' %}" method="POST" id="form_register_unidades">
-    <h2>Agregar Unidad</h2>
-    {% csrf_token %}
+  <div class="data_form">
+    <form action="{% url 'agregar_unidades' %}" method="POST" id="form_register_unidades">
+      {% csrf_token %}
 
-    <div>{{ agregar_unidades }}</div>
+      <h4>Información Básica de la Unidad</h4>
+      <div class="form-container">
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.nombre_unidad class="form-control"   placeholder=agregar_unidades.nombre_unidad.label %}
+          <label for="{{ agregar_unidades.nombre_unidad.id_for_label }}">{{ agregar_unidades.nombre_unidad.label }}</label>
+        </div>
 
-    <!-- Campo oculto para el ID de la unidad (solo se usará en edición) -->
-    <input type="hidden" name="id_unidad" id="id_unidad" value="{{ unidad.id|default:'' }}">
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.division class="form-select" %}
+          <label for="{{ agregar_unidades.division.id_for_label }}">{{ agregar_unidades.division.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.tipo_vehiculo class="form-select" %}
+          <label for="{{ agregar_unidades.tipo_vehiculo.id_for_label }}">{{ agregar_unidades.tipo_vehiculo.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.estado class="form-select" %}
+          <label for="{{ agregar_unidades.estado.id_for_label }}">{{ agregar_unidades.estado.label }}</label>
+        </div>
+      </div>
+
+      <h4>Detalles del Vehículo</h4>
+      <div class="form-container">
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.serial_carroceria class="form-control" placeholder=agregar_unidades.serial_carroceria.label %}
+          <label for="{{ agregar_unidades.serial_carroceria.id_for_label }}">{{ agregar_unidades.serial_carroceria.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.serial_chasis class="form-control" placeholder=agregar_unidades.serial_chasis.label %}
+          <label for="{{ agregar_unidades.serial_chasis.id_for_label }}">{{ agregar_unidades.serial_chasis.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.marca class="form-control" placeholder=agregar_unidades.marca.label %}
+          <label for="{{ agregar_unidades.marca.id_for_label }}">{{ agregar_unidades.marca.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.año class="form-control" placeholder=agregar_unidades.año.label %}
+          <label for="{{ agregar_unidades.año.id_for_label }}">{{ agregar_unidades.año.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.modelo class="form-control" placeholder=agregar_unidades.modelo.label %}
+          <label for="{{ agregar_unidades.modelo.id_for_label }}">{{ agregar_unidades.modelo.label }}</label>
+        </div>
+        
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.uso class="form-control" placeholder=agregar_unidades.uso.label %}
+          <label for="{{ agregar_unidades.uso.id_for_label }}">{{ agregar_unidades.uso.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.placas class="form-control" placeholder=agregar_unidades.placas.label %}
+          <label for="{{ agregar_unidades.placas.id_for_label }}">{{ agregar_unidades.placas.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.capacidad_carga class="form-control" placeholder=agregar_unidades.capacidad_carga.label %}
+          <label for="{{ agregar_unidades.capacidad_carga.id_for_label }}">{{ agregar_unidades.capacidad_carga.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.numero_ejes class="form-control" placeholder=agregar_unidades.numero_ejes.label %}
+          <label for="{{ agregar_unidades.numero_ejes.id_for_label }}">{{ agregar_unidades.numero_ejes.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.numero_puestos class="form-control" placeholder=agregar_unidades.numero_puestos.label %}
+          <label for="{{ agregar_unidades.numero_puestos.id_for_label }}">{{ agregar_unidades.numero_puestos.label }}</label>
+        </div>
+      </div>
+      
+
+      <h4>Datos Mecanicos</h4>
+      <div class="form-container">
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.tipo_filtro_aceite class="form-control" placeholder=agregar_unidades.tipo_filtro_aceite.label %}
+          <label for="{{ agregar_unidades.tipo_filtro_aceite.id_for_label }}">{{ agregar_unidades.tipo_filtro_aceite.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.tipo_filtro_combustible class="form-control" placeholder=agregar_unidades.tipo_filtro_combustible.label %}
+          <label for="{{ agregar_unidades.tipo_filtro_combustible.id_for_label }}">{{ agregar_unidades.tipo_filtro_combustible.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.bateria class="form-control" placeholder=agregar_unidades.bateria.label %}
+          <label for="{{ agregar_unidades.bateria.id_for_label }}">{{ agregar_unidades.bateria.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.numero_tag class="form-control" placeholder=agregar_unidades.numero_tag.label %}
+          <label for="{{ agregar_unidades.numero_tag.id_for_label }}">{{ agregar_unidades.numero_tag.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.tipo_bujia class="form-control" placeholder=agregar_unidades.tipo_bujia.label %}
+          <label for="{{ agregar_unidades.tipo_bujia.id_for_label }}">{{ agregar_unidades.tipo_bujia.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.tipo_combustible class="form-select" %}
+          <label for="{{ agregar_unidades.tipo_combustible.id_for_label }}">{{ agregar_unidades.tipo_combustible.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.tipo_aceite class="form-control" placeholder=agregar_unidades.tipo_aceite.label %}
+          <label for="{{ agregar_unidades.tipo_aceite.id_for_label }}">{{ agregar_unidades.tipo_aceite.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.medida_neumaticos class="form-control" placeholder=agregar_unidades.medida_neumaticos.label %}
+          <label for="{{ agregar_unidades.medida_neumaticos.id_for_label }}">{{ agregar_unidades.medida_neumaticos.label }}</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          {% render_field agregar_unidades.tipo_correa class="form-control" placeholder=agregar_unidades.tipo_correa.label %}
+          <label for="{{ agregar_unidades.tipo_correa.id_for_label }}">{{ agregar_unidades.tipo_correa.label }}</label>
+        </div>
+
+        
+      </div>
+
+    </div>
+
     <div class="buttons-form-unidades">
       <button class="btn btn-danger" type="submit">Enviar</button>
-      <button class="btn btn-danger" type="button"><a href="{% url 'unidades' %}">Cancelar</a></button>
+      <button class="btn btn-secondary" type="button"><a href="{% url 'unidades' %}">Cancelar</a></button>
     </div>
   </form>
 </div>
@@ -54,35 +180,6 @@
   </section>
 </footer>
 
-<script>
-  // Obtener el formulario por su ID
-  const form = document.getElementById("form_register_unidades");
 
-  if (form) {
-    // Seleccionar todas las divs dentro del formulario
-    const innerDivs = form.querySelectorAll("div > div");
-
-    // Iterar sobre cada div y aplicar las clases a sus inputs y labels
-    innerDivs.forEach(div => {
-      const label = div.querySelector("label");
-      const input = div.querySelector("input");
-      const select = div.querySelector("select");
-
-      if (label) {
-        label.classList.add("form-label");
-      }
-
-      if (input) {
-        input.classList.add("form-control");
-      }
-
-      if (select) {
-        select.classList.add("form-select");
-      }
-    });
-  }
-
-</script>
 <script src="{% static 'js/unidades/llenar_valores_unidades.js' %}"></script>
-<!-- <script src="../../static/js/loader-function.js"></script> -->
 {% endblock %}

@@ -1374,7 +1374,7 @@ summary>* {
     padding: 0rem;
   }
 
-  .data_form form button {
+  .data_form form button, .data_form form a {
     margin: 1rem;
     background-color: var(--color-button);
     color: #fff;
@@ -1384,7 +1384,7 @@ summary>* {
     width: 8rem;
   }
 
-  .data_form form button:hover {
+  .data_form form button:hover, .data_form form a:hover {
     background-color: #75202d;
     transition: 0.1s all ease-in-out;
   }
@@ -3116,7 +3116,10 @@ summary>* {
   max-height: 80vh !important;
   overflow: auto;
 }
-
+#confirmDeleteModal {
+  position: fixed;
+  top: 250px;
+}
 .filtros-prevencion .buscador-solicitudes{
   align-items: stretch;
 
@@ -3132,7 +3135,7 @@ summary>* {
 /* #endregion */
 
 
-/* #region Estilos Formulario */
+/* #region Estilos Formulario Prevencion */
   
 /* ====================================================================================================================================================== */
 /* Estilos Formularios planillas de prevencion */
@@ -3398,12 +3401,255 @@ summary>* {
 
 /* #endregion */
 
+
+/* #region Estilos Area Unidades */
+  /******************** unidades ************************/
+
+/* Estilos Area de Informacion o Detalles */
+#informacion_unidades {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.Info-Unidades {
+  margin: 1rem 0;
+  width: 100%;
+  padding: 1rem;
+  text-align: center;
+  background-color: white;
+
+  h2{
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #b6243a;
+  }
+  div {
+    width: auto;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    border-bottom: 2.5px solid #B6243AFF;
+    align-items: flex-start;
+    text-align: start;
+    
+    p {
+      margin: 1rem 0;
+    }
+  }
+}
+/* Infromacion Area de Informacion de Reportes */
+#reporte_unidades {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  overflow: auto;
+  scroll-snap-type: x mandatory;
+}
+.reporte {
+  min-width: 100%;
+  margin: 2rem 0; 
+  margin-right: 1rem;
+  scroll-snap-align: start;
+}
+.reporte-content {
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  text-align: center;
+  background-color: white;
+  border-bottom: 3px solid #b6243a;
+  margin: 0 auto;
+
+  position: relative;
+
+  h2{
+    margin-top: 5px;
+  }
+  div {
+    div {
+      width: 80%;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: 2.5px solid rgb(138, 138, 138);
+    }
+
+    p {
+      text-align: start;
+      margin: 1rem 0;
+      margin-right: 1.5rem;
+    }
+  }
+}
+.btn-borrar-reporte{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+/* Estilos Formularios Ventanas Modales */
+.height-auto {
+  width: 80%;
+  height: auto;
+}
+.form-reportes,
+.form-estado {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.form-division {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: .5rem;
+
+  .form-checkbox-dvisiones{
+    width: 100%;
+    margin: .5rem 0;
+  }
+  .form-checkbox-dvisiones>label{
+    padding-bottom: .2rem;
+    border-bottom: 3px solid #b6243a;
+  }
+  .form-check-group-column input:checked{
+    background-color: #b6243a;
+  }
+}
+.buttons-reportes,
+.buttons-estados,
+.buttons-division {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  button {
+    margin: .5rem .2rem;
+  }
+}
+
+/* Estilos para los formularios */
+.buttons-form-unidades {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  button {
+    min-width: 200px;
+    margin: .5rem .5rem 0 0;
+  }
+  a{
+    text-decoration: none;
+  }
+}
+
+/* #endregion */
+
+
+/* #region Estilos Area Conductores */
+/* Estilos Para la modal de Conductores */
+.modal-dashboard-conductores{
+  width: 100%;
+  padding: 0rem 1rem;
+  .title-icon{
+    width: 100%;
+  }
+}
+.modal-conductores-modify{
+  width: 95%;
+  align-items: flex-start;
+  margin: 1rem auto;
+  .container-fluid{
+    padding: 0;
+  }
+  .container-fluid .row div{
+    padding: 0;
+  }
+  .container-fluid .row div p{
+    max-width: 100%;
+    margin: 0;
+    margin-bottom: 2px;
+    font-size: .9rem;
+  }
+  .container-fluid .row{
+    margin: 0;
+    max-width: 100%;
+  }
+  .container-fluid h5{
+    margin-bottom: 4px;
+  }  
+}
+/* #endregion */
+
+
+/* #region Estilos Dashboard Mecanica */
+  .card-mecanic {
+    display: flex;
+    justify-content: center;
+    width: 15rem;
+    height: auto;
+    box-shadow: 1px 1px 10px rgb(146, 146, 146);
+    text-align: start;
+    margin: 1rem 2rem;
+    padding: 1rem;
+    font-family: var(--sofia-sans);
+    color: #FFF;
+    border-radius: 10px;
+
+    span {
+      font-size: 1.5rem;
+      margin: .4rem;
+    }
+  }
+/* #endregion */
+
+
+/* #region Estilos Seccion Inventario */
+  .herramienta-checkbox {
+    width: 1.25rem;  /* Adjust as needed, e.g., 1.5rem for slightly larger */
+    height: 1.25rem; /* Should match width for a square checkbox */
+    /* Optional: adjust margin if needed after resizing */
+    margin-top: 0; /* Ensures vertical alignment, good default for form-check-input */
+    flex-shrink: 0; /* Prevents the checkbox from shrinking on smaller screens */
+}
+/* #endregion */
+
+
+/* #region Estilos Bienes Inmuebles */
+  .buttons-inmuebles-form {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    button {
+      margin-top: .5rem;
+      width: 40%;
+    }
+  }
+/* #endregion */
+
 /****************** componentes reutilizables **************/
 
 .highlight {
   background-color: yellow;
 }
 
+
+/* #region Estilos del blog */
 /* ------------------------------------------------------------------------------------------------------------------------------- */
 /* blog style */
 .nav {
@@ -4288,41 +4534,10 @@ summary>* {
     text-align: center;
   }
 }
-
 .reduct-img {
   width: 10rem;
   height: auto;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .inicial-carrousel-one {
   margin-top: 4rem;
   width: 100%;
@@ -4351,38 +4566,30 @@ summary>* {
 .social-media a {
   margin: 0.5rem;
 }
-
 .title-blog span,
 .title-blog p {
   text-align: center;
 }
-
 .text-inter {
   margin: 0;
-
   h2 {
     font-size: 2.3rem;
   }
 }
-
 .to-glp {
   background-position: center 40px;
 }
-
 .title-information-section {
   font-size: 2.5rem;
   padding: 1rem;
   margin-top: 8rem;
 }
-
 .to-capacitation {
   background-position: -20px 110px;
 }
-
 .to-psicologa {
   background-position: center 100px;
 }
-
 .content-text {
   a {
     button {
@@ -4390,692 +4597,48 @@ summary>* {
     }
   }
 }
-
 .to-information {
   background-repeat: no-repeat;
   background-position: center center;
 }
-
 .to-contact {
   background-size: cover;
   background-position: -270px;
 }
-
 .text-inter h2 {
   font-size: 1.5rem;
 }
-
 .localitation {
   width: 80%;
   height: 12rem;
   flex-wrap: wrap;
   padding: .5rem;
 }
-
 .ubication {
   width: 70%;
   padding: .5rem;
   order: 1;
 }
-
 #stationInfo {
   padding: .5rem;
-
   #stationAddress {
     margin-top: .5rem;
     display: block;
     text-align: center;
   }
-
 }
-
 .iframe-maps {
   width: 100%;
   bottom: 12rem;
 }
-
 .card-gallery {
   width: 30%;
 }
 
-.form_personal div {
-  width: 40%;
+/* #endregion */
 
-  label,
-  input,
-  select {
-    width: 100%;
-  }
-}
 
-
-.barts {
-  height: 560px;
-}
-
-.bar-graphic {
-  height: 100% !important;
-}
-
-/* Estilos Area Unidades */
-.tabla-unidades {
-  width: 100%;
-}
-
-/******************** unidades ************************/
-#informacion_unidades {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-}
-
-.Info-Unidades {
-  margin: 2rem 0;
-  width: 90%;
-  border-radius: 3rem;
-  padding: 2rem;
-  text-align: center;
-  background-color: white;
-
-  div {
-    width: auto;
-    margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
-    border-bottom: 2.5px solid rgb(138, 138, 138);
-
-    p {
-      margin: 1rem 0;
-      margin-right: 1rem;
-    }
-  }
-}
-
-#reportes {
-  width: 90%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-#reporte_unidades {
-  width: 90%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
-
-.reporte {
-  margin: 2rem 0;
-  width: 20rem;
-  border-radius: 3rem;
-  padding: 2rem;
-  text-align: center;
-  background-color: white;
-
-  div {
-    div {
-      width: 80%;
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      border-bottom: 2.5px solid rgb(138, 138, 138);
-    }
-
-    p {
-      text-align: start;
-      margin: 1rem 0;
-      margin-right: 1.5rem;
-    }
-  }
-}
-
-.form-reportes,
-.form-estado {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-
-  div {
-    width: 90%;
-    margin: .5rem 0;
-
-    label {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    select {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    input {
-      width: 100%;
-      border-radius: 10px;
-    }
-  }
-}
-
-.form-division {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: .5rem;
-
-  div {
-    width: 90%;
-    margin: .5rem 0;
-
-    label {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    select {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    input {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    #id_nuevo {
-      width: 100%;
-
-      div {
-        width: 100%;
-      }
-    }
-  }
-}
-
-#id_nuevo {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, auto);
-  gap: 1rem;
-  width: 100%;
-}
-
-.buttons-reportes,
-.buttons-estados,
-.buttons-division {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-
-  button {
-    margin: 1rem;
-  }
-}
-
-.height-auto {
-  height: auto;
-}
-
-.contain-unidades {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-
-  form {
-    background-color: white;
-    border-radius: 20px;
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 4rem;
-
-    div {
-      margin: 0 auto;
-      width: 100%;
-      font-size: 1.4rem;
-      margin: 1rem;
-    }
-  }
-}
-
-.buttons-form-unidades {
-  width: 20%;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-evenly;
-
-  button {
-    width: 50%;
-    margin: 1rem;
-  }
-}
-
-.formulario-sarp {
-  width: 50%;
-  display: flex;
-  margin: 0 auto;
-
-  form {
-    margin: 0 auto;
-    width: 100%;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 20px;
-
-    h2 {
-      text-align: center;
-    }
-
-    div {
-      padding: 1.5rem;
-    }
-  }
-}
-
-.formulario-bienes {
-  width: 50%;
-  display: flex;
-  margin: 0 auto;
-  align-items: center;
-
-  form {
-    margin: 0 auto;
-    width: 90%;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 20px;
-
-    h2 {
-      text-align: center;
-    }
-
-    div {
-      padding: 1.5rem;
-    }
-  }
-}
-
-.formularioeliminarinmueble {
-  margin: 1rem 0;
-}
-
-.contain-detalle-bienes {
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-  text-align: start;
-  margin: 0 auto;
-}
-
-#bien-info {
-  width: 100%;
-
-  div {
-    width: 100%;
-
-    input {
-      width: 100%;
-      margin: 0 auto;
-    }
-  }
-}
-
-.contain-inputs-data {
-  width: 80%;
-}
-
-.contain-info-movimientos {
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
-
-/*
-.form-new-drones {
-  width: ;
-} */
-.buttons-sarp-form {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-
-  button {
-    width: 45%;
-  }
-}
-
-.buttons-inmuebles-form {
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-
-  button {
-    margin-top: .5rem;
-    width: 40%;
-  }
-}
-
-.formReasignacion {
-  padding: 1rem;
-  margin: 1rem 0;
-}
-
-/* Estilos de la tarjeta */
-#ultimo-reporte-card {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 320px;
-  background: linear-gradient(135deg, #b6243a, #d66e7e);
-  /* Degradado azul */
-  color: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
-  font-size: 14px;
-  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-  transform: translateY(50px);
-  opacity: 0;
-  z-index: 1000;
-  overflow: hidden;
-  font-family: "Arial", sans-serif;
-}
-
-/* Mostrar la tarjeta con animación */
-#ultimo-reporte-card.mostrar {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* Botón de cerrar */
-#cerrar-reporte {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 5px 8px;
-  transition: background 0.3s ease;
-}
-
-#cerrar-reporte:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-
-/* .is-invalid {
-  border-color: red;
-} */
-
-.cerrar-noti {
-  background: transparent;
-  border: none;
-  color: #888;
-  font-size: 16px;
-  cursor: pointer;
-  margin-left: auto;
-}
-
-.cerrar-noti:hover {
-  color: #f00;
-}
-
-
-/* Títulos */
-#ultimo-reporte-card h3 {
-  text-align: center;
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-/* Animación de entrada */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Aplicar la animación */
-#ultimo-reporte-card.mostrar {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-/* Control de texto largo */
-#ultimo-reporte-card p span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  max-width: 100%;
-}
-
-.size-font {
-  font-size: .9rem;
-}
-
-.modal-conductores-modify {
-  width: 100% !important;
-}
-
-.card-conductores-modify {
-  width: 80% !important;
-}
-
-.card-body-modify {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-content: flex-start;
-  justify-content: flex-start;
-}
-
-.dsp-flex {
-  display: flex;
-}
-
-.expand-card {
-  width: 82%;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.card-header-modify {
-  font-size: 1.5rem;
-}
-
-.form-conductores {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
-  border-radius: 10px;
-  margin: 0 auto;
-  width: 50%;
-  border-radius: 2rem;
-  background-color: #FFF;
-  padding-bottom: 2rem;
-
-  div {
-    display: flex;
-    flex-direction: column;
-    padding: 2rem;
-    width: 90%;
-    height: auto;
-
-    label {
-      margin: .8rem 0;
-    }
-  }
-
-  h3 {
-    text-align: center;
-  }
-}
-
-.nav-inventario {
-  margin-top: 2rem;
-  width: 100%;
-  height: auto;
-  display: flex;
-  justify-content: center;
-  z-index: 1;
-}
-
-.border-radius-modify {
-  position: absolute;
-  margin: 0 auto;
-  width: 80%;
-  border-radius: 20px;
-  margin: 0;
-  padding: 0;
-}
-
-.container-filter-inventario {
-  width: 100%;
-  height: auto;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  align-content: center;
-  background-color: #FFF;
-  margin-bottom: 1rem;
-  border-radius: 10px;
-  padding: 1rem !important;
-  flex-wrap: wrap;
-
-  i {
-    margin-left: .5rem;
-    font-size: 2rem;
-  }
-}
-
-.inventario-filter {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  align-content: center;
-  justify-content: center;
-}
-
-.container-modify {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.form-nueva-herramienta {
-  margin: 0 auto;
-  width: 70%;
-  background-color: #FFF;
-  padding: 3rem;
-  border-radius: 20px;
-
-  h2 {
-    margin: 0 auto;
-    width: 100%;
-    text-align: center;
-    padding-bottom: 1rem;
-  }
-
-  div {
-    margin: 0 auto;
-    width: 80%;
-    padding: 1rem;
-  }
-}
-
-.buttons-footer-tools {
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-
-  button {
-    width: 80%;
-    margin-bottom: 1rem;
-  }
-}
-
-.container-info-tool {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
-  justify-content: baseline;
-}
-
-.modal-body-modify {
-  width: 100% !important;
-}
-
-.div-responsive-table {
-  width: 100%;
-  overflow: scroll;
-}
-
-
-#confirmDeleteModal {
-  position: fixed;
-  top: 250px;
-}
-
-.buttons-row {
-  display: flex;
-  gap: .5rem;
-}
-
-.filter-asignacion {
-  display: flex;
-  gap: .5rem;
-}
-
-.highlighted {
-  background-color: #FFF9C4;
-  /* Amarillo claro */
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.highlight {
-  background-color: #ffeb3b !important;
-  /* Amarillo brillante */
-  transition: background-color 0.3s ease;
-}
-
+/* #region Estilos VEN911 */
 .contain-ven911-forms {
   width: 100%;
   margin: 0 auto;
@@ -5083,7 +4646,6 @@ summary>* {
   justify-content: center;
   flex-direction: column;
 }
-
 .form-911 {
   border-radius: 20px;
   background-color: #FFF;
@@ -5209,7 +4771,6 @@ summary>* {
     text-align: center;
   }
 }
-
 .title-ven-911 {
   width: 100%;
   background-color: #FFF;
@@ -5217,46 +4778,40 @@ summary>* {
   padding: 2rem;
   border-radius: 20px;
 }
+/* #endregion */
 
 
 
 
 
 
-/* ------------------------------- Media querys ------------------------------------------ */
+/* ------------------------------- Media querys BLOG & VEN911 ------------------------------------------ */
 
-/* @media (min-width: 1400px) {
+@media (min-width: 1400px) {
   .inicial-carrousel-one {
     height: 40rem;
   }
-
   .carousel-inner {
     height: 100%;
   }
-
   .carousel-inner img {
     object-fit: cover;
   }
-
   .content-card-comand {
     font-size: 1.5rem;
   }
-
   .information-background p {
     font-size: 1.3rem;
   }
-
   .to-glp {
     background-position: center -100px;
   }
-
   .to-capacitation {
     background-position: center 65px;
   }
   .to-psicologa {
     background-position: center 60px;
   }
-
   .content-text {
     a {
       button {
@@ -5264,88 +4819,46 @@ summary>* {
       }
     }
   }
-
   .to-information {
     background-repeat: no-repeat;
     background-position: center center;
   }
+}
 
-  .form-content {
-    height: auto;
-    padding: 2rem;
-
-    img {
-      position: initial;
-    }
-  }
-
-  .title-login {
-    font-size: 4rem;
-  }
-
-  .form-style {
-    div {
-      width: 80%;
-
-      select,
-      input {
-        width: 100%;
-      }
-    }
-  }
-
-  .modal-xl {
-    width: 90%;
-  }
-
-  .form_personal {
-    width: 100%;
-  }
-} */
-
-/* @media (max-width: 1366px) {
+@media (max-width: 1366px) {
   .icon-to-title {
     margin: 0;
   }
-
   .link-to-system {
     width: 15%;
     margin-right: 0;
   }
-
   .inicial-carrousel-one {
     margin-top: 4rem;
     width: 100%;
   }
-
   .carousel-inner img {
     object-fit: cover;
   }
-
   .content-card-comand {
     width: 45%;
     height: auto;
     font-size: 1.2rem;
     padding: 18px;
   }
-
   .contain-comand {
     align-items: center;
     align-content: center;
   }
-
   .information-background {
     width: 75%;
   }
-
   .to-capacitation {
     background-position: -20px 60px;
   }
-
   .to-psicologa {
     background-position: center 60px;
   }
-
   .content-text {
     a {
       button {
@@ -5353,221 +4866,160 @@ summary>* {
       }
     }
   }
-
   .to-information {
     background-repeat: no-repeat;
     background-position: center center;
   }
-
-  .form-content {
-    height: auto;
-    padding: 2rem;
-
-    img {
-      position: initial;
-    }
-  }
-
   .content-image {
     height: auto;
   }
+}
 
-  .form_personal {
-    width: 100%;
-  }
-} */
-
-/* @media (max-width: 1024px) {
+@media (max-width: 1024px) {
   .icon-to-title {
     margin: 0;
   }
-
   .link-to-system {
     margin: 0;
     width: 15%;
   }
-} */
+}
 
-/* @media (max-width: 990px) {
+@media (max-width: 990px) {
   .navbar-collapse {
     order: 1;
   }
-
   .link-to-system {
     margin: 0;
     width: 25%;
   }
-
   .to-information {
     background-repeat: no-repeat;
     background-position: center center;
   }
+}
 
-  .form_personal div {
-    width: 40%;
-  }
-
-  .modal-xl {
-    max-width: 80% !important;
-  }
-} */
-
-/* @media (max-width: 800px) {
+@media (max-width: 800px) {
   .nav {
     max-width: 100%;
   }
-
   .icon-to-title {
     margin: 0;
     max-width: 100%;
   }
-
   .link-to-system {
     margin: 0;
     width: 30%;
   }
-
   .inicial-carrousel-one {
     margin-top: 5rem;
     width: 100%;
   }
-
   .carousel-inner {
     height: 100%;
   }
-
   .carousel-inner img {
     object-fit: cover;
     object-position: top 80%;
   }
-
   .link-function {
     width: 100%;
   }
-
   .atention-person {
     width: 45%;
     margin-top: 10px;
   }
-
   .atention-person span {
     text-align: center;
     font-size: 14px;
   }
-
   .name-fuction h3 {
     text-align: center;
   }
-
   .card-comand {
     width: 45%;
     height: 20rem;
   }
-
   .content-card-comand {
     width: 70%;
     font-size: 17px;
     padding: 18px;
   }
-
   .contain-comand {
     align-items: center;
     flex-direction: column;
-
   }
-
   .content-card-comand h2 {
     font-size: 1.5rem;
     text-align: center;
     width: auto;
   }
-
   .client-info {
     width: 100%;
     height: 40rem;
     margin-bottom: 2rem;
   }
-
   .background-img-info {
     width: 100%;
     background-position: -310px;
   }
-
   .background-img-localitation {
     width: 100%;
     display: none;
   }
-
   .information-background h3 {
     font-size: 2rem
   }
-
   .log-social-media {
     flex-wrap: wrap;
   }
-
   .social-media {
     margin: 1rem 0;
   }
-
   .social-media a {
     margin: 0.5rem;
   }
-
   .title-blog span,
   .title-blog p {
     text-align: center;
   }
-
   .text-inter {
     margin: 0;
-
     h2 {
       font-size: 2.3rem;
     }
   }
-
   .to-glp {
     background-position: -250px 40px;
   }
-
   .title-information-section {
     font-size: 2.5rem;
     padding: 1rem;
   }
-
   .row-information {
     flex-direction: column;
   }
-
   .content-text {
     width: 90%;
   }
-
   .content-image {
     width: 90%;
-
     img {
       border-radius: 2rem;
     }
   }
-
   .order-by {
     order: 1;
   }
-
   .content-text {
     margin: 1.5rem auto;
   }
-
   .to-capacitation {
     background-position: -320px 65px;
   }
-
   .to-psicologa {
     background-position: center 60px;
   }
-
   .content-text {
     a {
       button {
@@ -5575,209 +5027,81 @@ summary>* {
       }
     }
   }
-
   .to-information {
     background-repeat: no-repeat;
     background-position: center center;
   }
-
   .title-information-section {
     margin-top: 9rem
   }
-
   .content-text {
     h3 {
       font-size: 2.5rem;
     }
   }
-
   .information-aboutme {
     h3 {
       font-size: 2rem;
     }
   }
-
   .list-valores {
     flex-direction: column;
     align-items: center;
-
     ul {
       width: 70%;
       margin: 0;
     }
-
     ul li a {
       font-size: 2rem;
-
     }
   }
-
   .content-image {
     width: 95%;
     height: auto;
   }
-
   .to-contact {
     background-size: cover;
     background-position: -270px;
   }
-
   .text-inter h2 {
     font-size: 1.5rem;
   }
-
   .localitation {
     width: 80%;
     height: 12rem;
     flex-wrap: wrap;
     padding: .5rem;
   }
-
   .ubication {
     width: 70%;
     padding: .5rem;
     order: 1;
   }
-
   #stationInfo {
     padding: .1rem;
-
     #stationAddress {
       margin-top: .5rem;
       display: block;
       text-align: center;
     }
-
   }
 
   .iframe-maps {
     width: 100%;
     bottom: 12rem;
   }
-
-  .link-to-back {
-    width: 3rem;
-
-    a {
-      padding: 0;
-    }
-  }
-
-  .icons {
-    img {
-      height: 4rem;
-    }
-  }
-
-  .title-login {
-    font-size: 2.5rem;
-  }
-
-  .icons-footer {
-    position: absolute;
-    bottom: 0;
-  }
-
-  .img-background {
-    background-position: -250px;
-  }
-
-  .form-content img {
-    height: 5rem;
-  }
-
   .card-gallery {
     width: 85%;
   }
-
-  .items-row {
-    width: 80%;
-    margin: 0 auto;
-  }
-
-  .style-two {
-    width: 25rem;
-  }
-
-  .items-list li {
-    width: 100%;
-  }
-
-  .table {
-    width: 220%;
-  }
-
-  .table-modify {
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .filter-search {
-    margin: 0;
-    width: 80%;
-    justify-content: space-between;
-  }
-
-  .filter-search-prevention {
-    width: 80%;
-    justify-content: space-between;
-  }
-
-  .division-title {
-    font-size: 1.2rem;
-  }
-
-  .barts {
-    height: 440px;
-  }
-
-  .cards-stadist-rows {
-    width: 30rem;
-  }
-
-  .data_form>form {
-    width: 100%;
-  }
-
-  .mod-title-width {
-    width: auto;
-  }
-
-  .form-style div {
-    width: 80%;
-  }
-
-  .form-style select,
-  .form-style input {
-    width: 100%;
-  }
-
-  #detalles-form {
-    width: 100%;
-  }
-
   .accion-filter {
     width: 100%;
     order: 1;
   }
-
-  .personal-register {
-    width: 100%;
-  }
-
-  .section-left {
-    section {
-      max-height: 100%;
-    }
-  }
-
   .content-video {
     width: 100%;
   }
-
   .accion-personal {
     flex-direction: column;
-
     button {
       svg {
         width: 4rem;
@@ -5795,191 +5119,123 @@ summary>* {
     width: 100%;
     padding: 0;
   }
-} */
+}
 
-/* Responsividad adicional */
-/* @media (max-width: 768px) {
-  .section-filter .input-group-text {
-    min-width: 70px;
-    font-size: 0.85rem;
-  }
-
-  .section-filter .btn i {
-    margin-right: 0 !important;
-  }
-
-  .section-filter .btn span {
-    display: none;
-  }
-  .section-filter .col-md-auto {
-    margin-bottom: 10px;
-  }
-
-  .section-filter .btn i {
-    margin-right: 0.3rem;
-  }
+@media (max-width: 768px) {
   #bar-chart-911{
     box-sizing: content-box !important;
   }
-
   .contain-ven911-forms {
     form {
       width: 90%;
-
       h2 {
         width: 100%;
       }
     }
   }
-
   .contain-cards-acordion {
     display: flex;
     flex-direction: column;
     width: 100%;
     align-items: center;
   }
+}
 
-} */
-
-/* Responsive */
-/* @media (max-width: 768px) {
-  .filter-form {
-    grid-template-columns: 1fr;
-  }
-
-  .filter-actions {
-    height: auto;
-    justify-content: flex-start;
-    margin-top: 8px;
-  }
-
-  .family-cards-container {
-      grid-template-columns: 1fr;
-  }
-  .perfil-header{
-    flex-direction: column;
-    margin: 0 auto;
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-    div{
-      margin: 0 auto;
-      text-align: center;
-    }
-  }
-} */
-
-/* @media (max-width: 480px) {
-  .nav-item {
-    width: 45%;
-    text-align: center;
-  }
-
+@media (max-width: 480px) {
   .icon-to-title {
     margin: 0 3rem;
     width: 70%;
     order: -1;
-  }
 
+    .icon {
+      img {
+        width: 3rem;
+        margin: 0 0.5rem;
+      }
+    }
+  }
   .navbar-toggler {
     width: auto;
   }
-
+   .navbar-toggler-icon{
+    width: 2.2rem;
+  }
+  
   .link-to-system {
     margin: 0;
     width: 45%;
   }
-
   .inicial-carrousel-one {
     margin-top: 8rem;
     width: 100%;
   }
-
   .carousel-inner {
     height: 100%;
   }
-
   .carousel-inner img {
     object-fit: cover;
     object-position: top 80%;
   }
-
   .link-function {
     width: 100%;
   }
-
   .atention-person {
     width: 45%;
     margin-top: 10px;
   }
-
   .atention-person span {
     text-align: center;
     font-size: 14px;
   }
-
   .name-fuction h3 {
     text-align: center;
   }
-
   .card-comand {
     width: 95%;
     height: 20rem;
   }
-
   .content-card-comand {
     width: 100%;
     font-size: 17px;
     padding: 18px;
   }
-
   .content-card-comand h2 {
     font-size: 1.5rem;
     text-align: center;
     width: auto;
   }
-
   .segundo .contain-comand .two-comand {
     order: -1;
   }
-
   .client-info {
     width: 100%;
     height: 40rem;
     margin-bottom: 2rem;
   }
-
   .background-img-info {
     width: 100%;
     background-position: -310px;
   }
-
   .background-img-localitation {
     width: 100%;
     display: none;
   }
-
   .information-background h3 {
     font-size: 1.5rem
   }
-
   .log-social-media {
     flex-wrap: wrap;
   }
-
   .social-media {
     margin: 1rem 0;
   }
-
   .social-media a {
     margin: 0.5rem;
   }
-
   .title-blog span,
   .title-blog p {
     text-align: center;
   }
-
   .text-inter {
     margin: 0;
 
@@ -5987,61 +5243,46 @@ summary>* {
       font-size: 2.3rem;
     }
   }
-
   .to-glp {
     background-position: -550px 40px;
   }
-
   .title-information-section {
     font-size: 2.5rem;
     padding: 1rem;
   }
-
   .row-information {
     flex-direction: column;
   }
-
   .content-text {
     width: 90%;
   }
-
   .content-image {
     width: 90%;
-
     img {
       border-radius: 2rem;
     }
   }
-
   .order-by {
     order: 1;
   }
-
   .content-text {
     margin: 1.5rem auto;
   }
-
   .to-brigate {
     background-position: center 40px;
   }
-
-
   .to-prevencion {
     background-position: -280px 40px;
   }
-
   .to-capacitation {
     background-position: -400px 130px;
   }
-
   .image-information {
     width: 100%;
   }
-
   .to-psicologa {
     background-position: center 130px;
   }
-
   .content-text {
     a {
       button {
@@ -6049,437 +5290,93 @@ summary>* {
       }
     }
   }
-
-
   .to-information {
     background-repeat: no-repeat;
     background-position: -350px center;
   }
-
-
   .title-information-section {
     margin-top: 9rem
   }
-
   .content-text {
     h3 {
       font-size: 2.5rem;
     }
   }
-
-
   .information-aboutme {
     h3 {
       font-size: 2rem;
     }
   }
-
   .list-valores {
     flex-direction: column;
     align-items: center;
-
     ul {
       width: 70%;
       margin: 0;
     }
-
     ul li a {
       font-size: 2rem;
-
     }
   }
-
   .content-image {
     width: 95%;
     height: auto;
   }
-
-
   .to-contact {
     background-size: cover;
     background-position: -270px;
   }
-
   .text-inter h2 {
     font-size: 1.5rem;
   }
-
   .localitation {
     width: 80%;
     height: auto;
     flex-wrap: wrap;
     padding: .5rem;
   }
-
   .ubication {
     width: 70%;
     padding: .5rem;
     order: 1;
   }
-
   #stationInfo {
     padding: .5rem;
-
     #stationAddress {
       margin-top: .5rem;
       display: block;
       text-align: center;
     }
-
   }
-
   .iframe-maps {
     width: 100%;
     bottom: 12rem;
   }
-
-
-  .icons {
-    img {
-      width: 3rem;
-    }
-  }
-
-  .title-login {
-    font-size: 2.5rem;
-  }
-
-  .link-to-back {
-    a {
-      padding: 0;
-    }
-  }
-
-  .form-content {
-    padding: 1rem;
-  }
-
-  .form-content img {
-    height: 5rem;
-  }
-
-  .icons-footer {
-    position: absolute;
-    bottom: 0;
-  }
-
-  .img-background {
-    background-position: -250px;
-  }
-
-
-  .user-name {
-    p {
-      font-size: 1rem
-    }
-  }
-
-  .card-parroquies {
-    width: 12rem;
-  }
-
-  .graphic-statistics {
-    width: 100%;
-    height: 350px;
-  }
-
-  .title-stadist-parroquies {
-    width: 50%;
-  }
-
-  .progress-bar {
-    p {
-      font-size: .9rem;
-    }
-  }
-
-  .progress {
-    margin: 1rem 0;
-  }
-
-  .title-procediments {
-    font-size: 1.3rem;
-  }
-
-  .offcanvas {
-    width: 70% !important;
-  }
-
-  .nav-item {
-    width: 100%;
-    text-align: left;
-  }
-
   .tool-personal {
     flex-direction: column;
     align-items: center;
     align-content: center;
     justify-content: center;
   }
-
-  .input-group {
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-
-  }
-
   .accion-filter {
     flex-direction: column;
     width: 80%;
     order: 1;
   }
-
   .accion-personal {
     width: 80%;
     justify-content: space-between;
     align-items: center;
     align-content: center;
-
     button {
       margin-right: 0;
     }
   }
-
-  .table {
-    width: 260%;
-  }
-
-  .table-modify {
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .modal-xl {
-    max-width: 100% !important;
-  }
-
-  .modal-body-three {
-    width: 97%;
-  }
-
-  .form_personal div {
-    width: 78%;
-  }
-
-  .form-style {
-    div {
-      width: 90%;
-    }
-
-    input,
-    select {
-      width: 100%;
-    }
-  }
-
-  .margin-bottom {
-    width: 90%;
-  }
-
-  .mod-title-width {
-    width: auto;
-  }
-
-  .title-icon h1 {
-    font-size: 1.2rem;
-  }
-
-  .title-icon img {
-    width: 2.2rem;
-    margin-right: 1rem;
-  }
-
-  .navbar-toggler-icon {
-    width: 2.2rem;
-  }
-
-  .div-user-name {
-    padding: 0;
-    justify-content: center;
-  }
-
-  .section-filter {
-    flex-direction: column;
-  }
-
-  .filter-search-prevention {
-    width: 100%;
-
-    input,
-    select {
-      width: 17rem;
-    }
-  }
-
-  .totals-procediments {
-    width: 55%;
-    align-self: flex-start;
-    text-align: start;
-  }
-
-  .table {
-    width: 380%;
-  }
-
-  .table-modify {
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .division-title {
-    margin-left: 0.5rem;
-  }
-
-  .section-left section {
-    max-height: 100%;
-  }
-
-  .stadist-column {
-    width: 100%;
-  }
-
-  .graphic-bar {
-    width: 100%;
-  }
-
-  .barts {
-    height: 510px;
-  }
-
-  .bar-graphic {
-    padding: 0 1rem;
-  }
-
-  .title-bar {
-    width: 100%;
-  }
-
-  .feed-instagram {
-    width: 100%;
-  }
-
-  .data_form>form {
-    width: 100%;
-  }
-
-  .buttons-items {
-    flex-direction: column;
-
-    button {
-      margin-bottom: 1rem;
-    }
-  }
-
-  .parte-b {
-    align-items: center;
-
-    div {
-      margin: 0;
-    }
-  }
-
-  .parte-a {
-    flex-direction: column;
-    align-items: center;
-
-    h2 {
-      font-size: 1.2rem;
-    }
-
-    div {
-      justify-content: flex-start;
-      width: 100%;
-      flex-direction: column;
-      margin: 0;
-
-      div {
-        width: 100%;
-        justify-content: flex-start;
-
-        select {
-          width: 100% !important;
-        }
-
-        input {
-          width: 100% !important;
-        }
-      }
-    }
-  }
-
-  .buttons-solicitud {
-    flex-direction: column;
-
-    button {
-      width: 100%;
-    }
-
-  }
-
-  .nav-tabs {
-    flex-direction: column;
-    margin: 0 auto;
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-    text-align: center;
-    width: 100%;
-    position: relative;
-
-    ul {
-      text-align: center;
-    }
-  }
-
-  .container-filter-inventario {
-    flex-direction: column;
-    text-align: center;
-    font-size: 1.2rem;
-
-    span {
-      width: 100%;
-      margin-bottom: 1rem;
-    }
-
-    input {
-      margin-bottom: 1rem;
-
-    }
-
-
-  }
-
-  .inventario-filter {
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    flex-direction: column;
-  }
-
-  .form-nueva-herramienta {
-    width: 100%;
-    padding: 1rem;
-    margin: 0 auto;
-  }
-
   .contain-cards-acordion {
     display: flex;
     flex-direction: column;
     width: 90%;
     align-items: center;
-  }
-  .filter-form{
-    flex-wrap: wrap;
-  }
-  .filter-group{
-    width: 100%;
-    margin-bottom: 1rem;
-    gap: 1rem
-  }
-  .step-links{
-    flex-direction: column;
   }
   .form-911{
     width: 90%;
@@ -6487,245 +5384,149 @@ summary>* {
       width: 100%;
     }
   }
-  .perfil-detalles{
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .detalle-seccion{
-    width: 100%;
-    h2{
-      width: 100%;
-    }
-    .detalle-item{
-      display: flex;
-      flex-direction: column;
-      align-items: start;
-    }
-    .ascensos-container{
-      padding: 3rem;
-      justify-content: center;
-      .boton_agregar_ascenso{
-        margin: 0;
-      }
-      td{
-        width: auto !important;
-      }
-    }
-    .responsive-scroll{
-      width: 100%;
-      overflow-x: scroll;
-    }
-    .tabla_ascensos{
-      width: 120% !important;
-    }
+}
 
-  }
-
-  .perfil-empleado{
-    max-width: 100%;
-  }
-  .container{
-    margin: 0 auto;
-    max-width: 100%;
-  }
-  .responsive-scroll{
-      width: 100%;
-      overflow-x: scroll;
-      display: block !important;
-    }
-  .tabla_ascensos{
-    width: 500% !important;
-  }
-  .ascensos-container{
-    width: 100%;
-    justify-content: center;
-    padding: 0 !important;
-    td{
-      width: calc(100%/3.4);
-    }
-    input{
-      font-size: 15px;
-    }
-  }
-} */
-
-/* @media (max-width: 375px) {
+@media (max-width: 375px) {
   .nav {
     width: 100%;
   }
-
-  .nav-item {
-    width: 45%;
-    text-align: center;
-  }
-
   .icon-to-title {
     margin: 0;
     width: 100%;
     order: -1;
-  }
 
+    .icon {
+      img {
+        width: 3rem;
+        margin: 0 0.5rem;
+      }
+    }
+  }
   .link-to-system {
     margin: 0;
     width: 45%;
   }
-
   .inicial-carrousel-one {
     margin-top: 6rem;
     width: 100%;
   }
-
   .carousel-inner {
     height: 100%;
   }
-
   .carousel-inner img {
     object-fit: cover;
     object-position: top 80%;
   }
-
   .link-function {
     width: 100%;
   }
-
   .atention-person {
     width: 45%;
     margin-top: 10px;
   }
-
   .atention-person span {
     text-align: center;
     font-size: 14px;
   }
-
   .name-fuction h3 {
     text-align: center;
   }
-
   .card-comand {
     width: 95%;
     height: 20rem;
   }
-
   .content-card-comand {
     width: 100%;
     font-size: 17px;
     padding: 18px;
   }
-
   .content-card-comand h2 {
     font-size: 1.5rem;
     text-align: center;
     width: auto;
   }
-
   .segundo .contain-comand .two-comand {
     order: -1;
   }
-
   .client-info {
     width: 100%;
     height: 40rem;
     margin-bottom: 2rem;
   }
-
   .background-img-info {
     width: 100%;
     background-position: -310px;
   }
-
   .background-img-localitation {
     width: 100%;
     display: none;
   }
-
   .information-background h3 {
     font-size: 1.5rem
   }
-
   .log-social-media {
     flex-wrap: wrap;
   }
-
   .social-media {
     margin: 1rem 0;
   }
-
   .social-media a {
     margin: 0.5rem;
   }
-
   .title-blog span,
   .title-blog p {
     text-align: center;
   }
-
   .text-inter {
     margin: 0;
-
     h2 {
       font-size: 2.3rem;
     }
   }
-
   .to-glp {
     background-position: -550px 40px;
   }
-
   .title-information-section {
     font-size: 2.5rem;
     margin-bottom: 0;
   }
-
   .row-information {
     flex-direction: column;
     padding: .5rem;
   }
-
   .content-text {
     width: 90%;
   }
-
   .content-image {
     width: 90%;
     img {
       border-radius: 2rem;
     }
   }
-
   .order-by {
     order: 1;
   }
-
   .content-text {
     margin: 1.5rem auto;
   }
-
   .to-brigate {
     background-position: center 40px;
   }
-
   .to-services-medicos {
     background-position: right top;
   }
-
   .to-prevencion {
     background-position: -280px 40px;
   }
-
   .to-capacitation {
     background-position: -400px 130px;
   }
-
   .image-information {
     width: 100%;
   }
-
   .to-psicologa {
     background-position: center 130px;
   }
-
   .content-text {
     a {
       button {
@@ -6733,268 +5534,38 @@ summary>* {
       }
     }
   }
-
   .to-information {
     background-repeat: no-repeat;
     background-position: -400px center;
   }
-
   .title-information-section {
     margin-top: 9rem
   }
-
   .content-text {
     h3 {
       font-size: 2.5rem;
     }
   }
-
   .information-aboutme {
     h3 {
       font-size: 2rem;
     }
   }
-
   .list-valores {
     ul {
       width: 100%;
       margin: 0;
     }
-
     ul li a {
       font-size: 1.3rem;
-
     }
   }
-
-  .content-image {
-    width: 100%;
-    height: auto;
-  }
-
-  .icons {
-    img {
-      width: 3.5rem;
-    }
-  }
-
-  .img-background {
-    background-position: -445px;
-  }
-
-  .title-login {
-    font-size: 2rem;
-  }
-
-  .link-to-back {
-    a {
-      padding: 0;
-    }
-  }
-
-  .form-content img {
-    height: 5rem;
-  }
-
-  .icons-footer {
-    position: absolute;
-    bottom: 0;
-  }
-
-  .card-parroquies {
-    width: 45%;
-
-    p {
-      font-size: 1rem;
-    }
-
-    span {
-      font-size: 1.5rem;
-    }
-  }
-
-  #btn-total-one,
-  #btn-month-one,
-  #btn-today-one,
-  #btn-total,
-  #btn-month,
-  #btn-today,
-  #total,
-  #mes {
-    padding: 0 .5rem;
-  }
-
-  .title-procediments {
-    font-size: 1.1rem;
-  }
-
-  .user-name {
-    p {
-      font-size: .9rem;
-    }
-  }
-
-  .items-row {
-    flex-direction: column;
-  }
-
-  .style-two {
-    width: 100%;
-  }
-
-  .items-list li {
-    margin: .5rem 0;
-  }
-
-  .title-stadist-parroquies {
-    width: 70%;
-  }
-
-  .graphic-statistics {
-    height: 400px;
-  }
-
-  .analitics-filters {
-    width: 80%;
-  }
-
-  .tools-exit-help {
-    img {
-      width: 1.5rem;
-    }
-  }
-
-  .title-icon {
-    margin-left: .3rem;
-  }
-
-  .title-icon img {
-    width: 1.8rem;
-    margin-left: 1.2rem;
-  }
-
-  .user-name {
-    p {
-      font-size: 0.8rem;
-    }
-  }
-
-  .offcanvas {
-    width: 80% !important;
-  }
-
-  .nav-item {
-    width: 80%;
-    text-align: start;
-  }
-
-  .progress {
-    margin-top: 0;
-  }
-
-  .division-title {
-    font-size: 1rem
-  }
-
-  .accion-personal {
-    font-size: 1.1rem;
-  }
-
   .accion-personal button svg {
     max-width: 70%;
   }
-
-  .title-icon {
-    font-size: 1.1rem;
-  }
-
-  .personal-register {
-    width: 90%;
-  }
-
-  .form-style {
-    width: 100%;
-  }
-
-  .data_form form {
-    width: 85%;
-  }
-
-  .totals-procediments {
-    width: 80%;
-  }
-
-  .filter-search-prevention {
-    flex-direction: column;
-
-    input,
-    select {
-      width: 10rem;
-    }
-
-    .filter-search-prevention {
-      span {
-        width: 100%;
-      }
-
-      input {
-        width: 100%;
-      }
-    }
-  }
-
-  .table {
-    width: 520%;
-  }
-
-  .table-modify {
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .info-modal p {
-    font-size: .9rem;
-  }
-
-  .title-icon h2 {
-    font-size: 1.5rem;
-  }
-
-  .items-list-procediments {
-    li {
-      font-size: 1rem;
-    }
-  }
-
-  .form-style {
-    width: 20rem;
-  }
-
-  .input-group-text {
-    font-size: 0.8rem;
-  }
-
-  .offcanvas-title {
-    font-size: 1.2rem;
-  }
-
-  .form-feed-instagram {
-    button {
-      width: 15rem;
-    }
-  }
-
-  .buttons-items {
-    flex-direction: column;
-
-    button {
-      margin-bottom: 1rem;
-    }
-  }
-
   .accion-personal {
+    font-size: 1.1rem;
     flex-direction: column;
-
     button {
       svg {
         width: 4rem;
@@ -7002,222 +5573,80 @@ summary>* {
       }
     }
   }
-
-  .contain-unidades {
-    form {
-      width: auto;
-      font-size: 2.5rem;
-
-      h2 {
-        font-size: 2rem;
-        text-align: center;
-      }
-    }
-  }
-
-  .div-analytics {
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-  }
-
-  .progress-bar {
-    width: 80%;
-  }
-
-  .buttons-solicitud {
-    a {
-      width: 100%;
-    }
-  }
-
-  .section-filter {
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-  }
-
-  .filter-search {
-    margin: 0;
-    width: 100%;
-    justify-content: center;
-  }
-
   .contain-cards-acordion {
     display: flex;
     flex-direction: column;
     width: 100%;
     align-items: center;
   }
-  .container-media-resolution{
-    max-width: 100% !important;
-  }
-} */
+}
 
-/* @media (max-width: 320px) {
+@media (max-width: 320px) {
   .icon-to-title {
     justify-content: center;
+
+    .icon {
+      img {
+        width: 3rem;
+        margin: 0 0.5rem;
+      }
+    }
   }
 
+ 
   .title-blog {
     width: auto;
-
     span {
       font-size: 0.9rem;
     }
-
     p {
       font-size: 1.1rem;
     }
   }
-
   .link-to-system {
     height: 2.2rem;
     width: 35%;
     font-size: 1rem;
     align-items: center;
-
     svg {
       width: 1.5rem;
     }
   }
-
-  .icon {
-    img {
-      width: 3rem;
-      margin: 0 0.5rem;
-    }
-  }
-
   .inicial-carrousel-one {
     margin-top: 5rem;
   }
-
   .to-capacitation {
     background-position: -406px 85px;
   }
-
   .text-inter {
     h2 {
       font-size: 2rem;
     }
   }
-
   .to-psicologa {
     background-position: center 85px;
   }
-
   .iframe-maps {
     bottom: 13rem;
   }
-
-  .nav-item {
-    width: 90%;
-  }
-
-  .form-style {
-    width: 16rem;
-  }
-
-  .filter-search-prevention {
-    input {
-      width: 8rem;
-    }
-  }
-
-  .totals-procediments {
-    b {
-      font-size: 1rem;
-    }
-
-    span {
-      font-size: 0.9rem;
-    }
-  }
-
-  .table {
-    width: 600%;
-  }
-
-  .table-modify {
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .barts {
-    height: 320px;
-  }
-
-  .feed-instagram {
-    padding: 1rem;
-  }
-
-  .form-feed-instagram {
-    flex-direction: column;
-    width: 100%;
-
-    button {
-      margin: .5rem auto;
-      width: 70%;
-    }
-  }
-
-  .buttons-items {
-    flex-direction: column;
-
-    button {
-      margin-bottom: 1rem;
-    }
-  }
-
-  .nav-tabs {
-    flex-direction: column;
-    margin: 0 auto;
-    align-items: center;
-    align-content: center;
-    justify-content: center;
-    text-align: center;
-    width: 100%;
-    position: relative;
-
-    ul {
-      text-align: center;
-    }
-  }
-
-  .container-filter-inventario {
-    flex-direction: column;
-  }
-
-  .form-nueva-herramienta {
-    width: 100%;
-    padding: 1rem;
-    margin: 0 auto;
-  }
-
   .contain-cards-acordion {
     display: flex;
     flex-direction: column;
     width: 100%;
     align-items: center;
   }
-
   .bar-chart-911 {
     width: 100%;
     height: 100px;
   }
-
   .contain-ven911-forms {
     form {
       width: 100%;
-
       h2 {
         width: 100%;
       }
     }
   }
-
   .filter-control-ven911,
   .filter-cards-acordion,
   .title-ven-911 {
@@ -7230,54 +5659,5 @@ summary>* {
   .chart-pie-ven911{
     margin-bottom: 6rem;
   }
-
-  .step-links{
-    flex-direction: column;
-  }
-  .current{
-    width: 100%;
-  }
-  .container-media-resolution{
-    max-width: 100% !important;
-  }
-
-  .perfil-empleado{
-    max-width: 100%;
-  }
-  .container{
-    margin: 0 auto;
-    max-width: 100%;
-  }
-  .responsive-scroll{
-      width: 100%;
-      overflow-x: scroll;
-      display: block !important;
-    }
-  .tabla_ascensos{
-    width: 500% !important;
-  }
-  .ascensos-container{
-    width: 100%;
-    justify-content: center;
-    padding: 0 !important;
-    td{
-      width: calc(100%/3.4);
-    }
-    input{
-      font-size: 15px;
-    }
-  }
-  .family-card-header{
-    flex-direction: column;
-    gap: 1;
-  }
-  .noti-container,
-  .noti-container-comandante{
-    width: 90%;
-    left: 5px;
-  }
-} */
-
-.text-center-two{
-  text-align: center;
 }
+

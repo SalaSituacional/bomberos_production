@@ -11,9 +11,9 @@ urlpatterns = [
     path('conductores/', conductores, name='conductores'),
     path('agregar_conductores/', agregar_conductor, name='agregar_conductor'),
     path('conductores/<int:id>/editar/', editar_conductor, name='editar_conductor'),
+    path('api/info_conductores/<int:id>/', api_conductores, name='info_conductores'),
 
-    # API Endpoints
-    path('api/conductores/', api_conductores, name='api_conductores'),
+    # API Endpointss
     path('api/conductores/<int:id>/', api_eliminar_conductor, name='api_eliminar_conductor'),
 
     path('formularioUnidades/', View_Form_unidades, name='formulario_unidades'),
@@ -23,6 +23,7 @@ urlpatterns = [
     path('reasignar_division/', reasignar_division, name="reasignar_division"),
     path('obtener_info_unidad/<int:id>/', obtener_info_unidad, name="obtener_info_unidad"),
     path('mostrar_informacion/<int:id>/', mostrar_informacion, name="mostrar_informacion"),
+    path('unidades/eliminar_reporte/<int:reporte_id>/', eliminar_reporte, name='eliminar_reporte'),
 
     path("api/conteo_unidades/", contar_estados_unidades, name="conteo_unidades"),
     path("api/reportes_combustible/", contar_reportes_combustible, name="reportes_combustible"),
@@ -42,27 +43,8 @@ urlpatterns = [
     path('herramientas/editar/<int:pk>/', editar_herramienta, name='editar-herramienta'),
     path('herramientas/eliminar/<int:pk>/', eliminar_herramienta, name='eliminar-herramienta'),
     
-    # path('unidades_inventario/', herramienta_list, name='inventario_unidades'),
-    # path('herramientas/nueva/', herramienta_create, name='herramienta-create'),
-    # path('herramientas/<int:pk>/editar/', herramienta_update, name='herramienta-update'),
-    
     # # Asignaciones
     path('asignaciones/', asignacion_unidades, name='asignacion-unidades'),
     path('asignaciones/<int:unidad_id>/', detalle_asignacion, name='detalle-asignacion'),
     path('asignaciones/devolver/<int:asignacion_id>/', devolver_herramienta, name='devolver-herramienta'),
-
-    # path('asignaciones/', asignacion_list, name='asignacion-list'),
-    # path('asignaciones/nueva/', asignacion_create, name='asignacion-create'),
-    # path('asignaciones/<int:pk>/devolver/', asignacion_devolver, name='asignacion-devolver'),
-    
-    # # Inventarios
-    # path('inventarios/nuevo/', inventario_create, name='inventario-create'),
-    # path('inventarios/<int:pk>/', inventario_detail, name='inventario-detalle'),
-    
-    # path('inventarios/', inventario_list, name='inventario-list'),
-    # path('inventarios/ajax/<int:pk>/', inventario_detail_ajax, name='inventario-detail-ajax'),
-
-    # # Reportes
-    # path('reportes/', reporte_inventario, name='reporte-inventario'),
-
 ]

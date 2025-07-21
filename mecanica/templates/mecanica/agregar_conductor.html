@@ -9,6 +9,7 @@
 {% endif %}
 
 {% load static %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="general-dashboard">
@@ -31,75 +32,174 @@
     </section>
   </div>
 </div>
-<form method="post" enctype="multipart/form-data" class="form-conductores">
-  {% csrf_token %}
-  <!-- Datos Personales -->
-  <h3>Datos Personales</h3>
-  <div>
-    <label for="{{ form.personal.id_for_label }}">Personal:</label>
-    {{ form.personal }}
-    <label for="{{ form.fecha_vencimiento.id_for_label }}">Fecha Vencimiento (Cédula):</label>
-    {{ form.fecha_vencimiento }}
-  </div>
 
-  <!-- Licencias de Conducir -->
-  <h3>Licencias de Conducir</h3>
-  {{ licencia_formset.management_form }}
-  <div id="licencias-container">
-    {% for form in licencia_formset %}
-    <div class="licencia-wrapper">
-      <label for="{{ form.tipo_licencia.id_for_label }}">Tipo:</label>
-      {{ form.tipo_licencia }}
-      <label for="{{ form.numero_licencia.id_for_label }}">Número:</label>
-      {{ form.numero_licencia }}
-      <label for="{{ form.fecha_emision.id_for_label }}">Fecha Emisión:</label>
-      {{ form.fecha_emision }}
-      <label for="{{ form.fecha_vencimiento.id_for_label }}">Fecha Vencimiento:</label>
-      {{ form.fecha_vencimiento }}
-      <label for="{{ form.organismo_emisor.id_for_label }}">Organismo Emisor:</label>
-      {{ form.organismo_emisor }}
+<div class="container-personal-form">
+  <div class="row justify-content-center">
+    <div class="w-100">
+      <form method="post" class="needs-validation">
+
+        <!-- Datos Iniciales -->
+        <div class="form-section">
+          <h2>Datos Personales</h2>
+          <div class="row g-3">
+
+            <!-- Datos Personales -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {% render_field form.personal class="form-select" %}
+                  <label for="{{ form.personal.id_for_label }}" class="form-label">Personal:</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating">
+                  {% render_field form.fecha_vencimiento class="form-control" %}
+                  <label for="{{ form.fecha_vencimiento.id_for_label }}" class="form-label">Fecha Vencimiento (Cédula):</label>
+                </div>
+              </div>
+
+          </div>          
+        </div>
+
+        <!-- Licencia de Conducir -->
+        <div class="form-section">
+          <h2>Licencias de Conducir <br> <small class="text-muted">(Puede agregar múltiples)</small></h2>
+          {{ licencia_formset.management_form }}
+          <div id="licencias-forms-container"> {# Changed ID for consistency #}
+              {% for form in licencia_formset %}
+              <div class="dynamic-form mb-3 p-3 border rounded position-relative" id="licencia-{{ forloop.counter0 }}-form">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h3 class="m-0 text-success" style="font-size: 1.5rem; padding-left: .5rem;">
+                          <i class="bi bi-journal-check me-2"></i> {# New icon for licenses #}
+                          Licencia {% if not forloop.first %}#{{ forloop.counter }}{% endif %}
+                      </h3>
+
+                      {% if form.instance.pk %}
+                      <div class="form-check form-switch">
+                          <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}"
+                                class="form-check-input" {% if form.DELETE.value %}checked{% endif %}>
+                          <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
+                              Eliminar
+                          </label>
+                      </div>
+                      {% else %}
+                      {% if not forloop.first %} {# Only show remove button for dynamically added forms, not the initial empty one #}
+                          <button type="button" class="btn btn-danger btn-sm remove-licencia-btn">
+                              <i class="bi bi-trash"></i> Eliminar
+                          </button>
+                          {% endif %}
+                      {% endif %}
+                  </div>
+
+                  {{ form.id }}
+                  {{ form.conductor }} {# Assuming a 'conductor' foreign key here #}
+
+                  <div class="row g-3">
+                      {% for field in form.visible_fields %}
+                      {% if field.name != "DELETE" %} {# Excluimos el campo DELETE de los campos visibles #}
+                      <div class="col-md-6"> {# Adjust column size as needed for better layout #}
+                          <div class="form-floating">
+                              {{ field }}
+                              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                              {% if field.errors %}
+                              <div class="invalid-feedback d-block">
+                                  {{ field.errors }}
+                              </div>
+                              {% endif %}
+                          </div>
+                      </div>
+                      {% endif %}
+                      {% endfor %}
+                  </div>
+              </div>
+              {% endfor %}
+          </div>
+          <button class="btn btn-success mt-3" type="button" id="add-licencia-form">
+              <i class="bi bi-plus-circle me-2"></i> Agregar otra licencia
+          </button>
+        </div>
+
+        <!-- Certificados Medicos -->
+        <div class="form-section">
+          <h2>Certificados Médicos</h2>
+          {{ certificado_formset.management_form }}
+          <div id="certificados-forms-container"> {# Changed ID for consistency #}
+              {% for form in certificado_formset %}
+              <div class="dynamic-form mb-3 p-3 border rounded position-relative" style="border: none !important;" id="certificado-{{ forloop.counter0 }}-form">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                      {% if form.instance.pk %}
+                      <div class="form-check form-switch">
+                          <input type="checkbox" name="{{ form.DELETE.html_name }}" id="{{ form.DELETE.id_for_label }}"
+                                class="form-check-input" {% if form.DELETE.value %}checked{% endif %}>
+                          <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
+                              Eliminar
+                          </label>
+                      </div>
+                      {% else %}
+                      {% if not forloop.first %} {# Only show remove button for dynamically added forms, not the initial empty one #}
+                          <button type="button" class="btn btn-danger btn-sm remove-certificado-btn">
+                              <i class="bi bi-trash"></i> Eliminar
+                          </button>
+                          {% endif %}
+                      {% endif %}
+                  </div>
+
+                  {{ form.id }}
+                  {{ form.conductor }} {# Assuming a 'conductor' foreign key here #}
+
+                  <div class="row g-3">
+                      {# Loop through visible fields, excluding the DELETE field itself #}
+                      {% for field in form.visible_fields %}
+                          {% if field.name != "DELETE" %}
+                          <div class="col-md-4"> {# Adjust column size as needed for better layout #}
+                              <div class="form-floating">
+                                  {# Apply specific classes for textareas if 'observaciones' is the last field #}
+                                  {% if field.field.widget.input_type == 'textarea' %}
+                                      {{ field }}
+                                  {% else %}
+                                      {{ field }}
+                                  {% endif %}
+                                  <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                  {% if field.errors %}
+                                  <div class="invalid-feedback d-block">
+                                      {{ field.errors }}
+                                  </div>
+                                  {% endif %}
+                              </div>
+                          </div>
+                          {% endif %}
+                      {% endfor %}
+                  </div>
+              </div>
+              {% endfor %}
+          </div>
+        </div>
+
+        <!-- Observaciones Generales -->
+        <div class="form-section">
+            <h2>Observaciones Generales</h2>
+            <div class="row g-3">
+              <div class="col-md-12">
+                <div class="form-floating">
+                  {% render_field form.observaciones_generales class="form-control" %}
+                  <label for="{{ form.observaciones_generales.id_for_label }}" class="form-label">Observaciones Generales:</label>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <section class="text-center">
+          <a href="{% url 'conductores' %}" class="btn btn-danger btn-lg">Cancelar</a>
+          <button class="btn btn-danger btn-lg" type="submit">Guardar Conductor</button>
+        </section>
+      </form>
     </div>
-    {% endfor %}
   </div>
-  <button class="btn btn-danger" type="button" id="add-licencia">Agregar otra licencia</button>
-
-  <!-- Certificados Médicos -->
-  <h3>Certificados Médicos</h3>
-  {{ certificado_formset.management_form }}
-  <div id="certificados-container">
-    {% for form in certificado_formset %}
-    <h5>Certificado #{{ forloop.counter }}</h5>
-    {% if form.instance.pk %}
-    {{ form.DELETE }}
-    <label for="{{ form.DELETE.id_for_label }}">Eliminar</label>
-    {% endif %}
-    <label for="{{ form.fecha_emision.id_for_label }}">Fecha Emisión:</label>
-    {{ form.fecha_emision }}
-    <label for="{{ form.fecha_vencimiento.id_for_label }}">Fecha Vencimiento:</label>
-    {{ form.fecha_vencimiento }}
-    <label for="{{ form.centro_medico.id_for_label }}">Centro Médico:</label>
-    {{ form.centro_medico }}
-    <label for="{{ form.medico.id_for_label }}">Médico:</label>
-    {{ form.medico }}
-    <label for="{{ form.observaciones.id_for_label }}">Observaciones:</label>
-    {{ form.observaciones }}
-  </div>
-  {% endfor %}
-
-  <!-- Observaciones Generales -->
-  <h3>Observaciones Generales</h3>
-  <div class="">
-    {{ form.observaciones_generales }}
-  </div>
-
-  <!-- Botones de Acción -->
-  <section class="buttons">
-    <a href="{% url 'conductores' %}" class="btn btn-danger">Cancelar</a>
-    <button class="btn btn-danger" type="submit">Guardar Conductor</button>
-  </section>
-</form>
-
 </div>
+
+
+
 <footer class="footer">
   <section class="text-reserved">
     <h5>2025 © Cuerpo de bomberos - San Cristobal</h>
@@ -107,44 +207,6 @@
 </footer>
 
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const addLicenciaBtn = document.getElementById('add-licencia');
-    const licenciasContainer = document.getElementById('licencias-container');
-    const licenciaFormTemplate = licenciasContainer.firstElementChild.cloneNode(true); // Clonar el primer formulario como plantilla
-    const totalForms = document.querySelector('input[name="licencias-TOTAL_FORMS"]');
-    let formNum = parseInt(totalForms.value);
-
-    addLicenciaBtn.addEventListener('click', function () {
-      const newForm = licenciaFormTemplate.cloneNode(true);
-
-      // Actualizar todos los atributos name/id con el nuevo índice
-      const oldPrefix = 'licencias-0-'; // Asumimos que el primer formulario tiene índice 0 como base
-      const newPrefix = `licencias-${formNum}-`;
-      const regex = new RegExp(oldPrefix.replace('-', '\\-'), 'g'); // Escapar el guion para la regex
-
-      newForm.innerHTML = newForm.innerHTML.replaceAll(regex, newPrefix);
-
-      // Limpiar valores de los campos clonados
-      const inputs = newForm.querySelectorAll('input, select, textarea');
-      inputs.forEach(input => {
-        if (input.type !== 'hidden' && !input.name.includes('DELETE')) {
-          if (input.type === 'checkbox' || input.type === 'radio') {
-            input.checked = false;
-          } else {
-            input.value = '';
-          }
-        }
-      });
-
-      // Insertar el nuevo formulario al final del contenedor
-      licenciasContainer.appendChild(newForm);
-
-      // Incrementar el contador de formularios
-      totalForms.value = formNum + 1;
-      formNum++;
-    });
-  });
-</script>
+<script src="{% static 'js/mecanica/licenciasFormSet.js' %}"></script>
 
 {% endblock %}

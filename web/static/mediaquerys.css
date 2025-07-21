@@ -4,12 +4,6 @@
 
 
 
-
-
-
-
-
-
 /* Anchuras */
 /* ==================== */
 /* Telefonos Super Pequenos (375px - 450px) */
@@ -496,6 +490,33 @@
     }
 
   /* #endregion */
+
+  /* #region Unidades Tabla */
+
+    .form-reportes, .form-estado, .form-division{
+      .filter-group{
+        width: 100% !important;
+      }
+    }
+    .reporte-content{
+      width: 70%;
+      border-radius: 10px;
+    }
+
+  /* #endregion */
+
+  /* #region Conductores de Mecanica */
+  .modal-conductores-mecanica{
+    width: 95%;
+    max-width: 95%;
+  }
+  .modal-conductores-modify{
+    .container-fluid .row div p{
+      font-size: 1rem;
+    }
+  }
+
+  /* #endregion */
 }
 
 /* ==================== */
@@ -673,6 +694,17 @@
     }
   /* #endregion */
 
+  /* #region Unidades Tabla */
+    .Info-Unidades{
+      width: 85%;
+      border-radius: 15px;
+    }
+    .reporte-content{
+      width: 60%;
+      border-radius: 10px;
+    }
+
+  /* #endregion */
 }
 
 /* ==================== */
@@ -701,6 +733,10 @@
   }
   .title-procediments{
     margin-bottom: 0;
+  }
+
+  #ultimo-procedimiento-card {
+    width: 40%;
   }
   /* #endregion */
 
@@ -883,6 +919,26 @@
       justify-content: flex-start;
     }
   /* #endregion */
+
+  /* #region Unidades Tabla */
+    .Info-Unidades{
+      width: 80%;
+    }
+    .reporte-content{
+      width: 45%;
+    }
+
+  /* #endregion */
+
+  /* #region Inventario Unidades */
+    .card-detalles-asignaciones{
+      width: 80%;
+      margin: 0 auto;
+    }
+    .herramienta-line{
+      padding: 5px 2.5rem;
+    }
+  /* #endregion */
 }
 
 /* ==================== */
@@ -932,6 +988,9 @@
     width: 45%;
   }
 
+  #ultimo-procedimiento-card {
+    width: 30%;
+  }
   /* #endregion */
 
   /* #region formulario Procedimientos */
@@ -1021,6 +1080,25 @@
       margin: 0 auto;
     }
   /* #endregion */
+
+  /* #region Unidades Tabla */
+  .Info-Unidades {
+    & div{
+      flex-direction: row;
+    }
+    div p{
+      width: calc(100% / 2 - 1rem);
+    }
+  }
+  /* #endregion */
+
+  /* #region Conductores de Mecanica */
+  .modal-conductores-mecanica{
+    width: 90%;
+    max-width: 90%;
+  }
+  /* #endregion */
+
 }
 
 /* ==================== */
@@ -1185,6 +1263,34 @@
       width: 75%;
       margin: 0 auto;
       padding: 2.5rem;
+    }
+  /* #endregion */
+
+  /* #region Unidades Tabla */
+    .Info-Unidades{
+      width: 80%;
+    }
+    .reporte-content{
+      width: 30%;
+    }
+    .form-reportes, .form-estado, .form-division {
+      .filter-group{
+        margin: .5rem;
+      }
+    }
+
+  /* #endregion */
+
+  /* #region Conductores de Mecanica */
+  .modal-conductores-mecanica{
+    width: 65%;
+    max-width: 65%;
+  }
+  /* #endregion */
+
+  /* #region Bienes Municipales */
+    .form-container .form-floating-inmuebles:first-child{
+      margin-bottom: 10px !important;
     }
   /* #endregion */
 }
@@ -1434,25 +1540,7 @@
   justify-content: center;
 } */
 
-/* .card-mecanic {
-  display: flex;
-  justify-content: center;
-  width: 15rem;
-  height: auto;
-  box-shadow: 1px 1px 10px rgb(146, 146, 146);
-  text-align: start;
-  margin: 1rem 2rem;
-  padding: 1rem;
-  font-family: var(--sofia-sans);
-  color: #FFF;
-  border-radius: 10px;
 
-  span {
-    font-size: 1.5rem;
-    margin: .4rem;
-  }
-
-} */
 
 
 /* .detalles_lesionados {
