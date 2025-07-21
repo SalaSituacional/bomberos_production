@@ -6,7 +6,7 @@ from .forms import *
 from .models import *
 from .urls import *
 
-@login_required
+
 # Vista para el Dashboard
 def Dashboard_bienes(request):
     # Filtrar bienes por estado y contar el total de cada uno
@@ -43,7 +43,6 @@ def Dashboard_bienes(request):
         "count_estacion03": estacion03,
     })
 
-@login_required
 def Registros_bienes(request):
     user = request.session.get('user')
 
@@ -84,19 +83,89 @@ def Registros_bienes(request):
 
 def Inventario_bienes(request):
     user = request.session.get('user')
-    total_bienes = BienMunicipal.objects.all().count()
 
     if not user:
         return redirect('/')
-    # Renderizar la página con los datos
+
+    bienes_queryset = BienMunicipal.objects.all()
+
+    # Get filter parameters
+    filter_id = request.GET.get('filterID', '')
+    filter_dependencia_id = request.GET.get('filterDependencia', '')
+    filter_estado = request.GET.get('filterEstado', '')
+
+    # Apply filters
+    if filter_id:
+        bienes_queryset = bienes_queryset.filter(identificador=filter_id)
+
+    if filter_dependencia_id:
+        bienes_queryset = bienes_queryset.filter(dependencia__id=filter_dependencia_id)
+
+    if filter_estado:
+        bienes_queryset = bienes_queryset.filter(estado_actual=filter_estado)
+
+    bienes_queryset = bienes_queryset.order_by('id')
+
+    # --- Pagination Implementation ---
+    # 1. Get the current page number from the request (default to 1)
+    page = request.GET.get('page', 1)
+
+    # 2. Initialize Paginator with your queryset and desired items per page
+    paginator = Paginator(bienes_queryset, 10) # Show 10 bienes per page (you can adjust this number)
+
+    try:
+        datos = paginator.page(page) # 'datos' will be your Page object
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        datos = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        datos = paginator.page(paginator.num_pages)
+    # --- End Pagination Implementation ---
+
+
+    total_bienes = bienes_queryset.count() # This now reflects the total count before pagination, but after filtering.
+                                           # If you want the count of items on the current page, use datos.object_list.count()
+
+    dependencias = Dependencia.objects.all().order_by('nombre')
+    estado_choices = ["Bueno", "Regular", "Defectuoso", "Dañado"]
+
+    # This logic needs to match the filter parameters in your pagination links.
+    # It seems your pagination links are using 'filtro_parroquia', 'filtro_procedimiento', 'filtro_trimestre'.
+    # We need to adapt this to your current 'filterID', 'filterDependencia', 'filterEstado'.
+    # I'll create variables that align with what's in your provided pagination HTML.
+    # You'll need to decide which filter variables map to which (e.g., filterDependencia could be 'filtro_parroquia'
+    # if it represents a similar concept). For now, I'll map them directly.
+
+    # Map your current filters to the names used in your pagination HTML
+    filtro_parroquia_param = request.GET.get('filterDependencia', '') # Assuming filterDependencia maps to filtro_parroquia in the pagination HTML example
+    filtro_procedimiento_param = '' # You don't have a 'procedimiento' filter currently, so it's empty
+    filtro_trimestre_param = ''    # You don't have a 'trimestre' filter currently, so it's empty
+
+    filters_active = bool(filter_id or filter_dependencia_id or filter_estado)
+
     return render(request, "bienes_municipales/inventario_bienes.html", {
         "user": user,
-        "jerarquia": user["jerarquia"],
-        "nombres": user["nombres"],
-        "apellidos": user["apellidos"],
+        "jerarquia": user.get("jerarquia"),
+        "nombres": user.get("nombres"),
+        "apellidos": user.get("apellidos"),
         "form_movimientos": MovimientoBienForm(),
         "form_estado": CambiarEstadoBienForm(),
         "total_bienes": total_bienes,
+        "bienes_municipales": datos, # Pass the 'Page' object here!
+        "dependencias": dependencias,
+        "estado_choices": estado_choices,
+        
+        # Pass the current filter values back to the template to pre-fill the form
+        "filterID_value": filter_id,
+        "filterDependencia_value": filter_dependencia_id,
+        "filterEstado_value": filter_estado,
+        "filters_active": filters_active,
+        
+        # New: Pass the filter parameters used in the pagination links for persistence
+        "filtro_parroquia": filtro_parroquia_param,
+        "filtro_procedimiento": filtro_procedimiento_param,
+        "filtro_trimestre": filtro_trimestre_param,
     })
 
 def listar_bienes(request):
@@ -148,12 +217,14 @@ def reasignar_bien(request):
             ordenado_por = form.cleaned_data['ordenado_por']
             fecha_orden = form.cleaned_data['fecha_orden']
 
+            ordenado_por_instance = Personal.objects.get(id=int(ordenado_por))
+
             # Guardar el movimiento
             movimiento = MovimientoBien.objects.create(
                 bien=bien,
                 nueva_dependencia=nueva_dependencia,
                 nuevo_departamento=nuevo_departamento,
-                ordenado_por=ordenado_por,
+                ordenado_por=ordenado_por_instance,
                 fecha_orden=fecha_orden
             )
 
@@ -162,7 +233,7 @@ def reasignar_bien(request):
             bien.departamento = nuevo_departamento
             bien.save()
 
-            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+            return redirect('/bienesMunicipales/inventario_bienes/')  # Cambia esta ruta al destino deseado
 
     else:
         form = MovimientoBienForm()
@@ -189,7 +260,7 @@ def cambiar_estado_bienes(request):
             bien.estado_actual = nuevo_estado
             bien.save()
 
-            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+            return redirect('/bienesMunicipales/inventario_bienes/')  # Cambia esta ruta al destino deseado
 
     else:
         form = CambiarEstadoBienForm()
@@ -199,7 +270,7 @@ def eliminar_bien(request):
     bien_id = request.POST.get('bien_id')
     bien = get_object_or_404(BienMunicipal, identificador=bien_id)
     bien.delete()
-    return redirect('/inventario_bienes/')  # Cambia a la vista que quieras recargar
+    return redirect('/bienesMunicipales/inventario_bienes/')  # Cambia a la vista que quieras recargar
 
 def historial_bien_api(request, bien_id):
     bien = BienMunicipal.objects.get(identificador=bien_id)
@@ -214,6 +285,7 @@ def historial_bien_api(request, bien_id):
             'departamento': bien.departamento,
             'responsable': str(bien.responsable.jerarquia) + " " + str(bien.responsable.nombres) + " " + str(bien.responsable.apellidos),
             'estado_actual': bien.estado_actual,
+            'fecha_registro': bien.fecha_registro,
         },
         'movimientos': [
             {
@@ -230,6 +302,8 @@ def historial_bien_api(request, bien_id):
 def verificar_identificador(request):
     identificador = request.GET.get("identificador", "")
     existe = BienMunicipal.objects.filter(identificador=identificador).exists()
+
+    print(existe)
     return JsonResponse({"existe": existe})
 
 

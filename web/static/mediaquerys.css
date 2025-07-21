@@ -4,14 +4,6 @@
 
 
 
-
-
-
-
-
-
-
-
 /* Anchuras */
 /* ==================== */
 /* Telefonos Super Pequenos (375px - 450px) */
@@ -1296,6 +1288,11 @@
   }
   /* #endregion */
 
+  /* #region Bienes Municipales */
+    .form-container .form-floating-inmuebles:first-child{
+      margin-bottom: 10px !important;
+    }
+  /* #endregion */
 }
 
 
