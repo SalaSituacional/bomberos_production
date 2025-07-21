@@ -214,7 +214,7 @@ def crear_o_editar_reporte(request, id_vuelo=None): # id_vuelo is optional for c
 
 # =================================== APIs ================================================
 def api_eliminar_vuelo(request, id_vuelo):
-    if request.method == "DELETE":
+    if request.method == "GET":
         vuelo = Registro_Vuelos.objects.filter(id_vuelo=id_vuelo).first()
         if vuelo:
             vuelo.delete()
@@ -368,6 +368,7 @@ def obtener_reporte(request, id_vuelo):
     except Exception as e:
         print(f"Error al generar el reporte: {e}")
         return HttpResponse(f"Hubo un error al generar el reporte: {str(e)}", status=500)
+
 # ================================== Exporar reportes en excel =============================
 def generar_excel_reportes_sarp(request):
     mes_str = request.GET.get('mes', None)

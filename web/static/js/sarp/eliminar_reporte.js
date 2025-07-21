@@ -23,16 +23,13 @@ function setupDeleteVueloListeners() {
             if (confirm("¿Estás seguro de eliminar este reporte?")) {
                 const urlCompletaEliminar = EliminarVueloBaseUrlPlaceholder.replace('0000', idVuelo);
 
-                console.log("Intentando eliminar vuelo de URL:", urlCompletaEliminar);
-
                 fetchWithLoader(urlCompletaEliminar, {
-                    method: "DELETE",
                     headers: {
                         "X-CSRFToken": getCSRFToken(),
                         "Content-Type": "application/json",
                     },
                 })
-                .then((response) => response.json())
+                .then((response) => response)
                 .then((data) => {
                     if (data.message) {
                         alert(data.message);
@@ -40,12 +37,10 @@ function setupDeleteVueloListeners() {
                     } else if (data.error) {
                         alert("Error: " + data.error);
                     } else {
-                        alert("Reporte eliminado exitosamente.");
                         location.reload();
                     }
                 })
                 .catch((error) => {
-                    console.error("Error al eliminar el vuelo:", error);
                     alert("Ocurrió un error al intentar eliminar el reporte.");
                 });
             }
