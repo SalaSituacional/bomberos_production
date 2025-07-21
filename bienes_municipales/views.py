@@ -15,8 +15,6 @@ from web.models import Personal
 from web.forms import Asignar_ops_Personal
 
 
-@login_required
-# Vista para el Dashboard
 def Dashboard_bienes(request):
     # Filtrar bienes por estado y contar el total de cada uno
     bienes_buenos = BienMunicipal.objects.filter(estado_actual="Bueno").count()

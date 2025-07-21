@@ -42,7 +42,7 @@
     </div>
     <div class="stat-box">
       <strong>Registrar Bienes:</strong>
-      <a href="{% url 'registro_inventario' %}" class="stat-badge" title="Registrar Inventario">
+      <a href="{% url 'registroInventario' %}" class="stat-badge" title="Registrar Inventario">
         <i class="bi bi-plus-circle"></i>
       </a>
     </div>
@@ -89,7 +89,7 @@
       Registrar Bienes:
     </label>
     <button type="button" class="btn">
-      <a href="{% url 'registro_inventario' %}">
+      <a href="{% url 'registroInventario' %}">
         <svg width="50px" height="50px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
           fill="#000000">
@@ -254,7 +254,7 @@
         </h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="POST" class="formReasignacion" id="formReasignacion" action="{% url 'reasignar_bien' %}">
+      <form method="POST" class="formReasignacion" id="formReasignacion" action="{% url 'reasignarBien' %}">
         {% csrf_token %}
         <input type="hidden" name="bien" id="inputBienId">
         {{ form_movimientos }}
@@ -278,7 +278,7 @@
         </h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="POST" class="formReasignacion" id="formReasignacionEstado" action="{% url 'cambiar_estado_bien' %}">
+      <form method="POST" class="formReasignacion" id="formReasignacionEstado" action="{% url 'cambiarEstadoBien' %}">
         {% csrf_token %}
         <input type="hidden" name="bien" id="inputBienId">
         {{ form_estado }}
