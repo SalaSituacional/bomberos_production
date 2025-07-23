@@ -204,7 +204,7 @@
       <i class="bi bi-arrow-right-circle"></i>
     </div>
     
-
+    <!-- Tabla de Ascensos -->
     <div class="ascensos-detalles">
       <div class="ascensos-container">
           <h2><i class="bi bi-chevron-double-up"></i>   Lista de Ascensos</h2>
@@ -315,6 +315,104 @@
       </div>
     </div>
 
+    <!-- Tabla de Vacaciones/Permisos -->
+    <div class="ascensos-detalles">
+      <div class="ascensos-container">
+          <h2><i class="bi bi-calendar-check"></i> Historial de Vacaciones y Permisos</h2>
+
+          <div class="boton_agregar_ascenso">
+            <button id="toggleVacacionesFormBtn" class="btn btn-danger" type="button">
+                Agregar Vacaciones/Permisos
+            </button>
+          </div>
+
+          <!-- Tabla de vacaciones -->
+          <div class="w-100 tabla-ascensos-container">
+            <table class="tabla_ascensos">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-card-list"></i> Tipo</th>
+                        <th><i class="bi bi-calendar-range"></i> Periodo</th>
+                        <th><i class="bi bi-calendar-date"></i> Fecha Desde</th>
+                        <th><i class="bi bi-calendar-day"></i> Días</th>
+                        <th><i class="bi bi-tools"></i> Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Filas de datos existentes -->
+                    {% for vacacion in detalles.vacaciones %}
+                    <tr>
+                        <td>{{ vacacion.tipo }}</td>
+                        <td>{{ vacacion.periodo }}</td>
+                        <td>{{ vacacion.fecha_desde }}</td>
+                        <td>{{ vacacion.cantidad_dias }}</td>
+                        <td>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">No hay registros de vacaciones/permisos</td>
+                    </tr>
+                    {% endfor %}
+
+                    <!-- Fila del formulario (inicialmente oculta) -->
+                    <tr id="vacacionesFormRow" style="display: none;">
+                        <form method="post" action="{% url 'detalles_personal' id=detalles.personal.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="vacaciones_form" value="true">
+                            <td>
+                              <div>
+                                <select name="tipo" id="id_tipo" class="form-select border-0 border-bottom rounded-3 shadow-none">
+                                  <option value="" selected>Seleccione una opción</option>
+                                  <option value="Vacaciones">Vacaciones</option>
+                                  <option value="Permiso">Permiso</option>
+                                </select>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                <input type="text" 
+                                      class="form-control border-0 border-bottom rounded-3 shadow-none" 
+                                      id="id_periodo" 
+                                      name="periodo" 
+                                      placeholder="Ej: 2023-2024" 
+                                      value="{{ detalles.form_vacaciones.periodo.value|default_if_none:'' }}">
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                <input type="date" 
+                                      class="form-control border-0 border-bottom rounded-3 shadow-none"
+                                      id="id_fecha_desde" 
+                                      name="fecha_desde" 
+                                      value="{{ detalles.form_vacaciones.fecha_desde.value|default_if_none:'' }}">
+                              </div>
+                            </td>
+                          <td>
+                            <div>
+                              <input type="number" 
+                                    class="form-control border-0 border-bottom rounded-3 shadow-none"
+                                    id="id_cantidad_dias" 
+                                    name="cantidad_dias" 
+                                    placeholder="Días"
+                                    value="{{ detalles.form_vacaciones.cantidad_dias.value|default_if_none:'' }}">
+                            </div>
+                          </td>
+                          <td class="align-middle">
+                            <div class="d-flex justify-content-center gap-2">
+                              <button type="submit" class="btn btn-danger btn-sm">✓</button>
+                              <button type="button" class="btn btn-secondary btn-sm cancel-vacaciones-form">✗</button>
+                            </div>
+                          </td>
+                        </form>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+      </div>
+    </div>
+
+    <!-- Cards De Familiares -->
     <div class="familiares-detalles">
       <div class="familiares-container">
         <h2><i class="bi bi-people-fill me-2"></i>Información Familiar</h2>

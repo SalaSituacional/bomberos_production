@@ -89,7 +89,17 @@ class Familiares(models.Model):
 
    def __str__(self):
       return self.nombres + " -- " + self.apellidos + " -- " + self.parentesco + " -- " + str(self.fecha_nacimiento)
-   
+
+class Vacaciones_Permisos(models.Model):
+  personal = models.ForeignKey(Personal, on_delete=models.CASCADE)
+  tipo = models.TextField()
+  periodo = models.TextField()
+  fecha_desde = models.TextField()
+  cantidad_dias = models.TextField()
+
+  def __str__(self):
+    return f"{self.personal.nombres} {self.personal.apellidos} -- {self.periodo} -- {self.fecha_desde} - {self.cantidad_dias}"
+
 class Sanciones(models.Model):
   personal = models.ForeignKey(Personal, on_delete=models.CASCADE)
   fecha = models.DateField(default=timezone.now)
