@@ -30,3 +30,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+
+// Mostrar/ocultar formulario de vacaciones
+document.getElementById('toggleVacacionesFormBtn').addEventListener('click', function() {
+    const formRow = document.getElementById('vacacionesFormRow');
+    formRow.style.display = formRow.style.display === 'none' ? 'table-row' : 'none';
+});
+
+// Botón cancelar del formulario de vacaciones
+document.querySelector('.cancel-vacaciones-form').addEventListener('click', function() {
+    document.getElementById('vacacionesFormRow').style.display = 'none';
+});

@@ -16,3 +16,5 @@ db.sqlite3
 *.sql
 # # Configuración sensible de Django
 # Web_App/settings.py
+
+staticfiles/

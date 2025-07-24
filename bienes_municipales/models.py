@@ -1,8 +1,5 @@
 from django.db import models
 from web.models import Personal
-from django.utils import timezone
-from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
 # Create your models here.
 
 # ========================================== MODELOS PARA EL AREA DE BIENES E INMUEBLES ===============================================================================================

@@ -1,6 +1,6 @@
 // Función para descargar el archivo Excel con todos los bienes municipales
 function descargarExcelBienes() {
-  fetch(ApiGenerarExcel) // Eliminamos el parámetro mes
+  fetch(`/generar-excel-bienesmunicipales/`) // Eliminamos el parámetro mes
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Error en la solicitud: ${response.status} ${response.statusText}`);

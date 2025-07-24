@@ -9,7 +9,6 @@
 {% endif %}
 
 {% load static %}
-{% load crispy_forms_tags %}
 {% load widget_tweaks %}
 
 {% block content %}
@@ -231,19 +230,16 @@
     </span>
 </div>
 
-  <div class="contain-dates">
-    <h4 class="title-procediments">Exportar Reportes</h4>
-    <br>
-    <section class="buttons-items input-group mb-3 filter-search">
-      <!-- <span class="input-group-text"><b> Seleccionar Mes:</b></span>
-      <input type="month" class="form-control fecha_manual" name="" id="mes_excel"> -->
-      <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
-    </section>
-  </div>
+<div class="contain-dates">
+  <h4 class="title-procediments titulo-exportaciones-excel">Exportar Reportes</h4>
+  <section class="buttons-items input-group mb-3 filter-search">
+    <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
+  </section>
+</div>
 
 
 
-<!-- Modal para Reasignación del item-->
+<!-- Modal para Reasignación -->
 <div class="modal fade" id="modalReasignarBien" tabindex="-1" aria-labelledby="modalReasignarBienLabel"
   aria-hidden="true">
   <div class="modal-dialog">
@@ -254,20 +250,40 @@
         </h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="POST" class="formReasignacion" id="formReasignacion" action="{% url 'reasignarBien' %}">
-        {% csrf_token %}
-        <input type="hidden" name="bien" id="inputBienId">
-        {{ form_movimientos }}
-          <div class="buttons-inmuebles-form">
-            <button type="submit" class="btn btn-danger">Aceptar</button>
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-          </div>
-      </form>
+      <div class="modal-body modal-body-two">
+        <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
+          <form method="POST" class="form-reportes" id="formReasignacion" action="{% url 'reasignar_bien' %}">
+            {% csrf_token %}
+            <input type="hidden" name="bien" id="inputBienId">
+            {% for field in form_movimientos %}
+              {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'date' or field.field.widget.input_type == 'time' %}
+                <div class="filter-group">
+                  <div class="floating-input">
+                    {% render_field field class="form-control" %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% else %}
+                <div class="filter-group">
+                  <div class="floating-select">
+                    {% render_field field %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+            <div class="buttons-inmuebles-form">
+              <button type="submit" class="btn btn-danger">Aceptar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Modal para Reasignación -->
+<!-- Modal para Cambiar Estado -->
 <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalReasignarBienLabel"
   aria-hidden="true">
   <div class="modal-dialog">
@@ -278,21 +294,40 @@
         </h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form method="POST" class="formReasignacion" id="formReasignacionEstado" action="{% url 'cambiarEstadoBien' %}">
-        {% csrf_token %}
-        <input type="hidden" name="bien" id="inputBienId">
-        {{ form_estado }}
-        
-          <div class="buttons-inmuebles-form">
-            <button type="submit" class="btn btn-danger">Aceptar</button>
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-          </div>
-      </form>
+      <div class="modal-body modal-body-two">
+        <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
+          <form method="POST" class="form-reportes" id="formReasignacionEstado" action="{% url 'cambiar_estado_bien' %}">
+            {% csrf_token %}
+            <input type="hidden" name="bien" id="inputBienId">
+            {% for field in form_estado %}
+              {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'date' or field.field.widget.input_type == 'time' %}
+                <div class="filter-group">
+                  <div class="floating-input">
+                    {% render_field field class="form-control" %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% else %}
+                <div class="filter-group">
+                  <div class="floating-select">
+                    {% render_field field %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+            <div class="buttons-inmuebles-form">
+              <button type="submit" class="btn btn-danger">Aceptar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Modal Confirmar Eliminación del item -->
+<!-- Modal Confirmar Eliminación -->
 <div class="modal fade" id="modalEliminarBien" tabindex="-1" aria-labelledby="modalEliminarBienLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -303,7 +338,7 @@
         </h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <form method="POST" action="{% url 'eliminarBien' %}" class="formularioeliminarinmueble">
+      <form method="POST" action="{% url 'eliminar_bien' %}" class="formularioeliminarinmueble">
         {% csrf_token %}
         <input type="hidden" name="bien_id" id="inputEliminarBienId">
         <div class="modal-body">
@@ -318,7 +353,7 @@
   </div>
 </div>
 
-<!-- Modal Mostrar Información Relacionada con el item -->
+<!-- Modal Mostar Información -->
 <div class="modal fade" id="modalHistorialBien" tabindex="-1" aria-labelledby="modalHistorialBienLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -329,19 +364,19 @@
         </h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body contain-inputs-data w-100">
+      <div class="modal-body contain-inputs-data">
         <div id="bien-info">
-          <h3>Información</h3>
+          <h3 class="mb-2 mt-1">Información</h3>
           <div id="bienDetalle" class="contain-detalle-bienes">Cargando...</div>
         </div>
         <hr>
         <div id="movimientos-info" class="contain-info-movimientos">
-          <h3>Últimos Movimientos</h3>
+          <h3 class="mb-2 mt-1">Últimos Movimientos</h3>
           <ul id="listaMovimientos" class="list-group"></ul>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger w-100" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
@@ -357,52 +392,10 @@
   </section>
 </footer>
 
-<!-- <script>
-  // Obtener los formularios por sus IDs
-  const formReasignacion = document.getElementById("formReasignacion");
-  const formReasignacionEstado = document.getElementById("formReasignacionEstado");
-
-  // Función para aplicar clases a los elementos dentro de un formulario
-  function applyClassesToFormElements(form) {
-    if (form) {
-      // Seleccionar todas las divs dentro del formulario
-      const innerDivs = form.querySelectorAll("div");
-
-      // Iterar sobre cada div y aplicar las clases a sus inputs, labels, selects y textareas
-      innerDivs.forEach(div => {
-        const label = div.querySelector("label");
-        const input = div.querySelector("input");
-        const select = div.querySelector("select");
-        const textarea = div.querySelector("textarea");
-
-        if (label) {
-          label.classList.add("form-label");
-        }
-
-        if (input) {
-          input.classList.add("form-control");
-        }
-
-        if (select) {
-          select.classList.add("form-select");
-        }
-
-        if (textarea) {
-          textarea.classList.add("form-control");
-        }
-      });
-    }
-  }
-
-  // Aplicar las clases a los formularios si existen
-  applyClassesToFormElements(formReasignacion);
-  applyClassesToFormElements(formReasignacionEstado);
-</script> -->
-<script src="{% static 'js/bienes_inmuebles/tabla_bienes.js' %}"></script>
 <script src="{% static 'js/bienes_inmuebles/reasignar_bien.js' %}"></script>
 <script src="{% static 'js/bienes_inmuebles/cambiar_estado.js' %}"></script>
-<script src="{% static 'js/bienes_inmuebles/informacionBien.js' %}"></script>
 <script src="{% static 'js/bienes_inmuebles/eliminar_bienes.js' %}"></script>
+<script src="{% static 'js/bienes_inmuebles/mostrar_bien.js' %}"></script>
 <script src="{% static 'js/bienes_inmuebles/generar_excel_bienes.js' %}"></script>
 
 

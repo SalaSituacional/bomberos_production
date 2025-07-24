@@ -34,12 +34,12 @@ from bienes_municipales.urls import *
 #Se crean las rutas que se podran visitar en la aplicacion web.
 urlpatterns = [
     # includes
-    path('bienes_municipales/', include('bienes_municipales.urls')),
     path('ven911/', include('ven911.urls')),
     path('seguridad_prevencion/', include('seguridad_prevencion.urls')),
     path('junin/', include('junin.urls')),
     path('mecanica/', include('mecanica.urls')),
     path('sarp/', include('sarp.urls')),
+    path('bienesMunicipales/', include('bienes_municipales.urls')),
 
 
     # Admin

@@ -1,20 +1,13 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect, get_object_or_404  
-from django.core.paginator import Paginator
-from django.utils.timezone import now
-import json
-import io
-import fitz  # PyMuPDF
 from .forms import *
 from .models import *
 from .urls import *
-from web.models import Personal
-from web.forms import Asignar_ops_Personal
 
 
+# Vista para el Dashboard
 def Dashboard_bienes(request):
     # Filtrar bienes por estado y contar el total de cada uno
     bienes_buenos = BienMunicipal.objects.filter(estado_actual="Bueno").count()
@@ -74,7 +67,7 @@ def Registros_bienes(request):
                 fecha_registro=data['fecha_registro'],
                 estado_actual=data['estado_actual']
             )
-            return redirect("inventarioBienes")
+            return redirect("inventario_bienes")
         else:
             return JsonResponse({"errores": form.errors}, status=400)
     
@@ -211,6 +204,7 @@ def listar_bienes(request):
 
     return JsonResponse(data)
 
+
 def reasignar_bien(request):
     if request.method == 'POST':
         form = MovimientoBienForm(request.POST)
@@ -220,11 +214,7 @@ def reasignar_bien(request):
 
             nueva_dependencia = form.cleaned_data['nueva_dependencia']
             nuevo_departamento = form.cleaned_data['nuevo_departamento']
-            
-            ordenado_por_id = form.cleaned_data['ordenado_por'] 
-            
-            ordenado_por_instance = get_object_or_404(Personal, pk=ordenado_por_id)
-
+            ordenado_por = form.cleaned_data['ordenado_por']
             fecha_orden = form.cleaned_data['fecha_orden']
 
             ordenado_por_instance = Personal.objects.get(id=int(ordenado_por))
@@ -234,7 +224,7 @@ def reasignar_bien(request):
                 bien=bien,
                 nueva_dependencia=nueva_dependencia,
                 nuevo_departamento=nuevo_departamento,
-                ordenado_por=ordenado_por,
+                ordenado_por=ordenado_por_instance,
                 fecha_orden=fecha_orden
             )
 
@@ -243,7 +233,7 @@ def reasignar_bien(request):
             bien.departamento = nuevo_departamento
             bien.save()
 
-            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+            return redirect('/bienesMunicipales/inventario_bienes/')  # Cambia esta ruta al destino deseado
 
     else:
         form = MovimientoBienForm()
@@ -270,7 +260,7 @@ def cambiar_estado_bienes(request):
             bien.estado_actual = nuevo_estado
             bien.save()
 
-            return redirect('/inventario_bienes/')  # Cambia esta ruta al destino deseado
+            return redirect('/bienesMunicipales/inventario_bienes/')  # Cambia esta ruta al destino deseado
 
     else:
         form = CambiarEstadoBienForm()
@@ -280,7 +270,7 @@ def eliminar_bien(request):
     bien_id = request.POST.get('bien_id')
     bien = get_object_or_404(BienMunicipal, identificador=bien_id)
     bien.delete()
-    return redirect('/inventario_bienes/')  # Cambia a la vista que quieras recargar
+    return redirect('/bienesMunicipales/inventario_bienes/')  # Cambia a la vista que quieras recargar
 
 def historial_bien_api(request, bien_id):
     bien = BienMunicipal.objects.get(identificador=bien_id)
@@ -315,6 +305,7 @@ def verificar_identificador(request):
 
     print(existe)
     return JsonResponse({"existe": existe})
+
 
 def generar_excel_bienes_municipales(request):
     bienes = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by('-fecha_registro')

@@ -264,6 +264,16 @@ class AscensoForm(forms.ModelForm):
             'nuevo': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+class VacacionesPermisosForm(forms.ModelForm):
+    class Meta:
+        model = Vacaciones_Permisos
+        fields = ["tipo", 'periodo', 'fecha_desde', 'cantidad_dias']
+        widgets = {
+            'tipo': forms.Select(choices=[("", "Seleccione Una Opcion"), ("Vacaciones", "Vacaciones"), ("Permiso", "Permiso")]),
+            'fecha_desde': forms.DateInput(attrs={'type': 'date'}),
+            'cantidad_dias': forms.NumberInput(attrs={'min': 1}),
+        }
+
 # Form1
 class SelectorDivision(forms.Form):
     def __init__(self, *args, **kwargs):
