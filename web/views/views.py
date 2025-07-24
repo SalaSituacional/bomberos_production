@@ -254,14 +254,22 @@ def Detalles_Personal_view(request, id):
     persona = get_object_or_404(Personal, pk=id)
 
     # Procesar el formulario de vacaciones/permisos si es POST
-    if request.method == 'POST' and 'vacaciones_form' in request.POST:
+    if request.method == 'POST':
+        form_ascensos = AscensoForm(request.POST)
         form = VacacionesPermisosForm(request.POST)
+
+        if form_ascensos.is_valid():
+            ascenso = form_ascensos.save(commit=False)
+            ascenso.personal = persona
+            ascenso.save()
+
         if form.is_valid():
             vacacion = form.save(commit=False)
             vacacion.personal = persona
             vacacion.save()
             return redirect('detalles_personal', id=id)
     else:
+        form_ascensos = AscensoForm()
         form = VacacionesPermisosForm()
 
     # Obtener el personal y sus relaciones
@@ -269,6 +277,7 @@ def Detalles_Personal_view(request, id):
         persona = Personal.objects.prefetch_related(
             Prefetch('detalles_personal_set', to_attr='detalles'),
             Prefetch('vacaciones_permisos_set', to_attr='lista_vacaciones'),
+            Prefetch('ascensos_set', to_attr='lista_ascensos'),
             Prefetch('familiares_set', to_attr='lista_familiares')
         ).get(pk=id)
 
@@ -297,9 +306,11 @@ def Detalles_Personal_view(request, id):
         detalles = {
             "personal": persona,
             "detalles": persona.detalles[0] if persona.detalles else None,
+            "ascensos": persona.lista_ascensos,
             "vacaciones": persona.lista_vacaciones,
             "familiares": familiares_con_edad,
-            "form_vacaciones": form
+            "form_vacaciones": form,
+            "form_ascenso": form_ascensos
         }
 
     except Personal.DoesNotExist:
