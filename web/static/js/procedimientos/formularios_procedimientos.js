@@ -849,8 +849,7 @@ document
 
         break;
       case "14":
-        let select_vivienda = document
-          .getElementById("evaluacion_riesgo");
+        let select_vivienda = document.getElementById("id_evaluacion_riesgo_form-tipo_etructura").parentElement;
         select_vivienda.style.display = "none";
         requiredFalse();
         showElements(["evaluacion_riesgo"]);
