@@ -118,6 +118,8 @@ urlpatterns = [
     path('api/obtener_tipos_procedimientos/', api_tipos_procedimientos, name='obtener_tipos_procedimientos'),
     path('api/obtener_solicitante/', api_solicitantes, name='obtener_solicitante'),
 
+    path('api/weather-proxy/', get_weather_data, name='weather_proxy'),
+
     # Descargas
     path('descargar-excel_personal/', generar_excel_personal, name='descargar_excel_personal'),
     path('descargar-base-datos/', descargar_base_datos, name='descargar_base_datos'),

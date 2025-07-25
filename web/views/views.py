@@ -29,7 +29,10 @@ from django.forms.models import model_to_dict
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import os
+import requests # ¡Importante! Asegúrate de tener requests importado
 
+OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY')
 
 # Vista Personalizada para el error 404
 def custom_404_view(request, exception):
@@ -49,6 +52,32 @@ def logout(request):
     request.session.flush()  # Eliminar todos los datos de la sesión
     return redirect('/login/')
 
+
+def get_weather_data(request):
+    lat = request.GET.get('lat')
+    lon = request.GET.get('lon')
+
+    if not lat or not lon:
+        return JsonResponse({'error': 'Latitud y longitud son requeridas'}, status=400)
+
+    if not OPENWEATHER_API_KEY:
+        return JsonResponse({'error': 'La API Key de OpenWeatherMap no está configurada'}, status=500)
+
+    weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric&lang=es"
+
+    try:
+        # CORRECCIÓN 1: Usar requests.get() para hacer la solicitud HTTP externa
+        response = requests.get(weather_url)
+        response.raise_for_status() # Lanza una excepción para errores HTTP (4xx o 5xx)
+        weather_data = response.json()
+        return JsonResponse(weather_data)
+    # CORRECCIÓN 2: Usar requests.exceptions.RequestException para manejar errores
+    except requests.exceptions.RequestException as e:
+        # Esto captura errores relacionados con la conexión, timeouts, DNS, etc.
+        return JsonResponse({'error': f'Error al conectar con la API del clima: {e}'}, status=500)
+    except Exception as e:
+        # Esto captura cualquier otro error inesperado
+        return JsonResponse({'error': f'Error inesperado en el proxy: {e}'}, status=500)
 
 
 def get_instagram_post_date(url):
