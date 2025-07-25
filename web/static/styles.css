@@ -71,17 +71,19 @@
 
 /* ******************** Reset CSS ******************** */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 html {
   font-size: 100%;
   scroll-behavior: smooth;
   background-color: #f3f3f3;
+  box-sizing: border-box;
 }
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
 
 body {
   margin: 0;
@@ -3642,6 +3644,116 @@ summary>* {
   }
 /* #endregion */
 
+
+/* #region Estilos Clima */
+  /* --- weather-info (Contenedor principal, flex vertical) --- */
+#weather-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 10px 0;
+  border-radius: 10px;
+  color: #343a40;
+}
+
+/* --- Estilos para cada 'chip' (el nuevo .weather-chip) --- */
+.weather-chip {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background-color: #f3f4f5;
+  border: 1px solid #f3f4f5;
+  color: #495057;
+  font-style: normal;
+  flex-shrink: 1;
+  min-width: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el ícono dentro del chip */
+.weather-chip i {
+  flex-shrink: 0;
+  margin-right: 8px;
+  font-size: 1rem;
+  color: #b6243a;
+
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+.weather-chip span {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Contenedor de la fecha/hora (.grid-time) --- */
+.grid-time {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  text-align: center;
+}
+#chip-fecha-clima {
+  width: 100%;
+  max-width: 300px;
+  justify-content: center;
+}
+#chip-fecha-clima span {
+  font-size: 1rem;
+}
+
+/* --- Contenedor de Ubicación y Temperatura (.grid-location-temp) --- */
+.grid-location-temp {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+#chip-ubicacion-clima,
+#chip-temperatura-clima {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+  min-width: 120px;
+  max-width: calc(50% - 5px);
+  justify-content: center;
+  text-align: center;
+}
+
+/* --- Contenedor de otras informaciones (.grid-other-info) --- */
+.grid-other-info {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+#chip-sensacion-clima,
+#chip-humedad-clima,
+#chip-viento-clima {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+  min-width: 90px;
+  max-width: calc(33.33% - 7px);
+  justify-content: center;
+  text-align: center;
+}
+/* #endregion */
+
 /****************** componentes reutilizables **************/
 
 .highlight {
@@ -4780,6 +4892,15 @@ summary>* {
 }
 /* #endregion */
 
+
+
+
+
+
+
+
+
+  
 
 
 

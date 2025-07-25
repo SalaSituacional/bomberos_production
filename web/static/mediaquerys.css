@@ -1,9 +1,4 @@
 
-
-
-
-
-
 /* Anchuras */
 /* ==================== */
 /* Telefonos Super Pequenos (375px - 450px) */
@@ -517,6 +512,28 @@
   }
 
   /* #endregion */
+
+  /* #region Estilos del Clima */
+    .grid-location-temp,
+    .grid-other-info {
+        flex-direction: row; /* Apila los chips uno debajo del otro */
+        align-items: center;
+    }
+    #chip-ubicacion-clima,
+    #chip-temperatura-clima,
+    #chip-sensacion-clima,
+    #chip-humedad-clima,
+    #chip-viento-clima {
+        width: 100%; /* Ocupa todo el ancho si están apilados */
+        max-width: 100%; /* Asegura que no sobrepase */
+        justify-content: center; /* Centra el contenido del chip */
+        text-align: center;
+    }
+    #chip-fecha-clima {
+        width: 100%; /* Para que la fecha ocupe todo el ancho en móvil */
+        max-width: 100%; /* Asegura que no se desborde */
+    }
+  /* #endregion */
 }
 
 /* ==================== */
@@ -704,6 +721,71 @@
       border-radius: 10px;
     }
 
+  /* #endregion */
+
+  /* #region Estilos del Clima */
+       #weather-info {
+        flex-direction: row; /* EL CONTENEDOR PRINCIPAL cambia a una fila */
+        flex-wrap: wrap; /* AHORA PERMITE QUE LAS "COLUMNAS" PRINCIPALES SE ENVUELVAN SI NO CABEN */
+        align-items: flex-start; /* Alinea los bloques al inicio de la fila */
+        justify-content: space-around; /* Distribuye el espacio entre las "columnas" */
+        gap: 20px; /* Espacio entre los bloques principales (fecha, ubicación, otros) */
+        padding: 30px;
+      }
+
+      .grid-time{
+        flex-direction: row;
+      }
+      /* Ajustes para los contenedores principales (grid-time, grid-location-temp, grid-other-info) */
+      .grid-time,
+      .grid-location-temp,
+      .grid-other-info {
+        width: auto; /* Permite que el ancho lo determine el contenido o flex-grow */
+        flex-basis: 0; /* Resetea la base para un cálculo más flexible */
+        flex-grow: 1; /* Permite que cada sección crezca para llenar el espacio */
+        flex-shrink: 1; /* Permite que se encojan */
+        align-items: center; /* Centra los chips dentro de cada "columna" */
+        justify-content: flex-start; /* Centra el contenido de cada "columna" */
+        min-width: calc(100% / 3 - 5px); /* AÑADIDO: Un ancho mínimo para cada "columna" principal */
+      }
+
+    /* Ajustes específicos para los chips en layout de una sola línea */
+
+      /* Fecha/Hora: ocupa la primera "columna" */
+      #chip-fecha-clima {
+        width: auto; /* Ajusta el ancho al contenido */
+        max-width: 100%; /* No se desborde del .grid-time */
+      }
+
+      /* Ubicación y Temperatura: en una fila, sus chips pueden envolverse */
+      .grid-location-temp {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: nowrap; /* AHORA PERMITE QUE LOS CHIPS INTERNOS SE ENVUELVAN SI NO CABEN */
+        gap: 10px; /* Mantener el gap entre los chips internos */
+      }
+      #chip-ubicacion-clima,
+      #chip-temperatura-clima {
+        min-width: calc(50% /2 - 5px); /* Permitir que se ajusten al contenido */
+        max-width: none; /* No limitar a 50% */
+        flex-basis: auto; /* Tamaño base es el contenido */
+        flex-grow: 0; /* No crece para no ocupar espacio excesivo */
+      }
+      /* Otras informaciones: en una fila, sus chips pueden envolverse */
+      .grid-other-info {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: nowrap; /* AHORA PERMITE QUE LOS CHIPS INTERNOS SE ENVUELVAN SI NO CABEN */
+        gap: 10px; /* Mantener el gap entre los chips internos */
+      }
+      #chip-sensacion-clima,
+      #chip-humedad-clima,
+      #chip-viento-clima {
+        min-width: auto; /* Permitir que se ajusten al contenido */
+        max-width: none; /* No limitar a 33% */
+        flex-basis: auto; /* Tamaño base es el contenido */
+        flex-grow: 0; /* No crece */
+      }
   /* #endregion */
 }
 
@@ -939,6 +1021,33 @@
       padding: 5px 2.5rem;
     }
   /* #endregion */
+
+  /* #region Estilos del Clima */
+       #weather-info {
+        flex-direction: row; /* EL CONTENEDOR PRINCIPAL cambia a una fila */
+        flex-wrap: wrap; /* AHORA PERMITE QUE LAS "COLUMNAS" PRINCIPALES SE ENVUELVAN SI NO CABEN */
+        align-items: flex-start; /* Alinea los bloques al inicio de la fila */
+        justify-content: space-around; /* Distribuye el espacio entre las "columnas" */
+        gap: 20px; /* Espacio entre los bloques principales (fecha, ubicación, otros) */
+        padding: 30px;
+      }
+      .grid-time{
+        justify-content: center;
+        min-width: 100% !important;
+        flex-direction: row;
+      }
+
+      /* Ubicación y Temperatura: en una fila, sus chips pueden envolverse */
+      .grid-location-temp {
+        flex-wrap: nowrap; /* AHORA PERMITE QUE LOS CHIPS INTERNOS SE ENVUELVAN SI NO CABEN */
+      }
+      
+      #chip-sensacion-clima,
+      #chip-humedad-clima,
+      #chip-viento-clima {
+        min-width: calc(100% / 3 - 10px);
+      }
+  /* #endregion */
 }
 
 /* ==================== */
@@ -1099,6 +1208,52 @@
   }
   /* #endregion */
 
+   /* #region Estilos del Clima */
+       #weather-info {
+        flex-direction: row; /* EL CONTENEDOR PRINCIPAL cambia a una fila */
+        flex-wrap: nowrap;
+        justify-content: center;
+
+        gap: 10px;
+        width: 92%;
+        margin: 0 auto;
+        padding: 20px 0px;
+        overflow: hidden;
+      }
+      #weather-info>div{
+        min-width: fit-content !important;
+        max-width: fit-content !important;
+        width: fit-content !important;
+      }
+      .grid-time{
+        justify-content: flex-start;
+        min-width: auto !important;
+        flex-direction: row;
+      }
+
+      /* Ubicación y Temperatura: en una fila, sus chips pueden envolverse */
+      .grid-location-temp {
+        flex-wrap: nowrap; /* AHORA PERMITE QUE LOS CHIPS INTERNOS SE ENVUELVAN SI NO CABEN */
+        justify-content: space-evenly;
+      }
+
+      #chip-ubicacion-clima, #chip-temperatura-clima{
+        width: fit-content;
+        min-width: fit-content;
+        max-width: fit-content;
+      }
+
+      .grid-other-info{
+        justify-content: space-evenly;
+      }
+      
+      #chip-sensacion-clima,
+      #chip-humedad-clima,
+      #chip-viento-clima {
+        max-width: 3rem;
+        min-width: 6.5rem;
+      }
+  /* #endregion */
 }
 
 /* ==================== */

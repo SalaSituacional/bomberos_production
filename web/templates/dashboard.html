@@ -64,9 +64,45 @@
       </section>
     </div>
     
+        
+
     <!-- card-new -->
     <div class="card-new">
       <div class="procediments-contain">
+        <div id="weather-info">
+          <div class="grid-time">
+              <div class="weather-chip" id="chip-fecha-clima"> <i class="bi bi-calendar"></i>
+                  <span id="fecha-clima">--:-- -. -. - -- -- ---------- -- ----</span>
+              </div>
+          </div>
+
+          <div class="grid-location-temp">
+              <div class="weather-chip" id="chip-ubicacion-clima">
+                  <i class="bi bi-geo-alt"></i>
+                  <span id="ubicacion-clima">--------- -- --- -------</span>
+              </div>
+              <div class="weather-chip" id="chip-temperatura-clima">
+                  <i class="bi bi-thermometer-half"></i>
+                  <span id="temperatura-clima">--.-°C</span>
+              </div>
+          </div>
+
+          <div class="grid-other-info">
+              <div class="weather-chip" id="chip-sensacion-clima">
+                  <i class="bi bi-emoji-sunglasses"></i>
+                  <span id="sensacion-clima">--.-°C</span>
+              </div>
+              <div class="weather-chip" id="chip-humedad-clima">
+                  <i class="bi bi-droplet"></i>
+                  <span id="humedad-clima">--%</span>
+              </div>
+              <div class="weather-chip" id="chip-viento-clima">
+                  <i class="bi bi-wind"></i>
+                  <span id="viento-clima">-.--m/s</span>
+              </div>
+          </div>
+      </div>
+
         <h4 class="title-procediments">Incidentes <span id="parroquias"></span> - Parroquias</h4>
         <div class="position-end">
           <div class="btn-group" role="group" aria-label="Basic mixed styles example">
@@ -104,7 +140,8 @@
             </article>
           </section>
         </div>
-      </div>
+    </div>
+
     <!-- resumen de procedimientos por division -->
     <div class="procediments-contain">
       <h4 class="title-procediments">Procedimientos <span id="divisiones"></span> - Divisiones</h4>
@@ -378,6 +415,7 @@
 <script src="{% static 'js/graphic.js' %}"></script>
 <script src="{% static 'js/modal-dashboard.js' %}"></script>
 <script src="{% static 'js/ultimo_procedimiento.js' %}"></script>
+<script src="{% static 'js/extra/clima.js' %}"></script>
 {% endblock %}
 
 

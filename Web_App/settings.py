@@ -17,6 +17,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY',)
 
+OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY') # Añade esta línea
+
 # SECURITY WARNING: don't run with debug turned on in production!
 # Debug true significa desarrollo modo de pruebas
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
