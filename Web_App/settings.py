@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     "junin",
     "mecanica",
     "sarp",
-    "bienes_municipales",   
+    "bienes_municipales",  
+    "pov", 
 ]
 
 MIDDLEWARE = [

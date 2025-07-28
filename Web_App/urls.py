@@ -40,6 +40,7 @@ urlpatterns = [
     path('mecanica/', include('mecanica.urls')),
     path('sarp/', include('sarp.urls')),
     path('bienesMunicipales/', include('bienes_municipales.urls')),
+    path('pov/', include('pov.urls')),
 
 
     # Admin
