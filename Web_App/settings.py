@@ -58,7 +58,22 @@ INSTALLED_APPS = [
     "sarp",
     "bienes_municipales",  
     "pov", 
+    'maintenance',
 ]
+
+
+# Configuración del mantenimiento selectivo
+MAINTENANCE_CONFIG = {
+    'enabled': True,  # Cambiar a True para activar
+    'protected_paths': ['/editar_procedimientos/',],
+    'excluded_paths': [],
+    'maintenance_url': '/maintenance/',
+    'estimated_time': '1 semana',
+    'start_time': '29/07/2025 14:40',
+    'end_time': '08/08/2025 16:40'
+}
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,6 +89,7 @@ MIDDLEWARE = [
     'web.middleware.LoadingScreenMiddleware',
     'web.middleware.RegistroPeticionesMiddleware',
     'web.middleware.PrivateApiAuthMiddleware',  # Middleware para autenticación de API privada
+    'maintenance.middleware.SelectiveMaintenanceMiddleware',
 ]
 
 LOGIN_URL = 'home'  # Cambia esto al nombre de tu URL de inicio de sesión

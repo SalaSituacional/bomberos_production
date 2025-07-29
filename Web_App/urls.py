@@ -30,6 +30,7 @@ from junin.urls import *
 from sarp.urls import *
 from mecanica.urls import *
 from bienes_municipales.urls import *
+from maintenance.views import maintenance_view  # Si creaste la app maintenance
 
 #Se crean las rutas que se podran visitar en la aplicacion web.
 urlpatterns = [
@@ -46,6 +47,8 @@ urlpatterns = [
     # Admin
     path('alpha04/', admin.site.urls),
     path('logout/', logout, name='logout'),
+
+    path('maintenance/', maintenance_view, name='maintenance-page'),
 
     # BLOG
     path('', inicio, name="inicio"),
