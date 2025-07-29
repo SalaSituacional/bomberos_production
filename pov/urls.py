@@ -5,4 +5,6 @@ from .views import *
 urlpatterns = [
     # POV
     path('dashboard_pov/', Dashboard_pov, name='dashboard_pov'),
+    path('tabla_pov/', Tabla_pov, name='tabla_pov'),
+
 ]
