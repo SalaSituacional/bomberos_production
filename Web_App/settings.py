@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     "sarp",
     "bienes_municipales",  
     "pov", 
-    'maintenance'
+    'maintenance',
 ]
 
 
