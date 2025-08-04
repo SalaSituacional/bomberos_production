@@ -109,12 +109,25 @@ class Sanciones(models.Model):
   def __str__(self):
     return f"{self.personal.nombres} {self.personal.apellidos} -- {self.fecha} -- {self.sancion} -- {self.observaciones}"
   
+class Tipos_Titulaciones(models.Model):
+  tipo_titulo = models.TextField()
+
+  def __str__(self):
+    return f"{self.tipo_titulo}"
+
+class Institucion(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)  # Evita duplicados
+
+    def __str__(self):
+        return self.nombre
+
 class Titulos_Academicos(models.Model):
     personal = models.ForeignKey(Personal, on_delete=models.CASCADE)
-    titulo = models.TextField()
-    institucion = models.TextField()
+    titulo = models.ForeignKey(Tipos_Titulaciones, on_delete=models.CASCADE)
+    institucion = models.ForeignKey(Institucion, on_delete=models.CASCADE)
     fecha_obtencion = models.DateField(default=timezone.now)
     numero_constancia = models.TextField()
+    carrera = models.TextField()
     hrs_academicas = models.TextField()
 
     def __str__(self):

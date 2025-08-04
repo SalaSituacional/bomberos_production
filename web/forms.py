@@ -275,9 +275,40 @@ class VacacionesPermisosForm(forms.ModelForm):
         }
 
 class TitulosAcademicosForm(forms.ModelForm):
+    titulo = forms.ModelChoiceField(
+        queryset=Tipos_Titulaciones.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True,
+        empty_label="Seleccione un título",
+    )
+
+    institucion_nombre = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'autocomplete': 'off'
+        }),
+        label="Institución"
+    )
+    
     class Meta:
         model = Titulos_Academicos
-        fields = ["titulo", 'institucion', 'fecha_obtencion', 'numero_constancia', 'hrs_academicas']
+        fields = ["titulo", 'fecha_obtencion', 'numero_constancia', 'hrs_academicas', 'carrera']
+        widgets = {
+            'institucion': forms.HiddenInput(),
+            'carrera': forms.TextInput(),
+            'titulo': forms.TextInput(),
+            'numero_constancia': forms.TextInput(),
+            'hrs_academicas': forms.TextInput(),
+            'fecha_obtencion': forms.DateInput(attrs={'type': 'date'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Elimina la validación del campo institucion si existe
+        if 'institucion' in self.fields:
+            del self.fields['institucion']
+
 
 # Form1
 class SelectorDivision(forms.Form):

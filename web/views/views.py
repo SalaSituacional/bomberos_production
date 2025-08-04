@@ -288,6 +288,7 @@ def Detalles_Personal_view(request, id):
     if request.method == 'POST':
         form_ascensos = AscensoForm(request.POST)
         form = VacacionesPermisosForm(request.POST)
+        form_titulos = TitulosAcademicosForm(request.POST)
 
         if form_ascensos.is_valid():
             ascenso = form_ascensos.save(commit=False)
@@ -299,15 +300,44 @@ def Detalles_Personal_view(request, id):
             vacacion.personal = persona
             vacacion.save()
             return redirect('detalles_personal', id=id)
+        
+        if form_titulos.is_valid():
+            try:
+                nombre_institucion = form_titulos.cleaned_data['institucion_nombre']
+                # 1. Crear o obtener institución
+                institucion, created = Institucion.objects.get_or_create(
+                    nombre=nombre_institucion
+                )
+                
+                # 2. Crear título académico
+                titulo = Titulos_Academicos(
+                    personal=persona,
+                    titulo=form_titulos.cleaned_data['titulo'],
+                    institucion=institucion,
+                    fecha_obtencion=form_titulos.cleaned_data['fecha_obtencion'],
+                    numero_constancia=form_titulos.cleaned_data.get('numero_constancia', ''),
+                    hrs_academicas=form_titulos.cleaned_data.get('hrs_academicas', 0),
+                    carrera=form_titulos.cleaned_data.get('carrera', '')
+                )
+                
+                titulo.full_clean()  # Validación adicional
+                titulo.save()
+                
+                return redirect('detalles_personal', id=id)
+                
+            except Exception as e:
+                print(f"❌ Error: {str(e)}")
     else:
         form_ascensos = AscensoForm()
         form = VacacionesPermisosForm()
+        form_titulos = TitulosAcademicosForm()
 
     # Obtener el personal y sus relaciones
     try:
         persona = Personal.objects.prefetch_related(
             Prefetch('detalles_personal_set', to_attr='detalles'),
             Prefetch('vacaciones_permisos_set', to_attr='lista_vacaciones'),
+            Prefetch('titulos_academicos_set', to_attr='lista_titulos'),
             Prefetch('ascensos_set', to_attr='lista_ascensos'),
             Prefetch('familiares_set', to_attr='lista_familiares')
         ).get(pk=id)
@@ -339,9 +369,11 @@ def Detalles_Personal_view(request, id):
             "detalles": persona.detalles[0] if persona.detalles else None,
             "ascensos": persona.lista_ascensos,
             "vacaciones": persona.lista_vacaciones,
+            "titulos": persona.lista_titulos,
             "familiares": familiares_con_edad,
             "form_vacaciones": form,
-            "form_ascenso": form_ascensos
+            "form_ascenso": form_ascensos,
+            "form_titulos": form_titulos
         }
 
     except Personal.DoesNotExist:
@@ -357,6 +389,30 @@ def Detalles_Personal_view(request, id):
         "años_servicio": calcular_edad(detalles["detalles"].fecha_ingreso) if detalles and detalles["detalles"] else None,
         "nacionalidad": detalles["personal"].cedula[0] if detalles and detalles["personal"].cedula else None,
     })
+
+def buscar_instituciones(request):
+    # Devuelve TODAS las instituciones cuando q está vacío
+    query = request.GET.get('q', '')
+    
+    if query:
+        instituciones = Institucion.objects.filter(nombre__icontains=query)[:10]
+    else:
+        instituciones = Institucion.objects.all()
+    
+    data = [{'id': inst.id, 'nombre': inst.nombre} for inst in instituciones]
+    return JsonResponse(data, safe=False)
+
+def eliminar_titulo(request, titulo_id):
+    try:
+        titulo = Titulos_Academicos.objects.get(id=titulo_id)
+        titulo.delete()
+        return JsonResponse({'status': 'success'}, status=200)
+    except Titulos_Academicos.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Título no encontrado'}, status=404)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
 
 
 def registrar_personal_completo(request):
