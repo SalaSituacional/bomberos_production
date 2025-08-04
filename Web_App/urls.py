@@ -82,6 +82,8 @@ urlpatterns = [
     path('personal/<int:id>/', Detalles_Personal_view, name='detalles_personal'),
     path('personal/registrar/', registrar_personal_completo, name='registrar_personal'),
     path('personal/editar/<int:personal_id>/', editar_personal, name='editar_personal'),
+    path('buscar_instituciones/', buscar_instituciones, name='buscar_instituciones'),
+    path('eliminar_titulo/<int:titulo_id>/', eliminar_titulo, name='eliminar_titulo'),
     
     
 

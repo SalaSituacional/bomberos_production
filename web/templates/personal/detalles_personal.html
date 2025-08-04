@@ -28,6 +28,34 @@
 {% load widget_tweaks %}
 
 {% block content %}
+
+<style>
+  .autocomplete-results {
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #b6243a;
+    border-top: none;
+    z-index: 1000;
+    display: none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+  
+  .autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: .9rem;
+  }
+  
+  .autocomplete-item:hover {
+    background-color: #b6243a70;
+    color: #fff;
+  }
+</style>
+
 <div class="general-dashboard">
   <div class="div-user-name  username-space">
     <h3 class="division-title">Informacion del {{detalles.personal.jerarquia}} {{ detalles.personal.nombres.split|first }} {{ detalles.personal.apellidos.split|first }}</h3>
@@ -238,7 +266,7 @@
                       </tr>
                       {% empty %}
                       <tr>
-                          <td colspan="4" class="text-center">No hay ascensos registrados</td>
+                          <td colspan="5" class="text-center">No hay ascensos registrados</td>
                       </tr>
                       {% endfor %}
 
@@ -352,7 +380,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center">No hay registros de vacaciones/permisos</td>
+                        <td colspan="5" class="text-center">No hay registros de vacaciones/permisos</td>
                     </tr>
                     {% endfor %}
 
@@ -417,40 +445,47 @@
     <!-- Tabla de Titulaciones -->
     <div class="ascensos-detalles">
       <div class="ascensos-container">
-          <h2><i class="bi bi-calendar-check"></i> Titulos Academicos</h2>
+          <h2><i class="bi bi-easel"></i> Formación Académica</h2>
 
           <div class="boton_agregar_ascenso">
-            <button id="toggleVacacionesFormBtn" class="btn btn-danger" type="button">
-                Agregar Vacaciones/Permisos
+            <button data-bs-toggle="modal" data-bs-target="#modalTitulaciones" class="btn btn-danger" type="button">
+                Agregar Titulo
             </button>
           </div>
 
-          <!-- Tabla de vacaciones -->
+          <!-- Tabla de Titulaciones -->
           <div class="w-100 tabla-ascensos-container">
             <table class="tabla_ascensos">
                 <thead>
                     <tr>
-                        <th><i class="bi bi-card-list"></i> Tipo</th>
-                        <th><i class="bi bi-calendar-range"></i> Periodo</th>
-                        <th><i class="bi bi-calendar-date"></i> Fecha Desde</th>
-                        <th><i class="bi bi-calendar-day"></i> Días</th>
-                        <th><i class="bi bi-tools"></i> Acciones</th>
+                        <th><i class="bi bi-award"></i> Título</th>
+                        <th><i class="bi bi-building"></i> Institución</th>
+                        <th><i class="bi bi-calendar-check"></i> Fecha Obtención</th>
+                        <th><i class="bi bi-file-earmark-text"></i> Número Constancia</th>
+                        <th><i class="bi bi-clock-history"></i> Horas Académicas</th>
+                        <th><i class="bi bi-gear"></i> Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Filas de datos existentes -->
-                    {% for vacacion in detalles.vacaciones %}
+                    {% for vacacion in detalles.titulos %}
                     <tr>
-                        <td>{{ vacacion.tipo }}</td>
-                        <td>{{ vacacion.periodo }}</td>
-                        <td>{{ vacacion.fecha_desde }}</td>
-                        <td>{{ vacacion.cantidad_dias }}</td>
+                        <td>{{ vacacion.titulo.tipo_titulo }} {{ vacacion.carrera }}</td>
+                        <td>{{ vacacion.institucion.nombre }}</td>
+                        <td>{{ vacacion.fecha_obtencion }}</td>
+                        <td>{{ vacacion.numero_constancia }}</td>
+                        <td>{{ vacacion.hrs_academicas }}</td>
                         <td>
+                            <button class="btn btn-danger btn-sm eliminar-titulo" 
+                                    data-id="{{ vacacion.id }}"
+                                    title="Eliminar título">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center">No hay registros de vacaciones/permisos</td>
+                        <td colspan="6" class="text-center">No hay registros de Titulos Academicos</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -534,38 +569,67 @@
 </section>
 
 <!----------------------- Modal Para Registros ---------------------------------->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="modalTitulaciones" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="modalTitulacionesLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header config-modal-delete">
-        <h2 class="modal-title fs-5" id="staticBackdropLabel">
-          Agregar Reporte
+        <h2 class="modal-title fs-5" id="modalTitulacionesLabel">
+          Agregar Titulaciones
         </h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body modal-body-two">
-        <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
-          <form action="{% url 'agregar_reportes' %}" method="POST" class="form-reportes">
+        <div class="infoProcedimientos style-delete height-auto">
+          <form method="POST" class="form-reportes">
             {% csrf_token %}
 
-            {% for field in form_reportes %}
-              {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'date' or field.field.widget.input_type == 'time' %}
-                <div class="filter-group">
-                  <div class="floating-input">
-                    {% render_field field class="form-control" %}
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                  </div>
-                </div>
-              {% else %}
-                <div class="filter-group">
-                  <div class="floating-select">
-                    {% render_field field %}
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                  </div>
-                </div>
-              {% endif %}
-            {% endfor %}
+            <div class="filter-group">
+              <div class="floating-select">
+                {% render_field detalles.form_titulos.titulo class="form-control" %}
+                <label for="{{ detalles.form_titulos.titulo.id_for_label }}">{{ detalles.form_titulos.titulo.label }}</label>
+              </div>
+            </div>
+            
+            <div class="filter-group">
+              <div class="floating-input">
+                {% render_field detalles.form_titulos.institucion_nombre class="form-control" id="institucion-autocomplete" %}
+                <label for="institucion-autocomplete">
+                  {{ detalles.form_titulos.institucion_nombre.label }}
+                </label>
+                <!-- Contenedor para los resultados -->
+                <div id="autocomplete-results" class="autocomplete-results"></div>
+              </div>
+            </div>
+            {% render_field detalles.form_titulos.institucion class="form-control" %}
+
+            <div class="filter-group">
+              <div class="floating-input">
+                {% render_field detalles.form_titulos.fecha_obtencion class="form-control" %}
+                <label for="{{ detalles.form_titulos.fecha_obtencion.id_for_label }}">{{ detalles.form_titulos.fecha_obtencion.label }}</label>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <div class="floating-input">
+                {% render_field detalles.form_titulos.numero_constancia class="form-control" %}
+                <label for="{{ detalles.form_titulos.numero_constancia.id_for_label }}">Numero Titulaciones</label>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <div class="floating-input">
+                {% render_field detalles.form_titulos.carrera class="form-control" %}
+                <label for="{{ detalles.form_titulos.carrera.id_for_label }}">{{ detalles.form_titulos.carrera.label }}</label>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <div class="floating-input">
+                {% render_field detalles.form_titulos.hrs_academicas class="form-control" %}
+                <label for="{{ detalles.form_titulos.hrs_academicas.id_for_label }}">Horas Academicas</label>
+              </div>
+            </div>
 
             <div class="buttons-reportes">
               <button type="submit" class="btn btn-danger" id="confirmarEliminar">
@@ -591,6 +655,8 @@
 </div>
 
 <script src="{% static 'js/personal/detalles_personal.js' %}"></script>
+<script src="{% static 'js/personal/delete-titulo.js' %}"></script>
+<script src="{% static 'js/personal/autocompletado.js' %}"></script>
 
 {% endblock %}
 

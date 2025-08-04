@@ -10,6 +10,8 @@ admin.site.register(Familiares)
 admin.site.register(Titulos_Academicos)
 admin.site.register(Sanciones)
 admin.site.register(Vacaciones_Permisos)
+admin.site.register(Tipos_Titulaciones)
+admin.site.register(Institucion)
 
 admin.site.register(Tipos_Procedimientos)
 admin.site.register(Procedimientos)
