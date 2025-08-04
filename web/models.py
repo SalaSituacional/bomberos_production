@@ -47,7 +47,7 @@ class Personal(models.Model):
   
 class Detalles_Personal(models.Model):
   personal = models.ForeignKey(Personal, on_delete=models.CASCADE)
-  fecha_nacimiento = models.DateField()
+  fecha_nacimiento = models.DateField(null=True, blank=True)
   talla_camisa = models.TextField(null=True, blank=True)
   talla_pantalon = models.TextField(null=True, blank=True)
   talla_zapato = models.TextField(null=True, blank=True)

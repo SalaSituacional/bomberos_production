@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const modal = new bootstrap.Modal(document.getElementById("modal-info"));
   const tablaContenido = document.getElementById("tabla-contenido-prevencion");
   const loadingScreen = document.getElementById("loadingScreen");
+  const usuario = document.getElementById("usuario").textContent
+  console.log(usuario)
   let activeRequests = 0;
 
   // Configuración de documentos por dependencia
@@ -80,14 +82,14 @@ document.addEventListener("DOMContentLoaded", () => {
                   title="Descargar Solicitud">
             <i class="bi bi-file-text"></i>
           </button>
-          ${ tieneProblemas ? '' : `
-          <button class="btn btn-info btn-sm mx-1 descargar-credencial" 
-                  data-solicitud="${item.id_solicitud}" 
-                  data-departamento="${item.comercio_departamento || 'default'}"
-                  title="Descargar Credencial">
-            <i class="bi bi-person-badge"></i>
-          </button>
-        </td>`}
+          ${tieneProblemas === false && usuario !== "Prevencion05" ? `
+            <button class="btn btn-info btn-sm mx-1 descargar-credencial" 
+                    data-solicitud="${item.id_solicitud}" 
+                    data-departamento="${item.comercio_departamento || 'default'}"
+                    title="Descargar Credencial">
+              <i class="bi bi-person-badge"></i>
+            </button>
+          </td>` : '' }
       </tr>
       ${tieneProblemas ? `
         <tr class="table-${tipo === 'Solicitud' ? 'warning' : 'info'}">
