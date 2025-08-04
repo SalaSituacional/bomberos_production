@@ -274,6 +274,11 @@ class VacacionesPermisosForm(forms.ModelForm):
             'cantidad_dias': forms.NumberInput(attrs={'min': 1}),
         }
 
+class TitulosAcademicosForm(forms.ModelForm):
+    class Meta:
+        model = Titulos_Academicos
+        fields = ["titulo", 'institucion', 'fecha_obtencion', 'numero_constancia', 'hrs_academicas']
+
 # Form1
 class SelectorDivision(forms.Form):
     def __init__(self, *args, **kwargs):
