@@ -29,7 +29,7 @@ async function obtenerServicios() {
 
         const response = await fetchWithLoader(url); // Asegúrate de que 'fetchWithLoader' esté definida
         const data = await response;
-        // console.log('Datos obtenidos:', data);
+        console.log('Datos obtenidos:', data);
 
         // --- Lógica para el título del reporte ---
         if (fechaInicio && fechaFin) {
@@ -68,6 +68,7 @@ async function obtenerServicios() {
             'rescateenascensores': 'Rescate En Ascensores',
             'rescateenestructuras': 'Rescate En Estructuras',
             'rescatepacientepsiquiatrico': 'Rescate Paciente Psiquiatrico',
+            'recuperaciondecadaver': 'Recuperacion De Cadaver',
 
             // Himenopteros
             'exterminioabejas': 'Exterminio De Abejas',
@@ -197,7 +198,8 @@ async function obtenerServicios() {
             data['Rescate En El Metro'] || 0,
             data['Rescate En Ascensores'] || 0,
             data['Rescate En Estructuras'] || 0,
-            data['Rescate Paciente Psiquiatrico'] || 0
+            data['Rescate Paciente Psiquiatrico'] || 0,
+            data['Recuperacion De Cadaver'] || 0
         ];
         const totalRescates = rescates.reduce((a, b) => a + b, 0);
         document.getElementById('rescatestotales').textContent = `(${totalRescates})`;
