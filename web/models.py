@@ -129,7 +129,6 @@ class Usuarios(models.Model):
     def __str__(self):
       return self.user + " -- " + self.password + " -- " + self.encargado.nombres + " " + self.encargado.apellidos
 
-
 class RegistroPeticiones(models.Model):
     usuario = models.ForeignKey(Usuarios, on_delete=models.SET_NULL, null=True, blank=True)  # Usuario logeado
     url = models.CharField(max_length=255)  # URL donde se realizó la petición
