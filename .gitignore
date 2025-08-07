@@ -9,9 +9,6 @@ venv/
 # Bases de datos
 db.sqlite3
 *.db
-# Migraciones (ignora todo excepto __init__.py)
-**/migrations/*
-!**/migrations/__init__.py
 # Archivos SQL
 *.sql
 # # Configuración sensible de Django
