@@ -35,5 +35,7 @@ urlpatterns = [
     path('api/verificar-identificador/', verificar_identificador, name='verificar_identificador'),
     # Api Generar Excel
     path('generar-excel-bienesmunicipales/', generar_excel_bienes_municipales, name='generar_excel_bienesmunicipales'),
+    # Api generar PDF
+    path('generar-pdf-bienesmunicipales/', generar_pdf_qr_bienes, name='generar_pdf_bienesmunicipales'),
 
 ]

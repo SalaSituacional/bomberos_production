@@ -7,6 +7,7 @@ crispy-bootstrap5==2025.6
 dj-database-url==2.3.0
 Django==5.1.2
 django-crispy-forms==2.4
+django-debug-toolbar==6.0.0
 django-widget-tweaks==1.5.0
 docopt==0.6.2
 docxcompose==1.4.0
@@ -38,6 +39,7 @@ python-docx==1.1.2
 python-dotenv==1.0.1
 pytz==2024.2
 qrcode==8.2
+reportlab==4.4.3
 requests==2.32.3
 six==1.16.0
 soupsieve==2.6
