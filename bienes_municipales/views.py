@@ -377,8 +377,8 @@ def generar_pdf_qr_bienes(request):
 
         # Prepara los datos para el código QR
         # Se usa un formato de texto simple para que el QR sea legible
-        data_qr = f"Identificador: {bien.identificador}\nDependencia: {bien.dependencia.nombre}\nDepartamento: {bien.departamento}\nResponsable: {bien.responsable if bien.responsable else 'Sin asignar'}"
-        
+        data_qr = f"Identificador: {bien.identificador}\nDependencia: {bien.dependencia.nombre}\nDescripción: {bien.descripcion}\nDepartamento: {bien.departamento}\nResponsable: {bien.responsable.nombres} {bien.responsable.apellidos}" if bien.responsable else "Responsable: Sin asignar"
+
         # Genera el código QR
         qr_img = qrcode.make(data_qr)
         qr_img_buffer = BytesIO()
