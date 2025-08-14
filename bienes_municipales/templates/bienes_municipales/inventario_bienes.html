@@ -46,7 +46,6 @@
       </a>
     </div>
   </div>
-
   <form class="filter-form" action="" method="GET">
     <div class="filter-group">
       <div class="floating-input">
@@ -82,14 +81,17 @@
         <label for="filterEstado">Estado</label>
       </div>
     </div>
-  </section>
+
+    <button type="submit" class="btn btn-danger w-100 px-3">Filtrar</button>
+</form>
+
 </div>
 
 <div class="table-responsive-sm">
-  <table class="table table-hover">
+  <table class="table table-hover table-responsive-sm">
     <thead>
       <tr>
-        <th class="fixed-width-auto">Número</th>
+        <th class="fixed-width-auto">#</th>
         <th class="fixed-width">Identificador</th>
         <th class="fixed-width">Descripción</th>
         <th class="fixed-width">Cantidad</th>
@@ -203,11 +205,34 @@
     </span>
 </div>
 
-<div class="contain-dates">
+<div class="contain-dates w-100 m-4">
   <h4 class="title-procediments titulo-exportaciones-excel">Exportar Reportes</h4>
   <section class="buttons-items input-group mb-3 filter-search">
     <button id="exportarExcel" class="btn btn-danger download-link">Exportar .xls</button>
   </section>
+</div>
+
+<div class="contain-dates w-100 m-4">
+  <h4 class="title-procediments titulo-exportaciones-excel mb-2">Exportar QR PDF</h4>
+  <form action="{% url 'generar_pdf_bienesmunicipales' %}" method="GET" class="filter-form form-reportes" target="_blank">
+    {% csrf_token %}
+    <div class="filter-group">
+      <div class="floating-select">
+        <select name="dependencia_id" id="filterDependencia" class="form-control">
+          <option value="">Seleccionar una dependencia...</option>
+          {% for dependencia in dependencias %}
+            <option value="{{ dependencia.id }}">
+              {{ dependencia.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+        <label for="filterDependencia">Seleccionar Dependencia</label>
+      </div>
+    </div>
+    <div class="filter-group d-flex justify-content-center align-items-center w-100 py-3">
+      <button type="submit" class="btn btn-danger" id="generatePdfBtn">Generar QR en PDF</button>
+    </div>
+</form>
 </div>
 
 
@@ -365,12 +390,13 @@
   </section>
 </footer>
 
+<script>
+  const GenerarExcelBienes = "{% url 'generar_excel_bienesmunicipales' %}"
+</script>
+
 <script src="{% static 'js/bienes_inmuebles/reasignar_bien.js' %}"></script>
 <script src="{% static 'js/bienes_inmuebles/cambiar_estado.js' %}"></script>
 <script src="{% static 'js/bienes_inmuebles/eliminar_bienes.js' %}"></script>
 <script src="{% static 'js/bienes_inmuebles/mostrar_bien.js' %}"></script>
 <script src="{% static 'js/bienes_inmuebles/generar_excel_bienes.js' %}"></script>
-
-
-
 {% endblock %}
