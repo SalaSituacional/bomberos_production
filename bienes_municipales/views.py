@@ -104,7 +104,7 @@ def Inventario_bienes(request):
     if filter_estado:
         bienes_queryset = bienes_queryset.filter(estado_actual=filter_estado)
 
-    bienes_queryset = bienes_queryset.order_by('id')
+    bienes_queryset = bienes_queryset.order_by('identificador')
 
     # --- Pagination Implementation ---
     # 1. Get the current page number from the request (default to 1)
@@ -173,7 +173,7 @@ def listar_bienes(request):
     page = int(request.GET.get("page", 1))
     per_page = 15
 
-    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by("id")
+    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by("identificador")
 
     if identificador:
         bienes_queryset = bienes_queryset.filter(identificador__icontains=identificador)
@@ -189,9 +189,8 @@ def listar_bienes(request):
         "bienes": []
     }
 
-    for index, bien in enumerate(bienes, start=bienes.start_index()):
+    for bien in bienes:
         data["bienes"].append({
-            "numero": index,
             "identificador": bien.identificador,
             "cantidad": bien.cantidad,
             "descripcion": bien.descripcion,
