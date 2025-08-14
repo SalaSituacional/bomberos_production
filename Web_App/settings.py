@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'crispy_forms',
     'crispy_bootstrap5',
     'widget_tweaks',
@@ -90,6 +91,7 @@ MIDDLEWARE = [
     'web.middleware.RegistroPeticionesMiddleware',
     'web.middleware.PrivateApiAuthMiddleware',  # Middleware para autenticación de API privada
     'maintenance.middleware.SelectiveMaintenanceMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 LOGIN_URL = 'home'  # Cambia esto al nombre de tu URL de inicio de sesión
@@ -166,3 +168,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 HANDLER404 = 'web.views.custom_404_view'
 HANDLER500 = 'web.views.custom_500_view'
+
+# Django debug tool bar settings
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]

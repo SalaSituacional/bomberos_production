@@ -22,5 +22,6 @@ Este proyecto es una aplicación web robusta construida con Django, diseñada pa
 * **PostgreSQL:** Base de datos para almacenar la información (PostgreSQL para producción).
 * **HTML, CSS, JavaScript:** Para la interfaz de usuario.
 * **Django Admin:** Para la gestión de datos administrativa.
+* **Librerias de py:** Para la creacion y exportacion de pdf, excel.
 
 ---

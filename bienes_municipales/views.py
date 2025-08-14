@@ -5,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import *
 from .urls import *
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.utils import ImageReader  # Importa ImageReader
 
 
 # Vista para el Dashboard
@@ -104,7 +108,7 @@ def Inventario_bienes(request):
     if filter_estado:
         bienes_queryset = bienes_queryset.filter(estado_actual=filter_estado)
 
-    bienes_queryset = bienes_queryset.order_by('id')
+    bienes_queryset = bienes_queryset.order_by('identificador')
 
     # --- Pagination Implementation ---
     # 1. Get the current page number from the request (default to 1)
@@ -173,7 +177,7 @@ def listar_bienes(request):
     page = int(request.GET.get("page", 1))
     per_page = 15
 
-    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by("id")
+    bienes_queryset = BienMunicipal.objects.select_related('dependencia', 'responsable').order_by("identificador")
 
     if identificador:
         bienes_queryset = bienes_queryset.filter(identificador__icontains=identificador)
@@ -189,9 +193,8 @@ def listar_bienes(request):
         "bienes": []
     }
 
-    for index, bien in enumerate(bienes, start=bienes.start_index()):
+    for bien in bienes:
         data["bienes"].append({
-            "numero": index,
             "identificador": bien.identificador,
             "cantidad": bien.cantidad,
             "descripcion": bien.descripcion,
@@ -336,3 +339,71 @@ def generar_excel_bienes_municipales(request):
         })
 
     return JsonResponse(data, safe=False)
+
+def generar_pdf_qr_bienes(request):
+    dependencia_id = request.GET.get('dependencia_id')
+
+    if not dependencia_id:
+        # Si no hay ID, no se puede generar el PDF.
+        return HttpResponse("Error: No se proporcionó una dependencia válida.", status=404)
+
+    try:
+        dependencia = get_object_or_404(Dependencia, id=dependencia_id)
+        bienes = BienMunicipal.objects.filter(dependencia=dependencia).select_related('dependencia', 'responsable').order_by('identificador')
+
+        if not bienes:
+            pass
+
+    except Dependencia.DoesNotExist:
+        return HttpResponse("Error: La dependencia seleccionada no existe.", status=404)
+
+    # Crea el buffer para el PDF y el canvas
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+    
+    # Añade un título al PDF
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(100, 750, f"Bienes de la dependencia: {dependencia.nombre}")
+    p.setFont("Helvetica", 12)
+    
+    y_position = 700
+    for bien in bienes:
+        # Si no hay suficiente espacio para el siguiente QR, crea una nueva página
+        if y_position < 100:
+            p.showPage()
+            y_position = 750
+            p.setFont("Helvetica-Bold", 16)
+            p.setFont("Helvetica", 12)
+
+        # Prepara los datos para el código QR
+        # Se usa un formato de texto simple para que el QR sea legible
+        data_qr = f"Identificador: {bien.identificador}\nDependencia: {bien.dependencia.nombre}\nDepartamento: {bien.departamento}\nResponsable: {bien.responsable if bien.responsable else 'Sin asignar'}"
+        
+        # Genera el código QR
+        qr_img = qrcode.make(data_qr)
+        qr_img_buffer = BytesIO()
+        qr_img.save(qr_img_buffer, "PNG")
+        qr_img_buffer.seek(0)
+        
+        # Convierte el buffer de la imagen en un objeto ImageReader para ReportLab
+        qr_reader = ImageReader(qr_img_buffer)
+        
+        # Dibuja la imagen del QR y la información del bien en el PDF
+        p.drawImage(qr_reader, 100, y_position - 80, width=80, height=80)
+        
+        p.drawString(200, y_position - 10, f"Identificador: {bien.identificador}")
+        p.drawString(200, y_position - 30, f"Descripción: {bien.descripcion}")
+        p.drawString(200, y_position - 50, f"Departamento: {bien.departamento}")
+        p.drawString(200, y_position - 70, f"Responsable: {bien.responsable.nombres} {bien.responsable.apellidos}" if bien.responsable else "Responsable: Sin asignar")
+        
+        y_position -= 100 # Mueve la posición para el siguiente bien
+
+    # Guarda el canvas y cierra el buffer
+    p.showPage() # Muestra la última página
+    p.save()
+    buffer.seek(0)
+
+    # Devuelve el PDF como respuesta para su descarga
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="bienes_{dependencia.nombre}.pdf" pagename="bienes_municipales"'
+    return response
