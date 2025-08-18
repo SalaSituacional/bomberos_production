@@ -344,7 +344,6 @@ def generar_pdf_qr_bienes(request):
     dependencia_id = request.GET.get('dependencia_id')
 
     if not dependencia_id:
-        # Si no hay ID, no se puede generar el PDF.
         return HttpResponse("Error: No se proporcionó una dependencia válida.", status=404)
 
     try:
@@ -352,7 +351,14 @@ def generar_pdf_qr_bienes(request):
         bienes = BienMunicipal.objects.filter(dependencia=dependencia).select_related('dependencia', 'responsable').order_by('identificador')
 
         if not bienes:
-            pass
+            # Puedes retornar un PDF vacío con un mensaje si no hay bienes.
+            buffer = BytesIO()
+            p = canvas.Canvas(buffer, pagesize=letter)
+            p.drawString(100, 750, f"No se encontraron bienes para la dependencia: {dependencia.nombre}")
+            p.showPage()
+            p.save()
+            buffer.seek(0)
+            return HttpResponse(buffer, content_type='application/pdf')
 
     except Dependencia.DoesNotExist:
         return HttpResponse("Error: La dependencia seleccionada no existe.", status=404)
@@ -363,21 +369,26 @@ def generar_pdf_qr_bienes(request):
     
     # Añade un título al PDF
     p.setFont("Helvetica-Bold", 16)
-    p.drawString(100, 750, f"Bienes de la dependencia: {dependencia.nombre}")
-    p.setFont("Helvetica", 12)
+    p.drawString(100, 750, f"Códigos QR de Bienes: {dependencia.nombre}")
+    p.setFont("Helvetica", 10)
     
-    y_position = 700
-    for bien in bienes:
-        # Si no hay suficiente espacio para el siguiente QR, crea una nueva página
-        if y_position < 100:
-            p.showPage()
-            y_position = 750
-            p.setFont("Helvetica-Bold", 16)
-            p.setFont("Helvetica", 12)
+    # Define las dimensiones y el espaciado
+    qr_width = 80
+    qr_height = 80
+    id_height = 12  # Altura para el texto del identificador
+    margin = 50     # Margen superior e inferior
+    padding_x = 20  # Espacio entre códigos en horizontal
+    padding_y = 40  # Espacio entre filas en vertical
+    
+    start_x = 70
+    start_y = 700
+    current_x = start_x
+    current_y = start_y
 
+    for bien in bienes:
         # Prepara los datos para el código QR
-        # Se usa un formato de texto simple para que el QR sea legible
-        data_qr = f"Identificador: {bien.identificador}\nDependencia: {bien.dependencia.nombre}\nDescripción: {bien.descripcion}\nDepartamento: {bien.departamento}\nResponsable: {bien.responsable.nombres} {bien.responsable.apellidos}" if bien.responsable else "Responsable: Sin asignar"
+        # El formato se mantiene para que el QR sea funcional
+        data_qr = f"Identificador: {bien.identificador}\nDependencia: {bien.dependencia.nombre}\nDescripción: {bien.descripcion}\nDepartamento: {bien.departamento}\nResponsable: {bien.responsable.nombres} {bien.responsable.apellidos}" if bien.responsable else f"Identificador: {bien.identificador}\nDependencia: {bien.dependencia.nombre}\nDescripción: {bien.descripcion}\nDepartamento: {bien.departamento}\nResponsable: Sin asignar"
 
         # Genera el código QR
         qr_img = qrcode.make(data_qr)
@@ -385,25 +396,35 @@ def generar_pdf_qr_bienes(request):
         qr_img.save(qr_img_buffer, "PNG")
         qr_img_buffer.seek(0)
         
-        # Convierte el buffer de la imagen en un objeto ImageReader para ReportLab
+        # Convierte el buffer de la imagen en un objeto ImageReader
         qr_reader = ImageReader(qr_img_buffer)
         
-        # Dibuja la imagen del QR y la información del bien en el PDF
-        p.drawImage(qr_reader, 100, y_position - 80, width=80, height=80)
+        # Dibuja el QR y el identificador
+        p.drawImage(qr_reader, current_x, current_y - qr_height, width=qr_width, height=qr_height)
         
-        p.drawString(200, y_position - 10, f"Identificador: {bien.identificador}")
-        p.drawString(200, y_position - 30, f"Descripción: {bien.descripcion}")
-        p.drawString(200, y_position - 50, f"Departamento: {bien.departamento}")
-        p.drawString(200, y_position - 70, f"Responsable: {bien.responsable.nombres} {bien.responsable.apellidos}" if bien.responsable else "Responsable: Sin asignar")
+        # Muestra el identificador debajo del QR
+        p.drawCentredString(current_x + qr_width / 2, current_y - qr_height - 10, f"ID: {bien.identificador}")
         
-        y_position -= 100 # Mueve la posición para el siguiente bien
-
+        # Mueve la posición para el siguiente QR en la misma fila
+        current_x += qr_width + padding_x
+        
+        # Si no hay suficiente espacio horizontal, se mueve a la siguiente fila
+        if current_x + qr_width > letter[0] - margin:
+            current_x = start_x
+            current_y -= (qr_height + id_height + padding_y)
+            
+        # Si no hay suficiente espacio para la siguiente fila, crea una nueva página
+        if current_y - (qr_height + id_height) < margin:
+            p.showPage()
+            current_x = start_x
+            current_y = start_y
+            
     # Guarda el canvas y cierra el buffer
-    p.showPage() # Muestra la última página
+    p.showPage() 
     p.save()
     buffer.seek(0)
 
     # Devuelve el PDF como respuesta para su descarga
     response = HttpResponse(buffer, content_type='application/pdf')
-    response['Content-Disposition'] = f'inline; filename="bienes_{dependencia.nombre}.pdf" pagename="bienes_municipales"'
+    response['Content-Disposition'] = f'inline; filename="bienes_qr_{dependencia.nombre}.pdf"'
     return response
