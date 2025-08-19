@@ -1,25 +1,12 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from ..models import *
 from ..forms import *
-from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
-from django.db.models import Count
-import json
-from datetime import datetime
+from django.db.models import Count, Exists, OuterRef, Case, When
 from dateutil.relativedelta import relativedelta
-from datetime import timedelta
 from django.utils.timezone import now, timedelta
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Case, When
-from collections import Counter
-from django.db.models import Exists, OuterRef
-import io
-import fitz  # PyMuPDF
-from django.core.paginator import Paginator
 from mecanica.models import Unidades_Detalles
 
 

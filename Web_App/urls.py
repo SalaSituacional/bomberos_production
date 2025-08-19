@@ -29,6 +29,7 @@ from seguridad_prevencion.urls import *
 from junin.urls import *
 from sarp.urls import *
 from mecanica.urls import *
+from insumos_medicos.urls import *
 from bienes_municipales.urls import *
 from maintenance.views import maintenance_view  # Si creaste la app maintenance
 
@@ -42,7 +43,7 @@ urlpatterns = [
     path('sarp/', include('sarp.urls')),
     path('bienesMunicipales/', include('bienes_municipales.urls')),
     path('pov/', include('pov.urls')),
-
+    path('insumos_medicos/', include('insumos_medicos.urls')),
 
     # Admin
     path('alpha04/', admin.site.urls),

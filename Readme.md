@@ -13,6 +13,7 @@ Este proyecto es una aplicación web robusta construida con Django, diseñada pa
 * **Estadísticas y Reportes:** Genera informes sobre operaciones, uso de recursos y desempeño.
 * **Gestión de Usuarios y Permisos:** Controla el acceso a diferentes módulos según los roles de los usuarios.
 * **Procedimientos del 911** Estadisticas y registros
+* **Seguridad y prevencion** Solicitudes y certificados
 ---
 
 ## 🛠️ Tecnologías Utilizadas
