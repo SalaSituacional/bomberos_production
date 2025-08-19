@@ -65,7 +65,7 @@ INSTALLED_APPS = [
 
 # Configuración del mantenimiento selectivo
 MAINTENANCE_CONFIG = {
-    'enabled': True,  # Cambiar a True para activar
+    'enabled': False,  # Cambiar a True para activar
     'protected_paths': ['/editar_procedimientos/',],
     'excluded_paths': [],
     'maintenance_url': '/maintenance/',
