@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "bienes_municipales",  
     "pov", 
     'maintenance',
+    'insumos_medicos'
 ]
 
 

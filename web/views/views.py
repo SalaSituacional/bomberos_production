@@ -197,6 +197,8 @@ def Home(request):
                 return redirect("/junin/DashboardJunin/")
             elif user.user == "Pov00":
                 return redirect("/pov/dashboard_pov/")
+            elif user.user == "Insumos_01":
+                return redirect("/insumos_medicos/dashboard_insumos_medicos/")
             else:
                 return redirect("/dashboard/")
         except Usuarios.DoesNotExist:
