@@ -31,43 +31,15 @@
         </section>
     </div>
 </div>
-
 <div class="container">
-    <h1>Inventario Principal</h1>
-<p>Este es el inventario central desde el que se distribuyen los insumos.</p>
-
-<a href="{% url 'lote_agregar' %}">
-    <button>Agregar Nuevo Lote de Insumos</button>
-</a>
-
-{% if lotes %}
-    <table>
-        <thead>
-            <tr>
-                <th>Insumo</th>
-                <th>Presentación</th>
-                <th>Cantidad</th>
-                <th>Fecha de Vencimiento</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lote in lotes %}
-            <tr>
-                <td>{{ lote.insumo.nombre }}</td>
-                <td>{{ lote.insumo.presentacion }}</td>
-                <td>{{ lote.cantidad }}</td>
-                <td>{{ lote.fecha_vencimiento|date:"d/m/Y" }}</td>
-                <td>
-                    </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No hay insumos registrados en el inventario principal.</p>
-{% endif %}
+    <h1 class="mb-4">Inventario Principal</h1>
+    <p>Este es el inventario central desde el que se distribuyen los insumos.</p>
+    <a href="{% url 'lote_agregar' %}" class="btn btn-primary mb-3">
+        Agregar Nuevo Lote de Insumos
+    </a>
+    <a href="{% url 'asignar_insumos' %}" class="btn btn-secondary mb-3">Asignar Insumos</a>
 </div>
+{% include "components/tablas/inventarioInsumos.html" %}    
 
 
 <footer class="footer">
