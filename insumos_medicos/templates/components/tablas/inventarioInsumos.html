@@ -40,41 +40,42 @@
         
         {# Sección de paginación #}
         {% if is_paginated %}
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <span class="page-link">Anterior</span>
-                        </li>
-                    {% endif %}
-                    
-                    {% for i in page_obj.paginator.page_range %}
-                        {% if page_obj.number == i %}
-                            <li class="page-item active" aria-current="page">
-                                <span class="page-link">{{ i }}</span>
-                            </li>
-                        {% else %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                    
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <span class="page-link">Siguiente</span>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
-        {% endif %}
+    <nav aria-label="Inventario navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <!-- <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                </li> -->
+            {% else %}
+                <!-- <li class="page-item disabled">
+                    <span class="page-link">Anterior</span>
+                </li> -->
+            {% endif %}
+
+            {# Cambiamos esto para usar la nueva lista de nombres #}
+            {% for page in page_names %}
+                {% if page_obj.number == page.number %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ page.name }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page.number }}">{{ page.name }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <!-- <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                </li> -->
+            {% else %}
+                <!-- <li class="page-item disabled">
+                    <span class="page-link">Siguiente</span>
+                </li> -->
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
     </div>
 {% endblock %}

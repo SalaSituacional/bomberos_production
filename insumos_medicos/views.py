@@ -27,16 +27,43 @@ class AuthRequiredMixin(View):
 # 1. Vista principal consolidada (Dashboard)
 # Muestra todos los inventarios en una sola página. La usaremos como nuestro dashboard principal.
 class DashboardInventariosView(AuthRequiredMixin, ListView):
+    """
+    Vista principal que muestra todos los inventarios y sus lotes.
+    """
     model = Inventario
     template_name = 'views/dashboard_insumos.html'
     context_object_name = 'inventarios'
-    paginate_by = 1  # Muestra 5 inventarios por página
-
+    paginate_by = 1
 
     def get_queryset(self):
         lotes_queryset = Lote.objects.order_by('insumo__nombre', 'fecha_vencimiento')
-        return Inventario.objects.all().prefetch_related(Prefetch('lotes', queryset=lotes_queryset))
+        # Solución a la advertencia: agrega un orden a la consulta principal
+        return Inventario.objects.all().prefetch_related(Prefetch('lotes', queryset=lotes_queryset)).order_by('nombre')
 
+    def get_context_data(self, **kwargs):
+        # Solución al error: llama a super() primero para obtener el contexto completo
+        context = super().get_context_data(**kwargs)
+        
+        # Ahora el objeto paginator ya está disponible
+        paginator = context['paginator']
+        
+        # El resto de tu lógica es correcta
+        page_names = []
+        for page_number in paginator.page_range:
+            page_inventories = paginator.page(page_number).object_list
+            if page_inventories:
+                name = page_inventories[0].nombre
+            else:
+                name = f"Página {page_number}"
+            
+            page_names.append({
+                'number': page_number,
+                'name': name
+            })
+            
+        context['page_names'] = page_names
+        return context
+   
 # 2. Vista para agregar un nuevo lote al inventario principal
 # Esta vista es para la entrada de insumos al sistema.
 class LotePrincipalCreateView(AuthRequiredMixin, CreateView):
@@ -113,3 +140,63 @@ class AsignarInsumoView(AuthRequiredMixin, FormView):
 
 # La vista InventarioBaseListView no la usaremos, ya que el dashboard centralizado la reemplaza.
 # La puedes eliminar o comentar para evitar confusiones.
+
+# Vista dinamica para sub inventarios
+
+class InventarioConsumoView(AuthRequiredMixin, ListView):
+    """
+    Vista dinámica que muestra los lotes de un inventario específico.
+    Solo accesible si el usuario tiene la jerarquía o el nombre de usuario correctos.
+    """
+    model = Lote
+    template_name = 'views/inventario_dinamico.html'
+    context_object_name = 'lotes'
+
+    def get_queryset(self):
+        # Obtiene el nombre del inventario de la URL
+        inventario_name = self.kwargs['inventario_name']
+        
+        # 1. Validación de permisos
+        user_name = self.user.get('user') # ¡Acceso correcto!
+        user_jerarquia = self.user.get('jerarquia') # ¡Acceso correcto!
+        allowed_access = False
+        
+        # Lógica de permisos por jerarquía (más robusta)
+        if user_jerarquia == 'Jefe de Inventario':
+            allowed_access = True
+            
+        # Lógica de permisos por nombre de usuario
+        elif user_name == 'SeRvEr' or user_name == 'Insumos_01' or user_name == 'Sala_Situacional':
+            allowed_access = True
+
+        # Lógica para otros roles por nombre de usuario y nombre de inventario
+        elif user_name == 'Operaciones01' and inventario_name == 'Cuartel Central':
+            allowed_access = True
+        elif user_name == 'Rescate03' and inventario_name == 'Estacion 01':
+            allowed_access = True
+        elif user_name == 'Prehospitalaria04' and inventario_name == 'Estacion 02':
+            allowed_access = True
+        elif user_name == 'Grumae02' and inventario_name == 'Estacion 03':
+            allowed_access = True
+        elif user_name == 'Enfermeria08' and inventario_name == 'Enfermeria':
+            allowed_access = True
+        elif user_name == 'Serviciosmedicos06' and inventario_name == 'Servicios Medicos':
+            allowed_access = True
+        
+        if not allowed_access:
+            messages.error(self.request, f"No tiene permisos para ver el inventario '{inventario_name}'.")
+            return Lote.objects.none()
+
+        # 2. Si tiene permisos, busca el inventario y retorna los lotes
+        try:
+            inventario = Inventario.objects.get(nombre=inventario_name)
+            self.inventario = inventario
+            return Lote.objects.filter(inventario=inventario).order_by('insumo__nombre', 'fecha_vencimiento')
+        except Inventario.DoesNotExist:
+            return Lote.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if hasattr(self, 'inventario'):
+            context['inventario'] = self.inventario
+        return context
