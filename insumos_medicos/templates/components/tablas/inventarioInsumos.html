@@ -1,17 +1,15 @@
 {% block content %}
-    <div class="container-fluid py-4">
-        <h2 class="mb-4">Inventarios</h2>
-
+    <div class="container-fluid w-100 ml-5 mr-5 ">
         {% for inventario in inventarios %}
             <div class="inventario-card card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="card-title h5 mb-0">{{ inventario.nombre }}</h2>
+                <div class="card-header bg-danger text-white">
+                    <h2 class="card-title h3 mb-0 text-center">{{ inventario.nombre }}</h2>
                 </div>
                 <div class="card-body">
                     {% if inventario.lotes.all %}
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover table-bordered">
-                                <thead class="table-dark">
+                            <table class="table table-hover table-bordered">
+                                <thead class="">
                                     <tr>
                                         <th>Insumo</th>
                                         <th>Presentación</th>
@@ -56,11 +54,11 @@
             {% for page in page_names %}
                 {% if page_obj.number == page.number %}
                     <li class="page-item active" aria-current="page">
-                        <span class="page-link">{{ page.name }}</span>
+                        <span class="page-link bg-danger text-white">{{ page.name }}</span>
                     </li>
                 {% else %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page.number }}">{{ page.name }}</a>
+                        <a class="page-link text-danger bg-white" href="?page={{ page.number }}">{{ page.name }}</a>
                     </li>
                 {% endif %}
             {% endfor %}

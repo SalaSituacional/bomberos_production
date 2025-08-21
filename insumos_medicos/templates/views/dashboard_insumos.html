@@ -31,15 +31,21 @@
         </section>
     </div>
 </div>
-<div class="container">
-    <h1 class="mb-4">Inventario Principal</h1>
-    <p>Este es el inventario central desde el que se distribuyen los insumos.</p>
-    <a href="{% url 'lote_agregar' %}" class="btn btn-primary mb-3">
-        Agregar Nuevo Lote de Insumos
-    </a>
-    <a href="{% url 'asignar_insumos' %}" class="btn btn-secondary mb-3">Asignar Insumos</a>
+<div class="container w-100 d-flex align-items-center p-2">
+    <div class="container d-flex w-50 bg-white rounded flex-column m-2">
+        <h2 class="w-100">Acciones</h2>
+        <a href="{% url 'lote_agregar' %}" class="btn btn-danger mb-2">
+            Agregar Nuevo Lote de Insumos
+        </a>
+        <a href="{% url 'asignar_insumos' %}" class="btn btn-danger mb-2">Asignar Insumos</a>
+    </div>
+    <div class="container w-50 bg-white rounded m-2">
+        <h2 class="w-100">Estadisticas</h2>
+    </div>
 </div>
-{% include "components/tablas/inventarioInsumos.html" %}    
+
+<!-- Tabla de Inventario de Insumos -->
+{% include "components/tablas/inventarioInsumos.html" %}
 
 
 <footer class="footer">

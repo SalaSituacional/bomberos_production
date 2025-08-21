@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from .models import *
 from .forms import *
+from django.http import JsonResponse
 
 # El mixin es fundamental, lo mantenemos como está
 class AuthRequiredMixin(View):
@@ -143,33 +144,46 @@ class AsignarInsumoView(AuthRequiredMixin, FormView):
 
 # Vista dinamica para sub inventarios
 
-class InventarioConsumoView(AuthRequiredMixin, ListView):
+class InventarioConsumoView(AuthRequiredMixin, ListView, FormView):
     """
-    Vista dinámica que muestra los lotes de un inventario específico.
-    Solo accesible si el usuario tiene la jerarquía o el nombre de usuario correctos.
+    Vista que muestra los lotes de un inventario específico y permite
+    registrar el consumo de insumos.
     """
     model = Lote
     template_name = 'views/inventario_dinamico.html'
     context_object_name = 'lotes'
+    form_class = RegistroConsumoForm
 
+    # Método para manejar solicitudes POST
+    def post(self, request, *args, **kwargs):
+        """
+        Maneja la lógica del formulario cuando se envía una solicitud POST.
+        """
+        # Se asegura de definir el objeto de inventario y la lista de objetos
+        self.inventario = get_object_or_404(Inventario, nombre=self.kwargs['inventario_name'])
+        self.object_list = self.get_queryset() # Esto es crucial para que ListView funcione
+        
+        # Crear una instancia del formulario con los datos POST y pasar el inventario_id
+        form = self.form_class(request.POST, inventario_id=self.inventario.id)
+        
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    # El resto de los métodos de la clase...
+    
     def get_queryset(self):
-        # Obtiene el nombre del inventario de la URL
         inventario_name = self.kwargs['inventario_name']
         
-        # 1. Validación de permisos
-        user_name = self.user.get('user') # ¡Acceso correcto!
-        user_jerarquia = self.user.get('jerarquia') # ¡Acceso correcto!
+        user_name = self.user.get('user')
+        user_jerarquia = self.user.get('jerarquia')
         allowed_access = False
         
-        # Lógica de permisos por jerarquía (más robusta)
         if user_jerarquia == 'Jefe de Inventario':
             allowed_access = True
-            
-        # Lógica de permisos por nombre de usuario
-        elif user_name == 'SeRvEr' or user_name == 'Insumos_01' or user_name == 'Sala_Situacional':
+        elif user_name in ['SeRvEr', 'Insumos_01', 'Sala_Situacional']:
             allowed_access = True
-
-        # Lógica para otros roles por nombre de usuario y nombre de inventario
         elif user_name == 'Operaciones01' and inventario_name == 'Cuartel Central':
             allowed_access = True
         elif user_name == 'Rescate03' and inventario_name == 'Estacion 01':
@@ -187,16 +201,85 @@ class InventarioConsumoView(AuthRequiredMixin, ListView):
             messages.error(self.request, f"No tiene permisos para ver el inventario '{inventario_name}'.")
             return Lote.objects.none()
 
-        # 2. Si tiene permisos, busca el inventario y retorna los lotes
         try:
             inventario = Inventario.objects.get(nombre=inventario_name)
             self.inventario = inventario
-            return Lote.objects.filter(inventario=inventario).order_by('insumo__nombre', 'fecha_vencimiento')
+            return Lote.objects.filter(inventario=inventario, cantidad__gt=0).order_by('insumo__nombre', 'fecha_vencimiento')
         except Inventario.DoesNotExist:
             return Lote.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # La vista ya tiene una instancia de 'inventario', usamos eso para pasar el ID
         if hasattr(self, 'inventario'):
-            context['inventario'] = self.inventario
+            context['form'] = self.form_class(inventario_id=self.inventario.id)
+            context['inventario_name'] = self.inventario.nombre
+            context['inventario_id'] = self.inventario.id
+        else:
+            context['form'] = self.form_class()
         return context
+    
+    def form_valid(self, form):
+        lote = form.cleaned_data['lote']
+        cantidad = form.cleaned_data['cantidad']
+        descripcion = form.cleaned_data['descripcion']
+
+        if lote.cantidad < cantidad:
+            messages.error(self.request, f"La cantidad a consumir ({cantidad}) es mayor que la disponible en el lote ({lote.cantidad}).")
+            return self.form_invalid(form)
+        
+        lote.cantidad -= cantidad
+        lote.save()
+
+        Movimiento.objects.create(
+            insumo=lote.insumo,
+            fecha_vencimiento_lote=lote.fecha_vencimiento,
+            tipo_movimiento='SALIDA',
+            cantidad=cantidad,
+            inventario_origen=self.inventario,
+            descripcion=descripcion
+        )
+
+        messages.success(self.request, f"Se han registrado {cantidad} unidades de {lote.insumo.nombre} como consumidas.")
+        return redirect(self.request.path_info)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Hubo un error en el formulario. Por favor, revisa los datos ingresados.")
+        print(form.errors)
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if hasattr(self, 'inventario'):
+            kwargs['inventario_id'] = self.inventario.id
+        return kwargs
+
+    def get_success_url(self):
+        return reverse_lazy('inventario_dinamico', kwargs={'inventario_name': self.inventario.nombre})
+
+# Funciones auxiliares para AJAX
+
+def obtener_lotes_ajax(request):
+    insumo_id = request.GET.get('insumo_id')
+    inventario_id_str = request.GET.get('inventario_id')
+    lotes = []
+
+    # Validamos que los IDs no estén vacíos y sean números válidos
+    if insumo_id and inventario_id_str:
+        try:
+            inventario_id = int(inventario_id_str)
+            insumo_id = int(insumo_id)
+            
+            # Filtra los lotes del insumo y el inventario, con cantidad > 0
+            lotes_qs = Lote.objects.filter(
+                insumo_id=insumo_id, 
+                inventario_id=inventario_id, 
+                cantidad__gt=0
+            ).order_by('fecha_vencimiento')
+            
+            lotes = [{'id': lote.id, 'text': str(lote)} for lote in lotes_qs]
+        except (ValueError, TypeError):
+            # En caso de que los valores no sean válidos, no hacemos nada y regresamos una lista vacía
+            pass 
+            
+    return JsonResponse({'lotes': lotes})
