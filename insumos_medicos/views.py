@@ -65,7 +65,6 @@ class DashboardInventariosView(AuthRequiredMixin, ListView):
         context['page_names'] = page_names
         return context
    
-# 2. Vista para agregar un nuevo lote al inventario principal
 # Esta vista es para la entrada de insumos al sistema.
 class LotePrincipalCreateView(AuthRequiredMixin, CreateView):
     model = Lote
@@ -94,8 +93,7 @@ class LotePrincipalCreateView(AuthRequiredMixin, CreateView):
             messages.error(self.request, f"Ocurrió un error al guardar el lote: {e}")
             return self.form_invalid(form)
 
-# 3. Vista para asignar insumos
-# Esta vista es para transferir insumos del inventario principal a los subinventarios.
+# Vista para asignar insumos
 class AsignarInsumoView(AuthRequiredMixin, FormView):
     template_name = 'components/forms/asignacion_inventarios.html'
     form_class = AsignarInsumoForm
@@ -139,11 +137,7 @@ class AsignarInsumoView(AuthRequiredMixin, FormView):
             messages.error(self.request, f"Ocurrió un error al asignar los insumos: {e}")
             return self.form_invalid(form)
 
-# La vista InventarioBaseListView no la usaremos, ya que el dashboard centralizado la reemplaza.
-# La puedes eliminar o comentar para evitar confusiones.
-
 # Vista dinamica para sub inventarios
-
 class InventarioConsumoView(AuthRequiredMixin, ListView, FormView):
     """
     Vista que muestra los lotes de un inventario específico y permite
@@ -180,9 +174,7 @@ class InventarioConsumoView(AuthRequiredMixin, ListView, FormView):
         user_jerarquia = self.user.get('jerarquia')
         allowed_access = False
         
-        if user_jerarquia == 'Jefe de Inventario':
-            allowed_access = True
-        elif user_name in ['SeRvEr', 'Insumos_01', 'Sala_Situacional']:
+        if user_name in ['SeRvEr', 'Insumos_01', 'Sala_Situacional']:
             allowed_access = True
         elif user_name == 'Operaciones01' and inventario_name == 'Cuartel Central':
             allowed_access = True
@@ -256,6 +248,22 @@ class InventarioConsumoView(AuthRequiredMixin, ListView, FormView):
 
     def get_success_url(self):
         return reverse_lazy('inventario_dinamico', kwargs={'inventario_name': self.inventario.nombre})
+
+# vista formulario para registrar los insumos (medicamentos)
+class InsumoCreateView(AuthRequiredMixin, CreateView):
+    model = Insumo
+    form_class = InsumoForm
+    template_name = 'components/forms/registro_insumo.html'
+    success_url = reverse_lazy('dashboard_insumos_medicos') # Cambia esto a la URL a la que quieres redirigir
+    
+    def form_valid(self, form):
+        # Opcional: Lógica adicional antes de guardar el insumo
+        # Por ejemplo, form.instance.usuario = self.request.user
+        messages.success(self.request, "El insumo se ha registrado correctamente.")
+        return super().form_valid(form)
+
+
+
 
 # Funciones auxiliares para AJAX
 

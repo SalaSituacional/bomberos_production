@@ -114,3 +114,24 @@ class RegistroConsumoForm(forms.Form):
                 ).order_by('fecha_vencimiento')
             except (ValueError, TypeError):
                 self.fields['lote'].queryset = Lote.objects.none()
+
+# registro de insumo (Medicamentos)
+class InsumoForm(forms.ModelForm):
+    """
+    Formulario para registrar un nuevo insumo médico.
+    """
+    class Meta:
+        model = Insumo
+        fields = ['nombre', 'tipo', 'presentacion', 'descripcion']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'tipo': forms.Select(attrs={'class': 'form-control'}),
+            'presentacion': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+    # Puedes agregar validaciones personalizadas si lo necesitas
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Opcional: Filtra el queryset del campo 'tipo' si es necesario
+        self.fields['tipo'].queryset = TipoInsumo.objects.all().order_by('nombre')
