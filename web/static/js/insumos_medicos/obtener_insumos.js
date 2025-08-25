@@ -1,57 +1,61 @@
-// En tu archivo obtener_insumos.js
+// La función `$(document).ready()` se asegura de que el código
+// se ejecute solo cuando el DOM (la estructura de la página)
+// esté completamente cargado y seguro de manipular.
 $(document).ready(function() {
+
+    // Cacheamos los elementos del DOM que vamos a usar.
+    // Esto hace el código más eficiente y legible.
+    const $form = $('form[data-url]');
+    const $insumoSelect = $('#id_insumo');
+    const $loteSelect = $('#id_lote');
     
-    // Obtenemos los valores de los atributos de datos del formulario
-    const form = $('form');
-    const ObtenerInsumosAjaxUrl = form.data('url');
-    const inventarioId = form.data('inventario-id');
+    // Obtenemos la URL y el ID del inventario directamente del atributo 'data-url' del formulario.
+    const ajaxUrl = $form.data('url');
+    const inventarioId = $form.data('inventario-id');
 
-    var insumo_id = $('#id_insumo').val();
-    if (insumo_id) {
-        cargarLotes(insumo_id);
-    }
+    // Deshabilitamos el select de Lote al cargar la página.
+    // Se habilitará solo cuando se seleccione un insumo.
+    $loteSelect.prop('disabled', true);
 
-    $('#id_insumo').change(function() {
-        var insumo_id = $(this).val();
-        cargarLotes(insumo_id);
-    });
+    // Evento que se dispara cada vez que el valor del select de Insumo cambia.
+    $insumoSelect.change(function() {
+        // Obtenemos el ID del insumo seleccionado.
+        const insumoId = $(this).val();
 
-    /**
-     * Realiza una llamada AJAX para cargar los lotes de un insumo específico.
-     * @param {string} insumo_id - El ID del insumo seleccionado.
-     */
-    function cargarLotes(insumo_id) {
-        if (!insumo_id || inventarioId === null || inventarioId === 0) {
-            console.error("IDs de insumo o inventario no encontrados. No se puede realizar la petición AJAX.");
-            var lote_select = $('#id_lote');
-            lote_select.empty().append($('<option></option>').val('').text('Primero selecciona un insumo.'));
-            return;
-        }
-
-        var url = `${ObtenerInsumosAjaxUrl}?insumo_id=${insumo_id}&inventario_id=${inventarioId}`;
-
-        console.log("URL de AJAX:", url); // Log de la URL para depuración
-
-        $.ajax({
-            url: url,
-            success: function(response) {
-                var lote_select = $('#id_lote');
-                lote_select.empty();
-                
-                if (response.lotes && response.lotes.length > 0) {
-                    lote_select.append($('<option></option>').val('').text('Seleccione un lote...'));
-                    $.each(response.lotes, function(index, lote) {
-                        lote_select.append($('<option></option>').val(lote.id).text(lote.text));
-                    });
-                } else {
-                    lote_select.append($('<option></option>').val('').text('No hay lotes disponibles.'));
+        // Si se selecciona un insumo válido (no la opción vacía)
+        if (insumoId) {
+            // Realizamos la petición AJAX para obtener los lotes.
+            $.ajax({
+                url: ajaxUrl,
+                data: {
+                    'insumo_id': insumoId,
+                    'inventario_id': inventarioId
+                },
+                dataType: 'json',
+                success: function(data) {
+                    // Limpiamos y rellenamos el select de Lote.
+                    $loteSelect.html('<option value="">---------</option>');
+                    if (data.lotes && data.lotes.length > 0) {
+                        $.each(data.lotes, function(index, lote) {
+                            $loteSelect.append(
+                                $('<option></option>').val(lote.id).text(lote.text)
+                            );
+                        });
+                        $loteSelect.prop('disabled', false);
+                    } else {
+                        // Si no hay lotes, lo deshabilitamos y mostramos un mensaje.
+                        $loteSelect.prop('disabled', true);
+                        $loteSelect.html('<option value="">No hay lotes disponibles</option>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error en la petición AJAX:", status, error);
+                    $loteSelect.html('<option value="">Error al cargar los lotes</option>').prop('disabled', true);
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error en la petición AJAX:", error);
-                var lote_select = $('#id_lote');
-                lote_select.empty().append($('<option></option>').val('').text('Error al cargar los lotes.'));
-            }
-        });
-    }
+            });
+        } else {
+            // Si no se selecciona un insumo, reseteamos el select de Lote.
+            $loteSelect.html('<option value="">---------</option>').prop('disabled', true);
+        }
+    });
 });

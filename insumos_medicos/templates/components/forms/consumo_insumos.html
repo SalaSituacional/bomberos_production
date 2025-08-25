@@ -10,11 +10,10 @@
         </ul>
     {% endif %}
     <form method="POST"
-
         data-url="{% url 'obtener_lotes_insumos_medicos' %}" 
         data-inventario-id="{{ inventario_id|default:"null" }}">
         {% csrf_token %}
-        <div>
+<div>
     {{ form.insumo.label_tag }}
     {{ form.insumo }}
 </div>

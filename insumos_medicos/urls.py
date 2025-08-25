@@ -9,6 +9,7 @@ urlpatterns = [
     path('obtener_lotes/', obtener_lotes_ajax, name='obtener_lotes_insumos_medicos'),
     path('insumos/registrar/', InsumoCreateView.as_view(), name='registrar_insumo'),
     path('movimientos/historial/', MovimientoListView.as_view(), name='historial_movimientos'),
+    path('devolucion/', DevolucionView.as_view(), name='devolucion_insumo'),
 
 
 ]

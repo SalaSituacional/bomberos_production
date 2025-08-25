@@ -1,37 +1,119 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
 {% block content %}
-    <div class="container-fluid py-4 w-100">
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-danger text-white">
-                <h3 class="card-title h3 mb-0 text-center">Inventario / {{ inventario_name }}</h3>
-            </div>
-            <div class="card-body">
-                {% if lotes %}
-                    <div class="table-responsive">
-                        <table class="table table-hover rounded">
-                            <thead class="">
+<div class="container-fluid py-4 w-100">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-danger text-white">
+            <h3 class="card-title h3 mb-0 text-center">Inventario / {{ inventario_name }}</h3>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} aler-danger fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if lotes %}
+                <div class="table-responsive">
+                    <table class="table table-hover rounded">
+                        <thead class="">
+                            <tr>
+                                <th>Insumo</th>
+                                <th>Presentación</th>
+                                <th>Cantidad</th>
+                                <th>Fecha de Vencimiento</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lote in lotes %}
                                 <tr>
-                                    <th>Insumo</th>
-                                    <th>Presentación</th>
-                                    <th>Cantidad</th>
-                                    <th>Fecha de Vencimiento</th>
+                                    <td>{{ lote.insumo.nombre }}</td>
+                                    <td>{{ lote.insumo.presentacion }}</td>
+                                    <td>{{ lote.cantidad }}</td>
+                                    <td>{{ lote.fecha_vencimiento|date:"d/m/Y" }}</td>
+                                    <td class="text-center">
+                                        <!-- Botón que abre el modal de devolución -->
+                                        <button 
+                                            class="btn btn-sm btn-danger text-white btn-devolucion" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#devolucionModal"
+                                            data-lote-id="{{ lote.id }}"
+                                            data-insumo-nombre="{{ lote.insumo.nombre }}">
+                                            Devolver
+                                        </button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {% for lote in lotes %}
-                                    <tr>
-                                        <td>{{ lote.insumo.nombre }}</td>
-                                        <td>{{ lote.insumo.presentacion }}</td>
-                                        <td>{{ lote.cantidad }}</td>
-                                        <td>{{ lote.fecha_vencimiento|date:"d/m/Y" }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="alert alert-danger">Este inventario no tiene insumos registrados.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal de Devolución -->
+    <div class="modal fade" id="devolucionModal" tabindex="-1" aria-labelledby="devolucionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'devolucion_insumo' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="devolucionModalLabel">Devolver Insumo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                {% else %}
-                    <p class="alert alert-danger">Este inventario no tiene insumos registrados.</p>
-                {% endif %}
+                    <div class="modal-body">
+                        <!-- Campo oculto para el ID del lote -->
+                        <input type="hidden" name="lote_id" id="loteIdInput">
+                        
+                        <p>¿Qué cantidad del insumo "<strong id="insumoNombreModal"></strong>" desea devolver?</p>
+                        
+                        <div class="mb-3">
+                            <label for="cantidadInput" class="form-label">Cantidad a Devolver</label>
+                            <input type="number" name="cantidad" id="cantidadInput" class="form-control" min="1" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="descripcionInput" class="form-label">Motivo de la Devolución</label>
+                            <textarea name="descripcion" id="descripcionInput" class="form-control" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger text-white">Registrar Devolución</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+    
+</div>
+<script>
+    // Script para manejar el modal y pre-llenar los datos
+    document.addEventListener('DOMContentLoaded', function () {
+        const devolucionModal = document.getElementById('devolucionModal');
+        devolucionModal.addEventListener('show.bs.modal', function (event) {
+            // Botón que disparó el modal
+            const button = event.relatedTarget;
+            
+            // Extraer la información de los atributos 'data-'
+            const loteId = button.getAttribute('data-lote-id');
+            const insumoNombre = button.getAttribute('data-insumo-nombre');
+
+            // Actualizar el contenido del modal
+            const insumoNombreModal = devolucionModal.querySelector('#insumoNombreModal');
+            const loteIdInput = devolucionModal.querySelector('#loteIdInput');
+            
+            insumoNombreModal.textContent = insumoNombre;
+            loteIdInput.value = loteId;
+        });
+    });
+</script>
+
 {% endblock %}

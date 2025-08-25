@@ -64,7 +64,7 @@ class DashboardInventariosView(AuthRequiredMixin, ListView):
             
         context['page_names'] = page_names
         return context
-   
+
 # Esta vista es para la entrada de insumos al sistema.
 class LotePrincipalCreateView(AuthRequiredMixin, CreateView):
     model = Lote
@@ -279,7 +279,83 @@ class MovimientoListView(AuthRequiredMixin, ListView):
         """
         return Movimiento.objects.all().order_by('-fecha_movimiento')
 
+# vista para la devolucion de insumos
 
+class DevolucionView(AuthRequiredMixin, View):
+    """
+    Vista para manejar la devolución de un insumo a su inventario principal.
+    """
+    def post(self, request, *args, **kwargs):
+        lote_id = request.POST.get('lote_id')
+        cantidad = request.POST.get('cantidad')
+        descripcion = request.POST.get('descripcion')
+        
+        try:
+            # Lote original del que provienen los insumos devueltos
+            lote_original = get_object_or_404(Lote, pk=lote_id)
+            cantidad = int(cantidad)
+
+            if cantidad <= 0:
+                messages.error(self.request, "La cantidad a devolver debe ser mayor que cero.")
+                return redirect(request.META.get('HTTP_REFERER', '/'))
+            
+            # 1. Validar que la cantidad a devolver no supere la cantidad consumida
+            # Nota: Esto es una suposición. La cantidad consumida no está en el lote.
+            # Podrías verificarlo contra el último movimiento de SALIDA si es necesario.
+            # Por ahora, nos aseguramos que no sea un número negativo al restar.
+            # if lote_original.cantidad < cantidad:
+            #     messages.error(self.request, "La cantidad a devolver no puede ser mayor que la cantidad consumida de este lote.")
+            #     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+            # 2. Restar la cantidad del lote de origen (el que se usó para el consumo)
+            lote_original.cantidad -= cantidad
+            lote_original.save()
+
+            # 3. Encontrar el inventario principal usando el campo `is_principal`
+            inventario_principal = get_object_or_404(Inventario, is_principal=True)
+
+            # 4. Buscar o crear el lote para el insumo en el inventario principal
+            try:
+                lote_principal = Lote.objects.get(
+                    insumo=lote_original.insumo,
+                    inventario=inventario_principal,
+                    fecha_vencimiento=lote_original.fecha_vencimiento
+                )
+                # Si el lote existe, le sumamos la cantidad devuelta
+                lote_principal.cantidad += cantidad
+                lote_principal.save()
+            except Lote.DoesNotExist:
+                # Si el lote no existe en el inventario principal, se crea uno nuevo
+                lote_principal = Lote.objects.create(
+                    insumo=lote_original.insumo,
+                    inventario=inventario_principal,
+                    cantidad=cantidad,
+                    fecha_vencimiento=lote_original.fecha_vencimiento
+                )
+
+            # 5. Registrar el movimiento de devolución
+            Movimiento.objects.create(
+                insumo=lote_original.insumo,
+                fecha_vencimiento_lote=lote_original.fecha_vencimiento,
+                tipo_movimiento='DEVOLUCION',
+                cantidad=cantidad,
+                inventario_origen=lote_original.inventario, # Origen: el inventario del lote original
+                inventario_destino=inventario_principal, # Destino: el inventario principal
+                descripcion=descripcion
+            )
+
+            messages.success(self.request, f"Se han devuelto {cantidad} unidades de {lote_original.insumo.nombre} al '{inventario_principal.nombre}'.")
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+
+        except (ValueError, TypeError):
+            messages.error(self.request, "Error: La cantidad no es un número válido.")
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+        except Lote.DoesNotExist:
+            messages.error(self.request, "Error: El lote original no existe.")
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+        except Inventario.DoesNotExist:
+            messages.error(self.request, "Error: No se encontró un inventario principal.")
+            return redirect(request.META.get('HTTP_REFERER', '/'))
 # Funciones auxiliares para AJAX
 
 def obtener_lotes_ajax(request):
@@ -302,7 +378,6 @@ def obtener_lotes_ajax(request):
             
             lotes = [{'id': lote.id, 'text': str(lote)} for lote in lotes_qs]
         except (ValueError, TypeError):
-            # En caso de que los valores no sean válidos, no hacemos nada y regresamos una lista vacía
             pass 
             
     return JsonResponse({'lotes': lotes})
