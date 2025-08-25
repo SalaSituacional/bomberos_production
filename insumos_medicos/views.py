@@ -262,7 +262,22 @@ class InsumoCreateView(AuthRequiredMixin, CreateView):
         messages.success(self.request, "El insumo se ha registrado correctamente.")
         return super().form_valid(form)
 
+# Vista Para los movimientos de los insumos
 
+class MovimientoListView(AuthRequiredMixin, ListView):
+    """
+    Vista para listar todos los movimientos de insumos.
+    """
+    model = Movimiento
+    template_name = 'views/historial_movimientos.html'
+    context_object_name = 'movimientos'
+    paginate_by = 25 # Muestra 25 movimientos por página, si es necesario
+
+    def get_queryset(self):
+        """
+        Ordena los movimientos de forma descendente por fecha.
+        """
+        return Movimiento.objects.all().order_by('-fecha_movimiento')
 
 
 # Funciones auxiliares para AJAX

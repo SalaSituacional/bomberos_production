@@ -1,12 +1,22 @@
 {% load static %}
 {% if user.user == "SeRvEr" %}
-{% include "layouts/panel_admin.html" %}
+    {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
-{% include "layouts/panel_sala_situacional.html" %}
-{% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
-{% include "layouts/panel_comandancia.html" %}
+    {% include "layouts/panel_sala_situacional.html" %}
+{% elif user.user == "Operaciones01" %}
+    {% include "layouts/panel_operaciones.html" %}
+{% elif user.user == "Grumae02" %}
+    {% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Rescate03" %}
+    {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Serviciosmedicos06" %}
+    {% include "layouts/panel_serviciosmedicos.html" %}
+{% elif user.user == "Enfermeria08" %}
+    {% include "layouts/panel_enfermeria.html" %}
 {% elif user.user == "Insumos_01" %}
-{% include "layouts/panel_insumos.html" %}
+    {% include "layouts/panel_insumos.html" %}
 {% endif %}
 
 {% block content %}
@@ -31,37 +41,8 @@
         </section>
     </div>
 </div>
-<div class="container w-100 d-flex align-items-center py-3">
-    <div class="container d-flex w-50 bg-white rounded flex-column m-2 h-100">
-        <h2 class="w-100 text-center text-start">Acciones</h2>
-        <a href="{% url 'lote_agregar' %}" class="btn btn-danger mb-2">
-            <i class="bi bi-capsule"></i>
-            Agregar Lote
-        </a>
-        <a href="{% url 'registrar_insumo' %}" class="btn btn-danger mb-2">
-            <i class="bi bi-plus-circle"></i>
-            Registrar</a>
-            <a href="{% url 'asignar_insumos' %}" class="btn btn-danger mb-2">
-                <i class="bi bi-prescription2"></i>
-                Asignar</a>
-                <a href="{% url 'historial_movimientos' %}" class="btn btn-danger mb-2">
-                <i class="bi bi-clock-history"></i>
-                Historial</a>
-            </div>
-    <div class="container w-100 bg-white d-flex flex-column rounded m-2 h-100">
-        <h2 class="w-100 text-center">Estadisticas</h2> 
-            <div class="d-flex justify-content-between flex-column">
-                <p>Total de Insumos: <b>{{ total_insumos }}</b></p>
-                <p>Total de Lotes: <b>{{ total_lotes }}</b></p>
-                <p>Insumos Vencidos: <b>{{ insumos_vencidos }}</b></p>
-                <p>Insumos por Vencer: <b>{{ insumos_por_vencer }}</b></p>
-            </div>
-    </div>
-</div>
 
-<!-- Tabla de Inventario de Insumos -->
-{% include "components/tablas/inventarioInsumos.html" %}
-
+{% include 'components/tablas/movimientosInsumos.html' %}
 
 <footer class="footer">
     <section class="text-reserved">
