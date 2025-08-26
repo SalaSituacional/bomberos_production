@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, CreateView, FormView, View
+from django.views.generic import ListView, CreateView, FormView, View, TemplateView
 from django.db import transaction
 from django.db.models import Prefetch
 from django.urls import reverse_lazy
@@ -65,33 +65,76 @@ class DashboardInventariosView(AuthRequiredMixin, ListView):
         context['page_names'] = page_names
         return context
 
-# Esta vista es para la entrada de insumos al sistema.
-class LotePrincipalCreateView(AuthRequiredMixin, CreateView):
-    model = Lote
-    form_class = LoteForm
-    template_name = 'components/forms/lote_principal_form.html'
-    success_url = reverse_lazy('dashboard_insumos_medicos')
 
-    def form_valid(self, form):
+# Esta vista es para la entrada de insumos al sistema.
+class LotePrincipalCreateView(AuthRequiredMixin, TemplateView):
+    """
+    Vista que permite agregar múltiples lotes al inventario principal
+    a través de una tabla dinámica.
+    """
+    template_name = 'components/forms/lote_principal_form.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Obtenemos todos los insumos para mostrarlos en la tabla
+        context['insumos'] = Insumo.objects.all().order_by('nombre')
+        return context
+
+    def post(self, request, *args, **kwargs):
         try:
             with transaction.atomic():
                 inventario_principal = Inventario.objects.get(is_principal=True)
-                lote = form.save(commit=False)
-                lote.inventario = inventario_principal
-                lote.save()
-                Movimiento.objects.create(
-                    insumo=lote.insumo,
-                    fecha_vencimiento_lote=lote.fecha_vencimiento,
-                    tipo_movimiento='ENTRADA',
-                    cantidad=lote.cantidad,
-                    inventario_origen=inventario_principal,
-                    descripcion="Entrada de nuevo lote al inventario principal."
-                )
-                messages.success(self.request, "Lote agregado con éxito.")
-                return super().form_valid(form)
+                
+                # Bandera para rastrear si se procesó algún lote
+                lotes_procesados = False
+                
+                for key, value in request.POST.items():
+                    if key.startswith('insumo_'):
+                        insumo_id = key.split('_')[1]
+                        
+                        try:
+                            cantidad = int(request.POST.get(f'cantidad_{insumo_id}'))
+                            fecha_vencimiento = request.POST.get(f'fecha_vencimiento_{insumo_id}')
+                            
+                            if cantidad <= 0:
+                                continue # Ignorar insumos con cantidad cero o negativa
+                            
+                            insumo = get_object_or_404(Insumo, id=insumo_id)
+                            
+                            # Crea el nuevo lote
+                            lote = Lote.objects.create(
+                                insumo=insumo,
+                                cantidad=cantidad,
+                                fecha_vencimiento=fecha_vencimiento,
+                                inventario=inventario_principal
+                            )
+                            
+                            # Registra el movimiento de entrada
+                            Movimiento.objects.create(
+                                insumo=insumo,
+                                fecha_vencimiento_lote=lote.fecha_vencimiento,
+                                tipo_movimiento='ENTRADA',
+                                cantidad=cantidad,
+                                inventario_origen=inventario_principal,
+                                descripcion=f"Entrada de nuevo lote de {insumo.nombre} al inventario principal."
+                            )
+                            
+                            lotes_procesados = True
+
+                        except (ValueError, TypeError):
+                            messages.error(self.request, "La cantidad debe ser un número válido.")
+                            return self.render_to_response(self.get_context_data())
+
+                if lotes_procesados:
+                    messages.success(self.request, "Lotes agregados con éxito.")
+                else:
+                    messages.warning(self.request, "No se seleccionó ningún insumo para agregar.")
+                    
+                return redirect(reverse_lazy('dashboard_insumos_medicos'))
+
         except Exception as e:
-            messages.error(self.request, f"Ocurrió un error al guardar el lote: {e}")
-            return self.form_invalid(form)
+            messages.error(self.request, f"Ocurrió un error al guardar los lotes: {e}")
+            return self.render_to_response(self.get_context_data())
 
 # Vista para asignar insumos
 class AsignarInsumoView(AuthRequiredMixin, FormView):
@@ -137,44 +180,74 @@ class AsignarInsumoView(AuthRequiredMixin, FormView):
             messages.error(self.request, f"Ocurrió un error al asignar los insumos: {e}")
             return self.form_invalid(form)
 
-# Vista dinamica para sub inventarios
-class InventarioConsumoView(AuthRequiredMixin, ListView, FormView):
+# Inventario Dinamico
+class InventarioConsumoView(AuthRequiredMixin, ListView):
     """
-    Vista que muestra los lotes de un inventario específico y permite
-    registrar el consumo de insumos.
+    Vista que muestra la tabla de inventario y procesa el consumo de múltiples insumos.
     """
     model = Lote
     template_name = 'views/inventario_dinamico.html'
     context_object_name = 'lotes'
-    form_class = RegistroConsumoForm
 
-    # Método para manejar solicitudes POST
     def post(self, request, *args, **kwargs):
         """
-        Maneja la lógica del formulario cuando se envía una solicitud POST.
+        Procesa el formulario de consumo de múltiples insumos.
         """
-        # Se asegura de definir el objeto de inventario y la lista de objetos
-        self.inventario = get_object_or_404(Inventario, nombre=self.kwargs['inventario_name'])
-        self.object_list = self.get_queryset() # Esto es crucial para que ListView funcione
-        
-        # Crear una instancia del formulario con los datos POST y pasar el inventario_id
-        form = self.form_class(request.POST, inventario_id=self.inventario.id)
-        
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+        # Obtenemos el inventario actual
+        inventario_name = self.kwargs.get('inventario_name')
+        try:
+            inventario = Inventario.objects.get(nombre=inventario_name)
+        except Inventario.DoesNotExist:
+            messages.error(self.request, "El inventario especificado no existe.")
+            return redirect('home_url')
 
-    # El resto de los métodos de la clase...
-    
+        # Recorremos los datos del formulario para encontrar los insumos seleccionados
+        for key, value in request.POST.items():
+            if key.startswith('consumir_lote_'):
+                lote_id = key.split('_')[2]
+                try:
+                    lote = get_object_or_404(Lote, id=lote_id)
+                    cantidad = int(request.POST.get(f'cantidad_{lote_id}', 0))
+                    descripcion = request.POST.get(f'descripcion_{lote_id}', '')
+
+                    if cantidad <= 0:
+                        messages.warning(self.request, f"Se ignoró el consumo para {lote.insumo.nombre} porque la cantidad es cero.")
+                        continue # Continúa con el siguiente insumo
+
+                    if lote.cantidad < cantidad:
+                        messages.error(self.request, f"La cantidad a consumir de {lote.insumo.nombre} ({cantidad}) es mayor que la disponible ({lote.cantidad}).")
+                        continue # Continúa con el siguiente insumo, no detiene el proceso
+
+                    # Resta la cantidad del lote y guarda el cambio
+                    lote.cantidad -= cantidad
+                    lote.save()
+                    
+                    # Crea el movimiento de salida para la trazabilidad
+                    Movimiento.objects.create(
+                        insumo=lote.insumo,
+                        fecha_vencimiento_lote=lote.fecha_vencimiento,
+                        tipo_movimiento='SALIDA',
+                        cantidad=cantidad,
+                        inventario_origen=inventario,
+                        descripcion=descripcion
+                    )
+
+                    messages.success(self.request, f"Consumo de {cantidad} unidades de {lote.insumo.nombre} registrado.")
+
+                except (Lote.DoesNotExist, ValueError):
+                    messages.error(self.request, "Hubo un error al procesar uno de los insumos seleccionados.")
+        
+        # Redirige a la misma página para mostrar los mensajes y la tabla actualizada
+        return redirect(self.request.path_info)
+
     def get_queryset(self):
-        inventario_name = self.kwargs['inventario_name']
+        inventario_name = self.kwargs.get('inventario_name')
         
         user_name = self.user.get('user')
         user_jerarquia = self.user.get('jerarquia')
         allowed_access = False
         
-        if user_name in ['SeRvEr', 'Insumos_01', 'Sala_Situacional']:
+        if user_name in ['SeRvEr', 'Insumos_01', 'Sala_Situacional', 'Jefe de Inventario']:
             allowed_access = True
         elif user_name == 'Operaciones01' and inventario_name == 'Cuartel Central':
             allowed_access = True
@@ -196,58 +269,17 @@ class InventarioConsumoView(AuthRequiredMixin, ListView, FormView):
         try:
             inventario = Inventario.objects.get(nombre=inventario_name)
             self.inventario = inventario
+            # Filtramos por cantidad > 0 para solo mostrar insumos consumibles
             return Lote.objects.filter(inventario=inventario, cantidad__gt=0).order_by('insumo__nombre', 'fecha_vencimiento')
         except Inventario.DoesNotExist:
             return Lote.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # La vista ya tiene una instancia de 'inventario', usamos eso para pasar el ID
         if hasattr(self, 'inventario'):
-            context['form'] = self.form_class(inventario_id=self.inventario.id)
             context['inventario_name'] = self.inventario.nombre
             context['inventario_id'] = self.inventario.id
-        else:
-            context['form'] = self.form_class()
         return context
-    
-    def form_valid(self, form):
-        lote = form.cleaned_data['lote']
-        cantidad = form.cleaned_data['cantidad']
-        descripcion = form.cleaned_data['descripcion']
-
-        if lote.cantidad < cantidad:
-            messages.error(self.request, f"La cantidad a consumir ({cantidad}) es mayor que la disponible en el lote ({lote.cantidad}).")
-            return self.form_invalid(form)
-        
-        lote.cantidad -= cantidad
-        lote.save()
-
-        Movimiento.objects.create(
-            insumo=lote.insumo,
-            fecha_vencimiento_lote=lote.fecha_vencimiento,
-            tipo_movimiento='SALIDA',
-            cantidad=cantidad,
-            inventario_origen=self.inventario,
-            descripcion=descripcion
-        )
-
-        messages.success(self.request, f"Se han registrado {cantidad} unidades de {lote.insumo.nombre} como consumidas.")
-        return redirect(self.request.path_info)
-
-    def form_invalid(self, form):
-        messages.error(self.request, "Hubo un error en el formulario. Por favor, revisa los datos ingresados.")
-        print(form.errors)
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        if hasattr(self, 'inventario'):
-            kwargs['inventario_id'] = self.inventario.id
-        return kwargs
-
-    def get_success_url(self):
-        return reverse_lazy('inventario_dinamico', kwargs={'inventario_name': self.inventario.nombre})
 
 # vista formulario para registrar los insumos (medicamentos)
 class InsumoCreateView(AuthRequiredMixin, CreateView):
