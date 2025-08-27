@@ -8,12 +8,13 @@
 {% elif user.user == "Insumos_01" %}
 {% include "layouts/panel_insumos.html" %}
 {% endif %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
-        <h3 class="division-title">Insumos Medicos</h3>
+        <h3 class="division-title">Insumos Cuartel Central</h3>
         <section class="user-name">
             <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
             <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,41 +33,14 @@
     </div>
 </div>
 
-<div class="container">
-    <h1>Inventario Principal</h1>
-<p>Este es el inventario central desde el que se distribuyen los insumos.</p>
-
-<a href="{% url 'lote_agregar' %}">
-    <button>Agregar Nuevo Lote de Insumos</button>
-</a>
-
-{% if lotes %}
-    <table>
-        <thead>
-            <tr>
-                <th>Insumo</th>
-                <th>Presentación</th>
-                <th>Cantidad</th>
-                <th>Fecha de Vencimiento</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lote in lotes %}
-            <tr>
-                <td>{{ lote.insumo.nombre }}</td>
-                <td>{{ lote.insumo.presentacion }}</td>
-                <td>{{ lote.cantidad }}</td>
-                <td>{{ lote.fecha_vencimiento|date:"d/m/Y" }}</td>
-                <td>
-                    </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No hay insumos registrados en el inventario principal.</p>
-{% endif %}
+<div class="container mt-4 bg-white rounded p-4">
+    <h2 class="text-center">Registrar Nuevo Insumo</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-danger mt-3">Guardar Insumo</button>
+        <a href="{% url 'dashboard_insumos_medicos' %}" class="btn btn-outline-danger mt-3">Cancelar</a>
+    </form>
 </div>
 
 

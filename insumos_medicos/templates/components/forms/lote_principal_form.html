@@ -33,23 +33,106 @@
     </div>
 </div>
 
-<div class="container">
-    <h3>Agregar Nuevo Lote al Inventario Principal</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-danger">Guardar Lote</button>
-        <a class="btn btn-danger" href="{% url 'dashboard_insumos_medicos' %}">Volver al Inventario Principal</a>
-    </form>
-    <br>
-</div>
+<div class="container w-75 bg-white p-4 rounded shadow-sm my-4">
+    <h3 class="text-center">Agregar Nuevos Lotes al Inventario Principal</h3>
+    
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
 
+    <form method="POST">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table class="table table-hover rounded">
+                <thead>
+                    <tr>
+                        <th>Seleccionar 
+                            <input type="checkbox" id="selectAll">
+                        </th>
+                        <th>Insumo</th>
+                        <th>Cantidad</th>
+                        <th>Fecha de Vencimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for insumo in insumos %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="insumo_{{ insumo.id }}" id="insumo_{{ insumo.id }}" class="item-checkbox">
+                            </td>
+                            <td>{{ insumo.nombre }} ({{ insumo.presentacion }})</td>
+                            <td>
+                                <input type="number" name="cantidad_{{ insumo.id }}" class="form-control" min="1" disabled required>
+                            </td>
+                            <td>
+                                <input type="date" name="fecha_vencimiento_{{ insumo.id }}" class="form-control" disabled required>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-between mt-3">
+            <a class="btn btn-secondary" href="{% url 'dashboard_insumos_medicos' %}">Volver al Inventario Principal</a>
+            <button type="submit" class="btn btn-danger">Guardar Lotes</button>
+        </div>
+    </form>
+</div>
 
 <footer class="footer">
     <section class="text-reserved">
         <h5>2025 © Cuerpo de bomberos - San Cristobal</h5>
     </section>
 </footer>
+    
+    <script>
+        // Script para manejar la lógica de la tabla de entrada de lotes
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+    
+            // Función para habilitar/deshabilitar campos
+            function toggleFields(checkbox) {
+                const row = checkbox.closest('tr');
+                const cantidadInput = row.querySelector('[name^="cantidad_"]');
+                const fechaInput = row.querySelector('[name^="fecha_vencimiento_"]');
+    
+                if (checkbox.checked) {
+                    cantidadInput.removeAttribute('disabled');
+                    fechaInput.removeAttribute('disabled');
+                } else {
+                    cantidadInput.setAttribute('disabled', 'true');
+                    fechaInput.setAttribute('disabled', 'true');
+                    cantidadInput.value = '';
+                    fechaInput.value = '';
+                }
+            }
+    
+            // Evento para el checkbox 'Seleccionar todos'
+            selectAllCheckbox.addEventListener('change', function() {
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    toggleFields(checkbox);
+                });
+            });
+    
+            // Evento para cada checkbox de item
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    toggleFields(this);
+                    // Si algún checkbox está desmarcado, desmarca el 'Seleccionar todos'
+                    if (!this.checked) {
+                        selectAllCheckbox.checked = false;
+                    }
+                });
+            });
+        });
+    </script>
 <!-- fin resumen de procedimientos -->
 <script src="{% static 'js/animate.js' %}"></script>
 <script src="{% static 'js/modal-dashboard.js' %}"></script>

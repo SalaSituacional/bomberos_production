@@ -13,7 +13,7 @@
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
-        <h3 class="division-title">Insumos Estacion 3</h3>
+        <h3 class="division-title">Insumos Medicos</h3>
         <section class="user-name">
             <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
             <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,10 +31,36 @@
         </section>
     </div>
 </div>
-
-<div class="container">
-
+<div class="container w-100 d-flex align-items-center py-3">
+    <div class="container d-flex w-50 bg-white rounded flex-column m-2 h-100">
+        <h2 class="w-100 text-center text-start">Acciones</h2>
+        <a href="{% url 'registrar_insumo' %}" class="btn btn-danger mb-2">
+            <i class="bi bi-plus-circle"></i>
+            Registrar</a>
+        <a href="{% url 'lote_agregar' %}" class="btn btn-danger mb-2">
+            <i class="bi bi-capsule"></i>
+            Agregar Lote
+        </a>
+            <a href="{% url 'asignar_insumos' %}" class="btn btn-danger mb-2">
+                <i class="bi bi-prescription2"></i>
+                Asignar</a>
+                <a href="{% url 'historial_movimientos' %}" class="btn btn-danger mb-2">
+                <i class="bi bi-clock-history"></i>
+                Historial</a>
+            </div>
+    <div class="container w-100 bg-white d-flex flex-column rounded m-2 h-100">
+        <h2 class="w-100 text-center">Estadisticas</h2> 
+            <div class="d-flex justify-content-between flex-column">
+                <p>Total de Insumos: <b>{{ total_insumos }}</b></p>
+                <p>Total de Lotes: <b>{{ total_lotes }}</b></p>
+                <p>Insumos Vencidos: <b>{{ insumos_vencidos }}</b></p>
+                <p>Insumos por Vencer: <b>{{ insumos_por_vencer }}</b></p>
+            </div>
+    </div>
 </div>
+
+<!-- Tabla de Inventario de Insumos -->
+{% include "components/tablas/inventarioInsumos.html" %}
 
 
 <footer class="footer">

@@ -1,19 +1,29 @@
 {% load static %}
 {% if user.user == "SeRvEr" %}
-{% include "layouts/panel_admin.html" %}
+    {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
-{% include "layouts/panel_sala_situacional.html" %}
-{% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
-{% include "layouts/panel_comandancia.html" %}
+    {% include "layouts/panel_sala_situacional.html" %}
+{% elif user.user == "Operaciones01" %}
+    {% include "layouts/panel_operaciones.html" %}
+{% elif user.user == "Grumae02" %}
+    {% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Rescate03" %}
+    {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Serviciosmedicos06" %}
+    {% include "layouts/panel_serviciosmedicos.html" %}
+{% elif user.user == "Enfermeria08" %}
+    {% include "layouts/panel_enfermeria.html" %}
 {% elif user.user == "Insumos_01" %}
-{% include "layouts/panel_insumos.html" %}
+    {% include "layouts/panel_insumos.html" %}
 {% endif %}
 
 {% block content %}
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
-        <h3 class="division-title">Insumos Estacion 2</h3>
+        <h3 class="division-title">Insumos Medicos</h3>
         <section class="user-name">
             <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
             <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,10 +42,7 @@
     </div>
 </div>
 
-<div class="container">
-
-</div>
-
+{% include 'components/tablas/movimientosInsumos.html' %}
 
 <footer class="footer">
     <section class="text-reserved">

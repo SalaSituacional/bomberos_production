@@ -1,0 +1,79 @@
+{% block content %}
+    <div class="container-fluid w-100 ml-5 mr-5 ">
+        {% for inventario in inventarios %}
+            <div class="inventario-card card shadow-sm mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="card-title h3 mb-0 text-center">{{ inventario.nombre }}</h2>
+                </div>
+                <div class="card-body">
+                    {% if inventario.lotes.all %}
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead class="">
+                                    <tr>
+                                        <th>Insumo</th>
+                                        <th>Presentación</th>
+                                        <th>Cantidad</th>
+                                        <th>Fecha de Vencimiento</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for lote in inventario.lotes.all %}
+                                        <tr>
+                                            <td>{{ lote.insumo.nombre }}</td>
+                                            <td>{{ lote.insumo.presentacion }}</td>
+                                            <td>{{ lote.cantidad }}</td>
+                                            <td>{{ lote.fecha_vencimiento|date:"d/m/Y" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="alert alert-danger">Este inventario no tiene insumos registrados.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+        
+        {# Sección de paginación #}
+        {% if is_paginated %}
+    <nav aria-label="Inventario navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <!-- <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                </li> -->
+            {% else %}
+                <!-- <li class="page-item disabled">
+                    <span class="page-link">Anterior</span>
+                </li> -->
+            {% endif %}
+
+            {# Cambiamos esto para usar la nueva lista de nombres #}
+            {% for page in page_names %}
+                {% if page_obj.number == page.number %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link bg-danger text-white">{{ page.name }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link text-danger bg-white" href="?page={{ page.number }}">{{ page.name }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <!-- <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                </li> -->
+            {% else %}
+                <!-- <li class="page-item disabled">
+                    <span class="page-link">Siguiente</span>
+                </li> -->
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+    </div>
+{% endblock %}
