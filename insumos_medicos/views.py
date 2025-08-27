@@ -65,8 +65,6 @@ class DashboardInventariosView(AuthRequiredMixin, ListView):
         context['page_names'] = page_names
         return context
 
-
-# Esta vista es para la entrada de insumos al sistema.
 class LotePrincipalCreateView(AuthRequiredMixin, TemplateView):
     """
     Vista que permite agregar múltiples lotes al inventario principal
@@ -85,14 +83,19 @@ class LotePrincipalCreateView(AuthRequiredMixin, TemplateView):
             with transaction.atomic():
                 inventario_principal = Inventario.objects.get(is_principal=True)
                 
+                # Obtiene la descripción general del formulario
+                descripcion = request.POST.get('descripcion', 'Entrada de nuevos lotes.')
+
                 # Bandera para rastrear si se procesó algún lote
                 lotes_procesados = False
                 
                 for key, value in request.POST.items():
+                    # Solo procesamos las filas de la tabla
                     if key.startswith('insumo_'):
                         insumo_id = key.split('_')[1]
                         
                         try:
+                            # Intenta obtener la cantidad y fecha de los campos correspondientes
                             cantidad = int(request.POST.get(f'cantidad_{insumo_id}'))
                             fecha_vencimiento = request.POST.get(f'fecha_vencimiento_{insumo_id}')
                             
@@ -109,14 +112,14 @@ class LotePrincipalCreateView(AuthRequiredMixin, TemplateView):
                                 inventario=inventario_principal
                             )
                             
-                            # Registra el movimiento de entrada
+                            # Registra el movimiento de entrada con la descripción general
                             Movimiento.objects.create(
                                 insumo=insumo,
                                 fecha_vencimiento_lote=lote.fecha_vencimiento,
                                 tipo_movimiento='ENTRADA',
                                 cantidad=cantidad,
                                 inventario_origen=inventario_principal,
-                                descripcion=f"Entrada de nuevo lote de {insumo.nombre} al inventario principal."
+                                descripcion=descripcion # Usa la descripción general
                             )
                             
                             lotes_procesados = True
@@ -137,49 +140,98 @@ class LotePrincipalCreateView(AuthRequiredMixin, TemplateView):
             return self.render_to_response(self.get_context_data())
 
 # Vista para asignar insumos
-class AsignarInsumoView(AuthRequiredMixin, FormView):
+class AsignarInsumoView(AuthRequiredMixin, TemplateView):
+    """
+    Vista que permite la asignación de múltiples insumos de la tabla del inventario principal
+    a un inventario de destino.
+    """
     template_name = 'components/forms/asignacion_inventarios.html'
-    form_class = AsignarInsumoForm
-    success_url = reverse_lazy('dashboard_insumos_medicos')
 
-    def form_valid(self, form):
-        lote_origen = form.cleaned_data['lote']
-        cantidad_asignada = form.cleaned_data['cantidad']
-        inventario_destino = form.cleaned_data['inventario_destino']
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            inventario_principal = Inventario.objects.get(is_principal=True)
+            # Obtenemos solo los lotes del inventario principal con cantidad > 0
+            context['lotes_origen'] = Lote.objects.filter(inventario=inventario_principal, cantidad__gt=0).order_by('insumo__nombre', 'fecha_vencimiento')
+            # Obtenemos todos los inventarios de destino, excluyendo el principal
+            context['inventarios_destino'] = Inventario.objects.exclude(is_principal=True)
+        except Inventario.DoesNotExist:
+            messages.error(self.request, "El inventario principal no se encuentra. No se puede continuar.")
+        return context
+
+    def post(self, request, *args, **kwargs):
         try:
             with transaction.atomic():
-                if cantidad_asignada > lote_origen.cantidad:
-                    messages.error(self.request, "La cantidad a asignar es mayor que la cantidad disponible.")
-                    return self.form_invalid(form)
-                lote_origen.cantidad -= cantidad_asignada
-                if lote_origen.cantidad <= 0:
-                    lote_origen.delete()
+                inventario_principal = Inventario.objects.get(is_principal=True)
+                
+                # Obtiene la descripción general y el inventario de destino del formulario
+                descripcion = request.POST.get('descripcion_general', 'Asignación de insumos.')
+                inventario_destino_id = request.POST.get('inventario_destino')
+                inventario_destino = get_object_or_404(Inventario, id=inventario_destino_id)
+
+                lotes_asignados = False
+
+                for key, value in request.POST.items():
+                    if key.startswith('asignar_lote_'):
+                        lote_id = key.split('_')[2]
+                        
+                        try:
+                            lote_origen = get_object_or_404(Lote, id=lote_id, inventario=inventario_principal)
+                            cantidad_asignada = int(request.POST.get(f'cantidad_{lote_id}', 0))
+                            
+                            if cantidad_asignada <= 0:
+                                messages.warning(self.request, f"Se ignoró la asignación de {lote_origen.insumo.nombre} porque la cantidad es cero.")
+                                continue
+
+                            if cantidad_asignada > lote_origen.cantidad:
+                                messages.error(self.request, f"La cantidad a asignar de {lote_origen.insumo.nombre} ({cantidad_asignada}) es mayor que la disponible ({lote_origen.cantidad}).")
+                                continue
+                            
+                            # Actualiza el lote de origen
+                            lote_origen.cantidad -= cantidad_asignada
+                            if lote_origen.cantidad <= 0:
+                                lote_origen.delete()
+                            else:
+                                lote_origen.save()
+
+                            # Asigna al inventario de destino
+                            lote_destino, created = Lote.objects.get_or_create(
+                                insumo=lote_origen.insumo,
+                                fecha_vencimiento=lote_origen.fecha_vencimiento,
+                                inventario=inventario_destino,
+                                defaults={'cantidad': cantidad_asignada}
+                            )
+                            if not created:
+                                lote_destino.cantidad += cantidad_asignada
+                                lote_destino.save()
+
+                            # Crea el movimiento para la trazabilidad
+                            Movimiento.objects.create(
+                                insumo=lote_origen.insumo,
+                                fecha_vencimiento_lote=lote_origen.fecha_vencimiento,
+                                tipo_movimiento='ASIGNACION',
+                                cantidad=cantidad_asignada,
+                                inventario_origen=inventario_principal,
+                                inventario_destino=inventario_destino,
+                                descripcion=descripcion
+                            )
+                            
+                            lotes_asignados = True
+
+                        except (Lote.DoesNotExist, ValueError):
+                            messages.error(self.request, "Hubo un error al procesar uno de los lotes seleccionados.")
+                            
+                if lotes_asignados:
+                    messages.success(self.request, "Lotes asignados con éxito.")
                 else:
-                    lote_origen.save()
-                lote_destino, created = Lote.objects.get_or_create(
-                    insumo=lote_origen.insumo,
-                    fecha_vencimiento=lote_origen.fecha_vencimiento,
-                    inventario=inventario_destino,
-                    defaults={'cantidad': cantidad_asignada}
-                )
-                if not created:
-                    lote_destino.cantidad += cantidad_asignada
-                    lote_destino.save()
-                Movimiento.objects.create(
-                    insumo=lote_origen.insumo,
-                    fecha_vencimiento_lote=lote_origen.fecha_vencimiento,
-                    tipo_movimiento='ASIGNACION',
-                    cantidad=cantidad_asignada,
-                    inventario_origen=lote_origen.inventario,
-                    inventario_destino=inventario_destino,
-                    descripcion=f"Asignación de {cantidad_asignada} unidades."
-                )
-            messages.success(self.request, "Insumos asignados con éxito.")
-            return super().form_valid(form)
+                    messages.warning(self.request, "No se seleccionó ningún lote para asignar.")
+                
+                return redirect(reverse_lazy('dashboard_insumos_medicos'))
+
         except Exception as e:
             messages.error(self.request, f"Ocurrió un error al asignar los insumos: {e}")
-            return self.form_invalid(form)
-
+            return self.render_to_response(self.get_context_data())
+        
 # Inventario Dinamico
 class InventarioConsumoView(AuthRequiredMixin, ListView):
     """
