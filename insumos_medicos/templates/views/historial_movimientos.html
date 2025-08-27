@@ -44,6 +44,11 @@
 
 {% include 'components/tablas/movimientosInsumos.html' %}
 
+<div class="d-flex justify-content-center align-items-center mb-4 bg-white w-75 mx-auto mt-5">
+        <a href="{% url 'exportar_movimientos_excel' %}" class="btn btn-danger w-100 mx-auto">
+            Exportar a Excel
+        </a>
+    </div>
 <footer class="footer">
     <section class="text-reserved">
         <h5>2025 © Cuerpo de bomberos - San Cristobal</h5>
