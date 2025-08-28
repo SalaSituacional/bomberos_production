@@ -9,7 +9,8 @@ from .forms import *
 from django.http import HttpResponse
 from django.http import JsonResponse
 import openpyxl
-
+from django.utils import timezone
+from datetime import timedelta
 
 # El mixin es fundamental, lo mantenemos como está
 class AuthRequiredMixin(View):
@@ -446,8 +447,6 @@ class DevolucionView(AuthRequiredMixin, View):
 
 # Exportacion de excel movimientos
 
-
-
 def exportar_movimientos_excel(request):
     """
     Exporta todos los movimientos de inventario a un archivo Excel,
@@ -523,6 +522,39 @@ def exportar_movimientos_excel(request):
     workbook.save(response)
     
     return response
+
+
+def obtener_estadisticas_insumos(request):
+    """
+    Vista que calcula las estadisticas clave del inventario
+    y las devuelve como un objeto JSON.
+    """
+    
+    # Total de insumos unicos
+    total_insumos = Insumo.objects.count()
+
+    # Total de lotes
+    total_lotes = Lote.objects.count()
+
+    # Insumos vencidos: lotes con fecha de vencimiento pasada
+    fecha_actual = timezone.now().date()
+    lotes_vencidos = Lote.objects.filter(fecha_vencimiento__lt=fecha_actual)
+    total_insumos_vencidos = sum(lote.cantidad for lote in lotes_vencidos)
+
+    # Insumos por vencer: lotes que vencen en los proximos 30 dias
+    fecha_proximo_mes = fecha_actual + timedelta(days=30)
+    lotes_por_vencer = Lote.objects.filter(fecha_vencimiento__gte=fecha_actual, fecha_vencimiento__lte=fecha_proximo_mes)
+    total_insumos_por_vencer = sum(lote.cantidad for lote in lotes_por_vencer)
+    
+    data = {
+        'total_insumos': total_insumos,
+        'total_lotes': total_lotes,
+        'insumos_vencidos': total_insumos_vencidos,
+        'insumos_por_vencer': total_insumos_por_vencer,
+    }
+
+    return JsonResponse(data)
+
 
 # Funciones auxiliares para AJAX
 def obtener_lotes_ajax(request):
