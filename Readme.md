@@ -1,3 +1,6 @@
+![Login Bomberos](https://i.postimg.cc/fTkPn0v4/Captura-de-pantalla-1-9-2025-155253-www-cuerpobomberossc-com.jpg)
+
+---
 # Sistema de Gestión Administrativa de Bomberos
 
 Este proyecto es una aplicación web robusta construida con Django, diseñada para optimizar y centralizar las operaciones administrativas de un cuerpo de bomberos. Desde la gestión de personal y vehículos hasta el control de inventario y el registro de incidencias, esta plataforma busca mejorar la eficiencia y la organización interna.
