@@ -10,7 +10,6 @@ from web.models import Divisiones
 from django.http import JsonResponse
 from django.http import HttpResponse
 from django.contrib import messages
-from django.utils import timezone
 from collections import Counter
 from django.utils.timezone import now, localdate
 from datetime import timedelta, date
@@ -58,6 +57,17 @@ def View_Unidades(request):
         # Para ForeignKey inverso 'unidades_detalles_set' (¡Aquí está el cambio!)
         Prefetch("detalles_de_unidad", queryset=Unidades_Detalles.objects.all(), to_attr="detalles_prefetch")
     )
+
+    if user["user"] == "Operaciones01":
+        unidades_queryset = unidades_queryset.filter(id_division=2)
+    elif user["user"] == "Rescate03":
+        unidades_queryset = unidades_queryset.filter(id_division=1)
+    elif user["user"] == "Prevencion05":
+        unidades_queryset = unidades_queryset.filter(id_division=3)
+    elif user["user"] == "Grumae02":
+        unidades_queryset = unidades_queryset.filter(id_division=4)
+    elif user["user"] == "Prehospitalaria04":
+        unidades_queryset = unidades_queryset.filter(id_division=5)
 
     # 3. Aplicar filtros si existen
     if filter_nombre_unidad:
@@ -642,7 +652,8 @@ def detalle_asignacion(request, unidad_id):
                 messages.error(request, f'Error durante la asignación: {str(e)}')
     else:
         form = AsignacionMasivaForm()
-    
+        formDevolucion = DevolucionCompletaForm()
+
     context = {
         "user": user,
         'jerarquia': user['jerarquia'],
@@ -651,39 +662,257 @@ def detalle_asignacion(request, unidad_id):
         'unidad': unidad,
         'asignaciones': asignaciones,
         'form': form,
+        'formDevolucion': formDevolucion,
         'seccion_activa': 'asignaciones'
     }
     return render(request, 'inventario_herramientas/detalles_asignacion.html', context)
 
 
-def devolver_herramienta(request, asignacion_id):
+
+def devolver_herramienta_completa(request, asignacion_id):
+    
+    # 1. Obtener la asignación. Esto fallará con un 404 si el ID no existe o ya ha sido devuelto.
     asignacion = get_object_or_404(
         AsignacionHerramienta,
         pk=asignacion_id,
-        fecha_devolucion__isnull=True  # Solo permite devolver asignaciones activas
+        fecha_devolucion__isnull=True
     )
     
-    try:
-        # Registrar la devolución
-        asignacion.fecha_devolucion = timezone.now().date()
-        asignacion.save()
-        
-        messages.success(
-            request,
-            f'Herramienta {asignacion.herramienta.nombre} devuelta correctamente'
-        )
-    except Exception as e:
-        messages.error(
-            request,
-            f'Error al devolver la herramienta: {str(e)}'
-        )
-    
-    # Redirigir al detalle de la unidad
+    if request.method == 'POST':   
+        # 2. Instancia el formulario con los datos recibidos del POST
+        form = DevolucionCompletaForm(request.POST) 
+
+        if form.is_valid():
+            try:
+                # 4. Iniciar la transacción atómica
+                with transaction.atomic():
+                    # El formulario ya validó que `responsable` es un objeto Personal válido
+                    responsable = form.cleaned_data['responsable'] 
+                    observaciones = form.cleaned_data.get('observaciones', '')
+
+                    responsable_instance = Personal.objects.get(pk=responsable.id)
+                    
+                    # 5. Registrar la devolución
+                    devolucion = DevolucionHerramienta.objects.create(
+                        asignacion=asignacion,
+                        cantidad=asignacion.cantidad,
+                        recibido_por=responsable_instance,
+                        observaciones=observaciones or "Devolución completa"
+                    )
+                    
+                    # 6. Marcar la asignación como devuelta
+                    asignacion.fecha_devolucion = timezone.now().date()
+                    asignacion.save()
+                    
+            except Exception as e:
+                messages.error(request, f'Error durante la devolución: {str(e)}')
+        else:
+            # Mostrar los errores detallados al usuario
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error en '{form.fields[field].label}': {error}")
+
     return redirect('detalle-asignacion', unidad_id=asignacion.unidad.id)
 
 
+def devolver_herramienta_parcial(request, asignacion_id):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+
+    asignacion = get_object_or_404(
+        AsignacionHerramienta,
+        pk=asignacion_id,
+        fecha_devolucion__isnull=True
+    )
+    
+    if request.method == 'POST':
+        form = DevolucionParcialForm(request.POST, instance=asignacion)
+        if form.is_valid():
+            cantidad_devolver = form.cleaned_data['cantidad_devolver']
+            observaciones = form.cleaned_data['observaciones']
+            ordenado_por = form.cleaned_data['ordenado_por']
+
+            ordenado_por_instance = Personal.objects.get(id=ordenado_por.id) if ordenado_por else None
+
+            if cantidad_devolver > asignacion.cantidad:
+                messages.error(request, 'No puedes devolver más de lo asignado')
+                return redirect('detalle-asignacion', unidad_id=asignacion.unidad.id)
+            
+            # Registrar la devolución
+            DevolucionHerramienta.objects.create(
+                asignacion=asignacion,
+                cantidad=cantidad_devolver,
+                observaciones=observaciones,
+                recibido_por=ordenado_por_instance
+            )
+            
+            # Actualizar la asignación
+            if cantidad_devolver == asignacion.cantidad:
+                # Devolución completa
+                asignacion.fecha_devolucion = now().date()
+                asignacion.save()
+                messages.success(request, f'Herramienta devuelta completamente')
+            else:
+                # Devolución parcial
+                asignacion.cantidad -= cantidad_devolver
+                asignacion.save()
+                messages.success(request, f'Devueltas {cantidad_devolver} unidades de {asignacion.herramienta.nombre}')
+            
+            return redirect('detalle-asignacion', unidad_id=asignacion.unidad.id)
+    else:
+        form = DevolucionParcialForm(instance=asignacion)
+    
+    return render(request, 'inventario_herramientas/devolucion_parcial.html', {
+        "user": user,
+        'jerarquia': user.get('jerarquia'), # Use .get() for safer dictionary access
+        'nombres': user.get('nombres'),
+        'apellidos': user.get('apellidos'),
+        'form': form,
+        'asignacion': asignacion
+    })
+
+def reasignar_herramienta(request, asignacion_id):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+
+    asignacion = get_object_or_404(
+        AsignacionHerramienta,
+        pk=asignacion_id,
+        fecha_devolucion__isnull=True
+    )
+    
+    if request.method == 'POST':
+        form = ReasignacionForm(
+            request.POST, 
+            herramienta=asignacion.herramienta,
+            unidad_origen=asignacion.unidad  # Pasar la unidad de origen
+        )
+        if form.is_valid():
+            cantidad_reasignar = form.cleaned_data['cantidad_reasignar']
+            unidad_destino = form.cleaned_data['unidad_destino']
+            observaciones = form.cleaned_data['observaciones']
+            ordenado_por = form.cleaned_data['ordenado_por']
+            
+            ordenado_por_instance = Personal.objects.get(id=ordenado_por.id) if ordenado_por else None
+
+            if cantidad_reasignar > asignacion.cantidad:
+                messages.error(request, 'No puedes reasignar más de lo asignado')
+                return redirect('detalle-asignacion', unidad_id=asignacion.unidad.id)
+            
+            try:
+                # Verificar si ya existe una asignación activa para la misma herramienta en la unidad destino
+                asignacion_existente = AsignacionHerramienta.objects.get(
+                    herramienta=asignacion.herramienta,
+                    unidad=unidad_destino,
+                    fecha_devolucion__isnull=True
+                )
+                
+                # Si existe, sumar la cantidad en lugar de crear nueva asignación
+                asignacion_existente.cantidad += cantidad_reasignar
+                asignacion_existente.observaciones = f"{asignacion_existente.observaciones or ''}\nReasignación desde {asignacion.unidad.nombre_unidad} el {timezone.now().date()}: +{cantidad_reasignar} unidades. {observaciones}".strip()
+                asignacion_existente.save()
+                
+                mensaje_tipo = 'sumada'
+                
+            except AsignacionHerramienta.DoesNotExist:
+                # Si no existe, crear nueva asignación
+                nueva_asignacion = AsignacionHerramienta.objects.create(
+                    herramienta=asignacion.herramienta,
+                    unidad=unidad_destino,
+                    cantidad=cantidad_reasignar,
+                    fecha_asignacion=timezone.now().date(),
+                    observaciones=f"Reasignado desde {asignacion.unidad.nombre_unidad}. {observaciones}"
+                )
+                mensaje_tipo = 'reasignada'
+            
+            # Registrar la reasignación en el historial
+            ReasignacionHerramienta.objects.create(
+                herramienta=asignacion.herramienta,
+                cantidad=cantidad_reasignar,
+                unidad_origen=asignacion.unidad,
+                unidad_destino=unidad_destino,
+                observaciones=observaciones,
+                responsable=ordenado_por_instance,
+                tipo_operacion='suma' if mensaje_tipo == 'sumada' else 'nueva'
+            )
+            
+            # Actualizar la asignación original
+            if cantidad_reasignar == asignacion.cantidad:
+                # Reasignación completa
+                asignacion.fecha_devolucion = timezone.now().date()
+                asignacion.save()
+                messages.success(request, f'Herramienta {mensaje_tipo} completamente a {unidad_destino.nombre_unidad}')
+            else:
+                # Reasignación parcial
+                asignacion.cantidad -= cantidad_reasignar
+                asignacion.save()
+                messages.success(request, f'Reasignadas {cantidad_reasignar} unidades a {unidad_destino.nombre_unidad} ({mensaje_tipo})')
+            
+            return redirect('detalle-asignacion', unidad_id=asignacion.unidad.id)
+    else:
+        form = ReasignacionForm(herramienta=asignacion.herramienta, unidad_origen=asignacion.unidad)
+    
+    return render(request, 'inventario_herramientas/reasignacion.html', {
+        "user": user,
+        'jerarquia': user.get('jerarquia'), # Use .get() for safer dictionary access
+        'nombres': user.get('nombres'),
+        'apellidos': user.get('apellidos'),
+        'form': form,
+        'asignacion': asignacion
+    })
 
 
+def historial_movimientos(request):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+    
+    # Obtener todas las unidades para el filtro
+    unidades = Unidades.objects.all().order_by('nombre_unidad')
+    
+    # Obtener parámetros de filtro
+    unidad_id = request.GET.get('unidad')
+    tipo_movimiento = request.GET.get('tipo', 'todos')
+    
+    # Filtrar devoluciones
+    devoluciones = DevolucionHerramienta.objects.select_related(
+        'asignacion__herramienta', 'asignacion__unidad'
+    ).order_by('-fecha_devolucion')
+    
+    # Filtrar reasignaciones
+    reasignaciones = ReasignacionHerramienta.objects.select_related(
+        'herramienta', 'unidad_origen', 'unidad_destino'
+    ).order_by('-fecha_reasignacion')
+    
+    # Aplicar filtros si se especifican
+    if unidad_id and unidad_id != 'todas':
+        unidad_id = int(unidad_id)
+        devoluciones = devoluciones.filter(asignacion__unidad__id=unidad_id)
+        reasignaciones = reasignaciones.filter(
+            models.Q(unidad_origen__id=unidad_id) | 
+            models.Q(unidad_destino__id=unidad_id)
+        )
+    
+    # Filtrar por tipo de movimiento
+    if tipo_movimiento != 'todos':
+        if tipo_movimiento == 'devoluciones':
+            reasignaciones = reasignaciones.none()
+        elif tipo_movimiento == 'reasignaciones':
+            devoluciones = devoluciones.none()
+    
+    return render(request, 'inventario_herramientas/historial_movimientos.html', {
+        "user": user,
+        'jerarquia': user.get('jerarquia'),
+        'nombres': user.get('nombres'),
+        'apellidos': user.get('apellidos'),
+        'devoluciones': devoluciones,
+        'reasignaciones': reasignaciones,
+        'unidades': unidades,
+        'unidad_seleccionada': unidad_id,
+        'tipo_seleccionado': tipo_movimiento
+    })
 
 # ======================== Conductores ========================
 
@@ -1315,14 +1544,42 @@ def contar_reporte_colisiones_danos(request):
 
 # =================================== DESCARGAS =================================================
 def generar_excel_reportes_unidades(request):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+
     mes_str = request.GET.get('mes', None)
 
-    reportes = Reportes_Unidades.objects.select_related('id_unidad', 'servicio').order_by('-fecha', '-hora')
+    # Obtener todos los reportes con las relaciones necesarias
+    reportes = Reportes_Unidades.objects.select_related(
+        'id_unidad', 'servicio'
+    ).prefetch_related('id_unidad__id_division').order_by('-fecha', '-hora')
 
+    # Filtrar por división según el usuario
+    if user["user"] == "Operaciones01":
+        reportes = reportes.filter(id_unidad__id_division__id=2)
+    elif user["user"] == "Rescate03":
+        reportes = reportes.filter(id_unidad__id_division__id=1)
+    elif user["user"] == "Prevencion05":
+        reportes = reportes.filter(id_unidad__id_division__id=3)
+    elif user["user"] == "Grumae02":
+        reportes = reportes.filter(id_unidad__id_division__id=4)
+    elif user["user"] == "Prehospitalaria04":
+        reportes = reportes.filter(id_unidad__id_division__id=5)
+    else:
+        # Para otros usuarios, mostrar todos los reportes
+        reportes = reportes.all()
+
+    # Filtrar por mes si se proporciona (manera más eficiente con Django ORM)
     if mes_str:
         try:
-            mes = int(mes_str.split('-')[1])
-            reportes = [reporte for reporte in reportes if reporte.fecha.month == mes]
+            año_mes = mes_str.split('-')
+            if len(año_mes) == 2:
+                año = int(año_mes[0])
+                mes = int(año_mes[1])
+                reportes = reportes.filter(fecha__year=año, fecha__month=mes)
+            else:
+                return JsonResponse({'error': 'Formato de mes incorrecto'}, status=400)
         except (ValueError, IndexError):
             return JsonResponse({'error': 'Formato de mes incorrecto'}, status=400)
 
@@ -1333,14 +1590,18 @@ def generar_excel_reportes_unidades(request):
             'nombre unidad': reporte.id_unidad.nombre_unidad,
             'servicio': reporte.servicio.nombre_servicio,
             'fecha': reporte.fecha.isoformat(),
-            'hora': reporte.hora.isoformat(),
+            'hora': reporte.hora.isoformat() if hasattr(reporte.hora, 'isoformat') else str(reporte.hora),
             'descripcion': reporte.descripcion,
             'persona responsable': reporte.persona_responsable,
         })
 
-    df = pd.DataFrame(data).sort_values(by=['fecha'], ascending=[False])
+    df = pd.DataFrame(data)
+    
+    # Si hay datos, ordenar por fecha
+    if not df.empty:
+        df = df.sort_values(by=['fecha'], ascending=[False])
 
-    json_data = df.to_json(orient='records', date_format='iso')
+    json_data = df.to_json(orient='records', date_format='iso', force_ascii=False)
 
     return JsonResponse(json.loads(json_data), safe=False)
 

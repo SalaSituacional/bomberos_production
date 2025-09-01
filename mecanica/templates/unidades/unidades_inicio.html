@@ -8,6 +8,16 @@
 {% include "layouts/panel_comandancia.html" %}
 {% elif user.user == "Mecanica_01"%}
 {% include "layouts/panel_mecanica.html" %}
+{% elif user.user == "Operaciones01"%}
+{% include "layouts/panel_operaciones.html" %}
+{% elif user.user == "Rescate03"%}
+{% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Grumae02"%}
+{% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Prehospitalaria04"%}
+{% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Prevencion05"%}
+{% include "layouts/panel_prevencion.html" %}
 {% endif %}
 
 {% load static %}
@@ -41,6 +51,7 @@
       <strong>Total Unidades:</strong>
       <span class="stat-badge">{{ conteo }}</span>
     </div>
+    {% if user.user == "SeRvEr" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Sala_Situacional" or user.user == "Mecanica_01" %}  
     <div class="stat-box">
       <strong>Agregar Unidad: </strong>
 
@@ -51,6 +62,7 @@
       </span>
 
     </div>
+    {% endif %}
   </div>
 
   <form method="get" action="" class="filter-form">
@@ -123,7 +135,9 @@
           <th scope="col" class="fixed-width-iconos">Agregar Reporte</th>
           <th scope="col" class="fixed-width-iconos">Cambiar Estado</th>
           <th scope="col" class="fixed-width-iconos">Reasignar Division</th>
-          <th scope="col" class="fixed-width-iconos">Modificar</th>
+          {% if user.user == "SeRvEr" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Sala_Situacional" or user.user == "Mecanica_01" %}
+            <th scope="col" class="fixed-width-iconos">Modificar</th>
+          {% endif %}
           <th scope="col" class="fixed-width-iconos">Ver Informacion</th>
         </tr>
       </thead>
@@ -198,6 +212,7 @@
                   </svg>
                 </button>
               </td>
+              {% if user.user == "SeRvEr" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Sala_Situacional" or user.user == "Mecanica_01" %}
               <td class="fixed-width-iconos">
                 <button class="btn editar_unidad" data-unidad="{{ row.id_unidad }}">
                   <svg fill="#B6243AFF" height="35px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
@@ -212,6 +227,7 @@
                   </svg>
                 </button>
               </td>
+              {% endif %}
               <td class="fixed-width-iconos">
                 <button class="btn ver-informacion" data-unidad="{{ row.id_unidad }}">
                   <svg width="35px" height="40px" viewBox="0 0 24 24" fill="#B6243AFF" xmlns="http://www.w3.org/2000/svg">

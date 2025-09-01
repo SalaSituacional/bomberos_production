@@ -46,5 +46,9 @@ urlpatterns = [
     # # Asignaciones
     path('asignaciones/', asignacion_unidades, name='asignacion-unidades'),
     path('asignaciones/<int:unidad_id>/', detalle_asignacion, name='detalle-asignacion'),
-    path('asignaciones/devolver/<int:asignacion_id>/', devolver_herramienta, name='devolver-herramienta'),
+
+    path('asignacion/<int:asignacion_id>/devolucion-parcial/', devolver_herramienta_parcial, name='devolucion-parcial'),
+    path('asignacion/<int:asignacion_id>/reasignar/', reasignar_herramienta, name='reasignar-herramienta'),
+    path('asignacion/<int:asignacion_id>/devolver-completa/', devolver_herramienta_completa, name='devolver-completa'),
+    path('historial-movimientos/', historial_movimientos, name='historial-movimientos'),
 ]

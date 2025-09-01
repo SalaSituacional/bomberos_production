@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Sum, F
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 # Create your models here.
 # ========================================= MODELOS PARA EL AREA DE CONTROL DE UNIDADES =============================================================================================
@@ -126,6 +127,33 @@ class AsignacionHerramienta(models.Model):
                     f"Disponibles: {disponibles}, Solicitadas: {self.cantidad}"
                 )
 
+class DevolucionHerramienta(models.Model):
+    asignacion = models.ForeignKey(AsignacionHerramienta, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    fecha_devolucion = models.DateTimeField(default=timezone.now)
+    observaciones = models.TextField(blank=True)
+    recibido_por = models.ForeignKey(Personal, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-fecha_devolucion']
+
+class ReasignacionHerramienta(models.Model):
+    TIPO_OPERACION = [
+        ('nueva', 'Nueva Asignación'),
+        ('suma', 'Suma a Existente'),
+    ]
+    
+    herramienta = models.ForeignKey(Herramienta, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    unidad_origen = models.ForeignKey(Unidades, on_delete=models.CASCADE, related_name='reasignaciones_salida')
+    unidad_destino = models.ForeignKey(Unidades, on_delete=models.CASCADE, related_name='reasignaciones_entrada')
+    fecha_reasignacion = models.DateTimeField(default=timezone.now)
+    observaciones = models.TextField(blank=True)
+    responsable = models.ForeignKey(Personal, on_delete=models.CASCADE)
+    tipo_operacion = models.CharField(max_length=10, choices=TIPO_OPERACION, default='nueva')
+    
+    class Meta:
+        ordering = ['-fecha_reasignacion']
 
 # ========================================= MODELOS PARA EL AREA DE CONTROL DE CONDUCTORES =============================================================================================
 class LicenciaConductor(models.Model):
