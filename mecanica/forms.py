@@ -311,3 +311,128 @@ class AsignacionMasivaForm(forms.Form):
         
         cleaned_data['selected_tools'] = selected_tools
         return cleaned_data
+    
+
+# forms.py
+class DevolucionCompletaForm(forms.Form):
+    # O si prefieres hacerlo en una sola línea:
+    responsable = forms.ModelChoiceField(
+        queryset=Personal.objects.none(),  # Se actualizará en __init__
+        label="Responsable",
+        empty_label="Seleccione un bombero",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    observaciones = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'rows': 3,
+            'class': 'form-control',
+            'placeholder': 'Observaciones de la devolución'
+        }),
+        label="Observaciones"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs) 
+        
+        jerarquias = ["General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+        
+        queryset = Personal.objects.filter(
+            status="Activo", 
+            rol="Bombero"
+        ).exclude(id=4).order_by(
+            Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)])
+        )
+        
+        self.fields['responsable'].queryset = queryset
+        self.fields['responsable'].label_from_instance = lambda obj: f"{obj.jerarquia} - {obj.nombres} {obj.apellidos}"
+
+
+class DevolucionParcialForm(forms.Form):
+    cantidad_devolver = forms.IntegerField(
+        min_value=1,
+        label="Cantidad a devolver"
+    )
+    observaciones = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 3}),
+        required=False,
+        label="Observaciones"
+    )
+    # O si prefieres hacerlo en una sola línea:
+    ordenado_por = forms.ModelChoiceField(
+        queryset=Personal.objects.none(),  # Se actualizará en __init__
+        label="Ordenado por",
+        empty_label="Seleccione un bombero"
+    )
+    
+    def __init__(self, *args, **kwargs):
+        self.instance = kwargs.pop('instance', None)
+        super().__init__(*args, **kwargs)
+        
+        if self.instance:
+            self.fields['cantidad_devolver'].widget.attrs['max'] = self.instance.cantidad
+
+        jerarquias = ["General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+        
+        queryset = Personal.objects.filter(
+            status="Activo", 
+            rol="Bombero"
+        ).exclude(id=4).order_by(
+            Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)])
+        )
+        
+        self.fields['ordenado_por'].queryset = queryset
+        self.fields['ordenado_por'].label_from_instance = lambda obj: f"{obj.jerarquia} - {obj.nombres} {obj.apellidos}"
+
+
+class ReasignacionForm(forms.Form):
+    cantidad_reasignar = forms.IntegerField(
+        min_value=1,
+        label="Cantidad a reasignar"
+    )
+    unidad_destino = forms.ModelChoiceField(
+        queryset=Unidades.objects.none(),  # Se actualizará en __init__
+        label="Unidad destino"
+    )
+    # O si prefieres hacerlo en una sola línea:
+    ordenado_por = forms.ModelChoiceField(
+        queryset=Personal.objects.none(),  # Se actualizará en __init__
+        label="Ordenado por",
+        empty_label="Seleccione un bombero"
+    )
+    observaciones = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 3}),
+        required=False,
+        label="Observaciones"
+    )
+    
+    def __init__(self, *args, **kwargs):
+        self.herramienta = kwargs.pop('herramienta', None)
+        self.unidad_origen = kwargs.pop('unidad_origen', None)  # Nuevo parámetro
+        super().__init__(*args, **kwargs)
+        
+        if self.herramienta:
+            self.fields['cantidad_reasignar'].widget.attrs['max'] = self.herramienta.cantidad_disponible
+
+        # Filtrar unidades destino (excluir la unidad origen y las unidades excluidas)
+        unidades_queryset = Unidades.objects.all().exclude(
+            id__in=[26, 30, 27]  # Excluir unidades específicas
+        )
+        
+        if self.unidad_origen:
+            unidades_queryset = unidades_queryset.exclude(id=self.unidad_origen.id)
+        
+        self.fields['unidad_destino'].queryset = unidades_queryset.order_by('id_division')
+        
+
+        jerarquias = ["General", "Coronel", "Teniente Coronel", "Mayor", "Capitán", "Primer Teniente", "Teniente", "Sargento Mayor", "Sargento Primero", "Sargento segundo", "Cabo Primero", "Cabo Segundo", "Distinguido", "Bombero" ] 
+        
+        queryset = Personal.objects.filter(
+            status="Activo", 
+            rol="Bombero"
+        ).exclude(id=4).order_by(
+            Case(*[When(jerarquia=nombre, then=pos) for pos, nombre in enumerate(jerarquias)])
+        )
+        
+        self.fields['ordenado_por'].queryset = queryset
+        self.fields['ordenado_por'].label_from_instance = lambda obj: f"{obj.jerarquia} - {obj.nombres} {obj.apellidos}"

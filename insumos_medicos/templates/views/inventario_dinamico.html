@@ -1,12 +1,22 @@
 {% load static %}
 {% if user.user == "SeRvEr" %}
-{% include "layouts/panel_admin.html" %}
+    {% include "layouts/panel_admin.html" %}
 {% elif user.user == "Sala_Situacional" %}
-{% include "layouts/panel_sala_situacional.html" %}
-{% elif user.user == "Comandancia" or user.user == "2dacomandancia" %}
-{% include "layouts/panel_comandancia.html" %}
+    {% include "layouts/panel_sala_situacional.html" %}
+{% elif user.user == "Operaciones01" %}
+    {% include "layouts/panel_operaciones.html" %}
+{% elif user.user == "Grumae02" %}
+    {% include "layouts/panel_grumae.html" %}
+{% elif user.user == "Rescate03" %}
+    {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Serviciosmedicos06" %}
+    {% include "layouts/panel_serviciosmedicos.html" %}
+{% elif user.user == "Enfermeria08" %}
+    {% include "layouts/panel_enfermeria.html" %}
 {% elif user.user == "Insumos_01" %}
-{% include "layouts/panel_insumos.html" %}
+    {% include "layouts/panel_insumos.html" %}
 {% endif %}
 
 {% block content %}
@@ -32,43 +42,11 @@
     </div>
 </div>
 
-<div class="container">
-    <h1>Inventario Principal</h1>
-<p>Este es el inventario central desde el que se distribuyen los insumos.</p>
 
-<a href="{% url 'lote_agregar' %}">
-    <button>Agregar Nuevo Lote de Insumos</button>
-</a>
+<!-- Template de la tabla de inventario dinamico para los subInventarios -->
+{% include "components/tablas/inventarioDinamico.html" %}    
 
-{% if lotes %}
-    <table>
-        <thead>
-            <tr>
-                <th>Insumo</th>
-                <th>Presentación</th>
-                <th>Cantidad</th>
-                <th>Fecha de Vencimiento</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lote in lotes %}
-            <tr>
-                <td>{{ lote.insumo.nombre }}</td>
-                <td>{{ lote.insumo.presentacion }}</td>
-                <td>{{ lote.cantidad }}</td>
-                <td>{{ lote.fecha_vencimiento|date:"d/m/Y" }}</td>
-                <td>
-                    </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No hay insumos registrados en el inventario principal.</p>
-{% endif %}
-</div>
-
+{% include "components/forms/consumo_insumos.html" %}
 
 <footer class="footer">
     <section class="text-reserved">

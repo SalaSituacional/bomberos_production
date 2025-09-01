@@ -8,12 +8,13 @@
 {% elif user.user == "Insumos_01" %}
 {% include "layouts/panel_insumos.html" %}
 {% endif %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <!-- Carga el tag static al inicio del archivo -->
 <div class="general-dashboard">
     <div class="div-user-name">
-        <h3 class="division-title">Insumos Servicios Medicos</h3>
+        <h3 class="division-title">Insumos Cuartel Central</h3>
         <section class="user-name">
             <p>{{ jerarquia }} {{ nombres }} {{ apellidos }} / <b id="usuario">{{ user.user }}</b></p>
             <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,10 +33,16 @@
     </div>
 </div>
 
-<div class="container">
-
+<div class="container mt-4 bg-white rounded p-4">
+    <h2 class="text-center">Registrar Nuevo Insumo</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-danger mt-3">Guardar Insumo</button>
+        <a href="{% url 'dashboard_insumos_medicos' %}" class="btn btn-outline-danger mt-3">Cancelar</a>
+    </form>
 </div>
-
+        
 
 <footer class="footer">
     <section class="text-reserved">

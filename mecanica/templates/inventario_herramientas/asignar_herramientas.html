@@ -12,6 +12,10 @@
     {% include "layouts/panel_grumae.html" %}
 {% elif user.user == "Rescate03" %}
     {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Prevencion05" %}
+    {% include "layouts/panel_prevencion.html" %}
 {% endif %}
 
 {% load static %}
@@ -46,7 +50,6 @@
             <tr>
                 <th class="fixed-width">Unidad</th>
                 <th class="fixed-width text-center">Total Herramientas Asignadas</th>
-                {# Dynamically add a header column for each category #}
                 {% for categoria in categorias %}
                     <th class="fixed-width text-center">
                         <span class="d-none d-md-inline">{{ categoria.nombre }}</span>
@@ -57,7 +60,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for unidad_detalle in unidades %} {# Renamed variable for clarity #}
+            {% for unidad_detalle in unidades %}
             <tr>
                 <td class="fixed-width">{{ unidad_detalle.nombre_unidad }}</td>
                 <td class="fixed-width text-center">
@@ -65,14 +68,8 @@
                         {{ unidad_detalle.num_herramientas_total_asignadas }}
                     </span>
                 </td>
-                {# Loop through all categories again to display the count for each unit #}
                 {% for categoria in categorias %}
                     <td class="fixed-width text-center">
-                        {% comment %}
-                            Use the custom 'get_item' filter to safely access the count from the dictionary.
-                            If the category has no assigned tools in this unit, get_item will return None,
-                            which is treated as false, so we display 0.
-                        {% endcomment %}
                         {% with count_for_category=unidad_detalle.categorias_counts|get_item:categoria.id %}
                             {% if count_for_category %}
                                 <span class="badge bg-primary" style="font-size: 1.1rem;">
@@ -92,7 +89,6 @@
             </tr>
             {% empty %}
             <tr>
-                {# The colspan needs to be 2 (initial cols) + number of categories + 1 (Actions col) #}
                 <td colspan="{{ 2|add:categorias|length|add:1 }}" class="text-center">No hay unidades registradas o datos de asignación disponibles.</td>
             </tr>
             {% endfor %}
@@ -104,6 +100,13 @@
   <a href="{% url 'listar-herramientas' %}" class="btn btn-outline-danger">
       <i class="bi bi-arrow-left"></i> Volver
   </a>
+</div>
+
+<!-- Botón flotante para historial -->
+<div class="position-fixed bottom-0 end-0 m-4">
+    <a href="{% url 'historial-movimientos' %}" class="btn btn-danger btn-lg rounded-circle shadow">
+        <i class="bi bi-clock-history"></i>
+    </a>
 </div>
 
 

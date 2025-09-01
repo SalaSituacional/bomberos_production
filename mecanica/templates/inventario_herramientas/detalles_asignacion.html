@@ -12,6 +12,10 @@
     {% include "layouts/panel_grumae.html" %}
 {% elif user.user == "Rescate03" %}
     {% include "layouts/panel_rescate.html" %}
+{% elif user.user == "Prehospitalaria04" %}
+    {% include "layouts/panel_prehospitalaria.html" %}
+{% elif user.user == "Prevencion05" %}
+    {% include "layouts/panel_prevencion.html" %}
 {% endif %}
 
 {% load static %}
@@ -61,27 +65,25 @@
                 <tbody>
                     {% for asignacion in asignaciones %}
                     <tr>
-                        <td class="fixed-width">
+                        <td class="fixed-width" style="overflow: initial;">
                             <strong>{{ asignacion.herramienta.nombre }}</strong><br>
                             <small class="text-muted">{{ asignacion.herramienta.categoria }}</small>
                         </td>
-                        <td class="fixed-width">{{ asignacion.cantidad }}</td>
-                        <td class="fixed-width">{{ asignacion.herramienta.numero_serie|default:"-" }}</td>
-                        <td class="fixed-width">{{ asignacion.fecha_asignacion|date:"d/m/Y" }}</td>
-                        <td class="fixed-width">
+                        <td class="fixed-width" style="overflow: initial;">{{ asignacion.cantidad }}</td>
+                        <td class="fixed-width" style="overflow: initial;">{{ asignacion.herramienta.numero_serie|default:"-" }}</td>
+                        <td class="fixed-width" style="overflow: initial;">{{ asignacion.fecha_asignacion|date:"d/m/Y" }}</td>
+                        <td class="fixed-width" style="overflow: initial;">
                             <span class="badge bg-{% if asignacion.herramienta.estado == 'B' %}success{% elif asignacion.herramienta.estado == 'R' %}warning{% else %}danger{% endif %}">
                                 {{ asignacion.herramienta.get_estado_display }}
                             </span>
                         </td>
                         <td class="text-end fixed-width">
                             {% if not asignacion.fecha_devolucion %}
-                            <form method="post" action="{% url 'devolver-herramienta' asignacion.id %}" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                        title="Devolver herramienta"
-                                    <i class="fas fa-undo-alt"></i> Devolver
-                                </button>
-                            </form>
+                            <button class="btn btn-sm btn-outline-danger" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#accionesModal{{ asignacion.id }}">
+                                <i class="fas fa-cog"></i> Acciones
+                            </button>
                             {% else %}
                             <small class="text-muted">
                                 Devuelta el {{ asignacion.fecha_devolucion|date:"d/m/Y" }}
@@ -106,6 +108,88 @@
     </div>
 </div>
 
+<!-- Modales para cada asignación -->
+{% for asignacion in asignaciones %}
+{% if not asignacion.fecha_devolucion %}
+<div class="modal fade" id="accionesModal{{ asignacion.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Acciones para {{ asignacion.herramienta.nombre }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'devolucion-parcial' asignacion.id %}" 
+                       class="btn btn-outline-primary">
+                        <i class="fas fa-undo-alt me-2"></i> Devolución Parcial
+                    </a>
+                    
+                    <a href="{% url 'reasignar-herramienta' asignacion.id %}" 
+                       class="btn btn-outline-warning">
+                        <i class="fas fa-exchange-alt me-2"></i> Reasignar
+                    </a>
+
+                    <button type="button" class="btn btn-outline-danger" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#devolucionCompletaModal{{ asignacion.id }}">
+                            Devolución Completa
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% for asignacion in asignaciones %}
+{% if not asignacion.fecha_devolucion %}
+<div class="modal fade" id="devolucionCompletaModal{{ asignacion.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    Devolución Completa
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'devolver-completa' asignacion.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="alert alert-danger d-flex flex-column align-items-md-start">
+                        <strong>Herramienta:</strong> {{ asignacion.herramienta.nombre }}<br>
+                        <strong>Unidad:</strong> {{ asignacion.unidad.nombre_unidad }}<br>
+                        <strong>Cantidad a devolver:</strong> 
+                        <span class="badge bg-primary">{{ asignacion.cantidad }} unidades</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{{ formDevolucion.responsable.label }}</label>
+                        {{ formDevolucion.responsable }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{{ formDevolucion.observaciones.label }}</label>
+                        {{ formDevolucion.observaciones }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-check me-2"></i>Confirmar Devolución
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+
 <div class="card shadow mb-4 card-detalles-asignaciones">
     <div class="card-header bg-danger text-white">
         <h5 class="mb-1 mt-1" style="font-size: 1.5rem;"><i class="bi bi-box-seam me-2"></i> Asignar Nuevas Herramientas</h5>
@@ -117,11 +201,11 @@
             <div class="herramientas-container">
                 {% for herramienta in form.herramientas_disponibles %}
                 <div class="d-flex align-items-center justify-content-center mb-2 herramienta-line"> 
-                    <div class="form-check form-switch flex-grow-1 d-flex align-items-center me-3"> {# Added d-flex and align-items-center here #}
+                    <div class="form-check form-switch flex-grow-1 d-flex align-items-center me-3">
                         <input type="checkbox"
                             name="herramienta_{{ herramienta.id }}_sel" 
                             id="id_herramienta_{{ herramienta.id }}_sel" 
-                            class="form-check-input herramienta-checkbox" {# Removed flex-grow-1 from here #}
+                            class="form-check-input herramienta-checkbox"
                             data-herramienta-id="{{ herramienta.id }}" 
                             {% if herramienta.cantidad_disponible <= 0 %}disabled{% endif %}>
                         
@@ -175,5 +259,30 @@
 </footer>
 
 <script src="{% static 'js/mecanica/asignacionesJs.js' %}"></script>
+<script>
+    // Añade este script al final de tu template
+document.addEventListener('DOMContentLoaded', function() {
+    // Corregir posición de dropdowns en tablas con scroll
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    
+    dropdowns.forEach(function(dropdown) {
+        dropdown.addEventListener('show.bs.dropdown', function() {
+            const tableContainer = this.closest('.table-responsive-sm');
+            if (tableContainer) {
+                this.style.position = 'fixed';
+                const rect = this.getBoundingClientRect();
+                this.style.top = rect.top + 'px';
+                this.style.left = rect.left + 'px';
+            }
+        });
+        
+        dropdown.addEventListener('hide.bs.dropdown', function() {
+            this.style.position = '';
+            this.style.top = '';
+            this.style.left = '';
+        });
+    });
+});
+</script>
 {% endblock %}
 
