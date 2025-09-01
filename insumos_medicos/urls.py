@@ -10,6 +10,8 @@ urlpatterns = [
     path('insumos/registrar/', InsumoCreateView.as_view(), name='registrar_insumo'),
     path('movimientos/historial/', MovimientoListView.as_view(), name='historial_movimientos'),
     path('devolucion/', DevolucionView.as_view(), name='devolucion_insumo'),
+    path('historial/exportar-excel/', exportar_movimientos_excel, name='exportar_movimientos_excel'),
+    path('api/estadisticas/', obtener_estadisticas_insumos, name='api_estadisticas_insumos'),
 
 
 ]

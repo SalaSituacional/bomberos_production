@@ -31,7 +31,7 @@
         </section>
     </div>
 </div>
-<div class="container w-100 d-flex align-items-center py-3">
+<div class="container w-100 d-flex align-items-center py-2">
     <div class="container d-flex w-50 bg-white rounded flex-column m-2 h-100">
         <h2 class="w-100 text-center text-start">Acciones</h2>
         <a href="{% url 'registrar_insumo' %}" class="btn btn-danger mb-2">
@@ -49,15 +49,20 @@
                 Historial</a>
             </div>
     <div class="container w-100 bg-white d-flex flex-column rounded m-2 h-100">
-        <h2 class="w-100 text-center">Estadisticas</h2> 
-            <div class="d-flex justify-content-between flex-column">
-                <p>Total de Insumos: <b>{{ total_insumos }}</b></p>
-                <p>Total de Lotes: <b>{{ total_lotes }}</b></p>
-                <p>Insumos Vencidos: <b>{{ insumos_vencidos }}</b></p>
-                <p>Insumos por Vencer: <b>{{ insumos_por_vencer }}</b></p>
-            </div>
+    <h2 class="w-100 text-center">Estadisticas</h2>
+    <div class="d-flex justify-content-between w-100">
+    <div class="container w-50">
+        <p>Total de Lotes Creados: <b id="total-insumos-span"></b></p>
+        <p>Total de Insumos Registrados: <b id="total-lotes-span"></b></p>
+    </div>
+    <div class="container w-50">
+        <p>Insumos Vencidos: <b id="insumos-vencidos-span"></b></p>
+        <p>Insumos por Vencer: <b id="insumos-por-vencer-span"></b></p>
+    </div>
+    </div>
     </div>
 </div>
+
 
 <!-- Tabla de Inventario de Insumos -->
 {% include "components/tablas/inventarioInsumos.html" %}
@@ -68,6 +73,40 @@
         <h5>2025 © Cuerpo de bomberos - San Cristobal</h5>
     </section>
 </footer>
+<script>
+    const ApiEstadisticas = "{% url 'api_estadisticas_insumos' %}"
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // La URL a la que se hara la peticion.
+        const url = ApiEstadisticas;
+
+        // Realizar la peticion asincrona
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    // Lanza un error si la respuesta no es exitosa (ej: 404, 500)
+                    throw new Error('La respuesta de la red no fue exitosa.');
+                }
+                return response.json(); // Parsea la respuesta como JSON
+            })
+            .then(data => {
+                // Actualiza el contenido HTML con los datos recibidos
+                document.getElementById('total-insumos-span').textContent = data.total_insumos;
+                document.getElementById('total-lotes-span').textContent = data.total_lotes;
+                document.getElementById('insumos-vencidos-span').textContent = data.insumos_vencidos;
+                document.getElementById('insumos-por-vencer-span').textContent = data.insumos_por_vencer;
+            })
+            .catch(error => {
+                console.error('Hubo un problema con la peticion fetch:', error);
+                // Puedes mostrar un mensaje de error en la interfaz de usuario si lo deseas
+                document.getElementById('total-insumos-span').textContent = 'Error';
+                document.getElementById('total-lotes-span').textContent = 'Error';
+                document.getElementById('insumos-vencidos-span').textContent = 'Error';
+                document.getElementById('insumos-por-vencer-span').textContent = 'Error';
+            });
+    });
+</script>
 <!-- fin resumen de procedimientos -->
 <script src="{% static 'js/animate.js' %}"></script>
 <script src="{% static 'js/modal-dashboard.js' %}"></script>

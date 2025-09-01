@@ -6,7 +6,11 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from .models import *
 from .forms import *
+from django.http import HttpResponse
 from django.http import JsonResponse
+import openpyxl
+from django.utils import timezone
+from datetime import timedelta
 
 # El mixin es fundamental, lo mantenemos como está
 class AuthRequiredMixin(View):
@@ -65,8 +69,6 @@ class DashboardInventariosView(AuthRequiredMixin, ListView):
         context['page_names'] = page_names
         return context
 
-
-# Esta vista es para la entrada de insumos al sistema.
 class LotePrincipalCreateView(AuthRequiredMixin, TemplateView):
     """
     Vista que permite agregar múltiples lotes al inventario principal
@@ -85,14 +87,19 @@ class LotePrincipalCreateView(AuthRequiredMixin, TemplateView):
             with transaction.atomic():
                 inventario_principal = Inventario.objects.get(is_principal=True)
                 
+                # Obtiene la descripción general del formulario
+                descripcion = request.POST.get('descripcion', 'Entrada de nuevos lotes.')
+
                 # Bandera para rastrear si se procesó algún lote
                 lotes_procesados = False
                 
                 for key, value in request.POST.items():
+                    # Solo procesamos las filas de la tabla
                     if key.startswith('insumo_'):
                         insumo_id = key.split('_')[1]
                         
                         try:
+                            # Intenta obtener la cantidad y fecha de los campos correspondientes
                             cantidad = int(request.POST.get(f'cantidad_{insumo_id}'))
                             fecha_vencimiento = request.POST.get(f'fecha_vencimiento_{insumo_id}')
                             
@@ -109,14 +116,14 @@ class LotePrincipalCreateView(AuthRequiredMixin, TemplateView):
                                 inventario=inventario_principal
                             )
                             
-                            # Registra el movimiento de entrada
+                            # Registra el movimiento de entrada con la descripción general
                             Movimiento.objects.create(
                                 insumo=insumo,
                                 fecha_vencimiento_lote=lote.fecha_vencimiento,
                                 tipo_movimiento='ENTRADA',
                                 cantidad=cantidad,
                                 inventario_origen=inventario_principal,
-                                descripcion=f"Entrada de nuevo lote de {insumo.nombre} al inventario principal."
+                                descripcion=descripcion # Usa la descripción general
                             )
                             
                             lotes_procesados = True
@@ -137,49 +144,98 @@ class LotePrincipalCreateView(AuthRequiredMixin, TemplateView):
             return self.render_to_response(self.get_context_data())
 
 # Vista para asignar insumos
-class AsignarInsumoView(AuthRequiredMixin, FormView):
+class AsignarInsumoView(AuthRequiredMixin, TemplateView):
+    """
+    Vista que permite la asignación de múltiples insumos de la tabla del inventario principal
+    a un inventario de destino.
+    """
     template_name = 'components/forms/asignacion_inventarios.html'
-    form_class = AsignarInsumoForm
-    success_url = reverse_lazy('dashboard_insumos_medicos')
 
-    def form_valid(self, form):
-        lote_origen = form.cleaned_data['lote']
-        cantidad_asignada = form.cleaned_data['cantidad']
-        inventario_destino = form.cleaned_data['inventario_destino']
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            inventario_principal = Inventario.objects.get(is_principal=True)
+            # Obtenemos solo los lotes del inventario principal con cantidad > 0
+            context['lotes_origen'] = Lote.objects.filter(inventario=inventario_principal, cantidad__gt=0).order_by('insumo__nombre', 'fecha_vencimiento')
+            # Obtenemos todos los inventarios de destino, excluyendo el principal
+            context['inventarios_destino'] = Inventario.objects.exclude(is_principal=True)
+        except Inventario.DoesNotExist:
+            messages.error(self.request, "El inventario principal no se encuentra. No se puede continuar.")
+        return context
+
+    def post(self, request, *args, **kwargs):
         try:
             with transaction.atomic():
-                if cantidad_asignada > lote_origen.cantidad:
-                    messages.error(self.request, "La cantidad a asignar es mayor que la cantidad disponible.")
-                    return self.form_invalid(form)
-                lote_origen.cantidad -= cantidad_asignada
-                if lote_origen.cantidad <= 0:
-                    lote_origen.delete()
+                inventario_principal = Inventario.objects.get(is_principal=True)
+                
+                # Obtiene la descripción general y el inventario de destino del formulario
+                descripcion = request.POST.get('descripcion_general', 'Asignación de insumos.')
+                inventario_destino_id = request.POST.get('inventario_destino')
+                inventario_destino = get_object_or_404(Inventario, id=inventario_destino_id)
+
+                lotes_asignados = False
+
+                for key, value in request.POST.items():
+                    if key.startswith('asignar_lote_'):
+                        lote_id = key.split('_')[2]
+                        
+                        try:
+                            lote_origen = get_object_or_404(Lote, id=lote_id, inventario=inventario_principal)
+                            cantidad_asignada = int(request.POST.get(f'cantidad_{lote_id}', 0))
+                            
+                            if cantidad_asignada <= 0:
+                                messages.warning(self.request, f"Se ignoró la asignación de {lote_origen.insumo.nombre} porque la cantidad es cero.")
+                                continue
+
+                            if cantidad_asignada > lote_origen.cantidad:
+                                messages.error(self.request, f"La cantidad a asignar de {lote_origen.insumo.nombre} ({cantidad_asignada}) es mayor que la disponible ({lote_origen.cantidad}).")
+                                continue
+                            
+                            # Actualiza el lote de origen
+                            lote_origen.cantidad -= cantidad_asignada
+                            if lote_origen.cantidad <= 0:
+                                lote_origen.delete()
+                            else:
+                                lote_origen.save()
+
+                            # Asigna al inventario de destino
+                            lote_destino, created = Lote.objects.get_or_create(
+                                insumo=lote_origen.insumo,
+                                fecha_vencimiento=lote_origen.fecha_vencimiento,
+                                inventario=inventario_destino,
+                                defaults={'cantidad': cantidad_asignada}
+                            )
+                            if not created:
+                                lote_destino.cantidad += cantidad_asignada
+                                lote_destino.save()
+
+                            # Crea el movimiento para la trazabilidad
+                            Movimiento.objects.create(
+                                insumo=lote_origen.insumo,
+                                fecha_vencimiento_lote=lote_origen.fecha_vencimiento,
+                                tipo_movimiento='ASIGNACION',
+                                cantidad=cantidad_asignada,
+                                inventario_origen=inventario_principal,
+                                inventario_destino=inventario_destino,
+                                descripcion=descripcion
+                            )
+                            
+                            lotes_asignados = True
+
+                        except (Lote.DoesNotExist, ValueError):
+                            messages.error(self.request, "Hubo un error al procesar uno de los lotes seleccionados.")
+                            
+                if lotes_asignados:
+                    messages.success(self.request, "Lotes asignados con éxito.")
                 else:
-                    lote_origen.save()
-                lote_destino, created = Lote.objects.get_or_create(
-                    insumo=lote_origen.insumo,
-                    fecha_vencimiento=lote_origen.fecha_vencimiento,
-                    inventario=inventario_destino,
-                    defaults={'cantidad': cantidad_asignada}
-                )
-                if not created:
-                    lote_destino.cantidad += cantidad_asignada
-                    lote_destino.save()
-                Movimiento.objects.create(
-                    insumo=lote_origen.insumo,
-                    fecha_vencimiento_lote=lote_origen.fecha_vencimiento,
-                    tipo_movimiento='ASIGNACION',
-                    cantidad=cantidad_asignada,
-                    inventario_origen=lote_origen.inventario,
-                    inventario_destino=inventario_destino,
-                    descripcion=f"Asignación de {cantidad_asignada} unidades."
-                )
-            messages.success(self.request, "Insumos asignados con éxito.")
-            return super().form_valid(form)
+                    messages.warning(self.request, "No se seleccionó ningún lote para asignar.")
+                
+                return redirect(reverse_lazy('dashboard_insumos_medicos'))
+
         except Exception as e:
             messages.error(self.request, f"Ocurrió un error al asignar los insumos: {e}")
-            return self.form_invalid(form)
-
+            return self.render_to_response(self.get_context_data())
+        
 # Inventario Dinamico
 class InventarioConsumoView(AuthRequiredMixin, ListView):
     """
@@ -388,8 +444,119 @@ class DevolucionView(AuthRequiredMixin, View):
         except Inventario.DoesNotExist:
             messages.error(self.request, "Error: No se encontró un inventario principal.")
             return redirect(request.META.get('HTTP_REFERER', '/'))
-# Funciones auxiliares para AJAX
 
+# Exportacion de excel movimientos
+
+def exportar_movimientos_excel(request):
+    """
+    Exporta todos los movimientos de inventario a un archivo Excel,
+    con cada inventario en una hoja de trabajo separada.
+    """
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="Historial_Movimientos.xlsx"'
+    
+    workbook = openpyxl.Workbook()
+    
+    # Obtener todos los inventarios que tienen movimientos
+    inventarios_origen_ids = Movimiento.objects.values_list('inventario_origen', flat=True).distinct()
+    inventarios_destino_ids = Movimiento.objects.values_list('inventario_destino', flat=True).distinct()
+    
+    # Combinar y obtener los objetos de inventario únicos
+    inventario_ids = list(set(list(inventarios_origen_ids) + list(inventarios_destino_ids)))
+    inventarios_con_movimientos = Inventario.objects.filter(id__in=inventario_ids).order_by('nombre')
+    
+    # Obtener todos los movimientos de una sola vez para eficiencia
+    todos_los_movimientos = Movimiento.objects.all().order_by('-fecha_movimiento')
+    
+    # Borrar la hoja de trabajo por defecto
+    default_sheet = workbook.active
+    workbook.remove(default_sheet)
+
+    for inventario in inventarios_con_movimientos:
+        # Limpiar el nombre del inventario para el título de la hoja
+        # Caracteres no permitidos en Excel: \ / ? * [ ] :
+        clean_name = inventario.nombre.replace('/', '_').replace('\\', '_').replace('?', '_').replace('*', '_').replace('[', '_').replace(']', '_').replace(':', '_')
+        
+        # Crear una nueva hoja de trabajo para cada inventario
+        sheet = workbook.create_sheet(title=clean_name)
+        
+        # Escribir la fila de encabezado
+        headers = ['Fecha', 'Insumo', 'Tipo de Movimiento', 'Cantidad', 'Inventario Origen', 'Inventario Destino', 'Descripción']
+        sheet.append(headers)
+        
+        # --- LÍNEA AGREGADA: Filtra los movimientos para la hoja de trabajo actual
+        movimientos_del_inventario = todos_los_movimientos.filter(
+            inventario_origen=inventario
+        ) | todos_los_movimientos.filter(
+            inventario_destino=inventario
+        )
+        # ---
+        
+        # Escribir los datos de los movimientos
+        for movimiento in movimientos_del_inventario:
+            row_data = [
+                movimiento.fecha_movimiento.strftime('%Y-%m-%d %H:%M:%S'),
+                movimiento.insumo.nombre,
+                movimiento.get_tipo_movimiento_display(),
+                movimiento.cantidad,
+                movimiento.inventario_origen.nombre if movimiento.inventario_origen else 'N/A',
+                movimiento.inventario_destino.nombre if movimiento.inventario_destino else 'Sin Asignar',
+                movimiento.descripcion if movimiento.descripcion else "No existe descripcion"
+            ]
+            sheet.append(row_data)
+
+        # Ajustar el ancho de las columnas después de escribir los datos
+        for column in sheet.columns:
+            max_length = 0
+            column = [cell for cell in column]
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            sheet.column_dimensions[column[0].column_letter].width = adjusted_width
+
+    # Guardar el libro de trabajo en una respuesta HTTP
+    workbook.save(response)
+    
+    return response
+
+
+def obtener_estadisticas_insumos(request):
+    """
+    Vista que calcula las estadisticas clave del inventario
+    y las devuelve como un objeto JSON.
+    """
+    
+    # Total de insumos unicos
+    total_insumos = Insumo.objects.count()
+
+    # Total de lotes
+    total_lotes = Lote.objects.count()
+
+    # Insumos vencidos: lotes con fecha de vencimiento pasada
+    fecha_actual = timezone.now().date()
+    lotes_vencidos = Lote.objects.filter(fecha_vencimiento__lt=fecha_actual)
+    total_insumos_vencidos = sum(lote.cantidad for lote in lotes_vencidos)
+
+    # Insumos por vencer: lotes que vencen en los proximos 30 dias
+    fecha_proximo_mes = fecha_actual + timedelta(days=30)
+    lotes_por_vencer = Lote.objects.filter(fecha_vencimiento__gte=fecha_actual, fecha_vencimiento__lte=fecha_proximo_mes)
+    total_insumos_por_vencer = sum(lote.cantidad for lote in lotes_por_vencer)
+    
+    data = {
+        'total_insumos': total_insumos,
+        'total_lotes': total_lotes,
+        'insumos_vencidos': total_insumos_vencidos,
+        'insumos_por_vencer': total_insumos_por_vencer,
+    }
+
+    return JsonResponse(data)
+
+
+# Funciones auxiliares para AJAX
 def obtener_lotes_ajax(request):
     insumo_id = request.GET.get('insumo_id')
     inventario_id_str = request.GET.get('inventario_id')

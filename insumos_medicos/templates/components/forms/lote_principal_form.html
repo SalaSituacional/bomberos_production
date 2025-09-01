@@ -34,25 +34,16 @@
 </div>
 
 <div class="container w-75 bg-white p-4 rounded shadow-sm my-4">
-    <h3 class="text-center">Agregar Nuevos Lotes al Inventario Principal</h3>
-    
-    {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
-    {% endif %}
-
+    <h3 class="text-center">Agregar Lote / Almacen</h3>
     <form method="POST">
         {% csrf_token %}
+        <!-- Campo de descripción general para todo el lote de entrada -->
         <div class="table-responsive">
             <table class="table table-hover rounded">
                 <thead>
                     <tr>
                         <th>Seleccionar 
-                            <input type="checkbox" id="selectAll">
+                            <input type="checkbox" id="selectAll" class="form-check-input form-check-procedimientos checkbox-styles">
                         </th>
                         <th>Insumo</th>
                         <th>Cantidad</th>
@@ -63,7 +54,7 @@
                     {% for insumo in insumos %}
                         <tr>
                             <td>
-                                <input type="checkbox" name="insumo_{{ insumo.id }}" id="insumo_{{ insumo.id }}" class="item-checkbox">
+                                <input type="checkbox" name="insumo_{{ insumo.id }}" id="insumo_{{ insumo.id }}" class="item-checkbox form-check-input form-check-procedimientos checkbox-styles">
                             </td>
                             <td>{{ insumo.nombre }} ({{ insumo.presentacion }})</td>
                             <td>
@@ -77,6 +68,11 @@
                 </tbody>
             </table>
         </div>
+        <div class="my-4">
+            <label for="id_descripcion" class="form-label">Descripción General del Lote</label>
+            <textarea name="descripcion" id="id_descripcion" class="form-control" rows="3" placeholder="Ej: Donación de empresa X, Compra de proveedor Z, etc." required></textarea>
+        </div>
+
         <div class="d-flex justify-content-between mt-3">
             <a class="btn btn-secondary" href="{% url 'dashboard_insumos_medicos' %}">Volver al Inventario Principal</a>
             <button type="submit" class="btn btn-danger">Guardar Lotes</button>
