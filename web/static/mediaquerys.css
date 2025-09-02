@@ -125,7 +125,7 @@
     .noti-container-comandante {
       left: calc(100% / 2 - 210px);
       width: 420px;
-    }
+    } 
   /* #endregion */
 }
 
@@ -133,7 +133,6 @@
 /* TABLETS PEQUEÑAS (650px - 768px) */
 /* ==================== */
 @media (min-width: 650px) {
-  
   /* #region Login */
   .form-items{
     width: 70%;
@@ -533,6 +532,7 @@
         width: 100%; /* Para que la fecha ocupe todo el ancho en móvil */
         max-width: 100%; /* Asegura que no se desborde */
     }
+    
   /* #endregion */
 }
 
@@ -1449,8 +1449,19 @@
     }
   /* #endregion */
 }
-
-
+/* ==================== */
+/* DESKTOP FIRST (520px - 0px) */
+/* ==================== */
+@media (max-width: 520px) {
+  .media-content-insumos{
+      display: flex;
+      width: 100%;
+      flex-direction: column !important;
+      div{
+        width: 100% !important;
+      }
+    }
+}
 
 
 
