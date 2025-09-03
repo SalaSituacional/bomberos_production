@@ -31,7 +31,7 @@
         </section>
     </div>
 </div>
-<div class="container w-100 d-flex align-items-center py-2">
+<div class="container w-100 d-flex align-items-center py-2 media-content-insumos">
     <div class="container d-flex w-50 bg-white rounded flex-column m-2 h-100">
         <h2 class="w-100 text-center text-start">Acciones</h2>
         <a href="{% url 'registrar_insumo' %}" class="btn btn-danger mb-2">
@@ -110,4 +110,6 @@
 <!-- fin resumen de procedimientos -->
 <script src="{% static 'js/animate.js' %}"></script>
 <script src="{% static 'js/modal-dashboard.js' %}"></script>
+<script src="{% static 'js/insumos_medicos/filter_table.js' %}"></script>
+
 {% endblock %}

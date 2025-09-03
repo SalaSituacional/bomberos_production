@@ -446,7 +446,6 @@ class DevolucionView(AuthRequiredMixin, View):
             return redirect(request.META.get('HTTP_REFERER', '/'))
 
 # Exportacion de excel movimientos
-
 def exportar_movimientos_excel(request):
     """
     Exporta todos los movimientos de inventario a un archivo Excel,
@@ -465,64 +464,67 @@ def exportar_movimientos_excel(request):
     inventario_ids = list(set(list(inventarios_origen_ids) + list(inventarios_destino_ids)))
     inventarios_con_movimientos = Inventario.objects.filter(id__in=inventario_ids).order_by('nombre')
     
-    # Obtener todos los movimientos de una sola vez para eficiencia
-    todos_los_movimientos = Movimiento.objects.all().order_by('-fecha_movimiento')
-    
     # Borrar la hoja de trabajo por defecto
     default_sheet = workbook.active
     workbook.remove(default_sheet)
 
-    for inventario in inventarios_con_movimientos:
-        # Limpiar el nombre del inventario para el título de la hoja
-        # Caracteres no permitidos en Excel: \ / ? * [ ] :
-        clean_name = inventario.nombre.replace('/', '_').replace('\\', '_').replace('?', '_').replace('*', '_').replace('[', '_').replace(']', '_').replace(':', '_')
+    # Definir los encabezados una sola vez
+    headers = ['Fecha', 'Insumo', 'Tipo de Movimiento', 'Cantidad', 'Inventario Origen', 'Inventario Destino', 'Descripción']
+
+    # Verificar si hay inventarios con movimientos
+    if inventarios_con_movimientos:
+        # Si hay registros, procede como antes
+        todos_los_movimientos = Movimiento.objects.all().order_by('-fecha_movimiento')
         
-        # Crear una nueva hoja de trabajo para cada inventario
-        sheet = workbook.create_sheet(title=clean_name)
-        
-        # Escribir la fila de encabezado
-        headers = ['Fecha', 'Insumo', 'Tipo de Movimiento', 'Cantidad', 'Inventario Origen', 'Inventario Destino', 'Descripción']
+        for inventario in inventarios_con_movimientos:
+            clean_name = inventario.nombre.replace('/', '_').replace('\\', '_').replace('?', '_').replace('*', '_').replace('[', '_').replace(']', '_').replace(':', '_')
+            sheet = workbook.create_sheet(title=clean_name)
+            sheet.append(headers)
+            
+            movimientos_del_inventario = todos_los_movimientos.filter(
+                inventario_origen=inventario
+            ) | todos_los_movimientos.filter(
+                inventario_destino=inventario
+            )
+            
+            for movimiento in movimientos_del_inventario:
+                row_data = [
+                    movimiento.fecha_movimiento.strftime('%Y-%m-%d %H:%M:%S'),
+                    movimiento.insumo.nombre,
+                    movimiento.get_tipo_movimiento_display(),
+                    movimiento.cantidad,
+                    movimiento.inventario_origen.nombre if movimiento.inventario_origen else 'N/A',
+                    movimiento.inventario_destino.nombre if movimiento.inventario_destino else 'Sin Asignar',
+                    movimiento.descripcion if movimiento.descripcion else "No existe descripcion"
+                ]
+                sheet.append(row_data)
+
+            # Ajustar el ancho de las columnas
+            for column in sheet.columns:
+                max_length = 0
+                column = [cell for cell in column]
+                for cell in column:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+                adjusted_width = (max_length + 2)
+                sheet.column_dimensions[column[0].column_letter].width = adjusted_width
+                
+    else:
+        # Si no hay registros, crea una hoja de trabajo por defecto
+        # con un mensaje claro y los encabezados.
+        sheet = workbook.create_sheet(title="Sin Movimientos")
         sheet.append(headers)
         
-        # --- LÍNEA AGREGADA: Filtra los movimientos para la hoja de trabajo actual
-        movimientos_del_inventario = todos_los_movimientos.filter(
-            inventario_origen=inventario
-        ) | todos_los_movimientos.filter(
-            inventario_destino=inventario
-        )
-        # ---
-        
-        # Escribir los datos de los movimientos
-        for movimiento in movimientos_del_inventario:
-            row_data = [
-                movimiento.fecha_movimiento.strftime('%Y-%m-%d %H:%M:%S'),
-                movimiento.insumo.nombre,
-                movimiento.get_tipo_movimiento_display(),
-                movimiento.cantidad,
-                movimiento.inventario_origen.nombre if movimiento.inventario_origen else 'N/A',
-                movimiento.inventario_destino.nombre if movimiento.inventario_destino else 'Sin Asignar',
-                movimiento.descripcion if movimiento.descripcion else "No existe descripcion"
-            ]
-            sheet.append(row_data)
-
-        # Ajustar el ancho de las columnas después de escribir los datos
-        for column in sheet.columns:
-            max_length = 0
-            column = [cell for cell in column]
-            for cell in column:
-                try:
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(str(cell.value))
-                except:
-                    pass
-            adjusted_width = (max_length + 2)
-            sheet.column_dimensions[column[0].column_letter].width = adjusted_width
+        # Opcionalmente, puedes agregar una fila para indicar que no hay datos
+        sheet.append(["No se encontraron movimientos de inventario."])
 
     # Guardar el libro de trabajo en una respuesta HTTP
     workbook.save(response)
     
     return response
-
 
 def obtener_estadisticas_insumos(request):
     """
