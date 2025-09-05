@@ -51,4 +51,9 @@ urlpatterns = [
     path('asignacion/<int:asignacion_id>/reasignar/', reasignar_herramienta, name='reasignar-herramienta'),
     path('asignacion/<int:asignacion_id>/devolver-completa/', devolver_herramienta_completa, name='devolver-completa'),
     path('historial-movimientos/', historial_movimientos, name='historial-movimientos'),
+
+    path('reportes-unidades/', View_Reportes_Unidades, name='reportes-unidades'),
+    path('api/reportes-unidades/<int:reporte_id>/', api_detalle_reporte_unidad, name='api_reportes_unidades'),
+    path('api/reportes-unidades/<int:reporteId>/eliminar/', Eliminar_Reporte_Unidad, name='eliminar_reporte_unidad'),
+    # path('editar-reporte-unidad/<int:id>/', editar_reporte_unidad, name='editar-reporte-unidad'),
 ]

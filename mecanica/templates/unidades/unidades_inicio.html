@@ -464,6 +464,13 @@
   </section>
 </footer>
 
+<!-- Botón flotante para historial -->
+<div class="position-fixed bottom-0 end-0 m-4">
+    <a href="{% url 'reportes-unidades' %}" class="btn btn-danger btn-lg rounded-circle shadow">
+        <i class="bi bi-file-earmark-text"></i>
+    </a>
+</div>
+
 <script>
     const CSRF_TOKEN = "{{ csrf_token }}"; // Obtiene el token CSRF de Django
     // Genera una URL base para eliminar reportes. El '0' es un marcador de posición para el ID.

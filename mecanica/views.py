@@ -7,8 +7,7 @@ from django.db.models import Prefetch, Max
 from .forms import *
 from .models import *
 from web.models import Divisiones
-from django.http import JsonResponse
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotAllowed
 from django.contrib import messages
 from collections import Counter
 from django.utils.timezone import now, localdate
@@ -20,6 +19,7 @@ import json
 from django.db.models import Q, Count, F
 from django.db import transaction
 from datetime import date as localdate
+from time import strptime
 
 # ========================= Dashboard Mecanica ========================
 def Dashboard_mecanica(request):
@@ -150,6 +150,158 @@ def View_Unidades(request):
     }
 
     return render(request, "unidades/unidades_inicio.html", context)
+
+# ======================== Reportes de Unidades ========================
+def View_Reportes_Unidades(request):
+    user = request.session.get('user')
+    if not user:
+        return redirect('/')
+
+    # 1. Obtener los parámetros de filtro de la URL
+    filter_unidad_id = request.GET.get('filterUnidad', '')
+    filter_tipo_reporte = request.GET.get('filterTipoReporte', '')
+    filter_fecha_inicio = request.GET.get('filterFechaInicio', '')
+    filter_fecha_fin = request.GET.get('filterFechaFin', '')
+
+    # 2. Inicializar el queryset base
+    reportes_queryset = Reportes_Unidades.objects.all().order_by("-fecha", "-hora")
+    servicios_para_filtro = Servicios.objects.all().order_by("nombre_servicio") # Línea corregida
+
+    # Prefetch y select_related
+    reportes_queryset = reportes_queryset.select_related(
+        'id_unidad',
+        'servicio'
+    ).prefetch_related(
+        'id_unidad__id_division'
+    )
+
+    # Filtros por usuario según su división
+    if user["user"] == "Operaciones01":
+        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=2)
+    elif user["user"] == "Rescate03":
+        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=1)
+    elif user["user"] == "Prevencion05":
+        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=3)
+    elif user["user"] == "Grumae02":
+        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=4)
+    elif user["user"] == "Prehospitalaria04":
+        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=5)
+
+    # 3. Aplicar filtros si existen
+    if filter_unidad_id:
+        reportes_queryset = reportes_queryset.filter(id_unidad_id=filter_unidad_id)
+
+    if filter_tipo_reporte:
+        reportes_queryset = reportes_queryset.filter(servicio__nombre_servicio=filter_tipo_reporte)
+
+    if filter_fecha_inicio:
+        try:
+            fecha_inicio = strptime(filter_fecha_inicio, '%Y-%m-%d').date()
+            reportes_queryset = reportes_queryset.filter(fecha__gte=fecha_inicio)
+        except ValueError:
+            pass
+
+    if filter_fecha_fin:
+        try:
+            fecha_fin = strptime(filter_fecha_fin, '%Y-%m-%d').date()
+            reportes_queryset = reportes_queryset.filter(fecha__lte=fecha_fin)
+        except ValueError:
+            pass
+
+    # 4. Obtener datos para filtros
+    unidades_para_filtro = Unidades.objects.exclude(id__in=[26, 30, 27]).order_by("nombre_unidad")
+    
+    # Aplicar filtro por división para usuarios específicos
+    if user["user"] in ["Operaciones01", "Rescate03", "Prevencion05", "Grumae02", "Prehospitalaria04"]:
+        division_id = {
+            "Operaciones01": 2,
+            "Rescate03": 1,
+            "Prevencion05": 3,
+            "Grumae02": 4,
+            "Prehospitalaria04": 5
+        }[user["user"]]
+        unidades_para_filtro = unidades_para_filtro.filter(id_division=division_id)
+
+    # 6. Preparar el contexto para el template
+    paginator = Paginator(reportes_queryset, 15)  # Muestra 15 reportes por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "user": user,
+        "jerarquia": user["jerarquia"],
+        "nombres": user["nombres"],
+        "apellidos": user["apellidos"],
+        "unidades": unidades_para_filtro,
+        "tipos_reporte": servicios_para_filtro, # Corregido
+        'filtroUnidad': filter_unidad_id,
+        'filtroTipoReporte': filter_tipo_reporte,
+        'filtroFechaInicio': filter_fecha_inicio,
+        'filtroFechaFin': filter_fecha_fin,
+        "conteo": reportes_queryset.count(),
+        "datos": page_obj,
+        "page_obj": page_obj,
+    }
+
+    return render(request, "unidades/reportesUnidades.html", context)
+
+def api_detalle_reporte_unidad(request, reporte_id):
+    try:
+        reporte = Reportes_Unidades.objects.select_related(
+            'id_unidad'
+        ).prefetch_related(
+            'id_unidad__id_division'
+        ).get(id=reporte_id)
+        
+        data = {
+            "id": reporte.id,
+            "unidad": reporte.id_unidad.nombre_unidad if reporte.id_unidad else "N/A",
+            "division": ", ".join([div.division for div in reporte.id_unidad.id_division.all()]) if reporte.id_unidad else "N/A",
+            "tipo_reporte": reporte.servicio.nombre_servicio,
+            "personal_responsable": reporte.persona_responsable,
+            "descripcion": reporte.descripcion,
+            "fecha_reporte": reporte.fecha.strftime('%d-%m-%Y') if reporte.fecha else "N/A",
+            "hora_reporte": str(reporte.hora) if reporte.hora else "N/A",
+        }
+        
+        return JsonResponse(data)
+        
+    except Reportes_Unidades.DoesNotExist:
+        return JsonResponse({"error": "Reporte no encontrado"}, status=404)
+
+def Eliminar_Reporte_Unidad(request, reporteId):
+    # La decoración @csrf_exempt se usa aquí para simplificar,
+    # pero para un entorno de producción, considera usar un token CSRF
+    # si la petición se envía desde el mismo sitio web.
+
+    # 1. Autenticación y Autorización
+    # Obtener el usuario de la sesión
+    user = request.session.get('user')
+    if not user:
+        # Si no hay usuario en sesión, no está autorizado
+        return HttpResponseForbidden(json.dumps({'error': 'No autorizado'}), content_type="application/json")
+
+    # Autorización basada en el rol del usuario
+    # Solo ciertos roles pueden eliminar reportes
+    roles_autorizados = ["SeRvEr", "Sala_Situacional", "Comandancia"]
+    if user["user"] not in roles_autorizados:
+        return HttpResponseForbidden(json.dumps({'error': 'No tiene permisos para realizar esta acción'}), content_type="application/json")
+
+    # 2. Buscar el reporte a eliminar
+    try:
+        reporte = Reportes_Unidades.objects.get(id=reporteId)
+    except Reportes_Unidades.DoesNotExist:
+        return HttpResponseBadRequest(json.dumps({'error': 'El reporte no existe.'}), content_type="application/json")
+
+    # 3. Eliminar el reporte
+    try:
+        reporte.delete()
+        return JsonResponse({'success': True, 'message': 'Reporte eliminado con éxito.'})
+    except Exception as e:
+        # En caso de cualquier otro error al intentar eliminar
+        return JsonResponse({'success': False, 'message': f'Error al eliminar el reporte: {str(e)}'}, status=500)
+
+
 
 def View_Form_unidades(request):
     user = request.session.get('user')
@@ -553,6 +705,17 @@ def asignacion_unidades(request):
 
     # Start with all relevant units, excluding the specified IDs
     unidades_queryset = Unidades.objects.exclude(id__in=[26, 30, 27]).order_by('nombre_unidad')
+
+    if user["user"] == "Operaciones01":
+        unidades_queryset = unidades_queryset.filter(id_division=2)
+    elif user["user"] == "Rescate03":
+        unidades_queryset = unidades_queryset.filter(id_division=1)
+    elif user["user"] == "Prevencion05":
+        unidades_queryset = unidades_queryset.filter(id_division=3)
+    elif user["user"] == "Grumae02":
+        unidades_queryset = unidades_queryset.filter(id_division=4)
+    elif user["user"] == "Prehospitalaria04":
+        unidades_queryset = unidades_queryset.filter(id_division=5)
 
     unidades_con_detalle = []
 

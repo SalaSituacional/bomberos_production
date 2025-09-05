@@ -59,7 +59,9 @@
                         <th class="fixed-width">Código</th>
                         <th class="fixed-width">Asignada el</th>
                         <th class="fixed-width">Estado</th>
-                        <th class="text-end fixed-width">Acciones</th>
+                        {% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Mecanica_01" %}
+                            <th class="text-end fixed-width">Acciones</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -77,19 +79,21 @@
                                 {{ asignacion.herramienta.get_estado_display }}
                             </span>
                         </td>
-                        <td class="text-end fixed-width">
-                            {% if not asignacion.fecha_devolucion %}
-                            <button class="btn btn-sm btn-outline-danger" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#accionesModal{{ asignacion.id }}">
-                                <i class="fas fa-cog"></i> Acciones
-                            </button>
-                            {% else %}
-                            <small class="text-muted">
-                                Devuelta el {{ asignacion.fecha_devolucion|date:"d/m/Y" }}
-                            </small>
-                            {% endif %}
-                        </td>
+                        {% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Mecanica_01" %}
+                            <td class="text-end fixed-width">
+                                {% if not asignacion.fecha_devolucion %}
+                                <button class="btn btn-sm btn-outline-danger" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#accionesModal{{ asignacion.id }}">
+                                    <i class="fas fa-cog"></i> Acciones
+                                </button>
+                                {% else %}
+                                <small class="text-muted">
+                                    Devuelta el {{ asignacion.fecha_devolucion|date:"d/m/Y" }}
+                                </small>
+                                {% endif %}
+                            </td>
+                        {% endif %}
                     </tr>
                     {% empty %}
                     <tr>
@@ -108,141 +112,144 @@
     </div>
 </div>
 
-<!-- Modales para cada asignación -->
-{% for asignacion in asignaciones %}
-{% if not asignacion.fecha_devolucion %}
-<div class="modal fade" id="accionesModal{{ asignacion.id }}" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Acciones para {{ asignacion.herramienta.nombre }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="d-grid gap-2">
-                    <a href="{% url 'devolucion-parcial' asignacion.id %}" 
-                       class="btn btn-outline-primary">
-                        <i class="fas fa-undo-alt me-2"></i> Devolución Parcial
-                    </a>
-                    
-                    <a href="{% url 'reasignar-herramienta' asignacion.id %}" 
-                       class="btn btn-outline-warning">
-                        <i class="fas fa-exchange-alt me-2"></i> Reasignar
-                    </a>
-
-                    <button type="button" class="btn btn-outline-danger" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#devolucionCompletaModal{{ asignacion.id }}">
-                            Devolución Completa
-                    </button>
+{% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Mecanica_01" %}
+    <!-- Modales para cada asignación -->
+    {% for asignacion in asignaciones %}
+    {% if not asignacion.fecha_devolucion %}
+    <div class="modal fade" id="accionesModal{{ asignacion.id }}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Acciones para {{ asignacion.herramienta.nombre }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
-{% endfor %}
-
-{% for asignacion in asignaciones %}
-{% if not asignacion.fecha_devolucion %}
-<div class="modal fade" id="devolucionCompletaModal{{ asignacion.id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">
-                    Devolución Completa
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" action="{% url 'devolver-completa' asignacion.id %}">
-                {% csrf_token %}
                 <div class="modal-body">
-                    <div class="alert alert-danger d-flex flex-column align-items-md-start">
-                        <strong>Herramienta:</strong> {{ asignacion.herramienta.nombre }}<br>
-                        <strong>Unidad:</strong> {{ asignacion.unidad.nombre_unidad }}<br>
-                        <strong>Cantidad a devolver:</strong> 
-                        <span class="badge bg-primary">{{ asignacion.cantidad }} unidades</span>
-                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'devolucion-parcial' asignacion.id %}" 
+                        class="btn btn-outline-primary">
+                            <i class="fas fa-undo-alt me-2"></i> Devolución Parcial
+                        </a>
+                        
+                        <a href="{% url 'reasignar-herramienta' asignacion.id %}" 
+                        class="btn btn-outline-warning">
+                            <i class="fas fa-exchange-alt me-2"></i> Reasignar
+                        </a>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">{{ formDevolucion.responsable.label }}</label>
-                        {{ formDevolucion.responsable }}
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">{{ formDevolucion.observaciones.label }}</label>
-                        {{ formDevolucion.observaciones }}
+                        <button type="button" class="btn btn-outline-danger" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#devolucionCompletaModal{{ asignacion.id }}">
+                                Devolución Completa
+                        </button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i>Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-check me-2"></i>Confirmar Devolución
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-</div>
-{% endif %}
-{% endfor %}
+    {% endif %}
+    {% endfor %}
 
-
-<div class="card shadow mb-4 card-detalles-asignaciones">
-    <div class="card-header bg-danger text-white">
-        <h5 class="mb-1 mt-1" style="font-size: 1.5rem;"><i class="bi bi-box-seam me-2"></i> Asignar Nuevas Herramientas</h5>
-    </div>
-    <div class="card-body">
-        <form method="post">
-            {% csrf_token %}
-            
-            <div class="herramientas-container">
-                {% for herramienta in form.herramientas_disponibles %}
-                <div class="d-flex align-items-center justify-content-center mb-2 herramienta-line"> 
-                    <div class="form-check form-switch flex-grow-1 d-flex align-items-center me-3">
-                        <input type="checkbox"
-                            name="herramienta_{{ herramienta.id }}_sel" 
-                            id="id_herramienta_{{ herramienta.id }}_sel" 
-                            class="form-check-input herramienta-checkbox"
-                            data-herramienta-id="{{ herramienta.id }}" 
-                            {% if herramienta.cantidad_disponible <= 0 %}disabled{% endif %}>
-                        
-                        <span class="d-flex flex-column align-items-start align-items-md-start ms-3 label-content">
-                            <strong>{{ herramienta.nombre }}</strong> 
-                            {% if herramienta.cantidad_disponible <= 0 %}
-                                <span class="badge bg-secondary mt-1">Agotada</span>
-                            {% else %}
-                                <span class="badge bg-danger text-white mt-1">Disponibles: {{ herramienta.cantidad_disponible }}</span>
-                            {% endif %}
-                        </span>
-                        <label class="visually-hidden" for="id_herramienta_{{ herramienta.id }}_sel">
-                            {{ herramienta.nombre }} (Cantidad)
-                        </label>
-                    </div>
-                    
-                    <div class="flex-shrink-0">
-                        <input type="number" 
-                            name="herramienta_{{ herramienta.id }}_cant" 
-                            id="id_herramienta_{{ herramienta.id }}_cant"
-                            class="form-control form-control-sm cantidad-input text-center" 
-                            data-herramienta-id="{{ herramienta.id }}"
-                            disabled 
-                            min="1"
-                            max="{{ herramienta.cantidad_disponible }}"
-                            value="1"
-                            style="width: 75px;">
-                    </div>
+    {% for asignacion in asignaciones %}
+    {% if not asignacion.fecha_devolucion %}
+    <div class="modal fade" id="devolucionCompletaModal{{ asignacion.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        Devolución Completa
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                {% empty %}
-                    <div class="alert alert-info text-center mb-0">No hay herramientas disponibles para asignar en este momento.</div>
-                {% endfor %}
+                <form method="post" action="{% url 'devolver-completa' asignacion.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="alert alert-danger d-flex flex-column align-items-md-start">
+                            <strong>Herramienta:</strong> {{ asignacion.herramienta.nombre }}<br>
+                            <strong>Unidad:</strong> {{ asignacion.unidad.nombre_unidad }}<br>
+                            <strong>Cantidad a devolver:</strong> 
+                            <span class="badge bg-primary">{{ asignacion.cantidad }} unidades</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ formDevolucion.responsable.label }}</label>
+                            {{ formDevolucion.responsable }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ formDevolucion.observaciones.label }}</label>
+                            {{ formDevolucion.observaciones }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-check me-2"></i>Confirmar Devolución
+                        </button>
+                    </div>
+                </form>
             </div>
-            <button type="submit" class="btn btn-danger mt-3"><i class="bi bi-box-arrow-in-up me-2"></i> Asignar Selección</button>
-        </form>        
+        </div>
     </div>
-</div>
+    {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Mecanica_01" %}
+    <div class="card shadow mb-4 card-detalles-asignaciones">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-1 mt-1" style="font-size: 1.5rem;"><i class="bi bi-box-seam me-2"></i> Asignar Nuevas Herramientas</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="herramientas-container">
+                    {% for herramienta in form.herramientas_disponibles %}
+                    <div class="d-flex align-items-center justify-content-center mb-2 herramienta-line"> 
+                        <div class="form-check form-switch flex-grow-1 d-flex align-items-center me-3">
+                            <input type="checkbox"
+                                name="herramienta_{{ herramienta.id }}_sel" 
+                                id="id_herramienta_{{ herramienta.id }}_sel" 
+                                class="form-check-input herramienta-checkbox"
+                                data-herramienta-id="{{ herramienta.id }}" 
+                                {% if herramienta.cantidad_disponible <= 0 %}disabled{% endif %}>
+                            
+                            <span class="d-flex flex-column align-items-start align-items-md-start ms-3 label-content">
+                                <strong>{{ herramienta.nombre }}</strong> 
+                                {% if herramienta.cantidad_disponible <= 0 %}
+                                    <span class="badge bg-secondary mt-1">Agotada</span>
+                                {% else %}
+                                    <span class="badge bg-danger text-white mt-1">Disponibles: {{ herramienta.cantidad_disponible }}</span>
+                                {% endif %}
+                            </span>
+                            <label class="visually-hidden" for="id_herramienta_{{ herramienta.id }}_sel">
+                                {{ herramienta.nombre }} (Cantidad)
+                            </label>
+                        </div>
+                        
+                        <div class="flex-shrink-0">
+                            <input type="number" 
+                                name="herramienta_{{ herramienta.id }}_cant" 
+                                id="id_herramienta_{{ herramienta.id }}_cant"
+                                class="form-control form-control-sm cantidad-input text-center" 
+                                data-herramienta-id="{{ herramienta.id }}"
+                                disabled 
+                                min="1"
+                                max="{{ herramienta.cantidad_disponible }}"
+                                value="1"
+                                style="width: 75px;">
+                        </div>
+                    </div>
+                    {% empty %}
+                        <div class="alert alert-info text-center mb-0">No hay herramientas disponibles para asignar en este momento.</div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-danger mt-3"><i class="bi bi-box-arrow-in-up me-2"></i> Asignar Selección</button>
+            </form>        
+        </div>
+    </div>
+{% endif %}
 
 <div class="d-flex justify-content-center align-items-center mb-4">
     <a href="{% url 'asignacion-unidades' %}" class="btn btn-outline-danger">
