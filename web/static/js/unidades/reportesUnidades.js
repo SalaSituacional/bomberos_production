@@ -1,17 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Seleccionar todas las filas de la tabla
     const filasReportes = document.querySelectorAll('#tabla-reportes tbody tr');
-    
-    // Obtener referencia al modal
     const modalReporte = new bootstrap.Modal(document.getElementById('detalleReporteModal'));
     
     // Agregar evento click a cada fila
     filasReportes.forEach(fila => {
         fila.addEventListener('click', async function(e) {
             // Prevenir que se active si se hizo clic en un botón de acción
-            if (e.target.tagName === 'A' || e.target.closest('a') || 
-                e.target.classList.contains('button-delete-reporte') || 
-                e.target.closest('.button-delete-reporte')) {
+            if (e.target.tagName === 'A' || e.target.closest('button') || e.target.classList.contains('button-delete-reporte') || e.target.classList.contains('button-edit-reporte') || e.target.closest('.button-delete-reporte')) {
                 return;
             }
             
@@ -109,8 +105,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Manejar eliminación de reportes
+    // Manejar eliminación de reportes// Manejar la eliminación de reportes con un modal de confirmación
     const botonesEliminar = document.querySelectorAll('.button-delete-reporte');
+    const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    const modalDeleteText = document.getElementById('modal-delete-text');
+
+    let reporteAEliminar = null;
     botonesEliminar.forEach(boton => {
         boton.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -118,30 +119,45 @@ document.addEventListener('DOMContentLoaded', function() {
             const unidad = this.getAttribute('data-unidad');
             const fecha = this.getAttribute('data-fecha');
             
-            if (confirm(`¿Está seguro de que desea eliminar el reporte de la unidad ${unidad} del ${fecha}?`)) {
-                // Aquí iría la lógica para eliminar el reporte
-                fetch(`/mecanica/api/reportes-unidades/${reporteId}/eliminar/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': getCookie('csrftoken'),
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        alert('Error al eliminar el reporte');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error al eliminar el reporte');
-                });
-            }
+            // Almacenar el ID del reporte en una variable temporal
+            reporteAEliminar = reporteId;
+
+            // Actualizar el texto del modal con los datos del reporte
+            modalDeleteText.innerHTML = `Reporte de la unidad <strong>${unidad}</strong> del ${fecha}.`;
+            
+            // Mostrar el modal
+            confirmationModal.show();
         });
     });
-    
-    // Función para obtener el token CSRF
+
+    // Manejar el clic en el botón de "Eliminar" dentro del modal
+    confirmDeleteBtn.addEventListener('click', function() {
+        if (reporteAEliminar) {
+            // Cerrar el modal
+            confirmationModal.hide();
+
+            // Lógica para eliminar el reporte
+            fetch(`/mecanica/api/reportes-unidades/${reporteAEliminar}/eliminar/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error al eliminar el reporte');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar el reporte');
+            });
+        }
+    });
+
+    // Función para obtener el token CSRF (esta parte no cambia)
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -156,4 +172,75 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return cookieValue;
     }
+
+
+
+
+
+
+    // Manejar la edición de reportes
+    const editReporteModal = new bootstrap.Modal(document.getElementById('editReporteModal'));
+    const botonesEditar = document.querySelectorAll('.button-edit-reporte');
+    const editForm = document.getElementById('editReporteForm');
+    const saveEditBtn = document.getElementById('save-edit-btn');
+    const editServicioSelect = document.getElementById('id_servicio');
+
+    botonesEditar.forEach(boton => {
+        boton.addEventListener('click', function(e) {
+            // Prevenir el comportamiento por defecto del enlace si fuera un <a>
+            e.preventDefault(); 
+            
+            // Obtener los datos del reporte desde los atributos data-*
+            const reporteId = this.getAttribute('data-id');
+            const unidad = this.getAttribute('data-unidad');
+            const servicioId = this.getAttribute('data-servicio-id');
+            const fecha = this.getAttribute('data-fecha');
+            const hora = this.getAttribute('data-hora');
+            const responsable = this.getAttribute('data-responsable');
+            const descripcion = this.getAttribute('data-descripcion');
+            
+            // Llenar el formulario del modal con los datos
+            document.getElementById('edit-reporte-id').value = reporteId;
+            document.getElementById('id_id_unidad').setAttribute('readonly', true); // Hacer el campo de unidad solo lectura
+            document.getElementById('id_id_unidad').value = unidad;
+            document.getElementById('id_fecha').value = fecha;
+            document.getElementById('id_hora').value = hora;
+            document.getElementById('id_responsable').value = responsable;
+            document.getElementById('id_descripcion').value = descripcion;
+            
+            editServicioSelect.value = servicioId;
+
+            // Mostrar el modal
+            editReporteModal.show();
+        });
+    });
+
+    // Manejar el envío del formulario del modal
+    saveEditBtn.addEventListener('click', function() {
+        const reporteId = document.getElementById('edit-reporte-id').value;
+        const formData = {
+            servicio: document.getElementById('id_servicio').value,
+            fecha: document.getElementById('id_fecha').value,
+            hora: document.getElementById('id_hora').value,
+            responsable: document.getElementById('id_responsable').value,
+            descripcion: document.getElementById('id_descripcion').value,
+        };
+
+        fetchWithLoader(`/mecanica/api/reportes-unidades/${reporteId}/editar/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(data => {
+            editReporteModal.hide();
+            location.reload(); // Recargar la página para ver los cambios
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al actualizar el reporte.');
+        });
+    });
 });

@@ -241,6 +241,7 @@ def View_Reportes_Unidades(request):
         "conteo": reportes_queryset.count(),
         "datos": page_obj,
         "page_obj": page_obj,
+        "form_reportes": Reportes(),
     }
 
     return render(request, "unidades/reportesUnidades.html", context)
@@ -300,6 +301,53 @@ def Eliminar_Reporte_Unidad(request, reporteId):
     except Exception as e:
         # En caso de cualquier otro error al intentar eliminar
         return JsonResponse({'success': False, 'message': f'Error al eliminar el reporte: {str(e)}'}, status=500)
+
+def editar_reporte(request, reporteId):
+    try:
+        # 1. Buscar el reporte por su ID
+        reporte = Reportes_Unidades.objects.get(id=reporteId)
+    except Reportes_Unidades.DoesNotExist:
+        return JsonResponse({"error": "El reporte no existe"}, status=404)
+
+    # 2. Decodificar los datos JSON enviados en el cuerpo de la solicitud
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Datos JSON inválidos.")
+
+    # 3. Extraer y validar los datos
+    servicio_id = data.get('servicio')
+    fecha = data.get('fecha')
+    hora = data.get('hora')
+    responsable = data.get('responsable')
+    descripcion = data.get('descripcion')
+    
+    # Valida que los datos necesarios existan
+    if not all([servicio_id, fecha, hora, responsable, descripcion]):
+        return HttpResponseBadRequest("Faltan campos obligatorios.")
+
+    # 4. Actualizar el reporte
+    try:
+        # Obtener el objeto Servicio
+        servicio = Servicios.objects.get(id=servicio_id)
+        
+        # Actualizar los campos del modelo
+        reporte.servicio = servicio
+        reporte.fecha = fecha
+        reporte.hora = hora
+        reporte.persona_responsable = responsable
+        reporte.descripcion = descripcion
+        
+        # Guardar los cambios en la base de datos
+        reporte.save()
+        
+        return JsonResponse({"message": "Reporte actualizado con éxito"}, status=200)
+    except Servicios.DoesNotExist:
+        return JsonResponse({"error": "El servicio seleccionado no existe."}, status=400)
+    except Exception as e:
+        # Manejo de errores genérico para depuración
+        print(f"Error al actualizar: {e}")
+        return JsonResponse({"error": "Error interno del servidor"}, status=500)
 
 
 

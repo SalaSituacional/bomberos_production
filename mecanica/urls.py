@@ -55,5 +55,6 @@ urlpatterns = [
     path('reportes-unidades/', View_Reportes_Unidades, name='reportes-unidades'),
     path('api/reportes-unidades/<int:reporte_id>/', api_detalle_reporte_unidad, name='api_reportes_unidades'),
     path('api/reportes-unidades/<int:reporteId>/eliminar/', Eliminar_Reporte_Unidad, name='eliminar_reporte_unidad'),
+    path('api/reportes-unidades/<int:reporteId>/editar/', editar_reporte, name='editar_reporte_api'),
     # path('editar-reporte-unidad/<int:id>/', editar_reporte_unidad, name='editar-reporte-unidad'),
 ]

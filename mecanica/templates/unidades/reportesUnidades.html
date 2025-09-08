@@ -20,6 +20,7 @@
 
 {% load static %}
 {% load customfilters %}
+{% load widget_tweaks %}
 
 
 {% block content %}
@@ -117,7 +118,9 @@
                     <th class="fixed-width">Descripción</th>
                     <th class="fixed-width-auto">Fecha</th>
                     <th class="fixed-width-auto">Hora</th>
+                    {% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Mecanica_01" %}
                     <th class="fixed-width-iconos">Acciones</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -130,18 +133,26 @@
                     <td class="fixed-width">{{ reporte.descripcion|truncatewords:5 }}</td>
                     <td class="fixed-width-auto">{{ reporte.fecha|date:"d-m-Y" }}</td>
                     <td class="fixed-width-auto">{{ reporte.hora }}</td>
+                    {% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Mecanica_01" %}
                     <td class="fixed-width-iconos">
-                        {% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" %}
-                        <a href="" class="btn btn-sm btn-danger" title="Editar">
+                        <button type="button" class="btn btn-sm btn-secondary button-edit-reporte"
+                                data-id="{{ reporte.id }}"
+                                data-unidad="{{ reporte.id_unidad.nombre_unidad }}"
+                                data-servicio-id="{{ reporte.servicio.id }}"
+                                data-fecha="{{ reporte.fecha|date:'Y-m-d' }}"
+                                data-hora="{{ reporte.hora|date:'H:i' }}" 
+                                data-responsable="{{ reporte.persona_responsable }}"
+                                data-descripcion="{{ reporte.descripcion }}"
+                                title="Editar">
                             <i class="bi bi-pencil-square"></i>
-                        </a>
+                        </button>
                         <button type="button" class="btn btn-sm btn-danger button-delete-reporte" 
-                                data-id="{{ reporte.id }}" data-unidad="{{ reporte.unidad }}"
-                                data-fecha="{{ reporte.fecha_reporte|date:'d-m-Y' }}" title="Eliminar">
+                                data-id="{{ reporte.id }}" data-unidad="{{ reporte.id_unidad.nombre_unidad }}"
+                                data-fecha="{{ reporte.fecha|date:'d-m-Y' }}" title="Eliminar">
                             <i class="bi bi-trash"></i>
                         </button>
-                        {% endif %}
                     </td>
+                    {% endif %}
                 </tr>
                 {% empty %}
                 <tr>
@@ -187,6 +198,76 @@
         <span class="current">
             Página {{ datos.number }} de {{ datos.paginator.num_pages }}.
         </span>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro de que desea eliminar este reporte?
+                    <p id="modal-delete-text" class="mt-2 mb-0"></p>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!----------------------- Modal Editar ---------------------------------->
+    <div class="modal fade" id="editReporteModal" data-bs-backdrop="static" aria-labelledby="editReporteModalLabel" aria-hidden="true" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header config-modal-delete">
+            <h2 class="modal-title fs-5" id="editReporteModalLabel">
+                Editar Reporte
+            </h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body modal-body-two">
+            <div id="infoProcedimiento" class="infoProcedimientos style-delete height-auto">
+            <form class="form-reportes" id="editReporteForm">
+                {% csrf_token %}
+
+                <input type="hidden" id="edit-reporte-id">
+
+                {% for field in form_reportes %}
+                {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'date' or field.field.widget.input_type == 'time' %}
+                    <div class="filter-group">
+                    <div class="floating-input">
+                        {% render_field field class="form-control" %}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    </div>
+                    </div>
+                {% else %}
+                    <div class="filter-group">
+                    <div class="floating-select">
+                        {% render_field field %}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+
+                <div class="buttons-reportes">
+                <button type="button" class="btn btn-danger" id="save-edit-btn">
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cerrar
+                </button>
+                </div>
+            </form>
+            </div>
+        </div>
+        </div>
+    </div>
     </div>
 
     <!-- Modal para detalles del reporte -->

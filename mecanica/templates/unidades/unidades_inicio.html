@@ -51,7 +51,7 @@
       <strong>Total Unidades:</strong>
       <span class="stat-badge">{{ conteo }}</span>
     </div>
-    {% if user.user == "SeRvEr" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Sala_Situacional" or user.user == "Mecanica_01" %}  
+    {% if user.user == "SeRvEr" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Sala_Situacional" or user.user == "Mecanica_01" or user.user == "Grumae02" %}  
     <div class="stat-box">
       <strong>Agregar Unidad: </strong>
 
@@ -135,7 +135,7 @@
           <th scope="col" class="fixed-width-iconos">Agregar Reporte</th>
           <th scope="col" class="fixed-width-iconos">Cambiar Estado</th>
           <th scope="col" class="fixed-width-iconos">Reasignar Division</th>
-          {% if user.user == "SeRvEr" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Sala_Situacional" or user.user == "Mecanica_01" %}
+          {% if user.user == "SeRvEr" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Sala_Situacional" or user.user == "Mecanica_01" or user.user == "Grumae02" %}
             <th scope="col" class="fixed-width-iconos">Modificar</th>
           {% endif %}
           <th scope="col" class="fixed-width-iconos">Ver Informacion</th>
@@ -212,7 +212,7 @@
                   </svg>
                 </button>
               </td>
-              {% if user.user == "SeRvEr" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Sala_Situacional" or user.user == "Mecanica_01" %}
+              {% if user.user == "SeRvEr" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Sala_Situacional" or user.user == "Mecanica_01" or user.user == "Grumae02" %}
               <td class="fixed-width-iconos">
                 <button class="btn editar_unidad" data-unidad="{{ row.id_unidad }}">
                   <svg fill="#B6243AFF" height="35px" width="40px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
