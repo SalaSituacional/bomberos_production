@@ -160,6 +160,12 @@ TIME_ZONE = 'America/Caracas'  # Usa la zona horaria de tu región
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Aquí es donde Django buscará los archivos estáticos en desarrollo
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'web', 'static'),
+]
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
