@@ -18,8 +18,8 @@ import pandas as pd
 import json
 from django.db.models import Q, Count, F
 from django.db import transaction
-from datetime import date as localdate
-from time import strptime
+from datetime import date
+from datetime import datetime
 
 # ========================= Dashboard Mecanica ========================
 def Dashboard_mecanica(request):
@@ -160,8 +160,7 @@ def View_Reportes_Unidades(request):
     # 1. Obtener los parámetros de filtro de la URL
     filter_unidad_id = request.GET.get('filterUnidad', '')
     filter_tipo_reporte = request.GET.get('filterTipoReporte', '')
-    filter_fecha_inicio = request.GET.get('filterFechaInicio', '')
-    filter_fecha_fin = request.GET.get('filterFechaFin', '')
+    filter_fecha_inicio = request.GET.get('filterFechaFin', '')
 
     # 2. Inicializar el queryset base
     reportes_queryset = Reportes_Unidades.objects.all().order_by("-fecha", "-hora")
@@ -196,15 +195,8 @@ def View_Reportes_Unidades(request):
 
     if filter_fecha_inicio:
         try:
-            fecha_inicio = strptime(filter_fecha_inicio, '%Y-%m-%d').date()
-            reportes_queryset = reportes_queryset.filter(fecha__gte=fecha_inicio)
-        except ValueError:
-            pass
-
-    if filter_fecha_fin:
-        try:
-            fecha_fin = strptime(filter_fecha_fin, '%Y-%m-%d').date()
-            reportes_queryset = reportes_queryset.filter(fecha__lte=fecha_fin)
+            fecha_inicio = datetime.strptime(filter_fecha_inicio, '%Y-%m-%d')
+            reportes_queryset = reportes_queryset.filter(fecha=fecha_inicio)
         except ValueError:
             pass
 
@@ -236,8 +228,7 @@ def View_Reportes_Unidades(request):
         "tipos_reporte": servicios_para_filtro, # Corregido
         'filtroUnidad': filter_unidad_id,
         'filtroTipoReporte': filter_tipo_reporte,
-        'filtroFechaInicio': filter_fecha_inicio,
-        'filtroFechaFin': filter_fecha_fin,
+        'filtroFechaFin': filter_fecha_inicio,
         "conteo": reportes_queryset.count(),
         "datos": page_obj,
         "page_obj": page_obj,
