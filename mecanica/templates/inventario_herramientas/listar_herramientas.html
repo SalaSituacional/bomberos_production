@@ -22,6 +22,86 @@
 {% load customfilters %}
 
 {% block content %}
+<style>#tabla-herramientas tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#tabla-herramientas tbody tr:hover {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}</style>
+<style>
+/* Estilos para los elementos de detalle */
+.detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.detail-item:hover {
+    background-color: #f8f9fa;
+}
+
+.detail-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+
+    span:nth-child(2) {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+}
+
+/* Colores personalizados */
+.bg-purple {
+    background-color: #6f42c1 !important;
+}
+
+.bg-orange {
+    background-color: #fd7e14 !important;
+}
+
+.bg-teal {
+    background-color: #20c997 !important;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-modal {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+/* Estilos para los badges de estado en el modal */
+#modal-estado .badge {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.65rem;
+}
+
+/* Ajustar botón de cierre */
+.btn-close:focus {
+    box-shadow: none;
+}
+</style>
+
 <div class="general-dashboard">
     <div class="div-user-name username-space">
         <h3 class="division-title">Gestion Inventario</h3>
@@ -52,14 +132,16 @@
                     </a>
                 </span>
             </div>
-            <div class="stat-box">
-                <strong>Agregar Herramienta</strong>
-                <span class="stat-badge">
-                    <a href="{% url 'crear-herramienta' %}" title="Nueva Herramienta">
-                        <i class="bi bi-plus-circle"></i>
-                    </a>
-                </span>
-            </div>
+            {% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Mecanica_01" %}
+                <div class="stat-box">
+                    <strong>Agregar Herramienta</strong>
+                    <span class="stat-badge">
+                        <a href="{% url 'crear-herramienta' %}" title="Nueva Herramienta">
+                            <i class="bi bi-plus-circle"></i>
+                        </a>
+                    </span>
+                </div>
+            {% endif %}
         </div>
 
         <form method="get" class="filter-form">
@@ -102,7 +184,7 @@
 
     <!-- Tabla de herramientas -->
     <div class="table-responsive-sm">
-        <table class="table table-hover">
+        <table class="table table-hover" id="tabla-herramientas">
             <thead>
                 <tr>
                     <th class="fixed-width">Nombre</th>
@@ -112,12 +194,21 @@
                     <th class="fixed-width">Estado</th>
                     <th class="fixed-width">Asignaciones</th>
                     <th class="fixed-width">Disponibles</th>
-                    <th class="fixed-width-iconos">Acciones</th>
+                    {% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Mecanica_01" %}
+                        <th class="fixed-width-iconos">Acciones</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% for herramienta in herramientas %}
-                <tr>
+                <tr data-herramienta-id="{{ herramienta.pk }}" 
+                    data-nombre="{{ herramienta.nombre }}"
+                    data-serial="{{ herramienta.numero_serie|default:'-' }}"
+                    data-categoria="{{ herramienta.categoria.nombre }}"
+                    data-cantidad="{{ herramienta.cantidad_total }}"
+                    data-estado="{{ herramienta.get_estado_display }}"
+                    data-asignadas="{{ herramienta.asignadas }}"
+                    data-disponibles="{{ herramienta.cantidad_total|sub:herramienta.asignadas }}">
                     <td class="fixed-width">{{ herramienta.nombre }}</td>
                     <td class="fixed-width">{{ herramienta.numero_serie|default:"-" }}</td>
                     <td class="fixed-width">{{ herramienta.categoria.nombre }}</td>
@@ -155,14 +246,16 @@
                         <span class="badge bg-success text-light" style="font-size: 0.85rem;">Disponible</span>
                         {% endif %}
                     </td>
-                    <td class="fixed-width-iconos">
-                        <a href="{% url 'editar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Editar">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
-                        <a href="{% url 'eliminar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Eliminar">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </td>
+                    {% if user.user == "SeRvEr" or user.user == "Sala_Situacional" or user.user == "Comandancia" or user.user == "2dacomandancia" or user.user == "Mecanica_01" %}
+                        <td class="fixed-width-iconos">
+                            <a href="{% url 'editar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Editar">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="{% url 'eliminar-herramienta' herramienta.pk %}" class="btn btn-danger" title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    {% endif %}
                 </tr>
                 {% empty %}
                 <tr>
@@ -173,11 +266,103 @@
         </table>
     </div>
 
+    <!-- Modal para mostrar detalles de la herramienta -->
+    <div class="modal fade" id="detalleHerramientaModal" tabindex="-1" aria-labelledby="detalleHerramientaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate__animated animate__zoomIn">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="detalleHerramientaModalLabel">
+                        <i class="bi bi-tools me-2"></i>Detalles de Herramienta
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="detail-item">
+                        <div class="detail-icon bg-primary">
+                            <i class="bi bi-tag"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="fw-bold text-secondary">Nombre:</span>
+                            <span id="modal-nombre" class="text-dark"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon bg-info">
+                            <i class="bi bi-upc-scan"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="fw-bold text-secondary">Serial:</span>
+                            <span id="modal-serial" class="text-dark"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon bg-warning">
+                            <i class="bi bi-grid-3x3"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="fw-bold text-secondary">Categoría:</span>
+                            <span id="modal-categoria" class="text-dark"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon bg-success">
+                            <i class="bi bi-boxes"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="fw-bold text-secondary">Cantidad:</span>
+                            <span id="modal-cantidad" class="text-dark"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon bg-purple">
+                            <i class="bi bi-clipboard-check"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="fw-bold text-secondary">Estado:</span>
+                            <span id="modal-estado"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon bg-orange">
+                            <i class="bi bi-person-check"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="fw-bold text-secondary">Asignadas:</span>
+                            <span id="modal-asignadas" class="text-dark"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon bg-teal">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="detail-content">
+                            <span class="fw-bold text-secondary">Disponibles:</span>
+                            <span id="modal-disponibles" class="text-dark"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer">
         <section class="text-reserved">
             <h5>2025 © Cuerpo de bomberos - San Cristobal</h5>
         </section>
     </footer>
+
+    <script src="{% static 'js/mecanica/modalDetalles.js' %}"></script>
 </div>
 
 {% endblock %}
