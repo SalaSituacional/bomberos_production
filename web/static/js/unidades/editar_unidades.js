@@ -15,7 +15,7 @@ botonesEditar.forEach((boton) => {
         localStorage.setItem("datosSolicitud", JSON.stringify(data));
 
         // Redirigir a la página destino
-        window.location.href = "/mecanica/formularioUnidades/";
+        window.location.href = `/mecanica/formularioUnidades/?editing=${true}`;
       } catch (error) {
         console.error("❌ Error al Obtener los Datos:", error);
       }
