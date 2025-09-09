@@ -38,6 +38,8 @@
     <form action="{% url 'agregar_unidades' %}" method="POST" id="form_register_unidades">
       {% csrf_token %}
 
+      <input type="hidden" name="id_unidad" id="id_unidad">
+
       <h4>Información Básica de la Unidad</h4>
       <div class="form-container">
         <div class="form-floating mb-3">
@@ -165,13 +167,12 @@
         
       </div>
 
-    </div>
-
-    <div class="buttons-form-unidades">
-      <button class="btn btn-danger" type="submit">Enviar</button>
-      <button class="btn btn-secondary" type="button"><a href="{% url 'unidades' %}">Cancelar</a></button>
-    </div>
-  </form>
+      <div class="buttons-form-unidades">
+        <button class="btn btn-danger" type="submit">Enviar</button>
+        <button class="btn btn-secondary" type="button"><a href="{% url 'unidades' %}">Cancelar</a></button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <footer class="footer">
@@ -180,6 +181,23 @@
   </section>
 </footer>
 
+<script>
+  // Obtener el valor de un parámetro de la URL
+  function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  }
 
-<script src="{% static 'js/unidades/llenar_valores_unidades.js' %}"></script>
+  // Ejemplo de uso: obtener el valor del parámetro "id"
+  var idUnidad = getUrlParameter('editing');
+  console.log('Valor de id:', idUnidad);
+  if (idUnidad) {
+    var script = document.createElement('script');
+    script.src = "{% static 'js/unidades/llenar_valores_unidades.js' %}";
+    document.body.appendChild(script);
+  }
+</script>
+
 {% endblock %}

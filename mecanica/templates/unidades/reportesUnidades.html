@@ -167,32 +167,31 @@
     <div class="pagination">
         <span class="step-links">
             {% if datos.has_previous %}
-                <a href="?page=1{% if filtroUnidad %}&unidad={{ filtroUnidad }}{% endif %}{% if filtroTipoReporte %}&tipo_reporte={{ filtroTipoReporte }}{% endif %}{% if filtroFechaInicio %}&fecha_inicio={{ filtroFechaInicio }}{% endif %}" 
-                    class="btn btn-secondary">&laquo;</a>
-                <a href="?page={{ datos.previous_page_number }}{% if filtroUnidad %}&unidad={{ filtroUnidad }}{% endif %}{% if filtroTipoReporte %}&tipo_reporte={{ filtroTipoReporte }}{% endif %}{% if filtroFechaInicio %}&fecha_inicio={{ filtroFechaInicio }}{% endif %}" 
-                    class="btn btn-danger">&lsaquo;</a>
+                <a href="?page=1{% if filtroUnidad %}&filterUnidad={{ filtroUnidad }}{% endif %}{% if filtroTipoReporte %}&filterTipoReporte={{ filtroTipoReporte }}{% endif %}{% if filtroFechaFin %}&filterFechaFin={{ filtroFechaFin }}{% endif %}"
+                class="btn btn-secondary">&laquo;</a>
+                <a href="?page={{ datos.previous_page_number }}{% if filtroUnidad %}&filterUnidad={{ filtroUnidad }}{% endif %}{% if filtroTipoReporte %}&filterTipoReporte={{ filtroTipoReporte }}{% endif %}{% if filtroFechaFin %}&filterFechaFin={{ filtroFechaFin }}{% endif %}"
+                class="btn btn-danger">&lsaquo;</a>
             {% else %}
                 <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
                     &laquo;
                 </a>
                 <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
                     &lsaquo;
-                </a>  
+                </a>
             {% endif %}
 
-
             {% if datos.has_next %}
-                <a href="?page={{ datos.next_page_number }}{% if filtroUnidad %}&unidad={{ filtroUnidad }}{% endif %}{% if filtroTipoReporte %}&tipo_reporte={{ filtroTipoReporte }}{% endif %}{% if filtroFechaInicio %}&fecha_inicio={{ filtroFechaInicio }}{% endif %}" 
-                    class="btn btn-danger">&rsaquo;</a>
-                <a href="?page={{ datos.paginator.num_pages }}{% if filtroUnidad %}&unidad={{ filtroUnidad }}{% endif %}{% if filtroTipoReporte %}&tipo_reporte={{ filtroTipoReporte }}{% endif %}{% if filtroFechaInicio %}&fecha_inicio={{ filtroFechaInicio }}{% endif %}" 
-                    class="btn btn-secondary">&raquo;</a>
+                <a href="?page={{ datos.next_page_number }}{% if filtroUnidad %}&filterUnidad={{ filtroUnidad }}{% endif %}{% if filtroTipoReporte %}&filterTipoReporte={{ filtroTipoReporte }}{% endif %}{% if filtroFechaFin %}&filterFechaFin={{ filtroFechaFin }}{% endif %}"
+                class="btn btn-danger">&rsaquo;</a>
+                <a href="?page={{ datos.paginator.num_pages }}{% if filtroUnidad %}&filterUnidad={{ filtroUnidad }}{% endif %}{% if filtroTipoReporte %}&filterTipoReporte={{ filtroTipoReporte }}{% endif %}{% if filtroFechaFin %}&filterFechaFin={{ filtroFechaFin }}{% endif %}"
+                class="btn btn-secondary">&raquo;</a>
             {% else %}
                 <a href="#" class="btn btn-danger disabled" tabindex="-1" aria-disabled="true">
                     &rsaquo;
                 </a>
                 <a href="#" class="btn btn-secondary disabled" tabindex="-1" aria-disabled="true">
-                    &rsaquo;
-                </a>  
+                    &raquo;
+                </a>
             {% endif %}
         </span>
         <span class="current">

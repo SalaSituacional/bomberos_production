@@ -1,7 +1,10 @@
+
+
 const storedData = localStorage.getItem("datosSolicitud");
 
 if (storedData) {
   let parsedData = JSON.parse(storedData); // Convertimos el string en un objeto
+  console.log("Datos cargados desde localStorage:", parsedData);
 
   document.getElementById("id_nombre_unidad").value = parsedData.nombre_unidad || "";
   document.getElementById("id_division").setAttribute("disabled", true);
@@ -29,17 +32,24 @@ if (storedData) {
   document.getElementById("id_estado").value = parsedData.estado || "";
 
   document.getElementById("id_unidad").value = parsedData.id || "";
+
+  // Limpiar la clave del localStorage después de usar los datos
+  localStorage.removeItem("datosUnidad");
 } else {
   console.log("⚠️ ERROR: No se encontraron datos de la solicitud.");
 }
 
 
 window.addEventListener("beforeunload", () => {
-  // Eliminar la clave del localStorage
   localStorage.removeItem("datosSolicitud");
+});
+window.addEventListener("popstate", () => {
+  localStorage.removeItem("datosSolicitud");
+});
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    localStorage.removeItem("datosSolicitud");
+  }
 });
 
-window.addEventListener("popstate", () => {
-  // Eliminar la clave del localStorage al retroceder
-  localStorage.removeItem("datosSolicitud");
-});
+

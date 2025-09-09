@@ -522,6 +522,7 @@ def obtener_info_unidad(request, id):
         "medida_neumaticos": detalles.medida_neumaticos if detalles else "",
         "tipo_correa": detalles.tipo_correa if detalles else "",
         "estado": detalles.estado if detalles else "",
+        "editing": True,
     }
 
     return JsonResponse(datos, safe=False)
