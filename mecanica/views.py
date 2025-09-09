@@ -16,10 +16,11 @@ from django.forms.models import model_to_dict
 from django.views.decorators.http import require_http_methods
 import pandas as pd
 import json
-from django.db.models import Q, Count, F
+from django.db.models import Q, Count, F, Func, DateTimeField, Value
 from django.db import transaction
 from datetime import date
 from datetime import datetime
+from django.db.models.functions import Cast
 
 # ========================= Dashboard Mecanica ========================
 def Dashboard_mecanica(request):
@@ -174,17 +175,69 @@ def View_Reportes_Unidades(request):
         'id_unidad__id_division'
     )
 
-    # Filtros por usuario según su división
+
+    ## Lógica del Turno de 24 Horas
+
+    # Define la hora de inicio del turno
+    HORA_INICIO_TURNO = 8
+
+    # Obtiene la hora actual
+    now = timezone.now()
+
+    # Determina la fecha de inicio del turno actual (8 AM)
+    if now.hour >= HORA_INICIO_TURNO:
+        start_of_shift = now.replace(hour=HORA_INICIO_TURNO, minute=0, second=0, microsecond=0)
+    else:
+        start_of_shift = (now - timedelta(days=1)).replace(hour=HORA_INICIO_TURNO, minute=0, second=0, microsecond=0)
+
+    # El fin del turno es 24 horas después del inicio
+    end_of_shift = start_of_shift + timedelta(days=1)
+
+    ## Filtros por Usuario y Periodo de Turno
+
+    # Anotamos un nuevo campo que combina la fecha y la hora correctamente
+    base_queryset = reportes_queryset.annotate(
+        reporte_completo=Cast(
+            Func(
+                F('fecha'),
+                Value(' '),
+                F('hora'),
+                function='CONCAT'
+            ),
+            output_field=DateTimeField()
+        )
+    )
+
     if user["user"] == "Operaciones01":
-        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=2)
+        reportes_queryset = base_queryset.filter(
+            id_unidad__id_division__id=2, 
+            reporte_completo__gte=start_of_shift, 
+            reporte_completo__lt=end_of_shift
+        )
     elif user["user"] == "Rescate03":
-        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=1)
+        reportes_queryset = base_queryset.filter(
+            id_unidad__id_division__id=1, 
+            reporte_completo__gte=start_of_shift, 
+            reporte_completo__lt=end_of_shift
+        )
     elif user["user"] == "Prevencion05":
-        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=3)
+        reportes_queryset = base_queryset.filter(
+            id_unidad__id_division__id=3, 
+            reporte_completo__gte=start_of_shift, 
+            reporte_completo__lt=end_of_shift
+        )
     elif user["user"] == "Grumae02":
-        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=4)
+        reportes_queryset = base_queryset.filter(
+            id_unidad__id_division__id=4, 
+            reporte_completo__gte=start_of_shift, 
+            reporte_completo__lt=end_of_shift
+        )
     elif user["user"] == "Prehospitalaria04":
-        reportes_queryset = reportes_queryset.filter(id_unidad__id_division__id=5)
+        reportes_queryset = base_queryset.filter(
+            id_unidad__id_division__id=5, 
+            reporte_completo__gte=start_of_shift, 
+            reporte_completo__lt=end_of_shift
+        )
 
     # 3. Aplicar filtros si existen
     if filter_unidad_id:
