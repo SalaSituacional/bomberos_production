@@ -17,7 +17,7 @@ if (tbodyContainer) {
     
     const id = targetRow.getAttribute('data-id');
     const id_tipo_procedimiento = targetRow.getAttribute("data-id_procedimiento");
-
+    
     info_modal.textContent = ""; // Limpiar contenido del modal
 
     const modalProcedimiento = new bootstrap.Modal(document.getElementById('modal-info'));

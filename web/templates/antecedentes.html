@@ -123,13 +123,13 @@
           <th scope="col" class="fixed-width-auto">Fecha</th>
           <th scope="col" class="fixed-width-auto">Hora</th>
           <th scope="col" class="fixed-width">Tipo de procedimiento</th>
-          <th scope="col" class="fixed-width-iconos">Acciones</th>
+          <!-- <th scope="col" class="fixed-width-iconos">Acciones</th> -->
         </tr>
       </thead>
       <tbody class="table-group-divider">
         <!-- prettier-ignore -->
         {% for row in datos %}
-        <tr>
+        <tr data-id="{{ row.procedimiento.id }}" data-id_procedimiento="{{ row.procedimiento.id_tipo_procedimiento }}">
           <!-- prettier-ignore -->
           <th scope="row" class="fixed-width-auto">{{ forloop.counter }}</th>
           <!-- prettier-ignore -->
@@ -143,8 +143,8 @@
           <td class="fixed-width-auto">{{ row.procedimiento.fecha|date:"d-m-Y" }}</td>
           <td class="fixed-width-auto">{{ row.procedimiento.hora }}</td>
           <td class="fixed-width">{{ row.procedimiento.id_tipo_procedimiento.tipo_procedimiento }}</td>
-          <td class="icons-accion fixed-width-iconos">
-            <!-- NO TOCAR Boton informacion-->
+          <!-- <td class="icons-accion fixed-width-iconos">
+            NO TOCAR Boton informacion
             <button
               type="button"
               class="button-info"
@@ -182,7 +182,7 @@
                 </g>
               </svg>
             </button>
-          </td>
+          </td> -->
         </tr>
         <!-- prettier-ignore -->
         {% endfor %}
