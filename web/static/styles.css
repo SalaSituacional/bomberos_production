@@ -1617,6 +1617,12 @@ summary>* {
 /* #region Tablas Divisiones Y General */
   /**************** estilos de tablas ********************/
 
+  /* Hacer las filas clickeables */
+#data-table tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
 .table-responsive-sm {
   overflow-y: hidden;
   width: 100%;

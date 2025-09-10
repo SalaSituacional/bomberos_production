@@ -166,7 +166,7 @@
         <div class="procedimientos-container">
         <!-- prettier-ignore -->
         {% for row in datos %}
-        <tr>
+        <tr data-id="{{ row.id }}" data-id_procedimiento="{{ row.id_tipo_procedimiento }}">
           <!-- prettier-ignore -->
           <th scope="row" class="fixed-width-auto">{{ forloop.counter }}</th>
           <td class="fixed-width">{{ row.id_division.division }}</td>
@@ -238,7 +238,7 @@
             {% endif %}
 
             <!-- NO TOCAR Boton informacion-->
-            <button
+            <!-- <button
               type="button"
               class="button-info"
               data-id="{{ row.id }}"
@@ -274,7 +274,7 @@
                   ></path>
                 </g>
               </svg>
-            </button>
+            </button> -->
 
             {% if user.user == 'Sala_Situacional' or user.user == 'SeRvEr' %}
             <!-- Boton de Editar -->
