@@ -33,49 +33,67 @@
     </div>
 </div>
 
-<div class="container w-75 bg-white p-4 rounded shadow-sm my-4">
+<div class="container w-100 bg-white p-4 rounded shadow-sm">
     <h3 class="text-center">Agregar Lote / Almacen</h3>
     <form method="POST">
         {% csrf_token %}
         <!-- Campo de descripción general para todo el lote de entrada -->
-        <div class="table-responsive">
-            <table class="table table-hover rounded">
-                <thead>
-                    <tr>
-                        <th>Seleccionar 
-                            <input type="checkbox" id="selectAll" class="form-check-input form-check-procedimientos checkbox-styles">
-                        </th>
-                        <th>Insumo</th>
-                        <th>Cantidad</th>
-                        <th>Fecha de Vencimiento</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for insumo in insumos %}
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="insumo_{{ insumo.id }}" id="insumo_{{ insumo.id }}" class="item-checkbox form-check-input form-check-procedimientos checkbox-styles">
-                            </td>
-                            <td>{{ insumo.nombre }} ({{ insumo.presentacion }})</td>
-                            <td>
-                                <input type="number" name="cantidad_{{ insumo.id }}" class="form-control" min="1" disabled required>
-                            </td>
-                            <td>
-                                <input type="date" name="fecha_vencimiento_{{ insumo.id }}" class="form-control" disabled required>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+         <div class="accordion" id="accordionPanelsStayOpenExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header m-0">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                    Insumos Disponibles
+                </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <div class="table-responsive-sm">
+                            <table class="table table-hover rounded">
+                                <thead>
+                                    <tr>
+                                        <th class="fixed-width">
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <span style="margin-right: 5px;">Seleccionar</span> 
+                                                <input type="checkbox" id="selectAll" class="form-check-input form-check-procedimientos checkbox-styles">
+                                            </div>
+                                        </th>
+                                        <th class="fixed-width" style="width: 250px;">Insumo</th>
+                                        <th class="fixed-width">Cantidad</th>
+                                        <th class="fixed-width">Fecha de Vencimiento</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for insumo in insumos %}
+                                        <tr>
+                                            <td class="fixed-width">
+                                                <input type="checkbox" name="insumo_{{ insumo.id }}" id="insumo_{{ insumo.id }}" class="item-checkbox form-check-input form-check-procedimientos checkbox-styles">
+                                            </td>
+                                            <td class="fixed-width" style="width: 250px;">{{ insumo.nombre }} ({{ insumo.presentacion }})</td>
+                                            <td class="fixed-width">
+                                                <input type="number" name="cantidad_{{ insumo.id }}" class="form-control" min="1" disabled required>
+                                            </td>
+                                            <td class="fixed-width">
+                                                <input type="date" name="fecha_vencimiento_{{ insumo.id }}" class="form-control" disabled required>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        
+
         <div class="my-4">
             <label for="id_descripcion" class="form-label">Descripción General del Lote</label>
             <textarea name="descripcion" id="id_descripcion" class="form-control" rows="3" placeholder="Ej: Donación de empresa X, Compra de proveedor Z, etc." required></textarea>
         </div>
 
-        <div class="d-flex justify-content-between mt-3">
-            <a class="btn btn-secondary" href="{% url 'dashboard_insumos_medicos' %}">Volver al Inventario Principal</a>
-            <button type="submit" class="btn btn-danger">Guardar Lotes</button>
+        <div class="d-flex justify-content-center flex-wrap mt-3 align-items-center w-75 mx-auto">
+            <a class="btn btn-secondary mb-1 w-100" href="{% url 'dashboard_insumos_medicos' %}">Volver al Inventario Principal</a>
+            <button type="submit" class="btn btn-danger w-100">Guardar Lotes</button>
         </div>
     </form>
 </div>
@@ -86,49 +104,50 @@
     </section>
 </footer>
     
-    <script>
-        // Script para manejar la lógica de la tabla de entrada de lotes
-        document.addEventListener('DOMContentLoaded', function () {
-            const selectAllCheckbox = document.getElementById('selectAll');
-            const itemCheckboxes = document.querySelectorAll('.item-checkbox');
-    
-            // Función para habilitar/deshabilitar campos
-            function toggleFields(checkbox) {
-                const row = checkbox.closest('tr');
-                const cantidadInput = row.querySelector('[name^="cantidad_"]');
-                const fechaInput = row.querySelector('[name^="fecha_vencimiento_"]');
-    
-                if (checkbox.checked) {
-                    cantidadInput.removeAttribute('disabled');
-                    fechaInput.removeAttribute('disabled');
-                } else {
-                    cantidadInput.setAttribute('disabled', 'true');
-                    fechaInput.setAttribute('disabled', 'true');
-                    cantidadInput.value = '';
-                    fechaInput.value = '';
-                }
+<script>
+    // Script para manejar la lógica de la tabla de entrada de lotes
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+
+        // Función para habilitar/deshabilitar campos
+        function toggleFields(checkbox) {
+            const row = checkbox.closest('tr');
+            const cantidadInput = row.querySelector('[name^="cantidad_"]');
+            const fechaInput = row.querySelector('[name^="fecha_vencimiento_"]');
+
+            if (checkbox.checked) {
+                cantidadInput.removeAttribute('disabled');
+                fechaInput.removeAttribute('disabled');
+            } else {
+                cantidadInput.setAttribute('disabled', 'true');
+                fechaInput.setAttribute('disabled', 'true');
+                cantidadInput.value = '';
+                fechaInput.value = '';
             }
-    
-            // Evento para el checkbox 'Seleccionar todos'
-            selectAllCheckbox.addEventListener('change', function() {
-                itemCheckboxes.forEach(checkbox => {
-                    checkbox.checked = this.checked;
-                    toggleFields(checkbox);
-                });
-            });
-    
-            // Evento para cada checkbox de item
+        }
+
+        // Evento para el checkbox 'Seleccionar todos'
+        selectAllCheckbox.addEventListener('change', function() {
             itemCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    toggleFields(this);
-                    // Si algún checkbox está desmarcado, desmarca el 'Seleccionar todos'
-                    if (!this.checked) {
-                        selectAllCheckbox.checked = false;
-                    }
-                });
+                checkbox.checked = this.checked;
+                toggleFields(checkbox);
             });
         });
-    </script>
+
+        // Evento para cada checkbox de item
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                toggleFields(this);
+                // Si algún checkbox está desmarcado, desmarca el 'Seleccionar todos'
+                if (!this.checked) {
+                    selectAllCheckbox.checked = false;
+                }
+            });
+        });
+    });
+</script>
+
 <!-- fin resumen de procedimientos -->
 <script src="{% static 'js/animate.js' %}"></script>
 <script src="{% static 'js/modal-dashboard.js' %}"></script>
